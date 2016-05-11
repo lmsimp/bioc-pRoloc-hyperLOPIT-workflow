@@ -1,0 +1,23 @@
+---
+title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
+author: "Lisa Breckels"
+date: "11 May 2016"
+output: html_document
+---
+
+# Forward
+
+# Reading and handling mass-spectrometry based proteomics data
+
+## The infrastructre: pRoloc and MSnbase in Bioconductor
+
+## The use-case: prediction sub-cellular localisation in pluripotent embroyonic mouse stem cells
+
+# Normalisation and Quality Control
+
+# Markers
+
+# Novelty Detection
+
+# Supervised machine learning
+
