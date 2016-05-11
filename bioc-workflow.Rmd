@@ -55,6 +55,14 @@ head(fData(lopit2015))
 
 # Normalisation and Quality Control
 
+Data quality is routinely examined through visualisation to verify that sub-cellular niches have been separated along the gradient. Based on De Duve's principle proteins that co-localise exhibit similar quantitation profiles across the fractions employed. One approach that has been widely used is principal components analysis (PCA) to inspect if structure, that is representative organellar separation, is present in the data. 
+
+This is the first 
+
+and by doing so, generated organelle-specific protein distributions along the gradient fractions. 
+
+The most natural visualisation is shown on figure 2, obtained using the sub-setting functionality of MSnSet instances and the plotDist function, as illustrated below.
+
 # Markers
 
 # Novelty Detection
