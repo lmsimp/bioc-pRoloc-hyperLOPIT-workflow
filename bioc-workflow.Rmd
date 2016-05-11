@@ -7,11 +7,15 @@ output: html_document
 
 # Forward
 
+Quantitative mass spectrometry based spatial proteomics involves elaborate, expensive and time consuming experimental procedures and considerable effort is invested in the generation of such data. Multiple research groups have described a variety of approaches to establish high quality proteome-wide datasets. However, data analysis is as critical as data production for reliable and insightful biological interpretation. Here, we walk through a typical pipeline for the analysis of such data using the Bioconductor `pRoloc` package for the R statistical programming environment. 
+
 # Reading and handling mass-spectrometry based proteomics data
 
 ## The infrastructre: pRoloc and MSnbase in Bioconductor
 
 ## The use-case: prediction sub-cellular localisation in pluripotent embroyonic mouse stem cells
+
+As a use-case we analyse a recent high-throughput spatial proteomics dataset from pluripotent mouse embryonic stem cells (E14TG2a) [@hyper]. The data was generated using hyperplexed LOPIT (hyperLOPIT), a novel technique for robust classification of protein localisation across the whole cell. The method uses an elaborate sub-cellular fractionation scheme, enabled by the use of Tandem Mass Tag (TMT) 10-plex and application of the MS data acquisition technique named synchronous precursor selection MS^3 (SPS)-MS^3 [@McAlister:2014], for TMT quantification with high accuracy and precision. Three biological replicates were generated from the E14TG2a experiment, the first was to target low density fractions and the second and third were to emphasis seperation of the denser organelles. The intersect of replicates 1 and 2 was treated as a 20-plex dataset for the analysis discussed in the manuscipt [@hyper] as it has been shown that combining replicates across from different gradients can increase spatial resolution [@trotter]. The combination of replicates resulted in 5032 proteins common in both experiments. Before combination, the two replicates were separately normalised by sum across the 10 channels (i.e. such that the sum of each protein's intensity is 1), for each replicate respectively. Normalisation is an essential part of data processing and several methods are available in `MSnbase`. The combination of data can also be performed effectively in `MSnbase` as detailed in the dedicated 'Combining MSnSet instances' section of the [`MSnbase` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf). 
 
 # Normalisation and Quality Control
 
