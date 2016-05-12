@@ -26,7 +26,7 @@ By example, in the code chunk below we read in the `csv` speadsheet containing t
 To use the `readMSnSet2` function, as a minimum one must specify the file path to the data and which columns of the spreadsheet contain quantitation data. The `getEcols` function exists to help users identify which columns of the spreadsheet that contain the quantitation data. The spreadsheet of E14TG2a data; "hyperLOPIT-SIData-ms3-rep12-intersect.csv", contains 5032 proteins common across the 2 biological replicates for the respective 2 x 10-plex reporter tags, along with assoiated feature meta-data such as protein markers, protein description, number of quantified peptides etc. The spreadsheet contains two headers, with the second header containing information about where the quantitation data is stored. We can display the names of the second header by calling the `getEcols` function with the argument `n = 2`, to specify that we wish to display the column names of the second header. It is now easy for one to identify that the quantitation data is located in columns 8 to 27. It is also possible to pass the optional argument `fnames` to indicate which column to use as the labels by which to identify each protein in the sample. Here, we use `fnames = 1` to use the Uniprot identifiers contained in the first column of the speadsheet.
 
 
-```{r makeMSnSet, echo=FALSE, message=FALSE, warning=FALSE}
+```{r makeMSnSet, message=FALSE, warning=FALSE}
 library("MSnbase")
 
 f0 <- dir(system.file("extdata", package = "pRolocdata"), full.names = TRUE, 
@@ -55,13 +55,13 @@ head(fData(lopit2015))
 
 # Normalisation and Quality Control
 
-Data quality is routinely examined through visualisation to verify that sub-cellular niches have been separated along the gradient. Based on De Duve's principle proteins that co-localise exhibit similar quantitation profiles across the fractions employed. One approach that has been widely used is principal components analysis (PCA) to inspect if structure, that is representative organellar separation, is present in the data. 
+Data quality is routinely examined through visualisation to verify that sub-cellular niches have been separated along the gradient. Based on De Duve's principle [@DeDuve:1981] proteins that co-localise exhibit similar quantitation profiles across the gradient fractions employed. One approach that has been widely used to visualise and inspect highthrouput mass spectrometry-based proteomics data is principal components analysis (PCA). PCA is one of many dimensionality reduction methods, that allow one to effectively summarise multi-dimensional data in to 2 or 3 dimensions to enable visualisation. Very generally, the original continuous multi-dimensional data is transformed into a set of orthogonal components ordered according to the amount of variability that they describe. The `plot2D` method in `pRoloc` allows one to plot the principal components (PCs) of a dataset against one another, by default the first two components are plotted on the `x`- and `y`-axis, respectively (the `dims` argument can be used to plot other PCs). If distinct clusters are observed, we assume that there is organellar separation present in the data. In the code chunk below we produce a PCA plot of the mouse stem cell dataset. One point on the plot represents one protein. We can indeed see many distinct protein clusters. Although, plotting the PCs does not give us a hard quantitative measure of separation, it is extremely useful summarising complex experimental information in one figure, to get an overview of the data. 
 
-This is the first 
+```{r qcplot, message=FALSE, warning=FALSE}
+library('pRoloc')
+plot2D(lopit2015, fcol = NULL)
+```
 
-and by doing so, generated organelle-specific protein distributions along the gradient fractions. 
-
-The most natural visualisation is shown on figure 2, obtained using the sub-setting functionality of MSnSet instances and the plotDist function, as illustrated below.
 
 # Markers
 
