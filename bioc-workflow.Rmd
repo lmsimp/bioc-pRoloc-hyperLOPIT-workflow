@@ -34,7 +34,9 @@ f0 <- dir(system.file("extdata", package = "pRolocdata"), full.names = TRUE,
 
 getEcols(f0, split = ",", n = 2)
 
-lopit2015 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1)
+lopit2015 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1, 
+                         stringsAsFactors = FALSE)
+
 
 ## Note: arguments can be passed to read.table and friends using ...
 ## here we use skip = 1 to tell readMSnSet2 to skip 1 line before
@@ -44,11 +46,11 @@ lopit2015 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1)
 exprs(lopit2015)[1:5, ]
 ```
 
-As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2015)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2015)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the fetaure names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the two columns "phenoDisco.Input" and "SVM.marker.set" that contain two protein marker sets to use an input for machine learning analyses.
+As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2015)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2015)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the fetaure names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the 2nd, 8th and 11th columns which contain the Uniprot entry names and two different marker sets to use an input for machine learning analyses (see sections on markers and subsequent sections).
 
 ```{r removefData}
 fvarLabels(lopit2015)
-fData(lopit2015) <- fData(lopit2015)[, c("phenoDisco.Input", "SVM.marker.set")]
+fData(lopit2015) <- fData(lopit2015)[, c(2, 8, 11)]
 head(fData(lopit2015))
 ```
 
@@ -64,7 +66,33 @@ plot2D(lopit2015, fcol = NULL)
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in the species **and** condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `pRoloc` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object. These can be accessed using the `pRolocmarkers()` function. The Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are an essential starting point for protein annotation and marker definition. It is important to note that automatic retrieval of sub-cellular localisation information is only the beginning, and expert curation is esssential to ensure annotation is in contect for the the biological question under investigation. 
+In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `pRoloc` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from inhouse user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2015))`) and the names of the vector of the mouse markers (`mmus` markers) are Uniprot entry names (see `head(mrk)` in the code chunk below), therefore it is required we update the `MSnSet` to match the names of the markers, as demonstrated below. It is then possible to match names between the markers and the `MSnSet` instance.
+
+```{r addmrkers}
+## List available marker sets
+pRolocmarkers()
+
+## Use mouse markers
+mrk <- pRolocmarkers(species = "mmus")
+head(mrk)
+
+## Change featureNames of the MSnSet to match the marker names 
+## which are named by Uniprot Entry Name
+featureNames(lopit2015) <- make.unique(fData(lopit2015)[, 1])
+
+## Add mouse markers
+lopit2015 <- addMarkers(lopit2015, mrk)
+
+## Remove marker sets with < 20 proteins
+lopit2015 <- minMarkers(lopit2015, n = 20)
+getMarkers(lopit2015, fcol = "markers20")
+plot2D(lopit2015, fcol = "markers20", main = "pRolocmarkers for mouse")
+
+## After expert curation
+plot2D(lopit2015, fcol = "SVM.marker.set", main = "Curated markers")
+```
+
+In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information is only the beginning, and expert curation is esssential to ensure that any annotation added is for the correct context for the the biological question under investigation.
 
 # Novelty Detection
 
