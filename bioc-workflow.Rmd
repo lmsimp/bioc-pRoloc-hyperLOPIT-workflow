@@ -96,5 +96,23 @@ In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cell
 
 # Novelty Detection
 
+The extraction of sub-cellular protein clusters can be difficult owing to the limited number of marker proteins that exist in databases and elsewhere. Furthermore, given the vast complexity of the cell, automatic annotation retrieval does not always give a full representation of the true sub-cellular diversity in the data. For downstream analyses, such as supervised machine learning, it is desirable to obtain reliable markers that cover as many sub-cellular niches as possible, as these markers are directly used in the training phase of the ML classification. We find that a lack of sub-cellular diveristy in the labelled training data leads to prediction errors, as unlabelled instance can only to predicted to a class that exists in the training data  [@Breckels:2013]. In such scenarios novelty detection can be useful to identify data-specific sub-cellular groupings such as organelles and protein complexes. The phenotype discovery (phenoDisco) algorithm [@Breckels:2013] is one such method and available in `pRoloc`. It is an iterative semi-supervised learning method that combines the classification of proteins on existing labelled data with the detection of new clusters. Novelty detection methods are also useful for confirming the presence of known clusters in an unbiased fashion. For example, in [@hyper] the `phenoDisco` algorithm was used to detect the data-specific confirmation and presence of the nucleus and sub-compartments, of it was expected that nucleus associated clusters existed within the data as the protocol included a separate chromatin-rich fraction to enrich for nuclei. In the code chunk below, we show how to run a a series of novelty detection experiments using the `phenoDisco` algorithm on the mouse stem-cell dataset. There are several optional arguments that can be set dependent on the type of biological question of interest. 
+
+- Explain how to use different group sizes for detecting small complexes etc.
+- ndims for using >=2 components
+- times -> important for convergence
+- input markers are different here -> explain choice of pd.markers
+
+```{r pd, eval = FALSE}
+## As per the hyperLOPIT paper
+pdRes <- phenoDisco(lopit2015, fcol = "phenoDisco.Input", times = 200, 
+                    GS = 20, p = 0.05)
+
+```
+
 # Supervised machine learning
+
+## Traditional approaches
+
+## Transfer learning
 
