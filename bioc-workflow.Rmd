@@ -163,7 +163,15 @@ pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200,
 
 # Supervised machine learning
 
-Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. In the below code chunk we demonstrate how to run a typical classification analysis. 
+Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
+
+There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` Machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier but the proper optimisation of the algorithms parameters that limit the classification results. Before employing a classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. For example, in the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. In the example below, the training data is found in the `featureData` slot in the column called `SVM.marker.set`.
+
+Notes:
+- take care of properly setting the model parameters. 
+- Wrongly set parameters can have adverse effects 
+- how well they represent the multivariate data?
+- Parameter optimisation can be conducted in a number of ways. One of the most common is train/test plus 5-fold x-val
 
 ```{r loadpdRes, include=FALSE}
 pdRes <- lopit2016
@@ -190,7 +198,6 @@ svmRes <- svmClassification(pdRes, params,
 ```
 
 
-## Traditional approaches
 
 ## Transfer learning
 
