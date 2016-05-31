@@ -423,7 +423,51 @@ pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200,
 ```
 
 # Supervised machine learning
-Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and the known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009] 
+
+Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. In the below code chunk we demonstrate how to run a typical classification analysis. 
+
+
+
+```r
+w <- table(fData(pdRes)[, "SVM.marker.set"])
+w <- 1/w[names(w) != "unknown"]
+
+params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
+                          times = 100, xval = 5,
+                          class.weights = w,
+                          verbose = TRUE)
+```
+
+```r
+plot(params)
+```
+
+![plot of chunk visualiseOpt](figure/visualiseOpt-1.png)
+
+```r
+levelPlot(params)
+```
+
+![plot of chunk visualiseOpt](figure/visualiseOpt-2.png)
+
+```r
+(best <- getParams(params))
+```
+
+```
+## sigma  cost 
+##   0.1  16.0
+```
+
+```r
+svmRes <- svmClassification(pdRes, params,
+                            class.weights = w,
+                            fcol = "SVM.marker.set")
+```
+
+```
+## Error in svm.default(x, y, scale = scale, ..., na.action = na.action): object 'w' not found
+```
 
 
 ## Traditional approaches

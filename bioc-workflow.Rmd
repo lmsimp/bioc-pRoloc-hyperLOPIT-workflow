@@ -194,7 +194,8 @@ svmRes <- svmClassification(pdRes, params,
 
 ## Transfer learning
 
-=======
+# Session information
+
 The function `sessionInfo` provides a summary of all packages and
 versions used to generate this document. This enables us to record the
 exact state of our session that lead to these exact
