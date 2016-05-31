@@ -34,7 +34,7 @@ f0 <- dir(system.file("extdata", package = "pRolocdata"), full.names = TRUE,
 
 getEcols(f0, split = ",", n = 2)
 
-lopit2015 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1, 
+lopit2016 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1, 
                          stringsAsFactors = FALSE)
 
 
@@ -43,15 +43,15 @@ lopit2015 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1,
 ## beginning to read data.
 
 ## Examine the quantitative information for first 5 proteins 
-exprs(lopit2015)[1:5, ]
+exprs(lopit2016)[1:5, ]
 ```
 
-As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2015)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2015)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the feature names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the 2nd, 8th and 11th columns which contain the Uniprot entry names and two different marker sets to use an input for machine learning analyses (see sections on markers and subsequent sections).
+As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2016)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2016)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the feature names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the 2nd, 8th and 11th columns which contain the Uniprot entry names and two different marker sets to use an input for machine learning analyses (see sections on markers and subsequent sections).
 
 ```{r removefData}
-fvarLabels(lopit2015)
-fData(lopit2015) <- fData(lopit2015)[, c(2, 8, 11)]
-head(fData(lopit2015))
+fvarLabels(lopit2016)
+fData(lopit2016) <- fData(lopit2016)[, c(2, 8, 11)]
+head(fData(lopit2016))
 ```
 
 
@@ -61,12 +61,12 @@ Data quality is routinely examined through visualisation to verify that sub-cell
 
 ```{r qcplot, message=FALSE, warning=FALSE}
 library('pRoloc')
-plot2D(lopit2015, fcol = NULL)
+plot2D(lopit2016, fcol = NULL)
 ```
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `pRoloc` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2015))`) and the names of the vector of the mouse markers (`mmus` markers) are Uniprot entry names (see `head(mrk)` in the code chunk below), therefore it is required we update the `MSnSet` to match the names of the markers, as demonstrated below. It is then possible to match names between the markers and the `MSnSet` instance. We see below that the markers cover many sub-cellular niches, with many niches only containing a few proteins. Depending on the biological question and downstream analyses we may wish the subset these marker classes, this can be done using the `minMarkers` function. In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
+In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `pRoloc` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are Uniprot entry names (see `head(mrk)` in the code chunk below), therefore it is required we update the `MSnSet` to match the names of the markers, as demonstrated below. It is then possible to match names between the markers and the `MSnSet` instance. We see below that the markers cover many sub-cellular niches, with many niches only containing a few proteins. Depending on the biological question and downstream analyses we may wish the subset these marker classes, this can be done using the `minMarkers` function. In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
 
 ```{r addmrkers}
 ## List available marker sets
@@ -78,25 +78,25 @@ head(mrk)
 
 ## Change featureNames of the MSnSet to match the marker names 
 ## which are named by Uniprot Entry Name
-featureNames(lopit2015) <- make.unique(fData(lopit2015)[, 1])
+featureNames(lopit2016) <- make.unique(fData(lopit2016)[, 1])
 
 ## Add mouse markers
-lopit2015 <- addMarkers(lopit2015, mrk)
+lopit2016 <- addMarkers(lopit2016, mrk)
 
 ## Remove marker sets with < 20 proteins
-lopit2015 <- minMarkers(lopit2015, n = 20)
-getMarkers(lopit2015, fcol = "markers20")
-plot2D(lopit2015, fcol = "markers20", main = "pRolocmarkers for mouse")
+lopit2016 <- minMarkers(lopit2016, n = 20)
+getMarkers(lopit2016, fcol = "markers20")
+plot2D(lopit2016, fcol = "markers20", main = "pRolocmarkers for mouse")
 
 ## After expert curation
-plot2D(lopit2015, fcol = "SVM.marker.set", main = "Curated markers")
+plot2D(lopit2016, fcol = "SVM.marker.set", main = "Curated markers")
 ```
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from `pRoloc` or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. In the code chunk above we show the PCA plot output of the mouse dataset with (i) the annotation for mouse pulled from `pRolocmarkers`, and (ii) annotation after expert curation (stored in the `featureData` column called `SVM.marker.set` that was used for a classification analyses in the original data analyses [@hyper]).
 
 # Novelty Detection
 
-The extraction of sub-cellular protein clusters can be difficult owing to the limited number of marker proteins that exist in databases and elsewhere. Furthermore, given the vast complexity of the cell, automatic annotation retrieval does not always give a full representation of the true sub-cellular diversity in the data. For downstream analyses, such as supervised machine learning, it is desirable to obtain reliable markers that cover as many sub-cellular niches as possible, as these markers are directly used in the training phase of the ML classification. We find that a lack of sub-cellular diversity in the labelled training data leads to prediction errors, as unlabelled instance can only to predicted to a class that exists in the training data  [@Breckels:2013]. In such scenarios novelty detection can be useful to identify data-specific sub-cellular groupings such as organelles and protein complexes. The phenotype discovery (phenoDisco) algorithm [@Breckels:2013] is one such method and available in `pRoloc`. It is an iterative semi-supervised learning method that combines the classification of proteins on existing labelled data with the detection of new clusters. Novelty detection methods are also useful for confirming the presence of known clusters in an unbiased fashion. For example, in [@hyper] the `phenoDisco` algorithm was used to detect the data-specific confirmation and presence of the nucleus and sub-compartments, of it was expected that nucleus associated clusters existed within the data as the protocol included a separate chromatin-rich fraction to enrich for nuclei. In the code chunk below, we show how to run a a series of novelty detection experiments using the `phenoDisco` algorithm on the mouse stem-cell dataset. There are several optional arguments that can be set dependent on the type of biological question of interest. 
+The extraction of sub-cellular protein clusters can be difficult owing to the limited number of marker proteins that exist in databases and elsewhere. Furthermore, given the vast complexity of the cell, automatic annotation retrieval does not always give a full representation of the true sub-cellular diversity in the data. For downstream analyses, such as supervised machine learning, it is desirable to obtain reliable markers that cover as many sub-cellular niches as possible, as these markers are directly used in the training phase of the ML classification. We find that a lack of sub-cellular diversity in the labelled training data leads to prediction errors, as unlabelled instances can only be assigned to a class that exists in the training data [@Breckels:2013]. In such scenarios novelty detection can be useful to identify data-specific sub-cellular groupings such as organelles and protein complexes. The phenotype discovery (phenoDisco) algorithm [@Breckels:2013] is one such method and is available in `pRoloc`. It is an iterative semi-supervised learning method that combines the classification of proteins on existing labelled data with the detection of new clusters. Novelty detection methods are also useful for confirming the presence of known clusters in an unbiased fashion. For example, in [@hyper] the `phenoDisco` algorithm was used to detect the data-specific confirmation and presence of the nucleus and nucleus sub-compartments, as it was expected that nucleus associated clusters existed within the data as the protocol included a separate chromatin-rich fraction to enrich for nuclei. In the code chunk below, we show how to run a series of novelty detection experiments using the `phenoDisco` algorithm on the mouse stem-cell dataset. There are several optional arguments that can be set dependent on the type of biological question of interest. For example, 
 
 - Explain how to use different group sizes for detecting small complexes etc.
 - ndims for using >=2 components
@@ -105,12 +105,14 @@ The extraction of sub-cellular protein clusters can be difficult owing to the li
 
 ```{r pd, eval = FALSE}
 ## As per the hyperLOPIT paper
-pdRes <- phenoDisco(lopit2015, fcol = "phenoDisco.Input", times = 200, 
+pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200, 
                     GS = 20, p = 0.05)
 
 ```
 
 # Supervised machine learning
+Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and the known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009] 
+
 
 ## Traditional approaches
 
