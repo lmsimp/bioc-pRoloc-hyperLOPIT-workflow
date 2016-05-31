@@ -370,6 +370,13 @@ Supervised machine learning, also known as classification, is an essential tool 
 
 # Session information
 
+The function `sessionInfo` provides a summary of all packages and
+versions used to generate this document. This enables us to record the
+exact state of our session that lead to these exact
+results. Conversely, if the script stops working of if it returns
+different results, we are in a position to re-generate the original
+results using the adequate software versions and retrace changes in
+the software that lead to failure and/or different results.
 
 
 ```r
@@ -435,3 +442,9 @@ sessionInfo()
 ## [91] survival_2.39-4       iterators_1.0.8       rgl_0.95.1441        
 ## [94] caret_6.0-68          sampling_2.7
 ```
+
+It is always important to include session information details along
+with a
+[short reproducible example](http://adv-r.had.co.nz/Reproducibility.html)
+highlighting the problem or
+[question](https://support.bioconductor.org/) at hand.
