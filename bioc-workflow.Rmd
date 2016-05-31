@@ -1,13 +1,60 @@
 ---
 title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
 author: "Lisa Breckels"
-date: "11 May 2016"
 output: html_document
 ---
 
-# Forward
+```{r env, echo=FALSE}
+library("BiocStyle")
+suppressPackageStartupMessages(library("MSnbase"))
+suppressPackageStartupMessages(library("pRoloc"))
+```
 
-Quantitative mass spectrometry based spatial proteomics involves elaborate, expensive and time consuming experimental procedures and considerable effort is invested in the generation of such data. Multiple research groups have described a variety of approaches to establish high quality proteome-wide datasets. However, data analysis is as critical as data production for reliable and insightful biological interpretation. Here, we walk through a typical pipeline for the analysis of such data using the Bioconductor `pRoloc` package for the R statistical programming environment. 
+# Introduction
+
+Quantitative mass spectrometry based spatial proteomics involves
+elaborate, expensive and time consuming experimental procedures and
+considerable effort is invested in the generation of such
+data. Multiple research groups have described a variety of approaches
+to establish high quality proteome-wide datasets. However, data
+analysis is as critical as data production for reliable and insightful
+biological interpretation. Here, we walk the reader through a typical
+pipeline for the analysis of such data using several Bioconductor
+packages for the R statistical programming environment.
+
+The main package to analyse protein localisation data is
+`r Biocpkg("pRoloc")`, which offers a set of dedicated functions for the
+analysis of such data. `pRoloc` itself relies on `r Biocpkg("MSnbase")` to
+manipulate and process quantitative proteomics data. Many other
+packages are used by `pRoloc` for clustering, classification and
+visualisation.
+
+In this workflow, we will describe how to prepare the spatial
+proteomics data starting from a spreadsheet containing quantitative
+mass spectrometry data. We will focus on a recent pluripotent mouse
+embryonic stem cells experiment [@hyper]. Additional annotated and
+pre-formatted datasets from various species are readily available in
+the `r Biocexptpkg("pRolocdata")` package.
+
+Installation of Bioconductor package is documented in details on the
+[Bioconductor installation help page](http://bioconductor.org/install/#install-bioconductor-packages). This
+procedure is also applicable to any packages, from
+[CRAN](https://cran.r-project.org/) as well as GitHub. Once a package
+has been installed, it needs to be loaded for it functionality become
+available in the R session; this is done with the `library` function.
+
+If you have questions about this workflow in particular, or about
+other Bioconductor packages in general, they a best asked on the
+[Bioconductor support site](https://support.bioconductor.org/)
+following the
+[posting guidelines](http://www.bioconductor.org/help/support/posting-guide/). Questions
+can be tagged with specific package names or keywords. For more
+general information about mass spectrometry and proteomics, the
+readers are invited to read the `r Biocexptpkg("RforProteomics")`
+package vignettes and associated papers [@Gatto:2014;@Gatto2015]. 
+
+
+
 
 # Reading and handling mass-spectrometry based proteomics data
 
@@ -93,6 +140,10 @@ plot2D(lopit2016, fcol = "SVM.marker.set", main = "Curated markers")
 ```
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from `pRoloc` or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. In the code chunk above we show the PCA plot output of the mouse dataset with (i) the annotation for mouse pulled from `pRolocmarkers`, and (ii) annotation after expert curation (stored in the `featureData` column called `SVM.marker.set` that was used for a classification analyses in the original data analyses [@hyper]).
+
+# Interactive visualisation
+
+
 
 # Novelty Detection
 

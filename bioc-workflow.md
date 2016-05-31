@@ -1,13 +1,71 @@
 ---
 title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
 author: "Lisa Breckels"
-date: "11 May 2016"
 output: html_document
 ---
 
-# Forward
 
-Quantitative mass spectrometry based spatial proteomics involves elaborate, expensive and time consuming experimental procedures and considerable effort is invested in the generation of such data. Multiple research groups have described a variety of approaches to establish high quality proteome-wide datasets. However, data analysis is as critical as data production for reliable and insightful biological interpretation. Here, we walk through a typical pipeline for the analysis of such data using the Bioconductor `pRoloc` package for the R statistical programming environment. 
+```
+## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
+## undefined subclass "daboostCont" of class "listOrdata.frame"; definition
+## not updated
+```
+
+```
+## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
+## undefined subclass "daboostCont" of class "input"; definition not updated
+```
+
+```
+## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
+## undefined subclass "daboostCont" of class "output"; definition not updated
+```
+
+# Introduction
+
+Quantitative mass spectrometry based spatial proteomics involves
+elaborate, expensive and time consuming experimental procedures and
+considerable effort is invested in the generation of such
+data. Multiple research groups have described a variety of approaches
+to establish high quality proteome-wide datasets. However, data
+analysis is as critical as data production for reliable and insightful
+biological interpretation. Here, we walk the reader through a typical
+pipeline for the analysis of such data using several Bioconductor
+packages for the R statistical programming environment.
+
+The main package to analyse protein localisation data is
+*[pRoloc](http://bioconductor.org/packages/pRoloc)*, which offers a set of dedicated functions for the
+analysis of such data. `pRoloc` itself relies on *[MSnbase](http://bioconductor.org/packages/MSnbase)* to
+manipulate and process quantitative proteomics data. Many other
+packages are used by `pRoloc` for clustering, classification and
+visualisation.
+
+In this workflow, we will describe how to prepare the spatial
+proteomics data starting from a spreadsheet containing quantitative
+mass spectrometry data. We will focus on a recent pluripotent mouse
+embryonic stem cells experiment [@hyper]. Additional annotated and
+pre-formatted datasets from various species are readily available in
+the *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* package.
+
+Installation of Bioconductor package is documented in details on the
+[Bioconductor installation help page](http://bioconductor.org/install/#install-bioconductor-packages). This
+procedure is also applicable to any packages, from
+[CRAN](https://cran.r-project.org/) as well as GitHub. Once a package
+has been installed, it needs to be loaded for it functionality become
+available in the R session; this is done with the `library` function.
+
+If you have questions about this workflow in particular, or about
+other Bioconductor packages in general, they a best asked on the
+[Bioconductor support site](https://support.bioconductor.org/)
+following the
+[posting guidelines](http://www.bioconductor.org/help/support/posting-guide/). Questions
+can be tagged with specific package names or keywords. For more
+general information about mass spectrometry and proteomics, the
+readers are invited to read the *[RforProteomics](http://bioconductor.org/packages/RforProteomics)*
+package vignettes and associated papers [@Gatto:2014;@Gatto2015]. 
+
+
+
 
 # Reading and handling mass-spectrometry based proteomics data
 
@@ -344,6 +402,10 @@ plot2D(lopit2016, fcol = "SVM.marker.set", main = "Curated markers")
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from `pRoloc` or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. In the code chunk above we show the PCA plot output of the mouse dataset with (i) the annotation for mouse pulled from `pRolocmarkers`, and (ii) annotation after expert curation (stored in the `featureData` column called `SVM.marker.set` that was used for a classification analyses in the original data analyses [@hyper]).
 
+# Interactive visualisation
+
+
+
 # Novelty Detection
 
 The extraction of sub-cellular protein clusters can be difficult owing to the limited number of marker proteins that exist in databases and elsewhere. Furthermore, given the vast complexity of the cell, automatic annotation retrieval does not always give a full representation of the true sub-cellular diversity in the data. For downstream analyses, such as supervised machine learning, it is desirable to obtain reliable markers that cover as many sub-cellular niches as possible, as these markers are directly used in the training phase of the ML classification. We find that a lack of sub-cellular diversity in the labelled training data leads to prediction errors, as unlabelled instances can only be assigned to a class that exists in the training data [@Breckels:2013]. In such scenarios novelty detection can be useful to identify data-specific sub-cellular groupings such as organelles and protein complexes. The phenotype discovery (phenoDisco) algorithm [@Breckels:2013] is one such method and is available in `pRoloc`. It is an iterative semi-supervised learning method that combines the classification of proteins on existing labelled data with the detection of new clusters. Novelty detection methods are also useful for confirming the presence of known clusters in an unbiased fashion. For example, in [@hyper] the `phenoDisco` algorithm was used to detect the data-specific confirmation and presence of the nucleus and nucleus sub-compartments, as it was expected that nucleus associated clusters existed within the data as the protocol included a separate chromatin-rich fraction to enrich for nuclei. In the code chunk below, we show how to run a series of novelty detection experiments using the `phenoDisco` algorithm on the mouse stem-cell dataset. There are several optional arguments that can be set dependent on the type of biological question of interest. For example, 
@@ -401,12 +463,12 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRoloc_1.13.1        MLInterfaces_1.53.0  cluster_2.0.4       
+##  [1] pRoloc_1.13.2        MLInterfaces_1.53.0  cluster_2.0.4       
 ##  [4] annotate_1.51.0      XML_3.98-1.4         AnnotationDbi_1.35.3
-##  [7] IRanges_2.7.0        S4Vectors_0.11.1     MSnbase_1.21.6      
+##  [7] IRanges_2.7.1        S4Vectors_0.11.2     MSnbase_1.21.6      
 ## [10] ProtGenerics_1.5.0   BiocParallel_1.7.2   mzR_2.7.3           
 ## [13] Rcpp_0.12.5          Biobase_2.33.0       BiocGenerics_0.19.0 
-## [16] knitr_1.13          
+## [16] BiocStyle_2.1.2      knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] nlme_3.1-128          pbkrtest_0.4-6        bitops_1.0-6         
@@ -423,7 +485,7 @@ sessionInfo()
 ## [34] digest_0.6.9          minqa_1.2.4           base64enc_0.1-3      
 ## [37] htmltools_0.3.5       lme4_1.1-12           rda_1.0.2-2          
 ## [40] limma_3.29.5          htmlwidgets_0.6       RSQLite_1.0.0        
-## [43] impute_1.47.0         BiocInstaller_1.23.3  FNN_1.1              
+## [43] impute_1.47.0         FNN_1.1               BiocInstaller_1.23.4 
 ## [46] shiny_0.13.2          hwriter_1.3.2         jsonlite_0.9.20      
 ## [49] mzID_1.11.2           mclust_5.2            gtools_3.5.0         
 ## [52] car_2.1-2             dplyr_0.4.3           RCurl_1.95-4.8       
@@ -433,7 +495,7 @@ sessionInfo()
 ## [64] flexmix_2.3-13        plyr_1.8.3            grid_3.4.0           
 ## [67] pls_2.5-0             gdata_2.17.0          lattice_0.20-33      
 ## [70] splines_3.4.0         fpc_2.1-10            lpSolve_5.6.13       
-## [73] reshape2_1.4.1        codetools_0.2-14      biomaRt_2.29.0       
+## [73] reshape2_1.4.1        codetools_0.2-14      biomaRt_2.29.2       
 ## [76] evaluate_0.9          pcaMethods_1.65.0     mlbench_2.1-1        
 ## [79] nloptr_1.0.4          httpuv_1.3.3          foreach_1.4.3        
 ## [82] MatrixModels_0.4-1    gtable_0.2.0          kernlab_0.9-24       
