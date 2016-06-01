@@ -76,13 +76,20 @@ replicates 1 and 2 was treated as a 20-plex dataset for the analysis
 discussed in the manuscript [@hyper] as it has been shown that
 combining replicates across from different gradients can increase
 spatial resolution [@trotter]. The combination of replicates resulted
-in 5032 proteins common in both experiments. Before combination, the
-two replicates were separately normalised by sum across the 10
-channels (i.e. such that the sum of each protein's intensity is 1),
-for each replicate respectively. Normalisation is an essential part of
-data processing and several methods are available in 
-`r Biocpkg("MSnbase")`. The normalisation desired in this specific case
-would be obtained with the a call to the `normalise` method.
+in 5032 proteins common in both experiments. 
+
+* Need to say that can be label-free or any other type of
+  quantitation, and, possibly, that features can be a peptide level.
+
+* I would like to show code for the below - maybe move to later
+  sections. See *Data processing* section.
+
+Before combination, the two replicates were separately normalised by
+sum across the 10 channels (i.e. such that the sum of each protein's
+intensity is 1), for each replicate respectively. Normalisation is an
+essential part of data processing and several methods are available in
+`r Biocpkg("MSnbase")`. The normalisation desired in this specific
+case would be obtained with the a call to the `normalise` method.
 
 The combination of data can also be performed effectively in 
 `r Biocpkg("MSnbase")` as detailed in the dedicated *Combining MSnSet
@@ -128,6 +135,11 @@ fData(lopit2016) <- fData(lopit2016)[, c(2, 8, 11)]
 head(fData(lopit2016))
 ```
 
+## Data processing
+
+* normalisation
+* missing data
+* combining acquisistions
 
 # Quality Control
 
