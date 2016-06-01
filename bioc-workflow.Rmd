@@ -204,27 +204,37 @@ pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200,
 
 Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
 
-There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` Machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier but the proper optimisation of the algorithms parameters that limit the classification results. Before employing a classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. For example, in the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. In the example below, the training data is found in the `featureData` slot in the column called `SVM.marker.set`.
-
-Notes:
-- take care of properly setting the model parameters. 
-- Wrongly set parameters can have adverse effects 
-- how well they represent the multivariate data?
-- Parameter optimisation can be conducted in a number of ways. One of the most common is train/test plus 5-fold x-val
+There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. In the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. The training data is found in the `featureData` slot in the column called `SVM.marker.set`. As previously mentioned one first needs to train the classifiers parameters before an algorithm can be used to predict the class labels of the proteins with unknown location. One of the most common ways to optimise the parameters of a classifier is to partition the labelled data in to training and testing subsets. In this framework parameters are tested via a grid search using cross-validation on the training partition. The best parameters chosen from the cross-validation stage are then used to build a classifier to predict the class labels of the protein profiles on the test partition. Observed and expected classication results can be compared, and then used to assess how well a given model works by getting an estimate of the classiers ability to achieve a good generalisation i.e. that is given an unknown example predict its class label with high accuracy. In `pRoloc` algorithmic performance is estimated using stratified 80/20 partitioning for the training/testing subsets respectively, in conjuction with five-fold cross-validation in order to optimise the free parameters via a grid search. This procedure is usually repeated 100 times and then the best parameter(s) are selected upon investigation of classifier accuracy, here we use the harmonic mean of precision and recall; the macro F1 score. In the code chunk below we demonstrate how to optimise the free parameters; `sigma` and `cost`, of a classical SVM classifier with a Gaussian kernel using the function `svmOptimisation`. As the number of labelled instances per class varies from organelle to organelle, we can account for class imbalance by setting specific class weights when generating the SVM model. Below the weights, `w` are set to be inversely proportional to the class frequencies. 
 
 ```{r loadpdRes, include=FALSE}
 pdRes <- lopit2016
 load("Data/fusionparams.rda")
 ```
 ```{r optimise, eval=FALSE}
-w <- table(fData(pdRes)[, "SVM.marker.set"])
+(w <- table(fData(pdRes)[, "SVM.marker.set"]))
 w <- 1/w[names(w) != "unknown"]
 
+## 100 rounds of optimisation with five-fold cross-validation
 params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
                           times = 100, xval = 5,
                           class.weights = w,
-                          verbose = TRUE)
+                          verbose = FALSE)
 ```
+
+The output `params` is an object of class `GenRegRes`; a regularisation/optimisation framework container for the optimisation results.
+
+
+associated macro F1 scores. A high macro F1 score
+indicates that the marker proteins in the test dataset are consistently correctly assigned by
+17
+Spatial proteomics data analysis
+the algorithm. Often more than one parameter or set of parameters gives rise to the best
+generalisation accuracy. As such it is always important to investigate the model parameters
+and critically assess the best choice. The best choice may not be as simple as the parameter
+set that gives rise to the highest macro F1 score and one must be careful to avoid overtting
+and to choose parameters wisely.
+
+
 ```{r visualiseOpt}
 plot(params)
 levelPlot(params)
@@ -236,6 +246,12 @@ svmRes <- svmClassification(pdRes, params,
                             fcol = "SVM.marker.set")
 ```
 
+
+Notes:
+- take care of properly setting the model parameters. 
+- Wrongly set parameters can have adverse effects 
+- how well they represent the multivariate data?
+- Parameter optimisation can be conducted in a number of ways. One of the most common is train/test plus 5-fold x-val
 
 
 ## Transfer learning
