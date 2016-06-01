@@ -167,10 +167,14 @@ R later on.
 
 The spreadsheet that was deposited by the authors contains two
 headers, with the second header containing information about where the
-quantitation data is stored. We can display the names of the second
-header by calling the `getEcols` function with the argument `n = 2`
-(the default value is `n = 1`), to specify that we wish to display the
-column names of the second line.
+quantitation data is stored. 
+
+![A screenshot of the data in the spreadsheet.](./Figures/spreadsheet-screenshot.png)
+
+We can display the names of the second header by calling the
+`getEcols` function with the argument `n = 2` (the default value is `n
+= 1`), to specify that we wish to display the column names of the
+second line.
 
 
 
@@ -226,24 +230,61 @@ getEcols(csvfile, split = ",", n = 2)
 ## [45] "Cell Surface Proteins"
 ```
 
-It is now easy for one to
-identify that the quantitation data is located in columns 8 to 27. It
-is also possible to pass the optional argument `fnames` to indicate
-which column to use as the labels by which to identify each protein in
-the sample. Here, we use `fnames = 1` to use the Uniprot identifiers
-contained in the first column of the spreadsheet.
+It is now easy for one to identify that the quantitation data,
+corresponding to the 10 TMT isobaric tags, is located in columns 8
+to 27. We now have the two mandatory arguments to `readMSnSet2`,
+namely the filename (stored in the `csvfile` variable) and the
+quantitation column indices. In addition to these, it is also possible
+to pass the optional argument `fnames` to indicate which column to use
+as the labels by which to identify each protein in the sample. Here,
+we use `fnames = 1` to use the Uniprot identifiers contained in the
+first (unnamed) column of the spreadsheet. We also need to specify to
+skip the first line of the file (for the same reason that we used 
+`n = 2` in `getEcols` above) to read the `csv` data and convert it to an
+`MSnSet` object.
 
 
 ```r
-lopit2016 <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1, 
-                         stringsAsFactors = FALSE)
+lopit2016 <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1)
+```
+
+Below, we display a short summary of the data. The data contains 
+5032 proteins/features common across the 2 biological replicates
+for the respective 2 x 10-plex reporter tags (20
+columns/samples), along with associated feature meta-data such as
+protein markers, protein description, number of quantified peptides
+etc (see below).
 
 
-## Note: arguments can be passed to read.table and friends using ...
-## here we use skip = 1 to tell readMSnSet2 to skip 1 line before
-## beginning to read data.
 
-## Examine the quantitative information for first 5 proteins 
+```r
+lopit2016
+```
+
+```
+## MSnSet (storageMode: lockedEnvironment)
+## assayData: 5032 features, 20 samples 
+##   element names: exprs 
+## protocolData: none
+## phenoData: none
+## featureData
+##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
+##   fvarLabels: X X.1 ... Cell.Surface.Proteins (25 total)
+##   fvarMetadata: labelDescription
+## experimentData: use 'experimentData(object)'
+## Annotation:  
+## - - - Processing information - - -
+##  MSnbase version: 1.21.6
+```
+
+As briefly mentioned above, the quantitation data is stored in the
+`exprs` slot of the `MSnSet` and can be accessed by
+`exprs(lopit2016)`. Below, we examine the quantitative information for
+first 5 proteins. It is also possible to access specific rows and
+columns by naming the proteins and fractions of interest.
+
+
+```r
 exprs(lopit2016)[1:5, ]
 ```
 
@@ -268,12 +309,29 @@ exprs(lopit2016)[1:5, ]
 ## Q8BTM8     0.144  0.087
 ```
 
-contains 5032 proteins common across the 2 biological replicates for
-the respective 2 x 10-plex reporter tags, along with associated
-feature meta-data such as protein markers, protein description, number
-of quantified peptides etc.
+```r
+exprs(lopit2016)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
+```
 
-As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2016)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2016)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the feature names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the 2nd, 8th and 11th columns which contain the Uniprot entry names and two different marker sets to use an input for machine learning analyses (see sections on markers and subsequent sections).
+```
+##         X126 X131.1
+## Q9ERU9 0.021  0.215
+## Q9Z2R6 0.563  0.000
+```
+
+The feature meta-data is stored in the `fData`
+slot and can be accessed by `fData(lopit2016)`. When using
+`readMSnSet2`, automatically, everything that is not defined as
+quantitation data by `ecol` or the feature names by `fnames` is
+deposited to the `fData` slot. As we wish to demonstrate the complete
+analysis of this data we remove the results from the prior analysis
+described in [@hyper] in the code chunk below. We see the `fData`
+contains 25 columns describing information such as the number of
+peptides, associated markers, machine learning results etc. For
+demonstration in the code chunk below keep the 2nd, 8th and 11th
+columns which contain the Uniprot entry names and two different marker
+sets to use an input for machine learning analyses (see sections on
+markers and subsequent sections).
 
 
 ```r
@@ -399,121 +457,54 @@ head(mrk)
 ## Change featureNames of the MSnSet to match the marker names 
 ## which are named by Uniprot Entry Name
 featureNames(lopit2016) <- make.unique(fData(lopit2016)[, 1])
+```
 
+```
+## Error in make.unique(fData(lopit2016)[, 1]): 'names' must be a character vector
+```
+
+```r
 ## Add mouse markers
 lopit2016 <- addMarkers(lopit2016, mrk)
 ```
 
 ```
-## Markers in data: 1257 out of 5032
-```
-
-```
-## organelleMarkers
-##                  actin cytoskeleton                 actin cytoskeleton  
-##                                  24                                   1 
-##            actin cytoskeleton - ARP         actin cytoskeleton - myosin 
-##                                   7                                   4 
-##                       cell junction                           chromatin 
-##                                   3                                  53 
-##                           cytoplasm             cytoplasm - EIF complex 
-##                                  41                                  30 
-##                  cytoplasm - P-body             cytoplasm - tRNA ligase 
-##                                  10                                  12 
-##           cytoplasm/nuclear shuttle                   cytoplasm/nucleus 
-##                                  20                                  52 
-##                  cytoplasm/nucleus                         cytoskeleton 
-##                                   3                                  12 
-##                            endosome                                  ER 
-##                                  22                                  80 
-##                            ER/golgi                extracellular matrix 
-##                                   4                                  11 
-##                               Golgi                            lysosome 
-##                                  27                                  28 
-##                   lysosome/endosome                         microtubule 
-##                                  20                                  32 
-##              microtubule/centrosome                        mitochondria 
-##                                  16                                 262 
-##                      nuclear lamina                           nucleolus 
-##                                   9                                  50 
-##                             nucleus      nucleus - chromatin/centromere 
-##                                  45                                   7 
-##            nucleus - nuclear matrix          nucleus - nuclear membrane 
-##                                   3                                  18 
-##           nucleus - nuclear speckle               nucleus - nucleoplasm 
-##                                   3                                   1 
-##                  nucleus - PML body nucleus - ribonucleoprotein complex 
-##                                   1                                  28 
-##                          peroxisome                                  PM 
-##                                  18                                  50 
-##             PM - adherins junctions                  PM - cell junction 
-##                                   2                                   8 
-##                          proteasome                      ribonucleosome 
-##                                  35                                   5 
-##                   ribosome 28S (MT)                   ribosome 39S (MT) 
-##                                  23                                  37 
-##                        ribosome 40S                        ribosome 50S 
-##                                  29                                   3 
-##                        ribosome 60S                            secreted 
-##                                  43                                   2 
-##        secreted/extracellular space                             unknown 
-##                                  11                                3775 
-##                 vesicles - caveolae          vesicles - clathrin coated 
-##                                   3                                   3 
-##    vesicles - clathrin coated/golgi       vesicles - clathrin coated/PM 
-##                                   7                                   3 
-##             vesicles - COPI coated             vesicles - COPII coated  
-##                                   7                                   3 
-##         vesicles - retromer complex            vesicles - SNARE complex 
-##                                   9                                  17
+## Error in addMarkers(lopit2016, mrk): No markers found. Are you sure that the feature names match?
+##   Feature names: Q9JHU4, Q9QXS1-3, Q9ERU9...
+##   Markers names: CLD4_MOUSE, CTND1_MOUSE, SCRIB_MOUSE...
 ```
 
 ```r
 ## Remove marker sets with < 20 proteins
 lopit2016 <- minMarkers(lopit2016, n = 20)
+```
+
+```
+## Error in `[.data.frame`(fData(object), , fcol): undefined columns selected
+```
+
+```r
 getMarkers(lopit2016, fcol = "markers20")
 ```
 
 ```
-## organelleMarkers
-##                  actin cytoskeleton                           chromatin 
-##                                  24                                  53 
-##                           cytoplasm             cytoplasm - EIF complex 
-##                                  41                                  30 
-##           cytoplasm/nuclear shuttle                   cytoplasm/nucleus 
-##                                  20                                  52 
-##                            endosome                                  ER 
-##                                  22                                  80 
-##                               Golgi                            lysosome 
-##                                  27                                  28 
-##                   lysosome/endosome                         microtubule 
-##                                  20                                  32 
-##                        mitochondria                           nucleolus 
-##                                 262                                  50 
-##                             nucleus nucleus - ribonucleoprotein complex 
-##                                  45                                  28 
-##                                  PM                          proteasome 
-##                                  50                                  35 
-##                   ribosome 28S (MT)                   ribosome 39S (MT) 
-##                                  23                                  37 
-##                        ribosome 40S                        ribosome 60S 
-##                                  29                                  43 
-##                             unknown 
-##                                4001
+## Error: fcol %in% fvarLabels(object) is not TRUE
 ```
 
 ```r
 plot2D(lopit2016, fcol = "markers20", main = "pRolocmarkers for mouse")
 ```
 
-![plot of chunk addmrkers](figure/addmrkers-1.png)
+```
+## Error: fcol %in% fvarLabels(object) is not TRUE
+```
 
 ```r
 ## After expert curation
 plot2D(lopit2016, fcol = "SVM.marker.set", main = "Curated markers")
 ```
 
-![plot of chunk addmrkers](figure/addmrkers-2.png)
+![plot of chunk addmrkers](figure/addmrkers-1.png)
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. In the code chunk above we show the PCA plot output of the mouse dataset with (i) the annotation for mouse pulled from `pRolocmarkers`, and (ii) annotation after expert curation (stored in the `featureData` column called `SVM.marker.set` that was used for a classification analyses in the original data analyses [@hyper]).
 

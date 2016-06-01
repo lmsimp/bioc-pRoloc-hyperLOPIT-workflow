@@ -151,42 +151,73 @@ R later on.
 
 The spreadsheet that was deposited by the authors contains two
 headers, with the second header containing information about where the
-quantitation data is stored. We can display the names of the second
-header by calling the `getEcols` function with the argument `n = 2`
-(the default value is `n = 1`), to specify that we wish to display the
-column names of the second line.
+quantitation data is stored. 
+
+![A screenshot of the data in the spreadsheet.](./Figures/spreadsheet-screenshot.png)
+
+We can display the names of the second header by calling the
+`getEcols` function with the argument `n = 2` (the default value is `n
+= 1`), to specify that we wish to display the column names of the
+second line.
 
 
 ```{r getEcols}
 getEcols(csvfile, split = ",", n = 2)
 ```
 
-It is now easy for one to
-identify that the quantitation data is located in columns 8 to 27. It
-is also possible to pass the optional argument `fnames` to indicate
-which column to use as the labels by which to identify each protein in
-the sample. Here, we use `fnames = 1` to use the Uniprot identifiers
-contained in the first column of the spreadsheet.
+It is now easy for one to identify that the quantitation data,
+corresponding to the 10 TMT isobaric tags, is located in columns 8
+to 27. We now have the two mandatory arguments to `readMSnSet2`,
+namely the filename (stored in the `csvfile` variable) and the
+quantitation column indices. In addition to these, it is also possible
+to pass the optional argument `fnames` to indicate which column to use
+as the labels by which to identify each protein in the sample. Here,
+we use `fnames = 1` to use the Uniprot identifiers contained in the
+first (unnamed) column of the spreadsheet. We also need to specify to
+skip the first line of the file (for the same reason that we used 
+`n = 2` in `getEcols` above) to read the `csv` data and convert it to an
+`MSnSet` object.
 
 ```{r readMSnSet2}
-lopit2016 <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1, 
-                         stringsAsFactors = FALSE)
-
-
-## Note: arguments can be passed to read.table and friends using ...
-## here we use skip = 1 to tell readMSnSet2 to skip 1 line before
-## beginning to read data.
-
-## Examine the quantitative information for first 5 proteins 
-exprs(lopit2016)[1:5, ]
+lopit2016 <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1)
 ```
 
-contains 5032 proteins common across the 2 biological replicates for
-the respective 2 x 10-plex reporter tags, along with associated
-feature meta-data such as protein markers, protein description, number
-of quantified peptides etc.
+Below, we display a short summary of the data. The data contains 
+`r nrow(lopit2016)` proteins/features common across the 2 biological replicates
+for the respective 2 x 10-plex reporter tags (`r ncol(lopit2016)`
+columns/samples), along with associated feature meta-data such as
+protein markers, protein description, number of quantified peptides
+etc (see below).
 
-As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2016)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2016)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the feature names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the 2nd, 8th and 11th columns which contain the Uniprot entry names and two different marker sets to use an input for machine learning analyses (see sections on markers and subsequent sections).
+
+```{r showlopit2016}
+lopit2016
+```
+
+As briefly mentioned above, the quantitation data is stored in the
+`exprs` slot of the `MSnSet` and can be accessed by
+`exprs(lopit2016)`. Below, we examine the quantitative information for
+first 5 proteins. It is also possible to access specific rows and
+columns by naming the proteins and fractions of interest.
+
+```{r }
+exprs(lopit2016)[1:5, ]
+exprs(lopit2016)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
+```
+
+The feature meta-data is stored in the `fData`
+slot and can be accessed by `fData(lopit2016)`. When using
+`readMSnSet2`, automatically, everything that is not defined as
+quantitation data by `ecol` or the feature names by `fnames` is
+deposited to the `fData` slot. As we wish to demonstrate the complete
+analysis of this data we remove the results from the prior analysis
+described in [@hyper] in the code chunk below. We see the `fData`
+contains 25 columns describing information such as the number of
+peptides, associated markers, machine learning results etc. For
+demonstration in the code chunk below keep the 2nd, 8th and 11th
+columns which contain the Uniprot entry names and two different marker
+sets to use an input for machine learning analyses (see sections on
+markers and subsequent sections).
 
 ```{r removefData}
 fvarLabels(lopit2016)
