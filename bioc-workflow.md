@@ -69,56 +69,113 @@ package vignettes and associated papers [@Gatto:2014;@Gatto2015].
 
 ## The use-case: prediction sub-cellular localisation in pluripotent embryonic mouse stem cells
 
-As a use-case we analyse a recent high-throughput spatial proteomics
+As a use-case, we analyse a recent high-throughput spatial proteomics
 dataset from pluripotent mouse embryonic stem cells (E14TG2a)
 [@hyper]. The data was generated using hyperplexed LOPIT (hyperLOPIT),
-an improved method relying on better sub-cellular fractionation and
+an improved method relying on improved sub-cellular fractionation and
 more acurate quantitation, leading to more reliable classification of
 protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
 use of Tandem Mass Tag (TMT) [Thompson:2003] 10-plex and application
 of the MS data acquisition technique named synchronous precursor
-selection MS$^3$ (SPS)-MS$^3$ [@McAlister:2014], for TMT
+selection MS$^3$ (SPS-MS$^3$) [@McAlister:2014], for TMT
 quantification with high accuracy and precision. Three biological
 replicates were generated from the E14TG2a experiment, the first was
 to target low density fractions and the second and third were to
-emphasis separation of the denser organelles. The intersect of
+emphasis separation of the denser organelles.  The intersect of
 replicates 1 and 2 was treated as a 20-plex dataset for the analysis
 discussed in the manuscript [@hyper] as it has been shown that
 combining replicates across from different gradients can increase
 spatial resolution [@trotter]. The combination of replicates resulted
-in 5032 proteins common in both experiments. Before combination, the
-two replicates were separately normalised by sum across the 10
-channels (i.e. such that the sum of each protein's intensity is 1),
-for each replicate respectively. Normalisation is an essential part of
-data processing and several methods are available in 
-*[MSnbase](http://bioconductor.org/packages/MSnbase)*. The normalisation desired in this specific case
-would be obtained with the a call to the `normalise` method.
+in 5032 proteins common in both experiments.
 
-The combination of data can also be performed effectively in 
-*[MSnbase](http://bioconductor.org/packages/MSnbase)* as detailed in the dedicated *Combining MSnSet
-instances* section of the *[MSnbase](http://bioconductor.org/packages/MSnbase)*
-[tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
+These, as well as many other data are directly available as properly
+structured and annotated computational object from the 
+*[pRolocdata](http://bioconductor.org/packages/pRolocdata)* experiment package. In this workflow, we
+will start with a description of how to generate these ad hoc objects
+starting from any arbitrary spreadsheets, as produced by many popular
+third-party applications. 
+
+While we focus here on a LOPIT-type dataset, these analyses are
+relevant for any quantitative spatial proteomics data, irrespective of
+the fractionation or quantitation (i.e. labeled or label-free)
+methods.
 
 ## The infrastructure: *[pRoloc](http://bioconductor.org/packages/pRoloc)* and *[MSnbase](http://bioconductor.org/packages/MSnbase)* in Bioconductor
 
-To make use of the full functionality of the *[pRoloc](http://bioconductor.org/packages/pRoloc)* software one is required to import their data into R as a `MSnSet` instance. The `MSnSet` is a dedicated data structure for the efficient manipulation and processing of mass spectrometry and proteomics data in R. Figure 1 illustrates a simplified view of the `MSnSet` structure; there exists 3 key slots (1) the `exprs` slot for storing the quantitation data, (2) the `fData` slot for storing the feature meta-data, and finally (3) the `pData` slot for storing the sample meta-data. 
-![**Figure 1.** Simplified representation of the `MSnSet` data structure (reproduced with permission from the *[MSnbase](http://bioconductor.org/packages/MSnbase)* vignette)](./Figures/msnset.png)
+To make use of the full functionality of the *[pRoloc](http://bioconductor.org/packages/pRoloc)*
+software one needs to import their data into R and prepare them as an
+`MSnSet`. The `MSnSet` is a dedicated data structure for the efficient
+manipulation and processing of mass spectrometry and proteomics data
+in R. Figure 1 illustrates a simplified view of the `MSnSet`
+structure; there exists 3 key sub-parts (termed slots) to such a data
+object: (1) the `exprs` slot for storing the quantitation data, (2)
+the `fData` slot for storing the feature meta-data, and finally (3)
+the `pData` slot for storing the sample meta-data.
 
-There are a number of ways to import quantitation data and create a `MSnSet` instance and all methods are described in the *[MSnbase](http://bioconductor.org/packages/MSnbase)* [input/output capabilities vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf). One suggested simple method is to use the function `readMSnSet2` in *[MSnbase](http://bioconductor.org/packages/MSnbase)*. The function takes a single spreadsheet as input and extracts the columns containing the quantitation data, as identified by the argument `ecol`, to create the expression data, while the other columns in the spreadsheet are appended to the feature meta-data slot. 
-By example, in the code chunk below we read in the `csv` spreadsheet containing the quantitation data from the intersect of replicates 1 and 2 of the mouse map [@hyper], using the `readMSnSet2` function. The data is as available online with the manuscript (see tab 2 of the `xlsx` supplementary data set 1 in [@hyper]) and also as both a `csv` and `MSnSet` object in the Bioconductor *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* data package. 
+![Simplified representation of the `MSnSet` data structure (reproduced with permission from the *[MSnbase](http://bioconductor.org/packages/MSnbase)* vignette)](./Figures/msnset.png)
 
-To use the `readMSnSet2` function, as a minimum one must specify the file path to the data and which columns of the spreadsheet contain quantitation data. The `getEcols` function exists to help users identify which columns of the spreadsheet that contain the quantitation data. The spreadsheet of E14TG2a data; "hyperLOPIT-SIData-ms3-rep12-intersect.csv", contains 5032 proteins common across the 2 biological replicates for the respective 2 x 10-plex reporter tags, along with associated feature meta-data such as protein markers, protein description, number of quantified peptides etc. The spreadsheet contains two headers, with the second header containing information about where the quantitation data is stored. We can display the names of the second header by calling the `getEcols` function with the argument `n = 2`, to specify that we wish to display the column names of the second header. It is now easy for one to identify that the quantitation data is located in columns 8 to 27. It is also possible to pass the optional argument `fnames` to indicate which column to use as the labels by which to identify each protein in the sample. Here, we use `fnames = 1` to use the Uniprot identifiers contained in the first column of the spreadsheet.
+There are a number of ways to import quantitation data and create an
+`MSnSet` instance and all methods are described in the `r
+Biocpkg("MSnbase")`
+[input/output capabilities vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf). One
+suggested simple method is to use the function `readMSnSet2` in 
+*[MSnbase](http://bioconductor.org/packages/MSnbase)*. The function takes a single spreadsheet as input
+and extracts the columns containing the quantitation data, as
+identified by the argument `ecol`, to create the expression data,
+while the other columns in the spreadsheet are appended to the feature
+meta-data slot.  By example, in the code chunk below we read in the
+`csv` spreadsheet containing the quantitation data from the intersect
+of replicates 1 and 2 of the mouse map [@hyper], using the
+`readMSnSet2` function. The data is as available online with the
+manuscript (see tab 2 of the `xlsx` supplementary data set 1 in
+[@hyper], which should be exported as a text-based spreadsheet) and
+also as a `csv` in the Bioconductor *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* data
+package.
 
+To use the `readMSnSet2` function, as a minimum one must specify the
+file path to the data and which columns of the spreadsheet contain
+quantitation data. The `getEcols` function exists to help users
+identify which columns of the spreadsheet contain the
+quantitation data. 
+
+We first locate the the spreadsheet of E14TG2a data distributed with
+the *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* data using `system.file`, that
+locates the `extdata` in the *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* package on
+the hard drive and `dir`, that displays the full path to the file
+matching the `hyperLOPIT-SIData-ms3-rep12-intersect.csv` pattern,
+which corresponds the the file of interest. In the last line, we print
+the filename (not the full path, which will vary from computer to
+computer). 
 
 
 ```r
 library("MSnbase")
-
-f0 <- dir(system.file("extdata", package = "pRolocdata"), full.names = TRUE, 
+extdatadir <- system.file("extdata", package = "pRolocdata")
+csvfile <- dir(extdatadir, full.names = TRUE,
           pattern = "hyperLOPIT-SIData-ms3-rep12-intersect.csv")
+basename(csvfile)
+```
 
-getEcols(f0, split = ",", n = 2)
+```
+## [1] "hyperLOPIT-SIData-ms3-rep12-intersect.csv.gz"
+```
+
+Note that the file is compressed (as indicated by the `gz`, for
+`gzip`, extension), and will be decompressed on-the-fly when read into
+R later on.
+
+The spreadsheet that was deposited by the authors contains two
+headers, with the second header containing information about where the
+quantitation data is stored. We can display the names of the second
+header by calling the `getEcols` function with the argument `n = 2`
+(the default value is `n = 1`), to specify that we wish to display the
+column names of the second line.
+
+
+
+```r
+getEcols(csvfile, split = ",", n = 2)
 ```
 
 ```
@@ -169,8 +226,16 @@ getEcols(f0, split = ",", n = 2)
 ## [45] "Cell Surface Proteins"
 ```
 
+It is now easy for one to
+identify that the quantitation data is located in columns 8 to 27. It
+is also possible to pass the optional argument `fnames` to indicate
+which column to use as the labels by which to identify each protein in
+the sample. Here, we use `fnames = 1` to use the Uniprot identifiers
+contained in the first column of the spreadsheet.
+
+
 ```r
-lopit2016 <- readMSnSet2(f0, ecol = c(8:27), fnames = 1, skip = 1, 
+lopit2016 <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1, 
                          stringsAsFactors = FALSE)
 
 
@@ -202,6 +267,11 @@ exprs(lopit2016)[1:5, ]
 ## P26039     0.017  0.033
 ## Q8BTM8     0.144  0.087
 ```
+
+contains 5032 proteins common across the 2 biological replicates for
+the respective 2 x 10-plex reporter tags, along with associated
+feature meta-data such as protein markers, protein description, number
+of quantified peptides etc.
 
 As briefly mentioned above, the quantitation data is stored in the `exprs` slot of the `MSnSet` and can be accessed by `exprs(lopit2016)`. The feature meta-data is stored in the `fData` slot and can be accessed by `fData(lopit2016)`. When using `readMSnSet2`, automatically, everything that is not defined as quantitation data by `ecol` or the feature names by `fnames` is deposited to the `fData` slot. As we wish to demonstrate the complete analysis of this data we remove the results from the prior analysis described in [@hyper] in the code chunk below. We see the `fData` contains 25 columns describing information such as the number of peptides, associated markers, machine learning results etc. For demonstration in the code chunk below keep the 2nd, 8th and 11th columns which contain the Uniprot entry names and two different marker sets to use an input for machine learning analyses (see sections on markers and subsequent sections).
 
@@ -252,6 +322,24 @@ head(fData(lopit2016))
 ## Q8BTM8    FLNA_MOUSE          unknown            unknown
 ## A2ARV4    LRP2_MOUSE          unknown            unknown
 ```
+
+## Data processing
+
+* normalisation
+* missing data
+* combining acquisistions
+
+Before combination, the two replicates were separately normalised by
+sum across the 10 channels (i.e. such that the sum of each protein's
+intensity is 1), for each replicate respectively. Normalisation is an
+essential part of data processing and several methods are available in
+*[MSnbase](http://bioconductor.org/packages/MSnbase)*. The normalisation desired in this specific
+case would be obtained with the a call to the `normalise` method.
+
+The combination of data can also be performed effectively in 
+*[MSnbase](http://bioconductor.org/packages/MSnbase)* as detailed in the dedicated *Combining MSnSet
+instances* section of the *[MSnbase](http://bioconductor.org/packages/MSnbase)*
+[tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
 
 
 # Quality Control
