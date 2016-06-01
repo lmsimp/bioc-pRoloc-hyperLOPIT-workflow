@@ -327,11 +327,13 @@ deposited to the `fData` slot. As we wish to demonstrate the complete
 analysis of this data we remove the results from the prior analysis
 described in [@hyper] in the code chunk below. We see the `fData`
 contains 25 columns describing information such as the number of
-peptides, associated markers, machine learning results etc. For
-demonstration in the code chunk below keep the 2nd, 8th and 11th
+peptides, associated markers, machine learning results etc. 
+
+For demonstration in the code chunk below keep the 2nd, 8th and 11th
 columns which contain the Uniprot entry names and two different marker
 sets to use an input for machine learning analyses (see sections on
-markers and subsequent sections).
+markers and subsequent sections) and rename the first feature variable
+names.
 
 
 ```r
@@ -368,17 +370,54 @@ fvarLabels(lopit2016)
 
 ```r
 fData(lopit2016) <- fData(lopit2016)[, c(2, 8, 11)]
+fvarLabels(lopit2016)[1] <- "UniProtId"
 head(fData(lopit2016))
 ```
 
 ```
-##                  X.1 phenoDisco.Input     SVM.marker.set
+##            UniProtId phenoDisco.Input     SVM.marker.set
 ## Q9JHU4   DYHC1_MOUSE          unknown            unknown
 ## Q9QXS1-3  PLEC_MOUSE          unknown            unknown
 ## Q9ERU9    RBP2_MOUSE          unknown            unknown
 ## P26039    TLN1_MOUSE          unknown Actin cytoskeleton
 ## Q8BTM8    FLNA_MOUSE          unknown            unknown
 ## A2ARV4    LRP2_MOUSE          unknown            unknown
+```
+
+Note that when using the simple `readMSnSet2` procedure, sample
+meta-data is kept empty. It is advised to annotate the fractions as
+well. Below, we annotate the replicate from which the profiles
+originate and the TMT tag (extracted from the sample/fraction names).
+
+
+```r
+pData(lopit2016)$replicate <- rep(1:2, each = 10)
+pData(lopit2016)$tag <- sub("\\.1$", "", sub("^X", "", sampleNames(lopit2016)))
+pData(lopit2016)
+```
+
+```
+##         replicate  tag
+## X126            1  126
+## X127N           1 127N
+## X127C           1 127C
+## X128N           1 128N
+## X128C           1 128C
+## X129N           1 129N
+## X129C           1 129C
+## X130N           1 130N
+## X130C           1 130C
+## X131            1  131
+## X126.1          2  126
+## X127N.1         2 127N
+## X127C.1         2 127C
+## X128N.1         2 128N
+## X128C.1         2 128C
+## X129N.1         2 129N
+## X129C.1         2 129C
+## X130N.1         2 130N
+## X130C.1         2 130C
+## X131.1          2  131
 ```
 
 ## Data processing
@@ -456,55 +495,122 @@ head(mrk)
 ```r
 ## Change featureNames of the MSnSet to match the marker names 
 ## which are named by Uniprot Entry Name
-featureNames(lopit2016) <- make.unique(fData(lopit2016)[, 1])
-```
+featureNames(lopit2016) <- make.unique(as.character(fData(lopit2016)[, 1]))
 
-```
-## Error in make.unique(fData(lopit2016)[, 1]): 'names' must be a character vector
-```
-
-```r
 ## Add mouse markers
 lopit2016 <- addMarkers(lopit2016, mrk)
 ```
 
 ```
-## Error in addMarkers(lopit2016, mrk): No markers found. Are you sure that the feature names match?
-##   Feature names: Q9JHU4, Q9QXS1-3, Q9ERU9...
-##   Markers names: CLD4_MOUSE, CTND1_MOUSE, SCRIB_MOUSE...
+## Markers in data: 1257 out of 5032
+```
+
+```
+## organelleMarkers
+##                  actin cytoskeleton                 actin cytoskeleton  
+##                                  24                                   1 
+##            actin cytoskeleton - ARP         actin cytoskeleton - myosin 
+##                                   7                                   4 
+##                       cell junction                           chromatin 
+##                                   3                                  53 
+##                           cytoplasm             cytoplasm - EIF complex 
+##                                  41                                  30 
+##                  cytoplasm - P-body             cytoplasm - tRNA ligase 
+##                                  10                                  12 
+##           cytoplasm/nuclear shuttle                   cytoplasm/nucleus 
+##                                  20                                  52 
+##                  cytoplasm/nucleus                         cytoskeleton 
+##                                   3                                  12 
+##                            endosome                                  ER 
+##                                  22                                  80 
+##                            ER/golgi                extracellular matrix 
+##                                   4                                  11 
+##                               Golgi                            lysosome 
+##                                  27                                  28 
+##                   lysosome/endosome                         microtubule 
+##                                  20                                  32 
+##              microtubule/centrosome                        mitochondria 
+##                                  16                                 262 
+##                      nuclear lamina                           nucleolus 
+##                                   9                                  50 
+##                             nucleus      nucleus - chromatin/centromere 
+##                                  45                                   7 
+##            nucleus - nuclear matrix          nucleus - nuclear membrane 
+##                                   3                                  18 
+##           nucleus - nuclear speckle               nucleus - nucleoplasm 
+##                                   3                                   1 
+##                  nucleus - PML body nucleus - ribonucleoprotein complex 
+##                                   1                                  28 
+##                          peroxisome                                  PM 
+##                                  18                                  50 
+##             PM - adherins junctions                  PM - cell junction 
+##                                   2                                   8 
+##                          proteasome                      ribonucleosome 
+##                                  35                                   5 
+##                   ribosome 28S (MT)                   ribosome 39S (MT) 
+##                                  23                                  37 
+##                        ribosome 40S                        ribosome 50S 
+##                                  29                                   3 
+##                        ribosome 60S                            secreted 
+##                                  43                                   2 
+##        secreted/extracellular space                             unknown 
+##                                  11                                3775 
+##                 vesicles - caveolae          vesicles - clathrin coated 
+##                                   3                                   3 
+##    vesicles - clathrin coated/golgi       vesicles - clathrin coated/PM 
+##                                   7                                   3 
+##             vesicles - COPI coated             vesicles - COPII coated  
+##                                   7                                   3 
+##         vesicles - retromer complex            vesicles - SNARE complex 
+##                                   9                                  17
 ```
 
 ```r
 ## Remove marker sets with < 20 proteins
 lopit2016 <- minMarkers(lopit2016, n = 20)
-```
-
-```
-## Error in `[.data.frame`(fData(object), , fcol): undefined columns selected
-```
-
-```r
 getMarkers(lopit2016, fcol = "markers20")
 ```
 
 ```
-## Error: fcol %in% fvarLabels(object) is not TRUE
+## organelleMarkers
+##                  actin cytoskeleton                           chromatin 
+##                                  24                                  53 
+##                           cytoplasm             cytoplasm - EIF complex 
+##                                  41                                  30 
+##           cytoplasm/nuclear shuttle                   cytoplasm/nucleus 
+##                                  20                                  52 
+##                            endosome                                  ER 
+##                                  22                                  80 
+##                               Golgi                            lysosome 
+##                                  27                                  28 
+##                   lysosome/endosome                         microtubule 
+##                                  20                                  32 
+##                        mitochondria                           nucleolus 
+##                                 262                                  50 
+##                             nucleus nucleus - ribonucleoprotein complex 
+##                                  45                                  28 
+##                                  PM                          proteasome 
+##                                  50                                  35 
+##                   ribosome 28S (MT)                   ribosome 39S (MT) 
+##                                  23                                  37 
+##                        ribosome 40S                        ribosome 60S 
+##                                  29                                  43 
+##                             unknown 
+##                                4001
 ```
 
 ```r
 plot2D(lopit2016, fcol = "markers20", main = "pRolocmarkers for mouse")
 ```
 
-```
-## Error: fcol %in% fvarLabels(object) is not TRUE
-```
+![plot of chunk addmrkers](figure/addmrkers-1.png)
 
 ```r
 ## After expert curation
 plot2D(lopit2016, fcol = "SVM.marker.set", main = "Curated markers")
 ```
 
-![plot of chunk addmrkers](figure/addmrkers-1.png)
+![plot of chunk addmrkers](figure/addmrkers-2.png)
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. In the code chunk above we show the PCA plot output of the mouse dataset with (i) the annotation for mouse pulled from `pRolocmarkers`, and (ii) annotation after expert curation (stored in the `featureData` column called `SVM.marker.set` that was used for a classification analyses in the original data analyses [@hyper]).
 
