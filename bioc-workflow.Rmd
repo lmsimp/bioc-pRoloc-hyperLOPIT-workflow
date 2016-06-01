@@ -241,9 +241,7 @@ pData(lopit2016)
 
 ## Data processing
 
-* normalisation
-* missing data
-* combining acquisistions
+### Normalisation
 
 Before combination, the two replicates were separately normalised by
 sum across the 10 channels (i.e. such that the sum of each protein's
@@ -251,6 +249,12 @@ intensity is 1), for each replicate respectively. Normalisation is an
 essential part of data processing and several methods are available in
 `r Biocpkg("MSnbase")`. The normalisation desired in this specific
 case would be obtained with the a call to the `normalise` method.
+
+### Missing data 
+
+
+### Combining acquisistions
+
 
 The combination of data can also be performed effectively in 
 `r Biocpkg("MSnbase")` as detailed in the dedicated *Combining MSnSet

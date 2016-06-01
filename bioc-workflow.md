@@ -422,9 +422,7 @@ pData(lopit2016)
 
 ## Data processing
 
-* normalisation
-* missing data
-* combining acquisistions
+### Normalisation
 
 Before combination, the two replicates were separately normalised by
 sum across the 10 channels (i.e. such that the sum of each protein's
@@ -432,6 +430,12 @@ intensity is 1), for each replicate respectively. Normalisation is an
 essential part of data processing and several methods are available in
 *[MSnbase](http://bioconductor.org/packages/MSnbase)*. The normalisation desired in this specific
 case would be obtained with the a call to the `normalise` method.
+
+### Missing data 
+
+
+### Combining acquisistions
+
 
 The combination of data can also be performed effectively in 
 *[MSnbase](http://bioconductor.org/packages/MSnbase)* as detailed in the dedicated *Combining MSnSet
@@ -731,7 +735,7 @@ sessionInfo()
 ##  [7] IRanges_2.7.1        S4Vectors_0.11.2     MSnbase_1.21.6      
 ## [10] ProtGenerics_1.5.0   BiocParallel_1.7.2   mzR_2.7.3           
 ## [13] Rcpp_0.12.5          Biobase_2.33.0       BiocGenerics_0.19.0 
-## [16] BiocStyle_2.1.2      knitr_1.13          
+## [16] BiocStyle_2.1.3      knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] nlme_3.1-128          pbkrtest_0.4-6        bitops_1.0-6         
@@ -743,7 +747,7 @@ sessionInfo()
 ## [19] preprocessCore_1.35.0 quantreg_5.24         formatR_1.4          
 ## [22] SparseM_1.7           diptest_0.75-7        scales_0.4.0         
 ## [25] sfsmisc_1.1-0         DEoptimR_1.0-4        mvtnorm_1.0-5        
-## [28] robustbase_0.92-5     randomForest_4.6-12   genefilter_1.55.2    
+## [28] robustbase_0.92-6     randomForest_4.6-12   genefilter_1.55.2    
 ## [31] affy_1.51.0           proxy_0.4-15          stringr_1.0.0        
 ## [34] digest_0.6.9          minqa_1.2.4           base64enc_0.1-3      
 ## [37] htmltools_0.3.5       lme4_1.1-12           rda_1.0.2-2          
@@ -754,7 +758,7 @@ sessionInfo()
 ## [52] car_2.1-2             dplyr_0.4.3           RCurl_1.95-4.8       
 ## [55] magrittr_1.5          modeltools_0.2-21     MALDIquant_1.14      
 ## [58] Matrix_1.2-6          munsell_0.4.3         vsn_3.41.0           
-## [61] stringi_1.0-1         MASS_7.3-45           zlibbioc_1.19.0      
+## [61] stringi_1.1.1         MASS_7.3-45           zlibbioc_1.19.0      
 ## [64] flexmix_2.3-13        plyr_1.8.3            grid_3.4.0           
 ## [67] pls_2.5-0             gdata_2.17.0          lattice_0.20-33      
 ## [70] splines_3.4.0         fpc_2.1-10            lpSolve_5.6.13       
