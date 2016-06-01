@@ -321,7 +321,11 @@ pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200,
 
 Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
 
-There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. In the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. The training data is found in the `featureData` slot in the column called `SVM.marker.set`. As previously mentioned one first needs to train the classifiers parameters before an algorithm can be used to predict the class labels of the proteins with unknown location. One of the most common ways to optimise the parameters of a classifier is to partition the labelled data in to training and testing subsets. In this framework parameters are tested via a grid search using cross-validation on the training partition. The best parameters chosen from the cross-validation stage are then used to build a classifier to predict the class labels of the protein profiles on the test partition. Observed and expected classication results can be compared, and then used to assess how well a given model works by getting an estimate of the classiers ability to achieve a good generalisation i.e. that is given an unknown example predict its class label with high accuracy. In `pRoloc` algorithmic performance is estimated using stratified 80/20 partitioning for the training/testing subsets respectively, in conjuction with five-fold cross-validation in order to optimise the free parameters via a grid search. This procedure is usually repeated 100 times and then the best parameter(s) are selected upon investigation of classifier accuracy, here we use the harmonic mean of precision and recall; the macro F1 score. In the code chunk below we demonstrate how to optimise the free parameters; `sigma` and `cost`, of a classical SVM classifier with a Gaussian kernel using the function `svmOptimisation`. As the number of labelled instances per class varies from organelle to organelle, we can account for class imbalance by setting specific class weights when generating the SVM model. Below the weights, `w` are set to be inversely proportional to the class frequencies. 
+There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the improper optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. 
+
+## Optimisation
+
+In the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. The training data is found in the `featureData` slot in the column called `SVM.marker.set`. As previously mentioned one first needs to train the classifiers parameters before an algorithm can be used to predict the class labels of the proteins with unknown location. One of the most common ways to optimise the parameters of a classifier is to partition the labelled data in to training and testing subsets. In this framework parameters are tested via a grid search using cross-validation on the training partition. The best parameters chosen from the cross-validation stage are then used to build a classifier to predict the class labels of the protein profiles on the test partition. Observed and expected classication results can be compared, and then used to assess how well a given model works by getting an estimate of the classiers ability to achieve a good generalisation i.e. that is given an unknown example predict its class label with high accuracy. In `pRoloc` algorithmic performance is estimated using stratified 80/20 partitioning for the training/testing subsets respectively, in conjuction with five-fold cross-validation in order to optimise the free parameters via a grid search. This procedure is usually repeated 100 times and then the best parameter(s) are selected upon investigation of classifier accuracy, here we use the harmonic mean of precision and recall; the macro F1 score. In the code chunk below we demonstrate how to optimise the free parameters; `sigma` and `cost`, of a classical SVM classifier with a Gaussian kernel using the function `svmOptimisation`. As the number of labelled instances per class varies from organelle to organelle, we can account for class imbalance by setting specific class weights when generating the SVM model. Below the weights, `w` are set to be inversely proportional to the class frequencies. 
 
 ```{r loadpdRes, include=FALSE}
 pdRes <- lopit2016
@@ -338,37 +342,38 @@ params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
                           verbose = FALSE)
 ```
 
-The output `params` is an object of class `GenRegRes`; a regularisation/optimisation framework container for the optimisation results.
-
-
-associated macro F1 scores. A high macro F1 score
-indicates that the marker proteins in the test dataset are consistently correctly assigned by
-17
-Spatial proteomics data analysis
-the algorithm. Often more than one parameter or set of parameters gives rise to the best
-generalisation accuracy. As such it is always important to investigate the model parameters
-and critically assess the best choice. The best choice may not be as simple as the parameter
-set that gives rise to the highest macro F1 score and one must be careful to avoid overtting
-and to choose parameters wisely.
-
+The output `params` is an object of class `GenRegRes`; a dedicated container for the storage of the design and results from a machine learning optimisation. To assess classifier performance we can examine the macro F1 scores and the most frequently chosen parameters. A high macro F1 score indicates that the marker proteins in the test dataset are consistently and correctly assigned by the the algorithm. Often more than one parameter or set of parameters gives rise to the best generalisation accuracy. As such it is always important to investigate the model parameters and critically assess the best choice. The best choice may not be as simple as the parameter set that gives rise to the highest macro F1 score and one must be careful to avoid overfitting and to choose parameters wisely. 
 
 ```{r visualiseOpt}
+(best <- getParams(params))
 plot(params)
 levelPlot(params)
-(best <- getParams(params))
 ```
+
+By using the function `getParams` we can extract the best set of parameters. Currently, `getParams` retrieves the first best set is automatically but users are encouraged to critically assess whether this is the most wise choice by visualising the results using the methods `plot` and `levelPlot`. The `plot` method for `GenRegRes` object shows the respective distributions of the 100 macro F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows the averaged macro F1 scores, for the full range of parameter values. Once we have selected the best parameters we can then use them to build a classifier from the labelled marker proteins. 
+
+## Classification
+
+We can use the function `svmClassification` to return a classification result for all unlabelled instances in the dataset corresponding to their most likely sub-cellular location. The algorithm parameters are passed to the function, along with the class weights and the `fcol` to tell the function where the labelled training data is located, in our case, our marker proteins are located in the `featureData` with the label `"SVM.marker.set"`.
+
 ```{r classify, eval=TRUE}
 svmRes <- svmClassification(pdRes, params,
                             class.weights = w,
                             fcol = "SVM.marker.set")
 ```
 
+Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located, here for example these are located in the column called `svm`. Additionally, when calling `plot2D` we use the `cex` argument to change the point size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
 
-Notes:
-- take care of properly setting the model parameters. 
-- Wrongly set parameters can have adverse effects 
-- how well they represent the multivariate data?
-- Parameter optimisation can be conducted in a number of ways. One of the most common is train/test plus 5-fold x-val
+```{r setColors, include=FALSE}
+setStockcol(paste0(getStockcol(), 70))
+```
+```{r plotSVM, eval=TRUE}
+ptsze <- exp(fData(svmRes)$svm.scores) - 1
+plot2D(svmRes, fcol = "svm", cex = ptsze)
+addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
+```
+
+## Thresholding
 
 
 ## Transfer learning
