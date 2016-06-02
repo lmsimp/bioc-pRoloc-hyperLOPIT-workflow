@@ -65,7 +65,7 @@ readers are invited to read the *[RforProteomics](http://bioconductor.org/packag
 package vignettes and associated papers [@Gatto:2014;@Gatto2015]. 
 
 
-# Reading and handling mass-spectrometry based proteomics data
+# Reading and processing spatial proteomics data
 
 ## The use-case: prediction sub-cellular localisation in pluripotent embryonic mouse stem cells
 
@@ -115,9 +115,10 @@ the `pData` slot for storing the sample meta-data.
 
 ![Simplified representation of the `MSnSet` data structure (reproduced with permission from the *[MSnbase](http://bioconductor.org/packages/MSnbase)* vignette)](./Figures/msnset.png)
 
+## Importing data
+
 There are a number of ways to import quantitation data and create an
-`MSnSet` instance and all methods are described in the `r
-Biocpkg("MSnbase")`
+`MSnSet` instance and all methods are described in the *[MSnbase](http://bioconductor.org/packages/MSnbase)*
 [input/output capabilities vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf). One
 suggested simple method is to use the function `readMSnSet2` in 
 *[MSnbase](http://bioconductor.org/packages/MSnbase)*. The function takes a single spreadsheet as input
@@ -424,24 +425,213 @@ pData(lopit2016)
 
 ### Normalisation
 
-Before combination, the two replicates were separately normalised by
-sum across the 10 channels (i.e. such that the sum of each protein's
-intensity is 1), for each replicate respectively. Normalisation is an
-essential part of data processing and several methods are available in
-*[MSnbase](http://bioconductor.org/packages/MSnbase)*. The normalisation desired in this specific
-case would be obtained with the a call to the `normalise` method.
+There are two aspects related to data normalisation that are relevant
+to spatial proteomics data processing. The first one focuses on
+reducing purely technical variation between fractions without
+affecting biological variability (i.e. the shape of the quantitative
+profiles) too much, as generally focused on. This normalisation will
+depend on the underlying quantitative technology and the experimental
+design, and will not be addressed in this workflow. In addition, and
+more specific to spatial proteomics data, it is fundamental to scale
+all the organelle-specific profiles into a same intensity interval
+(typically 0 and 1) by, for example, diving each intensity by the sum
+of the intensities for that quantitative feature, as illustrated
+below.
+
+
+```r
+lopit2016 <- normalise(lopit2016, method = "sum")
+```
+
+This transformation of the data assures to cancel the effect of the
+absolute intensities of the quantitive features along the rows, to
+focus subsequent analyses on the relative profiles along the
+sub-cellular fractions.
+
+The same `normalise` function (or `normalize`, both spellings are
+supported) can also be applied in the first case described
+above. Different normalisation methods such as mean or median scaling,
+variance stabilitation or quantile normalisation, to cite a few, can
+be applied to accomodation different needs.
+
+Before combination, the two replicates in the `lopit2016` data that we
+read into R were separately normalised by sum across the 10 channels
+for each replicate respectively. We can verify this by summing each
+rows for each replicate:
+
+
+```r
+summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 1])))
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.997   0.999   1.000   1.000   1.001   1.003
+```
+
+```r
+summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 2])))
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   0.997   0.999   1.000   1.000   1.001   1.003
+```
+We see that some features do not add up exactly to 1 due to rounding
+errors after exporting to intermediate files. These small deviations
+do not bear any consequences here.
+
+
+### Combining acquisitions
+
+The spreadsheet that was used to create the `lopit2016` MSnSet
+included two replicates. We also provide individual replicates in the
+*[pRolocdata](http://bioconductor.org/packages/pRolocdata)* package. Below, we show how to combine
+`MSnSet` objects and, subsequently, how to filter and hangle missing
+values. We start by loading the experimental data package and the
+equivalent replicates using the `load` function.
+
+
+```r
+library("pRolocdata")
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+```
+
+To list all data distributed with a package, one can use pass the
+package name as input to the `data` function. For instance
+
+
+```r
+data(package = "pRolocdata")
+```
+
+will list the 41 datasets
+that are available in *[pRolocdata](http://bioconductor.org/packages/pRolocdata)*.
+
+Combining data is performed with the `combine` function. This function
+will inspect the feature and sample names to identify how to combine
+the data. As we want our replicates to be combined along the columns
+(same proteins, different sets of fractions), we need to assure that
+the respective sample names differ. 
+
+
+```r
+identical(sampleNames(hyperLOPIT2015ms3r1), sampleNames(hyperLOPIT2015ms3r2))
+```
+
+```
+## [1] TRUE
+```
+
+```r
+hyperLOPIT2015ms3r1 <- updateSampleNames(hyperLOPIT2015ms3r1, 1)
+hyperLOPIT2015ms3r2 <- updateSampleNames(hyperLOPIT2015ms3r2, 2)
+sampleNames(hyperLOPIT2015ms3r1)
+```
+
+```
+##  [1] "X126.1"  "X127N.1" "X127C.1" "X128N.1" "X128C.1" "X129N.1" "X129C.1"
+##  [8] "X130N.1" "X130C.1" "X131.1"
+```
+
+```r
+sampleNames(hyperLOPIT2015ms3r2)
+```
+
+```
+##  [1] "X126.2"  "X127N.2" "X127C.2" "X128N.2" "X128C.2" "X129N.2" "X129C.2"
+##  [8] "X130N.2" "X130C.2" "X131.2"
+```
+
+In addition, to matching names, the content of the feature metadata
+for identical feature annotations must match exactly across the data
+to be combined. In particular for these data, we expect the same
+proteins in each replicates to be annotated with the same UniProt
+entry names and descriptions, but not with the same coverage of number
+of peptides or peptide-spectrum matches (PSMs).
+
+
+```r
+fvarLabels(hyperLOPIT2015ms3r1)
+```
+
+```
+## [1] "EntryName"          "ProteinDescription" "Peptides"          
+## [4] "PSMs"               "ProteinCoverage"    "markers"
+```
+
+```r
+fvarLabels(hyperLOPIT2015ms3r2)
+```
+
+```
+## [1] "EntryName"          "ProteinDescription" "Peptides"          
+## [4] "PSMs"               "ProteinCoverage"    "markers"
+```
+
+Below, we update the replicate specific feature variable names and
+remove the shared annotation.
+
+
+```r
+fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
+fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
+fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
+```
+
+We can now combine the two experiments into a single `MSnSet`:
+
+
+```r
+hyperLOPIT <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+hyperLOPIT
+```
+
+```
+## MSnSet (storageMode: lockedEnvironment)
+## assayData: 6725 features, 20 samples 
+##   element names: exprs 
+## protocolData: none
+## phenoData
+##   sampleNames: X126.1 X127N.1 ... X131.2 (20 total)
+##   varLabels: Replicate TMT.Reagent ... Fraction.No (6 total)
+##   varMetadata: labelDescription
+## featureData
+##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2Y3-3 (6725 total)
+##   fvarLabels: EntryName ProteinDescription ... ProteinCoverage2 (9
+##     total)
+##   fvarMetadata: labelDescription
+## experimentData: use 'experimentData(object)'
+## Annotation:  
+## - - - Processing information - - -
+## Combined [6725,20] and [6268,10] MSnSets Thu Jun  2 16:56:25 2016 
+##  MSnbase version: 1.19.3
+```
+
+More details above combining data are given in the dedicated
+*Combining MSnSet instances* section of the *[MSnbase](http://bioconductor.org/packages/MSnbase)*
+[tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
 
 ### Missing data 
 
+Missing data are a recurrent issue in mass spectrometry applications,
+and should be addressed independently of this workflow
+[@Lazar:2016]. In [@Gatto:2014b], we have described how a high content
+in missing values in spatial proteomics data and their inappropriate
+handling leads to a reduction of sub-cellular resolution. This 
 
-### Combining acquisistions
 
 
-The combination of data can also be performed effectively in 
-*[MSnbase](http://bioconductor.org/packages/MSnbase)* as detailed in the dedicated *Combining MSnSet
-instances* section of the *[MSnbase](http://bioconductor.org/packages/MSnbase)*
-[tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
+```r
+image2(is.na(hyperLOPIT), col = c("black", "white"))
+```
 
+![plot of chunk namap](figure/namap-1.png)
+
+## Replication
+
+See issue #6.
 
 # Quality Control
 
@@ -642,24 +832,35 @@ pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200,
 
 Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
 
-There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` Machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier but the proper optimisation of the algorithms parameters that limit the classification results. Before employing a classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. For example, in the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. In the example below, the training data is found in the `featureData` slot in the column called `SVM.marker.set`.
+There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the improper optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. 
 
-Notes:
-- take care of properly setting the model parameters. 
-- Wrongly set parameters can have adverse effects 
-- how well they represent the multivariate data?
-- Parameter optimisation can be conducted in a number of ways. One of the most common is train/test plus 5-fold x-val
+## Optimisation
+
+In the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. The training data is found in the `featureData` slot in the column called `SVM.marker.set`. As previously mentioned one first needs to train the classifiers parameters before an algorithm can be used to predict the class labels of the proteins with unknown location. One of the most common ways to optimise the parameters of a classifier is to partition the labelled data in to training and testing subsets. In this framework parameters are tested via a grid search using cross-validation on the training partition. The best parameters chosen from the cross-validation stage are then used to build a classifier to predict the class labels of the protein profiles on the test partition. Observed and expected classication results can be compared, and then used to assess how well a given model works by getting an estimate of the classiers ability to achieve a good generalisation i.e. that is given an unknown example predict its class label with high accuracy. In `pRoloc` algorithmic performance is estimated using stratified 80/20 partitioning for the training/testing subsets respectively, in conjuction with five-fold cross-validation in order to optimise the free parameters via a grid search. This procedure is usually repeated 100 times and then the best parameter(s) are selected upon investigation of classifier accuracy, here we use the harmonic mean of precision and recall; the macro F1 score. In the code chunk below we demonstrate how to optimise the free parameters; `sigma` and `cost`, of a classical SVM classifier with a Gaussian kernel using the function `svmOptimisation`. As the number of labelled instances per class varies from organelle to organelle, we can account for class imbalance by setting specific class weights when generating the SVM model. Below the weights, `w` are set to be inversely proportional to the class frequencies. 
 
 
 
 ```r
-w <- table(fData(pdRes)[, "SVM.marker.set"])
+(w <- table(fData(pdRes)[, "SVM.marker.set"]))
 w <- 1/w[names(w) != "unknown"]
 
+## 100 rounds of optimisation with five-fold cross-validation
 params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
                           times = 100, xval = 5,
                           class.weights = w,
-                          verbose = TRUE)
+                          verbose = FALSE)
+```
+
+The output `params` is an object of class `GenRegRes`; a dedicated container for the storage of the design and results from a machine learning optimisation. To assess classifier performance we can examine the macro F1 scores and the most frequently chosen parameters. A high macro F1 score indicates that the marker proteins in the test dataset are consistently and correctly assigned by the the algorithm. Often more than one parameter or set of parameters gives rise to the best generalisation accuracy. As such it is always important to investigate the model parameters and critically assess the best choice. The best choice may not be as simple as the parameter set that gives rise to the highest macro F1 score and one must be careful to avoid overfitting and to choose parameters wisely. 
+
+
+```r
+(best <- getParams(params))
+```
+
+```
+## sigma  cost 
+##   0.1  16.0
 ```
 
 ```r
@@ -674,14 +875,12 @@ levelPlot(params)
 
 ![plot of chunk visualiseOpt](figure/visualiseOpt-2.png)
 
-```r
-(best <- getParams(params))
-```
+By using the function `getParams` we can extract the best set of parameters. Currently, `getParams` retrieves the first best set is automatically but users are encouraged to critically assess whether this is the most wise choice by visualising the results using the methods `plot` and `levelPlot`. The `plot` method for `GenRegRes` object shows the respective distributions of the 100 macro F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows the averaged macro F1 scores, for the full range of parameter values. Once we have selected the best parameters we can then use them to build a classifier from the labelled marker proteins. 
 
-```
-## sigma  cost 
-##   0.1  16.0
-```
+## Classification
+
+We can use the function `svmClassification` to return a classification result for all unlabelled instances in the dataset corresponding to their most likely sub-cellular location. The algorithm parameters are passed to the function, along with the class weights and the `fcol` to tell the function where the labelled training data is located, in our case, our marker proteins are located in the `featureData` with the label `"SVM.marker.set"`.
+
 
 ```r
 svmRes <- svmClassification(pdRes, params,
@@ -693,6 +892,35 @@ svmRes <- svmClassification(pdRes, params,
 ## Error in svm.default(x, y, scale = scale, ..., na.action = na.action): object 'w' not found
 ```
 
+Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located, here for example these are located in the column called `svm`. Additionally, when calling `plot2D` we use the `cex` argument to change the point size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
+
+
+
+```r
+ptsze <- exp(fData(svmRes)$svm.scores) - 1
+```
+
+```
+## Error in fData(svmRes): object 'svmRes' not found
+```
+
+```r
+plot2D(svmRes, fcol = "svm", cex = ptsze)
+```
+
+```
+## Error in plot2D(svmRes, fcol = "svm", cex = ptsze): object 'svmRes' not found
+```
+
+```r
+addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
+```
+
+```
+## Error in fData(object): object 'svmRes' not found
+```
+
+## Thresholding
 
 
 ## Transfer learning
@@ -730,46 +958,46 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRoloc_1.13.2        MLInterfaces_1.53.0  cluster_2.0.4       
-##  [4] annotate_1.51.0      XML_3.98-1.4         AnnotationDbi_1.35.3
-##  [7] IRanges_2.7.1        S4Vectors_0.11.2     MSnbase_1.21.6      
-## [10] ProtGenerics_1.5.0   BiocParallel_1.7.2   mzR_2.7.3           
-## [13] Rcpp_0.12.5          Biobase_2.33.0       BiocGenerics_0.19.0 
-## [16] BiocStyle_2.1.3      knitr_1.13          
+##  [1] pRolocdata_1.11.0    pRoloc_1.13.2        MLInterfaces_1.53.0 
+##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
+##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
+## [10] MSnbase_1.21.6       ProtGenerics_1.5.0   BiocParallel_1.7.2  
+## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
+## [16] BiocGenerics_0.19.0  BiocStyle_2.1.3      knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] nlme_3.1-128          pbkrtest_0.4-6        bitops_1.0-6         
-##  [4] doParallel_1.0.10     RColorBrewer_1.1-2    threejs_0.2.2        
-##  [7] prabclus_2.2-6        ggvis_0.4.2           tools_3.4.0          
-## [10] R6_2.1.2              affyio_1.43.0         rpart_4.1-10         
-## [13] mgcv_1.8-12           DBI_0.4-1             colorspace_1.2-6     
-## [16] trimcluster_0.1-2     nnet_7.3-12           gbm_2.1.1            
-## [19] preprocessCore_1.35.0 quantreg_5.24         formatR_1.4          
-## [22] SparseM_1.7           diptest_0.75-7        scales_0.4.0         
-## [25] sfsmisc_1.1-0         DEoptimR_1.0-4        mvtnorm_1.0-5        
-## [28] robustbase_0.92-6     randomForest_4.6-12   genefilter_1.55.2    
-## [31] affy_1.51.0           proxy_0.4-15          stringr_1.0.0        
-## [34] digest_0.6.9          minqa_1.2.4           base64enc_0.1-3      
-## [37] htmltools_0.3.5       lme4_1.1-12           rda_1.0.2-2          
-## [40] limma_3.29.5          htmlwidgets_0.6       RSQLite_1.0.0        
-## [43] impute_1.47.0         FNN_1.1               BiocInstaller_1.23.4 
-## [46] shiny_0.13.2          hwriter_1.3.2         jsonlite_0.9.20      
-## [49] mzID_1.11.2           mclust_5.2            gtools_3.5.0         
-## [52] car_2.1-2             dplyr_0.4.3           RCurl_1.95-4.8       
-## [55] magrittr_1.5          modeltools_0.2-21     MALDIquant_1.14      
-## [58] Matrix_1.2-6          munsell_0.4.3         vsn_3.41.0           
-## [61] stringi_1.1.1         MASS_7.3-45           zlibbioc_1.19.0      
-## [64] flexmix_2.3-13        plyr_1.8.3            grid_3.4.0           
-## [67] pls_2.5-0             gdata_2.17.0          lattice_0.20-33      
-## [70] splines_3.4.0         fpc_2.1-10            lpSolve_5.6.13       
-## [73] reshape2_1.4.1        codetools_0.2-14      biomaRt_2.29.2       
-## [76] evaluate_0.9          pcaMethods_1.65.0     mlbench_2.1-1        
-## [79] nloptr_1.0.4          httpuv_1.3.3          foreach_1.4.3        
-## [82] MatrixModels_0.4-1    gtable_0.2.0          kernlab_0.9-24       
-## [85] assertthat_0.1        ggplot2_2.1.0         mime_0.4             
-## [88] xtable_1.8-2          e1071_1.6-7           class_7.3-14         
-## [91] survival_2.39-4       iterators_1.0.8       rgl_0.95.1441        
-## [94] caret_6.0-68          sampling_2.7
+##  [1] minqa_1.2.4           colorspace_1.2-6      hwriter_1.3.2        
+##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
+##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-15         
+## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
+## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.4.0        
+## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
+## [19] jsonlite_0.9.20       nloptr_1.0.4          caret_6.0-68         
+## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
+## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.13.2         
+## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-6         
+## [31] limma_3.29.5          formatR_1.4           htmltools_0.3.5      
+## [34] quantreg_5.24         tools_3.4.0           ggvis_0.4.2          
+## [37] gtable_0.2.0          affy_1.51.0           reshape2_1.4.1       
+## [40] dplyr_0.4.3           MALDIquant_1.14       trimcluster_0.1-2    
+## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
+## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.0.0        
+## [49] lme4_1.1-12           mime_0.4              lpSolve_5.6.13       
+## [52] gtools_3.5.0          DEoptimR_1.0-4        zlibbioc_1.19.0      
+## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.4 
+## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
+## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
+## [64] stringi_1.1.1         RSQLite_1.0.0         genefilter_1.55.2    
+## [67] foreach_1.4.3         randomForest_4.6-12   e1071_1.6-7          
+## [70] prabclus_2.2-6        bitops_1.0-6          rgl_0.95.1441        
+## [73] mzID_1.11.2           evaluate_0.9          lattice_0.20-33      
+## [76] htmlwidgets_0.6       gbm_2.1.1             plyr_1.8.3           
+## [79] magrittr_1.5          R6_2.1.2              DBI_0.4-1            
+## [82] mgcv_1.8-12           survival_2.39-4       RCurl_1.95-4.8       
+## [85] nnet_7.3-12           car_2.1-2             mlbench_2.1-1        
+## [88] grid_3.4.0            FNN_1.1               threejs_0.2.2        
+## [91] digest_0.6.9          diptest_0.75-7        xtable_1.8-2         
+## [94] httpuv_1.3.3          munsell_0.4.3
 ```
 
 It is always important to include session information details along
