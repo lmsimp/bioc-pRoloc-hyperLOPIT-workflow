@@ -86,7 +86,7 @@ emphasis separation of the denser organelles.  The intersect of
 replicates 1 and 2 was treated as a 20-plex dataset for the analysis
 discussed in the manuscript [@hyper] as it has been shown that
 combining replicates across from different gradients can increase
-spatial resolution [@trotter]. The combination of replicates resulted
+spatial resolution [@Trotter:2010]. The combination of replicates resulted
 in 5032 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
@@ -242,11 +242,11 @@ we use `fnames = 1` to use the Uniprot identifiers contained in the
 first (unnamed) column of the spreadsheet. We also need to specify to
 skip the first line of the file (for the same reason that we used 
 `n = 2` in `getEcols` above) to read the `csv` data and convert it to an
-`MSnSet` object.
+`MSnSet` object, named `hl` (for hyperLOPIT).
 
 
 ```r
-lopit2016 <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1)
+hl <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1)
 ```
 
 Below, we display a short summary of the data. The data contains 
@@ -259,7 +259,7 @@ etc (see below).
 
 
 ```r
-lopit2016
+hl
 ```
 
 ```
@@ -280,13 +280,13 @@ lopit2016
 
 As briefly mentioned above, the quantitation data is stored in the
 `exprs` slot of the `MSnSet` and can be accessed by
-`exprs(lopit2016)`. Below, we examine the quantitative information for
+`exprs(hl)`. Below, we examine the quantitative information for
 first 5 proteins. It is also possible to access specific rows and
 columns by naming the proteins and fractions of interest.
 
 
 ```r
-exprs(lopit2016)[1:5, ]
+exprs(hl)[1:5, ]
 ```
 
 ```
@@ -311,7 +311,7 @@ exprs(lopit2016)[1:5, ]
 ```
 
 ```r
-exprs(lopit2016)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
+exprs(hl)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
 ```
 
 ```
@@ -321,7 +321,7 @@ exprs(lopit2016)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
 ```
 
 The feature meta-data is stored in the `fData`
-slot and can be accessed by `fData(lopit2016)`. When using
+slot and can be accessed by `fData(hl)`. When using
 `readMSnSet2`, automatically, everything that is not defined as
 quantitation data by `ecol` or the feature names by `fnames` is
 deposited to the `fData` slot. As we wish to demonstrate the complete
@@ -338,7 +338,7 @@ names.
 
 
 ```r
-fvarLabels(lopit2016)
+fvarLabels(hl)
 ```
 
 ```
@@ -370,9 +370,9 @@ fvarLabels(lopit2016)
 ```
 
 ```r
-fData(lopit2016) <- fData(lopit2016)[, c(2, 8, 11)]
-fvarLabels(lopit2016)[1] <- "UniProtId"
-head(fData(lopit2016))
+fData(hl) <- fData(hl)[, c(2, 8, 11)]
+fvarLabels(hl)[1] <- "UniProtId"
+head(fData(hl))
 ```
 
 ```
@@ -392,9 +392,9 @@ originate and the TMT tag (extracted from the sample/fraction names).
 
 
 ```r
-pData(lopit2016)$replicate <- rep(1:2, each = 10)
-pData(lopit2016)$tag <- sub("\\.1$", "", sub("^X", "", sampleNames(lopit2016)))
-pData(lopit2016)
+pData(hl)$replicate <- rep(1:2, each = 10)
+pData(hl)$tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
+pData(hl)
 ```
 
 ```
@@ -440,7 +440,7 @@ below.
 
 
 ```r
-lopit2016 <- normalise(lopit2016, method = "sum")
+hl <- normalise(hl, method = "sum")
 ```
 
 This transformation of the data assures to cancel the effect of the
@@ -454,14 +454,14 @@ above. Different normalisation methods such as mean or median scaling,
 variance stabilitation or quantile normalisation, to cite a few, can
 be applied to accomodation different needs.
 
-Before combination, the two replicates in the `lopit2016` data that we
+Before combination, the two replicates in the `hl` data that we
 read into R were separately normalised by sum across the 10 channels
 for each replicate respectively. We can verify this by summing each
 rows for each replicate:
 
 
 ```r
-summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 1])))
+summary(rowSums(exprs(hl[, hl$replicate == 1])))
 ```
 
 ```
@@ -470,7 +470,7 @@ summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 1])))
 ```
 
 ```r
-summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 2])))
+summary(rowSums(exprs(hl[, hl$replicate == 2])))
 ```
 
 ```
@@ -484,7 +484,7 @@ do not bear any consequences here.
 
 ### Combining acquisitions
 
-The spreadsheet that was used to create the `lopit2016` MSnSet
+The spreadsheet that was used to create the `hl` MSnSet
 included two replicates. We also provide individual replicates in the
 *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* package. Below, we show how to combine
 `MSnSet` objects and, subsequently, how to filter and hangle missing
@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Jun  2 16:56:25 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:44:38 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -617,19 +617,73 @@ More details above combining data are given in the dedicated
 
 Missing data are a recurrent issue in mass spectrometry applications,
 and should be addressed independently of this workflow
-[@Lazar:2016]. In [@Gatto:2014b], we have described how a high content
-in missing values in spatial proteomics data and their inappropriate
-handling leads to a reduction of sub-cellular resolution. This 
+[@Webb-Robertson:2015;@Lazar:2016]. In [@Gatto:2014b], we have
+described how a high content in missing values in spatial proteomics
+data and their inappropriate handling leads to a reduction of
+sub-cellular resolution. Missing data can be imputated using 
 
+*[MSnbase](http://bioconductor.org/packages/MSnbase)*'s `impute` function. The method underlying the
+imputation method is then determined by a `methods` parameter. In our
+particular case, missing values are indicative of protein groups that
+were not profiles in both replicates.
 
 
 ```r
-image2(is.na(hyperLOPIT), col = c("black", "white"))
+image2(is.na(hyperLOPIT), col = c("black", "white"),
+       main = "Missing values (white cells) after combining replicates")
 ```
 
 ![plot of chunk namap](figure/namap-1.png)
 
+We prefer to remove proteins that were not assayed in our two
+replicated experiments. This is done with the `filterNA` function that
+removes features that contain more than a certain proportion (default
+is 0) missing values.
+
+
+```r
+hyperLOPIT <- filterNA(hyperLOPIT)
+hyperLOPIT
+```
+
+```
+## MSnSet (storageMode: lockedEnvironment)
+## assayData: 5032 features, 20 samples 
+##   element names: exprs 
+## protocolData: none
+## phenoData
+##   sampleNames: X126.1 X127N.1 ... X131.2 (20 total)
+##   varLabels: Replicate TMT.Reagent ... Fraction.No (6 total)
+##   varMetadata: labelDescription
+## featureData
+##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
+##   fvarLabels: EntryName ProteinDescription ... ProteinCoverage2 (9
+##     total)
+##   fvarMetadata: labelDescription
+## experimentData: use 'experimentData(object)'
+## Annotation:  
+## - - - Processing information - - -
+## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:44:38 2016 
+## Subset [6725,20][5032,20] Fri Jun  3 00:44:38 2016 
+## Removed features with more than 0 NAs: Fri Jun  3 00:44:38 2016 
+## Dropped featureData's levels Fri Jun  3 00:44:38 2016 
+##  MSnbase version: 1.19.3
+```
+
+Which results in two identical matrices of quantitative protein
+profiles.
+
+
+```r
+all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
+```
+
+```
+## [1] TRUE
+```
+
 ## Replication
+
 
 See issue #6.
 
@@ -640,14 +694,14 @@ Data quality is routinely examined through visualisation to verify that sub-cell
 
 ```r
 library('pRoloc')
-plot2D(lopit2016, fcol = NULL)
+plot2D(hl, fcol = NULL)
 ```
 
 ![plot of chunk qcplot](figure/qcplot-1.png)
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)* provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are Uniprot entry names (see `head(mrk)` in the code chunk below), therefore it is required we update the `MSnSet` to match the names of the markers, as demonstrated below. It is then possible to match names between the markers and the `MSnSet` instance. We see below that the markers cover many sub-cellular niches, with many niches only containing a few proteins. Depending on the biological question and downstream analyses we may wish the subset these marker classes, this can be done using the `minMarkers` function. In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
+In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)* provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(hl))`) and the names of the vector of the mouse markers (`mmus` markers) are Uniprot entry names (see `head(mrk)` in the code chunk below), therefore it is required we update the `MSnSet` to match the names of the markers, as demonstrated below. It is then possible to match names between the markers and the `MSnSet` instance. We see below that the markers cover many sub-cellular niches, with many niches only containing a few proteins. Depending on the biological question and downstream analyses we may wish the subset these marker classes, this can be done using the `minMarkers` function. In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
 
 
 ```r
@@ -666,7 +720,7 @@ pRolocmarkers()
 ## Homo sapiens [hsap]:
 ##  Ids: Uniprot ID, 205 markers
 ## Mus musculus [mmus]:
-##  Ids: Uniprot ID, 1305 markers
+##  Ids: Uniprot, 937 markers
 ## Saccharomyces cerevisiae [scer_sgd]:
 ##  Ids: SGD, 259 markers
 ## Saccharomyces cerevisiae [scer_uniprot]:
@@ -680,128 +734,64 @@ head(mrk)
 ```
 
 ```
-##      CLD4_MOUSE     CTND1_MOUSE     SCRIB_MOUSE      ITB4_MOUSE 
-## "cell junction" "cell junction" "cell junction" "cell junction" 
-##      ENOB_MOUSE      PGK2_MOUSE 
-##     "cytoplasm"     "cytoplasm"
+##                 P26039                 Q6PB66                 P11276 
+##   "Actin cytoskeleton"        "Mitochondrion" "Extracellular matrix" 
+##                 Q6PR54                 Q05793                 P19096 
+##  "Nucleus - Chromatin" "Extracellular matrix"              "Cytosol"
 ```
 
 ```r
-## Change featureNames of the MSnSet to match the marker names 
-## which are named by Uniprot Entry Name
-featureNames(lopit2016) <- make.unique(as.character(fData(lopit2016)[, 1]))
-
 ## Add mouse markers
-lopit2016 <- addMarkers(lopit2016, mrk)
+hl <- addMarkers(hl, mrk)
 ```
 
 ```
-## Markers in data: 1257 out of 5032
+## Markers in data: 937 out of 5032
 ```
 
 ```
 ## organelleMarkers
-##                  actin cytoskeleton                 actin cytoskeleton  
-##                                  24                                   1 
-##            actin cytoskeleton - ARP         actin cytoskeleton - myosin 
-##                                   7                                   4 
-##                       cell junction                           chromatin 
-##                                   3                                  53 
-##                           cytoplasm             cytoplasm - EIF complex 
-##                                  41                                  30 
-##                  cytoplasm - P-body             cytoplasm - tRNA ligase 
-##                                  10                                  12 
-##           cytoplasm/nuclear shuttle                   cytoplasm/nucleus 
-##                                  20                                  52 
-##                  cytoplasm/nucleus                         cytoskeleton 
-##                                   3                                  12 
-##                            endosome                                  ER 
-##                                  22                                  80 
-##                            ER/golgi                extracellular matrix 
-##                                   4                                  11 
-##                               Golgi                            lysosome 
-##                                  27                                  28 
-##                   lysosome/endosome                         microtubule 
-##                                  20                                  32 
-##              microtubule/centrosome                        mitochondria 
-##                                  16                                 262 
-##                      nuclear lamina                           nucleolus 
-##                                   9                                  50 
-##                             nucleus      nucleus - chromatin/centromere 
-##                                  45                                   7 
-##            nucleus - nuclear matrix          nucleus - nuclear membrane 
-##                                   3                                  18 
-##           nucleus - nuclear speckle               nucleus - nucleoplasm 
-##                                   3                                   1 
-##                  nucleus - PML body nucleus - ribonucleoprotein complex 
-##                                   1                                  28 
-##                          peroxisome                                  PM 
-##                                  18                                  50 
-##             PM - adherins junctions                  PM - cell junction 
-##                                   2                                   8 
-##                          proteasome                      ribonucleosome 
-##                                  35                                   5 
-##                   ribosome 28S (MT)                   ribosome 39S (MT) 
-##                                  23                                  37 
-##                        ribosome 40S                        ribosome 50S 
-##                                  29                                   3 
-##                        ribosome 60S                            secreted 
-##                                  43                                   2 
-##        secreted/extracellular space                             unknown 
-##                                  11                                3775 
-##                 vesicles - caveolae          vesicles - clathrin coated 
-##                                   3                                   3 
-##    vesicles - clathrin coated/golgi       vesicles - clathrin coated/PM 
-##                                   7                                   3 
-##             vesicles - COPI coated             vesicles - COPII coated  
-##                                   7                                   3 
-##         vesicles - retromer complex            vesicles - SNARE complex 
-##                                   9                                  17
+##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
+##                      27                      43                      13 
+##                 Cytosol   Endoplasmic reticulum                Endosome 
+##                      43                      95                      12 
+##    Extracellular matrix         Golgi apparatus                Lysosome 
+##                      10                      27                      33 
+##           Mitochondrion     Nucleus - Chromatin Nucleus - Non-chromatin 
+##                     383                      64                      85 
+##              Peroxisome         Plasma membrane              Proteasome 
+##                      17                      51                      34 
+##                 unknown 
+##                    4095
 ```
 
 ```r
 ## Remove marker sets with < 20 proteins
-lopit2016 <- minMarkers(lopit2016, n = 20)
-getMarkers(lopit2016, fcol = "markers20")
+hl <- minMarkers(hl, n = 20)
+getMarkers(hl, fcol = "markers20")
 ```
 
 ```
 ## organelleMarkers
-##                  actin cytoskeleton                           chromatin 
-##                                  24                                  53 
-##                           cytoplasm             cytoplasm - EIF complex 
-##                                  41                                  30 
-##           cytoplasm/nuclear shuttle                   cytoplasm/nucleus 
-##                                  20                                  52 
-##                            endosome                                  ER 
-##                                  22                                  80 
-##                               Golgi                            lysosome 
-##                                  27                                  28 
-##                   lysosome/endosome                         microtubule 
-##                                  20                                  32 
-##                        mitochondria                           nucleolus 
-##                                 262                                  50 
-##                             nucleus nucleus - ribonucleoprotein complex 
-##                                  45                                  28 
-##                                  PM                          proteasome 
-##                                  50                                  35 
-##                   ribosome 28S (MT)                   ribosome 39S (MT) 
-##                                  23                                  37 
-##                        ribosome 40S                        ribosome 60S 
-##                                  29                                  43 
-##                             unknown 
-##                                4001
+##            40S Ribosome            60S Ribosome                 Cytosol 
+##                      27                      43                      43 
+##   Endoplasmic reticulum         Golgi apparatus                Lysosome 
+##                      95                      27                      33 
+##           Mitochondrion     Nucleus - Chromatin Nucleus - Non-chromatin 
+##                     383                      64                      85 
+##         Plasma membrane              Proteasome                 unknown 
+##                      51                      34                    4147
 ```
 
 ```r
-plot2D(lopit2016, fcol = "markers20", main = "pRolocmarkers for mouse")
+plot2D(hl, fcol = "markers20", main = "pRolocmarkers for mouse")
 ```
 
 ![plot of chunk addmrkers](figure/addmrkers-1.png)
 
 ```r
 ## After expert curation
-plot2D(lopit2016, fcol = "SVM.marker.set", main = "Curated markers")
+plot2D(hl, fcol = "SVM.marker.set", main = "Curated markers")
 ```
 
 ![plot of chunk addmrkers](figure/addmrkers-2.png)
@@ -824,19 +814,20 @@ The extraction of sub-cellular protein clusters can be difficult owing to the li
 
 ```r
 ## As per the hyperLOPIT paper
-pdRes <- phenoDisco(lopit2016, fcol = "phenoDisco.Input", times = 200, 
+pdRes <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, 
                     GS = 20, p = 0.05)
 ```
 
 # Supervised machine learning
 
-Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @trotter; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
+Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @Trotter:2010; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
 
 There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the improper optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. 
 
 ## Optimisation
 
 In the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. The training data is found in the `featureData` slot in the column called `SVM.marker.set`. As previously mentioned one first needs to train the classifiers parameters before an algorithm can be used to predict the class labels of the proteins with unknown location. One of the most common ways to optimise the parameters of a classifier is to partition the labelled data in to training and testing subsets. In this framework parameters are tested via a grid search using cross-validation on the training partition. The best parameters chosen from the cross-validation stage are then used to build a classifier to predict the class labels of the protein profiles on the test partition. Observed and expected classication results can be compared, and then used to assess how well a given model works by getting an estimate of the classiers ability to achieve a good generalisation i.e. that is given an unknown example predict its class label with high accuracy. In `pRoloc` algorithmic performance is estimated using stratified 80/20 partitioning for the training/testing subsets respectively, in conjuction with five-fold cross-validation in order to optimise the free parameters via a grid search. This procedure is usually repeated 100 times and then the best parameter(s) are selected upon investigation of classifier accuracy, here we use the harmonic mean of precision and recall; the macro F1 score. In the code chunk below we demonstrate how to optimise the free parameters; `sigma` and `cost`, of a classical SVM classifier with a Gaussian kernel using the function `svmOptimisation`. As the number of labelled instances per class varies from organelle to organelle, we can account for class imbalance by setting specific class weights when generating the SVM model. Below the weights, `w` are set to be inversely proportional to the class frequencies. 
+
 
 
 
@@ -888,37 +879,17 @@ svmRes <- svmClassification(pdRes, params,
                             fcol = "SVM.marker.set")
 ```
 
-```
-## Error in svm.default(x, y, scale = scale, ..., na.action = na.action): object 'w' not found
-```
-
 Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located, here for example these are located in the column called `svm`. Additionally, when calling `plot2D` we use the `cex` argument to change the point size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
 
 
 
 ```r
 ptsze <- exp(fData(svmRes)$svm.scores) - 1
-```
-
-```
-## Error in fData(svmRes): object 'svmRes' not found
-```
-
-```r
 plot2D(svmRes, fcol = "svm", cex = ptsze)
-```
-
-```
-## Error in plot2D(svmRes, fcol = "svm", cex = ptsze): object 'svmRes' not found
-```
-
-```r
 addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
 
-```
-## Error in fData(object): object 'svmRes' not found
-```
+![plot of chunk plotSVM](figure/plotSVM-1.png)
 
 ## Thresholding
 
@@ -958,7 +929,7 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.11.0    pRoloc_1.13.2        MLInterfaces_1.53.0 
+##  [1] pRolocdata_1.11.0    pRoloc_1.13.4        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
 ## [10] MSnbase_1.21.6       ProtGenerics_1.5.0   BiocParallel_1.7.2  
