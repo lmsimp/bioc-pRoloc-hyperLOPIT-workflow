@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:44:38 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:56:00 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:44:38 2016 
-## Subset [6725,20][5032,20] Fri Jun  3 00:44:38 2016 
-## Removed features with more than 0 NAs: Fri Jun  3 00:44:38 2016 
-## Dropped featureData's levels Fri Jun  3 00:44:38 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:56:00 2016 
+## Subset [6725,20][5032,20] Fri Jun  3 00:56:01 2016 
+## Removed features with more than 0 NAs: Fri Jun  3 00:56:01 2016 
+## Dropped featureData's levels Fri Jun  3 00:56:01 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -701,7 +701,9 @@ plot2D(hl, fcol = NULL)
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input for a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)* provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(hl))`) and the names of the vector of the mouse markers (`mmus` markers) are Uniprot entry names (see `head(mrk)` in the code chunk below), therefore it is required we update the `MSnSet` to match the names of the markers, as demonstrated below. It is then possible to match names between the markers and the `MSnSet` instance. We see below that the markers cover many sub-cellular niches, with many niches only containing a few proteins. Depending on the biological question and downstream analyses we may wish the subset these marker classes, this can be done using the `minMarkers` function. In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
+In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input to a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but it is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)* provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are also Uniprot IDs (see `head(mrk)` in the code chunk below), so it is straightforward to match names between the markers and the `MSnSet` instance. If the naming between the marker sets and the `MSnSet` dataset are different, one will have to convert and match the proteins according to the appropriate identifier. Sometimes, we find the equivalent entry name, Uniprot ID or accession number is stored with the data, which makes conversion between identifers relatively straightforward. If this is not the case however, there are conversion softwares online available, for example XXX.   
+
+In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
 
 
 ```r
@@ -766,37 +768,13 @@ hl <- addMarkers(hl, mrk)
 ```
 
 ```r
-## Remove marker sets with < 20 proteins
-hl <- minMarkers(hl, n = 20)
-getMarkers(hl, fcol = "markers20")
-```
-
-```
-## organelleMarkers
-##            40S Ribosome            60S Ribosome                 Cytosol 
-##                      27                      43                      43 
-##   Endoplasmic reticulum         Golgi apparatus                Lysosome 
-##                      95                      27                      33 
-##           Mitochondrion     Nucleus - Chromatin Nucleus - Non-chromatin 
-##                     383                      64                      85 
-##         Plasma membrane              Proteasome                 unknown 
-##                      51                      34                    4147
-```
-
-```r
-plot2D(hl, fcol = "markers20", main = "pRolocmarkers for mouse")
+## Plot mouse markers
+plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 ```
 
 ![plot of chunk addmrkers](figure/addmrkers-1.png)
 
-```r
-## After expert curation
-plot2D(hl, fcol = "SVM.marker.set", main = "Curated markers")
-```
-
-![plot of chunk addmrkers](figure/addmrkers-2.png)
-
-In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. In the code chunk above we show the PCA plot output of the mouse dataset with (i) the annotation for mouse pulled from `pRolocmarkers`, and (ii) annotation after expert curation (stored in the `featureData` column called `SVM.marker.set` that was used for a classification analyses in the original data analyses [@hyper]).
+In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. 
 
 # Interactive visualisation
 
@@ -822,7 +800,7 @@ pdRes <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200,
 
 Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @Trotter:2010; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
 
-There are several classification algorithms available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the improper optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data with which to classify our set of unknown residents, one must find the optimal parameters for the algorithm of choice. 
+There are several classification algorithms readily available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the improper optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data, one must first find the optimal parameters for the algorithm of choice. 
 
 ## Optimisation
 
@@ -847,24 +825,10 @@ The output `params` is an object of class `GenRegRes`; a dedicated container for
 
 ```r
 (best <- getParams(params))
-```
-
-```
-## sigma  cost 
-##   0.1  16.0
-```
-
-```r
 plot(params)
-```
-
-![plot of chunk visualiseOpt](figure/visualiseOpt-1.png)
-
-```r
 levelPlot(params)
 ```
 
-![plot of chunk visualiseOpt](figure/visualiseOpt-2.png)
 
 By using the function `getParams` we can extract the best set of parameters. Currently, `getParams` retrieves the first best set is automatically but users are encouraged to critically assess whether this is the most wise choice by visualising the results using the methods `plot` and `levelPlot`. The `plot` method for `GenRegRes` object shows the respective distributions of the 100 macro F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows the averaged macro F1 scores, for the full range of parameter values. Once we have selected the best parameters we can then use them to build a classifier from the labelled marker proteins. 
 
@@ -934,7 +898,8 @@ sessionInfo()
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
 ## [10] MSnbase_1.21.6       ProtGenerics_1.5.0   BiocParallel_1.7.2  
 ## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
-## [16] BiocGenerics_0.19.0  BiocStyle_2.1.3      knitr_1.13          
+## [16] BiocGenerics_0.19.0  gridExtra_2.2.1      BiocStyle_2.1.3     
+## [19] knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] minqa_1.2.4           colorspace_1.2-6      hwriter_1.3.2        
@@ -959,7 +924,7 @@ sessionInfo()
 ## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
 ## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
 ## [64] stringi_1.1.1         RSQLite_1.0.0         genefilter_1.55.2    
-## [67] foreach_1.4.3         randomForest_4.6-12   e1071_1.6-7          
+## [67] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
 ## [70] prabclus_2.2-6        bitops_1.0-6          rgl_0.95.1441        
 ## [73] mzID_1.11.2           evaluate_0.9          lattice_0.20-33      
 ## [76] htmlwidgets_0.6       gbm_2.1.1             plyr_1.8.3           
