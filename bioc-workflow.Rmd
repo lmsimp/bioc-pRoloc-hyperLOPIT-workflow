@@ -8,6 +8,7 @@ output: html_document
 library("BiocStyle")
 suppressPackageStartupMessages(library("MSnbase"))
 suppressPackageStartupMessages(library("pRoloc"))
+suppressPackageStartupMessages(library("pRolocdata"))
 ```
 
 # Introduction
@@ -54,7 +55,7 @@ readers are invited to read the `r Biocexptpkg("RforProteomics")`
 package vignettes and associated papers [@Gatto:2014;@Gatto2015]. 
 
 
-# Reading and handling mass-spectrometry based proteomics data
+# Reading and processing spatial proteomics data
 
 ## The use-case: prediction sub-cellular localisation in pluripotent embryonic mouse stem cells
 
@@ -104,9 +105,10 @@ the `pData` slot for storing the sample meta-data.
 
 ![Simplified representation of the `MSnSet` data structure (reproduced with permission from the `r Biocpkg("MSnbase")` vignette)](./Figures/msnset.png)
 
+## Importing data
+
 There are a number of ways to import quantitation data and create an
-`MSnSet` instance and all methods are described in the `r
-Biocpkg("MSnbase")`
+`MSnSet` instance and all methods are described in the `r Biocpkg("MSnbase")`
 [input/output capabilities vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf). One
 suggested simple method is to use the function `readMSnSet2` in 
 `r Biocpkg("MSnbase")`. The function takes a single spreadsheet as input
@@ -243,24 +245,135 @@ pData(lopit2016)
 
 ### Normalisation
 
-Before combination, the two replicates were separately normalised by
-sum across the 10 channels (i.e. such that the sum of each protein's
-intensity is 1), for each replicate respectively. Normalisation is an
-essential part of data processing and several methods are available in
-`r Biocpkg("MSnbase")`. The normalisation desired in this specific
-case would be obtained with the a call to the `normalise` method.
+There are two aspects related to data normalisation that are relevant
+to spatial proteomics data processing. The first one focuses on
+reducing purely technical variation between fractions without
+affecting biological variability (i.e. the shape of the quantitative
+profiles) too much, as generally focused on. This normalisation will
+depend on the underlying quantitative technology and the experimental
+design, and will not be addressed in this workflow. In addition, and
+more specific to spatial proteomics data, it is fundamental to scale
+all the organelle-specific profiles into a same intensity interval
+(typically 0 and 1) by, for example, diving each intensity by the sum
+of the intensities for that quantitative feature, as illustrated
+below.
+
+```{r normsum, eval = FALSE}
+lopit2016 <- normalise(lopit2016, method = "sum")
+```
+
+This transformation of the data assures to cancel the effect of the
+absolute intensities of the quantitive features along the rows, to
+focus subsequent analyses on the relative profiles along the
+sub-cellular fractions.
+
+The same `normalise` function (or `normalize`, both spellings are
+supported) can also be applied in the first case described
+above. Different normalisation methods such as mean or median scaling,
+variance stabilitation or quantile normalisation, to cite a few, can
+be applied to accomodation different needs.
+
+Before combination, the two replicates in the `lopit2016` data that we
+read into R were separately normalised by sum across the 10 channels
+for each replicate respectively. We can verify this by summing each
+rows for each replicate:
+
+```{r normcheck}
+summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 1])))
+summary(rowSums(exprs(lopit2016[, lopit2016$replicate == 2])))
+```
+We see that some features do not add up exactly to 1 due to rounding
+errors after exporting to intermediate files. These small deviations
+do not bear any consequences here.
+
+
+### Combining acquisitions
+
+The spreadsheet that was used to create the `lopit2016` MSnSet
+included two replicates. We also provide individual replicates in the
+`r Biocexptpkg("pRolocdata")` package. Below, we show how to combine
+`MSnSet` objects and, subsequently, how to filter and hangle missing
+values. We start by loading the experimental data package and the
+equivalent replicates using the `load` function.
+
+```{r reps4combine}
+library("pRolocdata")
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+```
+
+To list all data distributed with a package, one can use pass the
+package name as input to the `data` function. For instance
+
+```{r pkgdata, eval=FALSE}
+data(package = "pRolocdata")
+```
+
+will list the `r nrow(data(package = "pRolocdata")$results)` datasets
+that are available in `r Biocexptpkg("pRolocdata")`.
+
+Combining data is performed with the `combine` function. This function
+will inspect the feature and sample names to identify how to combine
+the data. As we want our replicates to be combined along the columns
+(same proteins, different sets of fractions), we need to assure that
+the respective sample names differ. 
+
+```{r samplenames}
+identical(sampleNames(hyperLOPIT2015ms3r1), sampleNames(hyperLOPIT2015ms3r2))
+hyperLOPIT2015ms3r1 <- updateSampleNames(hyperLOPIT2015ms3r1, 1)
+hyperLOPIT2015ms3r2 <- updateSampleNames(hyperLOPIT2015ms3r2, 2)
+sampleNames(hyperLOPIT2015ms3r1)
+sampleNames(hyperLOPIT2015ms3r2)
+```
+
+In addition, to matching names, the content of the feature metadata
+for identical feature annotations must match exactly across the data
+to be combined. In particular for these data, we expect the same
+proteins in each replicates to be annotated with the same UniProt
+entry names and descriptions, but not with the same coverage of number
+of peptides or peptide-spectrum matches (PSMs).
+
+```{r fvarnames}
+fvarLabels(hyperLOPIT2015ms3r1)
+fvarLabels(hyperLOPIT2015ms3r2)
+```
+
+Below, we update the replicate specific feature variable names and
+remove the shared annotation.
+
+```{r r fvarnames2}
+fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
+fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
+fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
+```
+
+We can now combine the two experiments into a single `MSnSet`:
+
+```{r combine}
+hyperLOPIT <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+hyperLOPIT
+```
+
+More details above combining data are given in the dedicated
+*Combining MSnSet instances* section of the `r Biocpkg("MSnbase")`
+[tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
 
 ### Missing data 
 
+Missing data are a recurrent issue in mass spectrometry applications,
+and should be addressed independently of this workflow
+[@Lazar:2016]. In [@Gatto:2014b], we have described how a high content
+in missing values in spatial proteomics data and their inappropriate
+handling leads to a reduction of sub-cellular resolution. 
 
-### Combining acquisistions
 
+```{r namap}
+image2(is.na(hyperLOPIT), col = c("black", "white"))
+```
 
-The combination of data can also be performed effectively in 
-`r Biocpkg("MSnbase")` as detailed in the dedicated *Combining MSnSet
-instances* section of the `r Biocpkg("MSnbase")`
-[tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
+## Replication
 
+See issue #6.
 
 # Quality Control
 
