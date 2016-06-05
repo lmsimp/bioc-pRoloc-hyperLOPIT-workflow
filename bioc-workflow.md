@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:54:45 2016 
+## Combined [6725,20] and [6268,10] MSnSets Mon Jun  6 00:06:24 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:54:45 2016 
-## Subset [6725,20][5032,20] Sun Jun  5 23:54:45 2016 
-## Removed features with more than 0 NAs: Sun Jun  5 23:54:45 2016 
-## Dropped featureData's levels Sun Jun  5 23:54:45 2016 
+## Combined [6725,20] and [6268,10] MSnSets Mon Jun  6 00:06:24 2016 
+## Subset [6725,20][5032,20] Mon Jun  6 00:06:24 2016 
+## Removed features with more than 0 NAs: Mon Jun  6 00:06:24 2016 
+## Dropped featureData's levels Mon Jun  6 00:06:24 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -732,6 +732,11 @@ plot2D(hl, fcol = NULL)
 ```
 
 ![plot of chunk qcplot](figure/qcplot-1.png)
+
+**TODO** Mention that there are other dimensionality reduction
+techniques. Advantages, disadvantages? See
+[this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
+very interesting gist with intriguing tSNE examples.
 
 # Markers
 

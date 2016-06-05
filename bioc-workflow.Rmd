@@ -439,6 +439,11 @@ library('pRoloc')
 plot2D(hl, fcol = NULL)
 ```
 
+**TODO** Mention that there are other dimensionality reduction
+techniques. Advantages, disadvantages? See
+[this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
+very interesting gist with intriguing tSNE examples.
+
 # Markers
 
 In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input to a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but it is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `r Biocpkg("pRoloc")` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are also Uniprot IDs (see `head(mrk)` in the code chunk below), so it is straightforward to match names between the markers and the `MSnSet` instance. If the naming between the marker sets and the `MSnSet` dataset are different, one will have to convert and match the proteins according to the appropriate identifier. Sometimes, we find the equivalent entry name, Uniprot ID or accession number is stored with the data, which makes conversion between identifers relatively straightforward. If this is not the case however, there are conversion softwares online available, for example XXX.   
