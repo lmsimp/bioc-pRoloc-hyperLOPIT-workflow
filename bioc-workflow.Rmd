@@ -397,8 +397,38 @@ all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 
 ## Replication
 
+With the aim of maximising the sub-cellular resolution and,
+consequently, the reliability in protein sub-cellular assignments, we
+follow the advice in [@Trotter:2010] and combine replicated spatial
+proteomics experiments and described above. Trotter et al. have shown
+that ...
 
-See issue #6.
+Why is the below no a good indication: fraction, even if same index,
+are not necessarily same; replication of single fractions fractions is
+not really relevant, but rather complete profiles; more than single
+profiles, it's rather relative profiles in the frame of whole dataset.
+
+```{r eval = FALSE}
+par(mfrow = c(3, 4))
+for (i in 1:10) {
+    plot(exprs(hl[, c(i, i+10)]))
+    grid()
+    abline(0, 1, col = "red")
+}
+```
+
+```{r plot2Drep}
+par(mfrow = c(1, 2))
+plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", mirrorY = TRUE, main = "Replicate 2")
+```
+
+Could compute squared differences between fractions over profile for
+each protein, and compare to Dunkley 2006, to show improvement in
+replicability. Or to have an internal replication measurement. Or what
+about wave?
+
+This might be better off in the QC section...
 
 # Quality Control
 
@@ -487,7 +517,7 @@ The output `params` is an object of class `GenRegRes`; a dedicated container for
 plot(params)
 levelPlot(params)
 ```
-```{r visualiseOptHide, include=FALSE}
+```{r visualiseOptHide, echo=FALSE}
 grid.arrange(plot(params), levelPlot(params), ncol = 2)
 ```
 

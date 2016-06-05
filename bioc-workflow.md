@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:56:00 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:48:30 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Jun  3 00:56:00 2016 
-## Subset [6725,20][5032,20] Fri Jun  3 00:56:01 2016 
-## Removed features with more than 0 NAs: Fri Jun  3 00:56:01 2016 
-## Dropped featureData's levels Fri Jun  3 00:56:01 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:48:30 2016 
+## Subset [6725,20][5032,20] Sun Jun  5 23:48:31 2016 
+## Removed features with more than 0 NAs: Sun Jun  5 23:48:31 2016 
+## Dropped featureData's levels Sun Jun  5 23:48:31 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -684,8 +684,42 @@ all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 
 ## Replication
 
+With the aim of maximising the sub-cellular resolution and,
+consequently, the reliability in protein sub-cellular assignments, we
+follow the advice in [@Trotter:2010] and combine replicated spatial
+proteomics experiments and described above. Trotter et al. have shown
+that ...
 
-See issue #6.
+Why is the below no a good indication: fraction, even if same index,
+are not necessarily same; replication of single fractions fractions is
+not really relevant, but rather complete profiles; more than single
+profiles, it's rather relative profiles in the frame of whole dataset.
+
+
+```r
+par(mfrow = c(3, 4))
+for (i in 1:10) {
+    plot(exprs(hl[, c(i, i+10)]))
+    grid()
+    abline(0, 1, col = "red")
+}
+```
+
+
+```r
+par(mfrow = c(1, 2))
+plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", mirrorY = TRUE, main = "Replicate 2")
+```
+
+![plot of chunk plot2Drep](figure/plot2Drep-1.png)
+
+Could compute squared differences between fractions over profile for
+each protein, and compare to Dunkley 2006, to show improvement in
+replicability. Or to have an internal replication measurement. Or what
+about wave?
+
+This might be better off in the QC section...
 
 # Quality Control
 
@@ -828,7 +862,7 @@ The output `params` is an object of class `GenRegRes`; a dedicated container for
 plot(params)
 levelPlot(params)
 ```
-
+![plot of chunk visualiseOptHide](figure/visualiseOptHide-1.png)
 
 By using the function `getParams` we can extract the best set of parameters. Currently, `getParams` retrieves the first best set is automatically but users are encouraged to critically assess whether this is the most wise choice by visualising the results using the methods `plot` and `levelPlot`. The `plot` method for `GenRegRes` object shows the respective distributions of the 100 macro F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows the averaged macro F1 scores, for the full range of parameter values. Once we have selected the best parameters we can then use them to build a classifier from the labelled marker proteins. 
 
