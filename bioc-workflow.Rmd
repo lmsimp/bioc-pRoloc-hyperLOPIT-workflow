@@ -417,7 +417,7 @@ for (i in 1:10) {
 }
 ```
 
-```{r plot2Drep}
+```{r plot2Drep, fig.width = 12}
 par(mfrow = c(1, 2))
 plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
 plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", mirrorY = TRUE, main = "Replicate 2")
@@ -517,7 +517,7 @@ The output `params` is an object of class `GenRegRes`; a dedicated container for
 plot(params)
 levelPlot(params)
 ```
-```{r visualiseOptHide, echo=FALSE}
+```{r visualiseOptHide, echo=FALSE, fig.width = 12}
 grid.arrange(plot(params), levelPlot(params), ncol = 2)
 ```
 

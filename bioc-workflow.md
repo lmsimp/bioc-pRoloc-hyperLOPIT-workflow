@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:48:30 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:54:45 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:48:30 2016 
-## Subset [6725,20][5032,20] Sun Jun  5 23:48:31 2016 
-## Removed features with more than 0 NAs: Sun Jun  5 23:48:31 2016 
-## Dropped featureData's levels Sun Jun  5 23:48:31 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Jun  5 23:54:45 2016 
+## Subset [6725,20][5032,20] Sun Jun  5 23:54:45 2016 
+## Removed features with more than 0 NAs: Sun Jun  5 23:54:45 2016 
+## Dropped featureData's levels Sun Jun  5 23:54:45 2016 
 ##  MSnbase version: 1.19.3
 ```
 
