@@ -275,7 +275,7 @@ hl
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 1.21.6
+##  MSnbase version: 1.21.7
 ```
 
 As briefly mentioned above, the quantitation data is stored in the
@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Jun  6 00:06:24 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Jun  8 23:04:23 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Jun  6 00:06:24 2016 
-## Subset [6725,20][5032,20] Mon Jun  6 00:06:24 2016 
-## Removed features with more than 0 NAs: Mon Jun  6 00:06:24 2016 
-## Dropped featureData's levels Mon Jun  6 00:06:24 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Jun  8 23:04:23 2016 
+## Subset [6725,20][5032,20] Wed Jun  8 23:04:23 2016 
+## Removed features with more than 0 NAs: Wed Jun  8 23:04:23 2016 
+## Dropped featureData's levels Wed Jun  8 23:04:23 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -682,44 +682,12 @@ all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 ## [1] TRUE
 ```
 
-## Replication
-
-With the aim of maximising the sub-cellular resolution and,
-consequently, the reliability in protein sub-cellular assignments, we
-follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. Trotter et al. have shown
-that ...
-
-Why is the below no a good indication: fraction, even if same index,
-are not necessarily same; replication of single fractions fractions is
-not really relevant, but rather complete profiles; more than single
-profiles, it's rather relative profiles in the frame of whole dataset.
-
-
-```r
-par(mfrow = c(3, 4))
-for (i in 1:10) {
-    plot(exprs(hl[, c(i, i+10)]))
-    grid()
-    abline(0, 1, col = "red")
-}
-```
-
-
-```r
-par(mfrow = c(1, 2))
-plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", mirrorY = TRUE, main = "Replicate 2")
-```
-
-![plot of chunk plot2Drep](figure/plot2Drep-1.png)
-
-Could compute squared differences between fractions over profile for
-each protein, and compare to Dunkley 2006, to show improvement in
-replicability. Or to have an internal replication measurement. Or what
-about wave?
-
-This might be better off in the QC section...
+When more than 2 data are to be combine and/or too many proteins were
+not consistently assayed, leading to too many proteins being filtered
+out, we sould suggest to implement an ensemble of classifiers voting
+on protein-sub-cellular niche membership over the output of several
+experiments (see section *Supervised machine learning* for the
+description of sub-cellular assingments).
 
 # Quality Control
 
@@ -814,6 +782,67 @@ plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 ![plot of chunk addmrkers](figure/addmrkers-1.png)
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. 
+
+# Replication
+
+With the aim of maximising the sub-cellular resolution and,
+consequently, the reliability in protein sub-cellular assignments, we
+follow the advice in [@Trotter:2010] and combine replicated spatial
+proteomics experiments and described above. 
+
+
+Trotter et al. have shown a significant improvement in
+protein–organelle association upon direct combination of single
+experiments, in particular when these resolve different subcellular
+niches.
+
+Direct comparisons of individual fractions in replicated experiments
+does not provide an good, goal-driven assessment of different
+experiments. Indeed, due to the nature of the experiment and fraction
+collection, the quantitative channels (loosely referred to as
+fractions) do not correspond to identical fractions along the
+gradient. As we see in the table below (taken from the `hyperLOPIT`'s
+`pData`), different sets of fractions are combined to obtain enough
+material and optimise acurate quantitation.
+
+
+| Replicate|TMT.Reagent |Gradient.Fraction | Iodixonal.Density| Fraction.No|
+|---------:|:-----------|:-----------------|-----------------:|-----------:|
+|         1|X129C       |16                |              20.1|           7|
+|         1|X130N       |18                |              26.8|           8|
+|         1|X130C       |Chromatin         |                NA|          10|
+|         1|X131        |19                |              34.5|           9|
+|         2|X129C       |17                |              20.9|           7|
+|         2|X130N       |18 to 19 (pooled) |              24.7|           8|
+|         2|X130C       |Chromatin         |                NA|          10|
+|         2|X131        |20                |              31.9|           9|
+
+On the figure below, we compare the relative intensities of fractions
+7 to 10 on scatter plots, highlighting different marker sets, in
+particular mitochondrion and chromatin. These differences result from
+different peak fractions for these niches.
+
+![plot of chunk repl1](figure/repl1-1.png)
+
+
+The relevant comparison unit is not a single fraction, but rather
+complete protein occupancy profiles, which are best visualised as a
+whole on a PCA plot. As such, we prefer to focus on the direct
+comparison of individual replicate PCA plots, assuring that each
+displays acceptable sub-cellular resolution. Note that in the code
+chunk below, we mirror the y-axis to represent the two figures with
+the same orientation.
+
+
+
+```r
+par(mfrow = c(1, 2))
+plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+       mirrorY = TRUE)
+```
+
+![plot of chunk plot2Drep](figure/plot2Drep-1.png)
 
 # Interactive visualisation
 
@@ -935,7 +964,7 @@ sessionInfo()
 ##  [1] pRolocdata_1.11.0    pRoloc_1.13.4        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
-## [10] MSnbase_1.21.6       ProtGenerics_1.5.0   BiocParallel_1.7.2  
+## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.7.2  
 ## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
 ## [16] BiocGenerics_0.19.0  gridExtra_2.2.1      BiocStyle_2.1.3     
 ## [19] knitr_1.13          
@@ -962,17 +991,17 @@ sessionInfo()
 ## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.4 
 ## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
 ## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
-## [64] stringi_1.1.1         RSQLite_1.0.0         genefilter_1.55.2    
-## [67] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
-## [70] prabclus_2.2-6        bitops_1.0-6          rgl_0.95.1441        
-## [73] mzID_1.11.2           evaluate_0.9          lattice_0.20-33      
-## [76] htmlwidgets_0.6       gbm_2.1.1             plyr_1.8.3           
-## [79] magrittr_1.5          R6_2.1.2              DBI_0.4-1            
-## [82] mgcv_1.8-12           survival_2.39-4       RCurl_1.95-4.8       
-## [85] nnet_7.3-12           car_2.1-2             mlbench_2.1-1        
-## [88] grid_3.4.0            FNN_1.1               threejs_0.2.2        
-## [91] digest_0.6.9          diptest_0.75-7        xtable_1.8-2         
-## [94] httpuv_1.3.3          munsell_0.4.3
+## [64] stringi_1.1.1         RSQLite_1.0.0         highr_0.6            
+## [67] genefilter_1.55.2     randomForest_4.6-12   foreach_1.4.3        
+## [70] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
+## [73] rgl_0.95.1441         mzID_1.11.2           evaluate_0.9         
+## [76] lattice_0.20-33       htmlwidgets_0.6       gbm_2.1.1            
+## [79] plyr_1.8.3            magrittr_1.5          R6_2.1.2             
+## [82] DBI_0.4-1             mgcv_1.8-12           survival_2.39-4      
+## [85] RCurl_1.95-4.8        nnet_7.3-12           car_2.1-2            
+## [88] mlbench_2.1-1         grid_3.4.0            FNN_1.1              
+## [91] threejs_0.2.2         digest_0.6.9          diptest_0.75-7       
+## [94] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3
 ```
 
 It is always important to include session information details along

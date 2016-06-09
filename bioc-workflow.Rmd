@@ -6,6 +6,7 @@ output: html_document
 
 ```{r env, echo=FALSE}
 library("BiocStyle")
+suppressPackageStartupMessages(library("knitr"))
 suppressPackageStartupMessages(library("gridExtra"))
 suppressPackageStartupMessages(library("MSnbase"))
 suppressPackageStartupMessages(library("pRoloc"))
@@ -395,40 +396,12 @@ profiles.
 all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 ```
 
-## Replication
-
-With the aim of maximising the sub-cellular resolution and,
-consequently, the reliability in protein sub-cellular assignments, we
-follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. Trotter et al. have shown
-that ...
-
-Why is the below no a good indication: fraction, even if same index,
-are not necessarily same; replication of single fractions fractions is
-not really relevant, but rather complete profiles; more than single
-profiles, it's rather relative profiles in the frame of whole dataset.
-
-```{r eval = FALSE}
-par(mfrow = c(3, 4))
-for (i in 1:10) {
-    plot(exprs(hl[, c(i, i+10)]))
-    grid()
-    abline(0, 1, col = "red")
-}
-```
-
-```{r plot2Drep, fig.width = 12}
-par(mfrow = c(1, 2))
-plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", mirrorY = TRUE, main = "Replicate 2")
-```
-
-Could compute squared differences between fractions over profile for
-each protein, and compare to Dunkley 2006, to show improvement in
-replicability. Or to have an internal replication measurement. Or what
-about wave?
-
-This might be better off in the QC section...
+When more than 2 data are to be combine and/or too many proteins were
+not consistently assayed, leading to too many proteins being filtered
+out, we sould suggest to implement an ensemble of classifiers voting
+on protein-sub-cellular niche membership over the output of several
+experiments (see section *Supervised machine learning* for the
+description of sub-cellular assingments).
 
 # Quality Control
 
@@ -466,6 +439,96 @@ plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 ```
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from `r Biocpkg("pRoloc")` or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. 
+
+# Replication
+
+With the aim of maximising the sub-cellular resolution and,
+consequently, the reliability in protein sub-cellular assignments, we
+follow the advice in [@Trotter:2010] and combine replicated spatial
+proteomics experiments and described above. 
+
+
+Trotter et al. have shown a significant improvement in
+protein–organelle association upon direct combination of single
+experiments, in particular when these resolve different subcellular
+niches.
+
+Direct comparisons of individual fractions in replicated experiments
+does not provide an good, goal-driven assessment of different
+experiments. Indeed, due to the nature of the experiment and fraction
+collection, the quantitative channels (loosely referred to as
+fractions) do not correspond to identical fractions along the
+gradient. As we see in the table below (taken from the `hyperLOPIT`'s
+`pData`), different sets of fractions are combined to obtain enough
+material and optimise acurate quantitation.
+
+```{r pdtab, echo=FALSE}
+i <- hyperLOPIT$Fraction.No %in% 7:10
+kable(pData(hyperLOPIT)[i, -3], row.names = FALSE)
+```
+
+On the figure below, we compare the relative intensities of fractions
+7 to 10 on scatter plots, highlighting different marker sets, in
+particular mitochondrion and chromatin. These differences result from
+different peak fractions for these niches.
+
+```{r repl1, eval = TRUE, echo=FALSE, fig.width = 12}
+sel0 <- fData(hyperLOPIT)$markers != "unknown"
+cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)]
+cls[!sel0] <- getUnknowncol()
+
+
+par(mfrow = c(2, 4))
+for (i in c(7, 8, 10, 9)) {
+    plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls,
+         main = paste("Fraction", pData(hyperLOPIT)[i, "Fraction.No"]))
+    points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19)
+    grid()
+    abline(0, 1, col = "red")
+}
+plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "n")
+addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7)
+
+
+i <- fData(hyperLOPIT)$markers == "Mitochondrion"
+plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
+         featureNames(hyperLOPIT)[i], type = "l",
+         mcol = "orange")
+title(main = "Mitochondrion")
+## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
+matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1)
+legend("topleft", paste("Replicate", 1:2),
+       col = c("#F781BF", "orange"),
+       lty = 1, bty = "n")
+
+
+i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin"
+plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
+         featureNames(hyperLOPIT)[i], type = "l")
+## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
+matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1)
+title(main = "Chromatin")
+legend("topleft", paste("Replicate", 1:2),
+       col = c("#984EA3", "steelblue"),
+       lty = 1, bty = "n")
+```
+
+
+The relevant comparison unit is not a single fraction, but rather
+complete protein occupancy profiles, which are best visualised as a
+whole on a PCA plot. As such, we prefer to focus on the direct
+comparison of individual replicate PCA plots, assuring that each
+displays acceptable sub-cellular resolution. Note that in the code
+chunk below, we mirror the y-axis to represent the two figures with
+the same orientation.
+
+
+```{r plot2Drep, fig.width = 12}
+par(mfrow = c(1, 2))
+plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+       mirrorY = TRUE)
+```
 
 # Interactive visualisation
 
