@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Jun  8 23:04:23 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Jun  9 11:03:37 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Jun  8 23:04:23 2016 
-## Subset [6725,20][5032,20] Wed Jun  8 23:04:23 2016 
-## Removed features with more than 0 NAs: Wed Jun  8 23:04:23 2016 
-## Dropped featureData's levels Wed Jun  8 23:04:23 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Jun  9 11:03:37 2016 
+## Subset [6725,20][5032,20] Thu Jun  9 11:03:37 2016 
+## Removed features with more than 0 NAs: Thu Jun  9 11:03:37 2016 
+## Dropped featureData's levels Thu Jun  9 11:03:37 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -684,8 +684,8 @@ all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 
 When more than 2 data are to be combine and/or too many proteins were
 not consistently assayed, leading to too many proteins being filtered
-out, we sould suggest to implement an ensemble of classifiers voting
-on protein-sub-cellular niche membership over the output of several
+out, we suggest to implement an ensemble of classifiers voting on
+protein-sub-cellular niche membership over the output of several
 experiments (see section *Supervised machine learning* for the
 description of sub-cellular assingments).
 
@@ -788,22 +788,20 @@ In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cell
 With the aim of maximising the sub-cellular resolution and,
 consequently, the reliability in protein sub-cellular assignments, we
 follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. 
-
-
-Trotter et al. have shown a significant improvement in
-protein–organelle association upon direct combination of single
-experiments, in particular when these resolve different subcellular
-niches.
+proteomics experiments and described above. Indeed, Trotter et
+al. have shown a significant improvement in protein–organelle
+association upon direct combination of single experiments, in
+particular when these resolve different subcellular niches.
 
 Direct comparisons of individual fractions in replicated experiments
-does not provide an good, goal-driven assessment of different
+does not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and fraction
 collection, the quantitative channels (loosely referred to as
-fractions) do not correspond to identical fractions along the
-gradient. As we see in the table below (taken from the `hyperLOPIT`'s
-`pData`), different sets of fractions are combined to obtain enough
-material and optimise acurate quantitation.
+fractions) do not correspond to identical actual fractions along the
+gradient. As can be seen in the table below (taken from the
+`hyperLOPIT`'s `pData`, focusing on channels 7 to 10), different sets
+of fractions are combined to obtain enough material and optimise
+acurate quantitation.
 
 
 | Replicate|TMT.Reagent |Gradient.Fraction | Iodixonal.Density| Fraction.No|
@@ -817,21 +815,23 @@ material and optimise acurate quantitation.
 |         2|X130C       |Chromatin         |                NA|          10|
 |         2|X131        |20                |              31.9|           9|
 
-On the figure below, we compare the relative intensities of fractions
-7 to 10 on scatter plots, highlighting different marker sets, in
-particular mitochondrion and chromatin. These differences result from
-different peak fractions for these niches.
+On the figure below, we compare the relative intensities of channels 7
+to 10 on scatter plots, highlighting different marker sets. These
+differences result from different peak fractions for these niches on
+the mitochondrial and chromatin occupancy profiles for the two
+replicates.
+
 
 ![plot of chunk repl1](figure/repl1-1.png)
 
 
-The relevant comparison unit is not a single fraction, but rather
-complete protein occupancy profiles, which are best visualised as a
-whole on a PCA plot. As such, we prefer to focus on the direct
-comparison of individual replicate PCA plots, assuring that each
-displays acceptable sub-cellular resolution. Note that in the code
-chunk below, we mirror the y-axis to represent the two figures with
-the same orientation.
+The more relevant comparison unit is not a single fraction, but rather
+the complete protein occupancy profiles, which are best visualised as
+experiment-wide on a PCA plot. As such, we prefer to focus on the
+direct, qualitative comparison of individual replicate PCA plots,
+assuring that each displays acceptable sub-cellular resolution. Note
+that in the code chunk below, we mirror the y-axis to represent the
+two figures with the same orientation.
 
 
 

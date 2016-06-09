@@ -398,8 +398,8 @@ all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 
 When more than 2 data are to be combine and/or too many proteins were
 not consistently assayed, leading to too many proteins being filtered
-out, we sould suggest to implement an ensemble of classifiers voting
-on protein-sub-cellular niche membership over the output of several
+out, we suggest to implement an ensemble of classifiers voting on
+protein-sub-cellular niche membership over the output of several
 experiments (see section *Supervised machine learning* for the
 description of sub-cellular assingments).
 
@@ -445,32 +445,32 @@ In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cell
 With the aim of maximising the sub-cellular resolution and,
 consequently, the reliability in protein sub-cellular assignments, we
 follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. 
-
-
-Trotter et al. have shown a significant improvement in
-protein–organelle association upon direct combination of single
-experiments, in particular when these resolve different subcellular
-niches.
+proteomics experiments and described above. Indeed, Trotter et
+al. have shown a significant improvement in protein–organelle
+association upon direct combination of single experiments, in
+particular when these resolve different subcellular niches.
 
 Direct comparisons of individual fractions in replicated experiments
-does not provide an good, goal-driven assessment of different
+does not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and fraction
 collection, the quantitative channels (loosely referred to as
-fractions) do not correspond to identical fractions along the
-gradient. As we see in the table below (taken from the `hyperLOPIT`'s
-`pData`), different sets of fractions are combined to obtain enough
-material and optimise acurate quantitation.
+fractions) do not correspond to identical actual fractions along the
+gradient. As can be seen in the table below (taken from the
+`hyperLOPIT`'s `pData`, focusing on channels 7 to 10), different sets
+of fractions are combined to obtain enough material and optimise
+acurate quantitation.
 
 ```{r pdtab, echo=FALSE}
 i <- hyperLOPIT$Fraction.No %in% 7:10
 kable(pData(hyperLOPIT)[i, -3], row.names = FALSE)
 ```
 
-On the figure below, we compare the relative intensities of fractions
-7 to 10 on scatter plots, highlighting different marker sets, in
-particular mitochondrion and chromatin. These differences result from
-different peak fractions for these niches.
+On the figure below, we compare the relative intensities of channels 7
+to 10 on scatter plots, highlighting different marker sets. These
+differences result from different peak fractions for these niches on
+the mitochondrial and chromatin occupancy profiles for the two
+replicates.
+
 
 ```{r repl1, eval = TRUE, echo=FALSE, fig.width = 12}
 sel0 <- fData(hyperLOPIT)$markers != "unknown"
@@ -481,12 +481,12 @@ cls[!sel0] <- getUnknowncol()
 par(mfrow = c(2, 4))
 for (i in c(7, 8, 10, 9)) {
     plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls,
-         main = paste("Fraction", pData(hyperLOPIT)[i, "Fraction.No"]))
+         main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"]))
     points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19)
     grid()
     abline(0, 1, col = "red")
 }
-plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "n")
+plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "")
 addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7)
 
 
@@ -514,13 +514,13 @@ legend("topleft", paste("Replicate", 1:2),
 ```
 
 
-The relevant comparison unit is not a single fraction, but rather
-complete protein occupancy profiles, which are best visualised as a
-whole on a PCA plot. As such, we prefer to focus on the direct
-comparison of individual replicate PCA plots, assuring that each
-displays acceptable sub-cellular resolution. Note that in the code
-chunk below, we mirror the y-axis to represent the two figures with
-the same orientation.
+The more relevant comparison unit is not a single fraction, but rather
+the complete protein occupancy profiles, which are best visualised as
+experiment-wide on a PCA plot. As such, we prefer to focus on the
+direct, qualitative comparison of individual replicate PCA plots,
+assuring that each displays acceptable sub-cellular resolution. Note
+that in the code chunk below, we mirror the y-axis to represent the
+two figures with the same orientation.
 
 
 ```{r plot2Drep, fig.width = 12}
