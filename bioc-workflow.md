@@ -73,7 +73,7 @@ As a use-case, we analyse a recent high-throughput spatial proteomics
 dataset from pluripotent mouse embryonic stem cells (E14TG2a)
 [@hyper]. The data was generated using hyperplexed LOPIT (hyperLOPIT),
 an improved method relying on improved sub-cellular fractionation and
-more acurate quantitation, leading to more reliable classification of
+more accurate quantitation, leading to more reliable classification of
 protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
 use of Tandem Mass Tag (TMT) [Thompson:2003] 10-plex and application
@@ -98,7 +98,7 @@ third-party applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
 relevant for any quantitative spatial proteomics data, irrespective of
-the fractionation or quantitation (i.e. labeled or label-free)
+the fractionation or quantitation (i.e. labelled or label-free)
 methods.
 
 ## The infrastructure: *[pRoloc](http://bioconductor.org/packages/pRoloc)* and *[MSnbase](http://bioconductor.org/packages/MSnbase)* in Bioconductor
@@ -146,7 +146,7 @@ locates the `extdata` in the *[pRolocdata](http://bioconductor.org/packages/pRol
 the hard drive and `dir`, that displays the full path to the file
 matching the `hyperLOPIT-SIData-ms3-rep12-intersect.csv` pattern,
 which corresponds the the file of interest. In the last line, we print
-the filename (not the full path, which will vary from computer to
+the file name (not the full path, which will vary from computer to
 computer). 
 
 
@@ -234,11 +234,11 @@ getEcols(csvfile, split = ",", n = 2)
 It is now easy for one to identify that the quantitation data,
 corresponding to the 10 TMT isobaric tags, is located in columns 8
 to 27. We now have the two mandatory arguments to `readMSnSet2`,
-namely the filename (stored in the `csvfile` variable) and the
+namely the file name (stored in the `csvfile` variable) and the
 quantitation column indices. In addition to these, it is also possible
 to pass the optional argument `fnames` to indicate which column to use
 as the labels by which to identify each protein in the sample. Here,
-we use `fnames = 1` to use the Uniprot identifiers contained in the
+we use `fnames = 1` to use the UniProt identifiers contained in the
 first (unnamed) column of the spreadsheet. We also need to specify to
 skip the first line of the file (for the same reason that we used 
 `n = 2` in `getEcols` above) to read the `csv` data and convert it to an
@@ -331,7 +331,7 @@ contains 25 columns describing information such as the number of
 peptides, associated markers, machine learning results etc. 
 
 For demonstration in the code chunk below keep the 2nd, 8th and 11th
-columns which contain the Uniprot entry names and two different marker
+columns which contain the UniProt entry names and two different marker
 sets to use an input for machine learning analyses (see sections on
 markers and subsequent sections) and rename the first feature variable
 names.
@@ -444,14 +444,14 @@ hl <- normalise(hl, method = "sum")
 ```
 
 This transformation of the data assures to cancel the effect of the
-absolute intensities of the quantitive features along the rows, to
+absolute intensities of the quantitative features along the rows, to
 focus subsequent analyses on the relative profiles along the
 sub-cellular fractions.
 
 The same `normalise` function (or `normalize`, both spellings are
 supported) can also be applied in the first case described
 above. Different normalisation methods such as mean or median scaling,
-variance stabilitation or quantile normalisation, to cite a few, can
+variance stabilisation or quantile normalisation, to cite a few, can
 be applied to accomodation different needs.
 
 Before combination, the two replicates in the `hl` data that we
@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Jun  9 11:03:37 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Jun 11 23:39:33 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Jun  9 11:03:37 2016 
-## Subset [6725,20][5032,20] Thu Jun  9 11:03:37 2016 
-## Removed features with more than 0 NAs: Thu Jun  9 11:03:37 2016 
-## Dropped featureData's levels Thu Jun  9 11:03:37 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Jun 11 23:39:33 2016 
+## Subset [6725,20][5032,20] Sat Jun 11 23:39:33 2016 
+## Removed features with more than 0 NAs: Sat Jun 11 23:39:33 2016 
+## Dropped featureData's levels Sat Jun 11 23:39:33 2016 
 ##  MSnbase version: 1.19.3
 ```
 
