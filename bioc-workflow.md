@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Jun 11 23:39:33 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Jun 12 12:02:43 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Jun 11 23:39:33 2016 
-## Subset [6725,20][5032,20] Sat Jun 11 23:39:33 2016 
-## Removed features with more than 0 NAs: Sat Jun 11 23:39:33 2016 
-## Dropped featureData's levels Sat Jun 11 23:39:33 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Jun 12 12:02:43 2016 
+## Subset [6725,20][5032,20] Sun Jun 12 12:02:43 2016 
+## Removed features with more than 0 NAs: Sun Jun 12 12:02:43 2016 
+## Dropped featureData's levels Sun Jun 12 12:02:43 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -691,7 +691,35 @@ description of sub-cellular assingments).
 
 # Quality Control
 
-Data quality is routinely examined through visualisation to verify that sub-cellular niches have been separated along the gradient. Based on De Duve's principle [@DeDuve:1981] proteins that co-localise exhibit similar quantitation profiles across the gradient fractions employed. One approach that has been widely used to visualise and inspect high throughput mass spectrometry-based proteomics data is principal components analysis (PCA). PCA is one of many dimensionality reduction methods, that allow one to effectively summarise multi-dimensional data in to 2 or 3 dimensions to enable visualisation. Very generally, the original continuous multi-dimensional data is transformed into a set of orthogonal components ordered according to the amount of variability that they describe. The `plot2D` method in *[pRoloc](http://bioconductor.org/packages/pRoloc)* allows one to plot the principal components (PCs) of a dataset against one another, by default the first two components are plotted on the x- and y-axis, respectively (the `dims` argument can be used to plot other PCs). If distinct clusters are observed, we assume that there is organellar separation present in the data. In the code chunk below we produce a PCA plot of the mouse stem cell dataset. One point on the plot represents one protein. We can indeed see several distinct protein clusters. Although, plotting the PCs does not give us a hard quantitative measure of separation, it is extremely useful summarising complex experimental information in one figure, to get an simplified overview of the data. 
+Data quality is routinely examined through visualisation to verify
+that sub-cellular niches have been separated along the gradient. Based
+on De Duve's principle [@DeDuve:1981] proteins that co-localise
+exhibit similar quantitation profiles across the gradient fractions
+employed. One approach that has been widely used to visualise and
+inspect high throughput mass spectrometry-based proteomics data is
+principal components analysis (PCA). PCA is one of many dimensionality
+reduction methods, that allow one to effectively summarise
+multi-dimensional data in to 2 or 3 dimensions to enable
+visualisation. Very generally, the original continuous
+multi-dimensional data is transformed into a set of orthogonal
+components ordered according to the amount of variability that they
+describe. The `plot2D` method in *[pRoloc](http://bioconductor.org/packages/pRoloc)* allows one to
+plot the principal components (PCs) of a dataset against one another,
+by default the first two components are plotted on the x- and y-axis,
+respectively (the `dims` argument can be used to plot other PCs). If
+distinct clusters are observed, we assume that there is organellar
+separation present in the data. In the code chunk below we produce a
+PCA plot of the mouse stem cell dataset. One point on the plot
+represents one protein. We can indeed see several distinct protein
+clusters. Although, representing the multi-dimensional data along a
+limited set of PCs does not give us a hard quantitative measure of
+separation, it is extremely useful summarising complex experimental
+information in one figure, to get an simplified overview of the data.
+
+In the code chunk below, we specify `fcol = NULL`, which means not to
+consider any feature variable to annotate the features with
+colours. We will see later how to use this to annotate the PCA plot
+with prior information about sub-cellular markers.
 
 
 ```r
@@ -701,10 +729,22 @@ plot2D(hl, fcol = NULL)
 
 ![plot of chunk qcplot](figure/qcplot-1.png)
 
+We advise to visualise the without any annotation (i.e. with `fcol =
+NULL`) in a first place, before proceeding with data annotation. The
+identification of well resolved clusters in the data, constitutes an
+unbiased assessment of the data structure, demonstrating the
+successful separation of sub-cellular clusters.
+
+There are other dimensionality reduction methods available in the
+`plot2D` function, which can be parametrised with the `method`
+argument. 
+
+
 **TODO** Mention that there are other dimensionality reduction
 techniques. Advantages, disadvantages? See
 [this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
-very interesting gist with intriguing tSNE examples.
+very interesting gist with intriguing tSNE examples. This might be
+better to come after markers.
 
 # Markers
 
@@ -846,6 +886,7 @@ plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
 
 # Interactive visualisation
 
+A section about  *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)*.
 
 
 # Novelty Detection
