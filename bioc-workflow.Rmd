@@ -559,16 +559,29 @@ the complete protein occupancy profiles, which are best visualised as
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
-that in the code chunk below, we mirror the y-axis to represent the
+that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation.
 
 
 ```{r plot2Drep, fig.width = 12}
 par(mfrow = c(1, 2))
-plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
-       mirrorY = TRUE)
+plot2D(hl[, hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+       mirrorX = TRUE)
 ```
+
+Peason correlation
+
+```{r}
+i1 <- exprs(hl[, hl$replicate == 1])
+i2 <- exprs(hl[, hl$replicate == 2])
+pearcor <- cor(t(i1), t(i2))
+mean(diag(pearcor))
+```
+
+- What about classification on different replicates?
+
+
 
 # Interactive visualisation
 
