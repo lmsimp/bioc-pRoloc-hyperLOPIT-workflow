@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sun Jun 12 12:02:43 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 16:14:37 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sun Jun 12 12:02:43 2016 
-## Subset [6725,20][5032,20] Sun Jun 12 12:02:43 2016 
-## Removed features with more than 0 NAs: Sun Jun 12 12:02:43 2016 
-## Dropped featureData's levels Sun Jun 12 12:02:43 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 16:14:37 2016 
+## Subset [6725,20][5032,20] Tue Jun 14 16:14:37 2016 
+## Removed features with more than 0 NAs: Tue Jun 14 16:14:37 2016 
+## Dropped featureData's levels Tue Jun 14 16:14:37 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -740,17 +740,29 @@ There are other dimensionality reduction methods available in the
 argument. 
 
 
-**TODO** Mention that there are other dimensionality reduction
-techniques. Advantages, disadvantages? See
+**TODO** Advantages, disadvantages? See
 [this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
 very interesting gist with intriguing tSNE examples. This might be
 better to come after markers.
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input to a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but it is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)* provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are also Uniprot IDs (see `head(mrk)` in the code chunk below), so it is straightforward to match names between the markers and the `MSnSet` instance. If the naming between the marker sets and the `MSnSet` dataset are different, one will have to convert and match the proteins according to the appropriate identifier. Sometimes, we find the equivalent entry name, Uniprot ID or accession number is stored with the data, which makes conversion between identifers relatively straightforward. If this is not the case however, there are conversion softwares online available, for example XXX.   
-
-In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
+In the context of spatial proteomics, a marker protein is defined as a
+well-known resident of a specific sub-cellular niche in a species
+*and* condition of interest. Applying this to machine learning (ML),
+and specifically supervised learning, for the task of protein
+localisation prediction, markers constitute the labelled training data
+to use as input to a classification analyses. Defining well-known
+residents, and obtaining labelled training data for ML analyses can be
+time consuming, but it is important to define markers that are
+representative of the multivariate data space and on which a
+classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)*
+provides a convenience function, `addMarkers`, to directly add markers
+to a `MSnSet` object, as demonstrated in the code chunk below. These
+marker sets can be accessed using the `pRolocmarkers()`
+function. Marker sets are stored as a simple named vector in R, and
+originate from in-house user-defined sets of markers or from previous
+published studies [@Gatto:2014b]. 
 
 
 ```r
@@ -775,6 +787,16 @@ pRolocmarkers()
 ## Saccharomyces cerevisiae [scer_uniprot]:
 ##  Ids: Uniprot Accession, 259 markers
 ```
+
+These markers can then be mapped to an `MSnSet`'s `featureNames`. The
+mouse dataset used here has Uniprot IDs stored as the `featureNames`
+(see `head(featureNames(lopit2016))`) and the names of the vector of
+the mouse markers (`mmus` markers) are also Uniprot IDs (see
+`head(mrk)` in the code chunk below), so it is straightforward to
+match names between the markers and the `MSnSet` instance using the
+`addMarkers` function.
+
+
 
 ```r
 ## Use mouse markers
@@ -814,14 +836,73 @@ hl <- addMarkers(hl, mrk)
 ##                    4095
 ```
 
+If the naming between the marker sets and the `MSnSet` dataset are
+different, one will have to convert and match the proteins according
+to the appropriate identifier. Sometimes, we find the equivalent entry
+name, Uniprot ID or accession number is stored with the data, which
+makes conversion between identifers relatively straightforward. If
+this is not the case however, conversion can be performed using the 
+*[biomaRt](http://bioconductor.org/packages/biomaRt)*, the Bioconductor
+[annotation resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
+or any conversion softwares available online.
+
+We now visualise these annotations along the PCA plot using the
+`plot2D` function. We also use the `addLegend` function to map the
+marker classes to the pre-defined colours. 
+
+
 ```r
 ## Plot mouse markers
 plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
+addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
 ```
 
-![plot of chunk addmrkers](figure/addmrkers-1.png)
+![plot of chunk plotmarkers](figure/plotmarkers-1.png)
 
-In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. 
+The colours have been defined so as to enable to differenciate up to
+30 classes. If more are provided, different character symbols
+(circles, squares, ... and empty and solid symbols) are used. The
+colours and the default plotting characters (solid dots for the
+markers and empty circles for the features of unknown localisation)
+can of course be changed, as described in the `setStockcol` manual
+page.
+
+In general, the Gene Ontology (GO) [@Ashburner:2000], and in
+particular the cellular compartment (CC) namespace are a good starting
+point for protein annotation and marker definition. It is important to
+note however that automatic retrieval of sub-cellular localisation
+information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the
+beginning in defining a marker set for downstream analyses. Expert
+curation is vital to check that any annotation added is in the correct
+context for the the biological question under investigation.
+
+Another useful visualisation that relies on marker annotation is the
+representation of the protein profiles occupancy along the gradient
+using the `plotDist` function. While the PCA plot enables to
+efficiently visualise the complete dataset and assess the relative
+separation of different sub-cellular niches, comparing profiles of a
+few marker clusters is useful to assess how exactly they differ (in
+terms of peak fractions, for example). Below, we plot the profile of
+the mitochondrial and peroxisome markers. 
+
+
+
+```r
+par(mfrow = c(2, 1))
+o <- order(hyperLOPIT$Fraction.No)
+cls <- c(Peroxisome = "darkblue", Mitochondrion = "purple")
+for (k in c("Mitochondrion", "Peroxisome")) {
+    plotDist(hyperLOPIT[fData(hyperLOPIT)$markers == k, o],
+             pcol = cls[k])
+    title(main = k)
+}
+```
+
+![plot of chunk plotDist](figure/plotDist-1.png)
+
+
+
+
 
 # Replication
 
@@ -870,19 +951,77 @@ the complete protein occupancy profiles, which are best visualised as
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
-that in the code chunk below, we mirror the y-axis to represent the
+that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation.
 
 
 
 ```r
 par(mfrow = c(1, 2))
-plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
-       mirrorY = TRUE)
+plot2D(hl[, hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+       mirrorX = TRUE)
 ```
 
 ![plot of chunk plot2Drep](figure/plot2Drep-1.png)
+
+Peason correlation
+
+
+```r
+i1 <- exprs(hl[, hl$replicate == 1])
+i2 <- exprs(hl[, hl$replicate == 2])
+pearcor <- cor(t(i1), t(i2))
+pearcor0 <- cor(t(i1[, seq(1, 10, 2)]), t(i2[, seq(1, 10, 2)]))
+mean(diag(pearcor))
+```
+
+```
+## [1] 0.7726258
+```
+
+```r
+mean(diag(pearcor0))
+```
+
+```
+## [1] 0.8853138
+```
+
+
+```r
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+data(hyperLOPIT2015ms3r3)
+
+hll <- MSnSetList(list(hyperLOPIT2015ms3r1,
+                       hyperLOPIT2015ms3r2,
+                       hyperLOPIT2015ms3r3))
+
+ij <- combn(3, 2)
+pc <- apply(ij, 2,
+            function(.ij) {
+                tmp <- suppressMessages(commonFeatureNames(hll[.ij]))
+                diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]]))))
+            })
+names(pc) <- apply(ij, 2, paste, collapse = ".")
+sapply(pc, summary)
+```
+
+```
+##             1.2     1.3     2.3
+## Min.    -0.8132 -0.7461 -0.9271
+## 1st Qu.  0.6989  0.2450  0.3109
+## Median   0.8321  0.5996  0.6805
+## Mean     0.7726  0.4808  0.5380
+## 3rd Qu.  0.9246  0.7912  0.8684
+## Max.     0.9994  0.9991  0.9995
+```
+
+The third replicate was produce over 1 year after the first two by
+another operator.
+
+- What about classification on different replicates?
 
 # Interactive visualisation
 
