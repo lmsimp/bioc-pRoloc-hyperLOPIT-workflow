@@ -78,7 +78,7 @@ protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
 use of Tandem Mass Tag (TMT) [Thompson:2003] 10-plex and application
 of the MS data acquisition technique named synchronous precursor
-selection MS$^3$ (SPS-MS$^3$) [@McAlister:2014], for TMT
+selection MS^3^ (SPS-MS^3^) [@McAlister:2014], for TMT
 quantification with high accuracy and precision. Three biological
 replicates were generated from the E14TG2a experiment, the first was
 to target low density fractions and the second and third were to
@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:36:49 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 21:40:59 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:36:49 2016 
-## Subset [6725,20][5032,20] Tue Jun 14 20:36:49 2016 
-## Removed features with more than 0 NAs: Tue Jun 14 20:36:49 2016 
-## Dropped featureData's levels Tue Jun 14 20:36:49 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 21:40:59 2016 
+## Subset [6725,20][5032,20] Tue Jun 14 21:41:00 2016 
+## Removed features with more than 0 NAs: Tue Jun 14 21:41:00 2016 
+## Dropped featureData's levels Tue Jun 14 21:41:00 2016 
 ##  MSnbase version: 1.19.3
 ```
 

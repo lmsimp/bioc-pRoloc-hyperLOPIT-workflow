@@ -70,7 +70,7 @@ protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
 use of Tandem Mass Tag (TMT) [Thompson:2003] 10-plex and application
 of the MS data acquisition technique named synchronous precursor
-selection MS$^3$ (SPS-MS$^3$) [@McAlister:2014], for TMT
+selection MS^3^ (SPS-MS^3^) [@McAlister:2014], for TMT
 quantification with high accuracy and precision. Three biological
 replicates were generated from the E14TG2a experiment, the first was
 to target low density fractions and the second and third were to
