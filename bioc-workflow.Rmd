@@ -538,7 +538,7 @@ the apparent overlap in the two first PCs.
 par(mfrow = c(1, 2))
 plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
-plot2D(hl, dims = c(1, 7))
+plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 ```
 
 The colours have been defined so as to enable to differenciate up to
@@ -565,23 +565,20 @@ efficiently visualise the complete dataset and assess the relative
 separation of different sub-cellular niches, comparing profiles of a
 few marker clusters is useful to assess how exactly they differ (in
 terms of peak fractions, for example). Below, we plot the profile of
-the mitochondrial and peroxisome markers. 
-
+the mitochondrial and peroxisome markers to highlight the differences
+in profiles between these two sets of markers along the 6th and 7th
+fractions, as represented above along the 7th PC on the PCA plot.
 
 ```{r plotDist}
-par(mfrow = c(2, 1))
-o <- order(hyperLOPIT$Fraction.No)
-cls <- c(Peroxisome = "darkblue", Mitochondrion = "purple")
-for (k in c("Mitochondrion", "Peroxisome")) {
-    plotDist(hyperLOPIT[fData(hyperLOPIT)$markers == k, o],
-             pcol = cls[k])
-    title(main = k)
-}
+hlo <- hyperLOPIT[, order(hyperLOPIT$Fraction.No)]
+plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
+         pcol = "purple", fractions = "Fraction.No")
+title(main = "Marker occupancy profiles along the gradient")
+matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
+         lty = 1, col = "darkblue", type = "l")
+legend("topleft", c("Mitochondrion", "Peroxisome"),
+       lty = 1, col = c("purple", "blue"), bty = "n")
 ```
-
-
-
-
 
 # Replication
 

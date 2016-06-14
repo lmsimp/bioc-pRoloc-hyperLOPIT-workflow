@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:16:22 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:36:49 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:16:22 2016 
-## Subset [6725,20][5032,20] Tue Jun 14 20:16:22 2016 
-## Removed features with more than 0 NAs: Tue Jun 14 20:16:22 2016 
-## Dropped featureData's levels Tue Jun 14 20:16:22 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:36:49 2016 
+## Subset [6725,20][5032,20] Tue Jun 14 20:36:49 2016 
+## Removed features with more than 0 NAs: Tue Jun 14 20:36:49 2016 
+## Dropped featureData's levels Tue Jun 14 20:36:49 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -880,7 +880,7 @@ the apparent overlap in the two first PCs.
 par(mfrow = c(1, 2))
 plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
-plot2D(hl, dims = c(1, 7))
+plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 ```
 
 ![plot of chunk plotmarkers](figure/plotmarkers-1.png)
@@ -909,26 +909,23 @@ efficiently visualise the complete dataset and assess the relative
 separation of different sub-cellular niches, comparing profiles of a
 few marker clusters is useful to assess how exactly they differ (in
 terms of peak fractions, for example). Below, we plot the profile of
-the mitochondrial and peroxisome markers. 
-
+the mitochondrial and peroxisome markers to highlight the differences
+in profiles between these two sets of markers along the 6th and 7th
+fractions, as represented above along the 7th PC on the PCA plot.
 
 
 ```r
-par(mfrow = c(2, 1))
-o <- order(hyperLOPIT$Fraction.No)
-cls <- c(Peroxisome = "darkblue", Mitochondrion = "purple")
-for (k in c("Mitochondrion", "Peroxisome")) {
-    plotDist(hyperLOPIT[fData(hyperLOPIT)$markers == k, o],
-             pcol = cls[k])
-    title(main = k)
-}
+hlo <- hyperLOPIT[, order(hyperLOPIT$Fraction.No)]
+plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
+         pcol = "purple", fractions = "Fraction.No")
+title(main = "Marker occupancy profiles along the gradient")
+matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
+         lty = 1, col = "darkblue", type = "l")
+legend("topleft", c("Mitochondrion", "Peroxisome"),
+       lty = 1, col = c("purple", "blue"), bty = "n")
 ```
 
 ![plot of chunk plotDist](figure/plotDist-1.png)
-
-
-
-
 
 # Replication
 
@@ -1208,7 +1205,7 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.11.0    pRoloc_1.13.4        MLInterfaces_1.53.0 
+##  [1] pRolocdata_1.11.0    pRoloc_1.13.5        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
 ## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.7.2  
