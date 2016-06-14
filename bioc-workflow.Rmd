@@ -446,15 +446,29 @@ identification of well resolved clusters in the data, constitutes an
 unbiased assessment of the data structure, demonstrating the
 successful separation of sub-cellular clusters.
 
-There are other dimensionality reduction methods available in the
-`plot2D` function, which can be parametrised with the `method`
-argument. 
-
-
-**TODO** Advantages, disadvantages? See
+**TODO** There are other dimensionality reduction methods available in
+the `plot2D` function, which can be parametrised with the `method`
+argument.  Advantages, disadvantages? See
 [this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
 very interesting gist with intriguing tSNE examples. This might be
 better to come after markers.
+
+It is also useful to visualise the relative intensities along the
+gradient to identify fractions displaying particularly low yield. This
+can be done using the `plotDist` and `boxplot` functions, that plot
+the protein profiles occupancy along the gradient (we also display the
+mean fraction intensities) and a `boxplot` of the column
+intensities. In the two plots displayed below, we re-order the
+fractions to pair corresponding fractions in the two replicates
+(rather than ordering the fractions by replicate).
+
+```{r qcbx, fig.width = 12}
+par(mfrow = c(1, 2))
+o <- order(hyperLOPIT$Fraction.No)
+plotDist(hyperLOPIT[, o], pcol = "#00000010")
+lines(colMeans(exprs(hyperLOPIT[, o])), col = "red", type = "b")
+boxplot(exprs(hyperLOPIT[, o]))
+```
 
 # Markers
 
@@ -510,12 +524,21 @@ or any conversion softwares available online.
 
 We now visualise these annotations along the PCA plot using the
 `plot2D` function. We also use the `addLegend` function to map the
-marker classes to the pre-defined colours. 
+marker classes to the pre-defined colours. We also display the data
+along the first and seventh PCs using the `dims` argument. Note that
+in this second call to the `plot2D` function, we have omitted the
+`fcol` argument, as the `"markers"` feature variable name is the
+default value. We choose to display PCs 1 and 7 to illustrate that
+while upper principal components explain much less variability in the
+data (2.23% for PC7, as opposed to 48.41% for PC1), we see that the
+mitochondrial and peroxisome clusters can be differenciated, despite
+the apparent overlap in the two first PCs.
 
-```{r plotmarkers}
-## Plot mouse markers
+```{r plotmarkers, fig.width = 12}
+par(mfrow = c(1, 2))
 plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
+plot2D(hl, dims = c(1, 7))
 ```
 
 The colours have been defined so as to enable to differenciate up to
@@ -662,9 +685,12 @@ mean(diag(pearcor0))
 ```
 
 ```{r}
+
 data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2)
 data(hyperLOPIT2015ms3r3)
+
+hyperLOPIT2015ms3r3 <- hyperLOPIT2015ms3r3[, -(2:4)]
 
 hll <- MSnSetList(list(hyperLOPIT2015ms3r1,
                        hyperLOPIT2015ms3r2,
@@ -674,10 +700,23 @@ ij <- combn(3, 2)
 pc <- apply(ij, 2,
             function(.ij) {
                 tmp <- suppressMessages(commonFeatureNames(hll[.ij]))
-                diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]]))))
+                i <- intersect(tmp[[1]]$Fraction.No, tmp[[2]]$Fraction.No)
+                diag(cor(t(exprs(tmp[[1]][, match(i, tmp[[1]]$Fraction.No)])),
+                         t(exprs(tmp[[2]][, match(i, tmp[[2]]$Fraction.No)]))))
             })
 names(pc) <- apply(ij, 2, paste, collapse = ".")
 sapply(pc, summary)
+
+
+data(hyperLOPIT2015ms3r3)
+tmp <- commonFeatureNames(hyperLOPIT2015ms3r1[, -(2:4)],
+                          hyperLOPIT2015ms3r3[, -(2:4)])
+summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
+
+data(hyperLOPIT2015ms3r3)
+tmp <- commonFeatureNames(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r3)
+summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
+
 ```
 
 The third replicate was produce over 1 year after the first two by

@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 16:14:37 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:16:22 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 16:14:37 2016 
-## Subset [6725,20][5032,20] Tue Jun 14 16:14:37 2016 
-## Removed features with more than 0 NAs: Tue Jun 14 16:14:37 2016 
-## Dropped featureData's levels Tue Jun 14 16:14:37 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 20:16:22 2016 
+## Subset [6725,20][5032,20] Tue Jun 14 20:16:22 2016 
+## Removed features with more than 0 NAs: Tue Jun 14 20:16:22 2016 
+## Dropped featureData's levels Tue Jun 14 20:16:22 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -735,15 +735,32 @@ identification of well resolved clusters in the data, constitutes an
 unbiased assessment of the data structure, demonstrating the
 successful separation of sub-cellular clusters.
 
-There are other dimensionality reduction methods available in the
-`plot2D` function, which can be parametrised with the `method`
-argument. 
-
-
-**TODO** Advantages, disadvantages? See
+**TODO** There are other dimensionality reduction methods available in
+the `plot2D` function, which can be parametrised with the `method`
+argument.  Advantages, disadvantages? See
 [this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
 very interesting gist with intriguing tSNE examples. This might be
 better to come after markers.
+
+It is also useful to visualise the relative intensities along the
+gradient to identify fractions displaying particularly low yield. This
+can be done using the `plotDist` and `boxplot` functions, that plot
+the protein profiles occupancy along the gradient (we also display the
+mean fraction intensities) and a `boxplot` of the column
+intensities. In the two plots displayed below, we re-order the
+fractions to pair corresponding fractions in the two replicates
+(rather than ordering the fractions by replicate).
+
+
+```r
+par(mfrow = c(1, 2))
+o <- order(hyperLOPIT$Fraction.No)
+plotDist(hyperLOPIT[, o], pcol = "#00000010")
+lines(colMeans(exprs(hyperLOPIT[, o])), col = "red", type = "b")
+boxplot(exprs(hyperLOPIT[, o]))
+```
+
+![plot of chunk qcbx](figure/qcbx-1.png)
 
 # Markers
 
@@ -848,13 +865,22 @@ or any conversion softwares available online.
 
 We now visualise these annotations along the PCA plot using the
 `plot2D` function. We also use the `addLegend` function to map the
-marker classes to the pre-defined colours. 
+marker classes to the pre-defined colours. We also display the data
+along the first and seventh PCs using the `dims` argument. Note that
+in this second call to the `plot2D` function, we have omitted the
+`fcol` argument, as the `"markers"` feature variable name is the
+default value. We choose to display PCs 1 and 7 to illustrate that
+while upper principal components explain much less variability in the
+data (2.23% for PC7, as opposed to 48.41% for PC1), we see that the
+mitochondrial and peroxisome clusters can be differenciated, despite
+the apparent overlap in the two first PCs.
 
 
 ```r
-## Plot mouse markers
+par(mfrow = c(1, 2))
 plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
 addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
+plot2D(hl, dims = c(1, 7))
 ```
 
 ![plot of chunk plotmarkers](figure/plotmarkers-1.png)
@@ -994,6 +1020,8 @@ data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2)
 data(hyperLOPIT2015ms3r3)
 
+hyperLOPIT2015ms3r3 <- hyperLOPIT2015ms3r3[, -(2:4)]
+
 hll <- MSnSetList(list(hyperLOPIT2015ms3r1,
                        hyperLOPIT2015ms3r2,
                        hyperLOPIT2015ms3r3))
@@ -1002,7 +1030,9 @@ ij <- combn(3, 2)
 pc <- apply(ij, 2,
             function(.ij) {
                 tmp <- suppressMessages(commonFeatureNames(hll[.ij]))
-                diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]]))))
+                i <- intersect(tmp[[1]]$Fraction.No, tmp[[2]]$Fraction.No)
+                diag(cor(t(exprs(tmp[[1]][, match(i, tmp[[1]]$Fraction.No)])),
+                         t(exprs(tmp[[2]][, match(i, tmp[[2]]$Fraction.No)]))))
             })
 names(pc) <- apply(ij, 2, paste, collapse = ".")
 sapply(pc, summary)
@@ -1010,12 +1040,49 @@ sapply(pc, summary)
 
 ```
 ##             1.2     1.3     2.3
-## Min.    -0.8132 -0.7461 -0.9271
-## 1st Qu.  0.6989  0.2450  0.3109
-## Median   0.8321  0.5996  0.6805
-## Mean     0.7726  0.4808  0.5380
-## 3rd Qu.  0.9246  0.7912  0.8684
-## Max.     0.9994  0.9991  0.9995
+## Min.    -0.8132 -0.9101 -0.9305
+## 1st Qu.  0.6989  0.2937  0.4237
+## Median   0.8321  0.5644  0.7271
+## Mean     0.7726  0.4997  0.5845
+## 3rd Qu.  0.9246  0.8105  0.8670
+## Max.     0.9994  0.9999  0.9997
+```
+
+```r
+data(hyperLOPIT2015ms3r3)
+tmp <- commonFeatureNames(hyperLOPIT2015ms3r1[, -(2:4)],
+                          hyperLOPIT2015ms3r3[, -(2:4)])
+```
+
+```
+## 4817 features in common
+```
+
+```r
+summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## -0.9101  0.2937  0.5644  0.4997  0.8105  0.9999
+```
+
+```r
+data(hyperLOPIT2015ms3r3)
+tmp <- commonFeatureNames(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r3)
+```
+
+```
+## 4817 features in common
+```
+
+```r
+summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## -0.7461  0.2450  0.5996  0.4808  0.7912  0.9991
 ```
 
 The third replicate was produce over 1 year after the first two by
