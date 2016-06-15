@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 21:40:59 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Jun 15 10:48:26 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Jun 14 21:40:59 2016 
-## Subset [6725,20][5032,20] Tue Jun 14 21:41:00 2016 
-## Removed features with more than 0 NAs: Tue Jun 14 21:41:00 2016 
-## Dropped featureData's levels Tue Jun 14 21:41:00 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Jun 15 10:48:26 2016 
+## Subset [6725,20][5032,20] Wed Jun 15 10:48:26 2016 
+## Removed features with more than 0 NAs: Wed Jun 15 10:48:26 2016 
+## Dropped featureData's levels Wed Jun 15 10:48:26 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -959,14 +959,53 @@ acurate quantitation.
 |         2|X130C       |Chromatin         |                NA|          10|
 |         2|X131        |20                |              31.9|           9|
 
-On the figure below, we compare the relative intensities of channels 7
-to 10 on scatter plots, highlighting different marker sets. These
-differences result from different peak fractions for these niches on
-the mitochondrial and chromatin occupancy profiles for the two
-replicates.
+<!-- On the figure below, we compare the relative intensities of channels 7 -->
+<!-- to 10 on scatter plots, highlighting different marker sets. These -->
+<!-- differences result from different peak fractions for these niches on -->
+<!-- the mitochondrial and chromatin occupancy profiles for the two -->
+<!-- replicates. -->
 
 
-![plot of chunk repl1](figure/repl1-1.png)
+<!-- ```{r repl1, eval = TRUE, echo=FALSE, fig.width = 12} -->
+<!-- sel0 <- fData(hyperLOPIT)$markers != "unknown" -->
+<!-- cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)] -->
+<!-- cls[!sel0] <- getUnknowncol() -->
+
+
+<!-- par(mfrow = c(2, 4)) -->
+<!-- for (i in c(7, 8, 10, 9)) { -->
+<!--     plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls, -->
+<!--          main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"])) -->
+<!--     points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19) -->
+<!--     grid() -->
+<!--     abline(0, 1, col = "red") -->
+<!-- } -->
+<!-- plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "") -->
+<!-- addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7) -->
+
+
+<!-- i <- fData(hyperLOPIT)$markers == "Mitochondrion" -->
+<!-- plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2], -->
+<!--          featureNames(hyperLOPIT)[i], type = "l", -->
+<!--          mcol = "orange") -->
+<!-- title(main = "Mitochondrion") -->
+<!-- ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2]) -->
+<!-- matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1) -->
+<!-- legend("topleft", paste("Replicate", 1:2), -->
+<!--        col = c("#F781BF", "orange"), -->
+<!--        lty = 1, bty = "n") -->
+
+
+<!-- i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin" -->
+<!-- plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2], -->
+<!--          featureNames(hyperLOPIT)[i], type = "l") -->
+<!-- ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2]) -->
+<!-- matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1) -->
+<!-- title(main = "Chromatin") -->
+<!-- legend("topleft", paste("Replicate", 1:2), -->
+<!--        col = c("#984EA3", "steelblue"), -->
+<!--        lty = 1, bty = "n") -->
+<!-- ``` -->
 
 
 The more relevant comparison unit is not a single fraction, but rather
@@ -987,6 +1026,8 @@ plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
 ```
 
 ![plot of chunk plot2Drep](figure/plot2Drep-1.png)
+
+
 
 Peason correlation
 
@@ -1010,80 +1051,6 @@ mean(diag(pearcor0))
 ```
 ## [1] 0.8853138
 ```
-
-
-```r
-data(hyperLOPIT2015ms3r1)
-data(hyperLOPIT2015ms3r2)
-data(hyperLOPIT2015ms3r3)
-
-hyperLOPIT2015ms3r3 <- hyperLOPIT2015ms3r3[, -(2:4)]
-
-hll <- MSnSetList(list(hyperLOPIT2015ms3r1,
-                       hyperLOPIT2015ms3r2,
-                       hyperLOPIT2015ms3r3))
-
-ij <- combn(3, 2)
-pc <- apply(ij, 2,
-            function(.ij) {
-                tmp <- suppressMessages(commonFeatureNames(hll[.ij]))
-                i <- intersect(tmp[[1]]$Fraction.No, tmp[[2]]$Fraction.No)
-                diag(cor(t(exprs(tmp[[1]][, match(i, tmp[[1]]$Fraction.No)])),
-                         t(exprs(tmp[[2]][, match(i, tmp[[2]]$Fraction.No)]))))
-            })
-names(pc) <- apply(ij, 2, paste, collapse = ".")
-sapply(pc, summary)
-```
-
-```
-##             1.2     1.3     2.3
-## Min.    -0.8132 -0.9101 -0.9305
-## 1st Qu.  0.6989  0.2937  0.4237
-## Median   0.8321  0.5644  0.7271
-## Mean     0.7726  0.4997  0.5845
-## 3rd Qu.  0.9246  0.8105  0.8670
-## Max.     0.9994  0.9999  0.9997
-```
-
-```r
-data(hyperLOPIT2015ms3r3)
-tmp <- commonFeatureNames(hyperLOPIT2015ms3r1[, -(2:4)],
-                          hyperLOPIT2015ms3r3[, -(2:4)])
-```
-
-```
-## 4817 features in common
-```
-
-```r
-summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-## -0.9101  0.2937  0.5644  0.4997  0.8105  0.9999
-```
-
-```r
-data(hyperLOPIT2015ms3r3)
-tmp <- commonFeatureNames(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r3)
-```
-
-```
-## 4817 features in common
-```
-
-```r
-summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
-```
-
-```
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-## -0.7461  0.2450  0.5996  0.4808  0.7912  0.9991
-```
-
-The third replicate was produce over 1 year after the first two by
-another operator.
 
 - What about classification on different replicates?
 
@@ -1220,7 +1187,7 @@ sessionInfo()
 ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
 ## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.4.0        
 ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-## [19] jsonlite_0.9.20       nloptr_1.0.4          caret_6.0-68         
+## [19] jsonlite_0.9.21       nloptr_1.0.4          caret_6.0-68         
 ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
 ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.13.2         
 ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-6         
@@ -1240,7 +1207,7 @@ sessionInfo()
 ## [70] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
 ## [73] rgl_0.95.1441         mzID_1.11.2           evaluate_0.9         
 ## [76] lattice_0.20-33       htmlwidgets_0.6       gbm_2.1.1            
-## [79] plyr_1.8.3            magrittr_1.5          R6_2.1.2             
+## [79] plyr_1.8.4            magrittr_1.5          R6_2.1.2             
 ## [82] DBI_0.4-1             mgcv_1.8-12           survival_2.39-4      
 ## [85] RCurl_1.95-4.8        nnet_7.3-12           car_2.1-2            
 ## [88] mlbench_2.1-1         grid_3.4.0            FNN_1.1              

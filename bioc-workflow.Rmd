@@ -605,53 +605,53 @@ i <- hyperLOPIT$Fraction.No %in% 7:10
 kable(pData(hyperLOPIT)[i, -3], row.names = FALSE)
 ```
 
-On the figure below, we compare the relative intensities of channels 7
-to 10 on scatter plots, highlighting different marker sets. These
-differences result from different peak fractions for these niches on
-the mitochondrial and chromatin occupancy profiles for the two
-replicates.
+<!-- On the figure below, we compare the relative intensities of channels 7 -->
+<!-- to 10 on scatter plots, highlighting different marker sets. These -->
+<!-- differences result from different peak fractions for these niches on -->
+<!-- the mitochondrial and chromatin occupancy profiles for the two -->
+<!-- replicates. -->
 
 
-```{r repl1, eval = TRUE, echo=FALSE, fig.width = 12}
-sel0 <- fData(hyperLOPIT)$markers != "unknown"
-cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)]
-cls[!sel0] <- getUnknowncol()
+<!-- ```{r repl1, eval = TRUE, echo=FALSE, fig.width = 12} -->
+<!-- sel0 <- fData(hyperLOPIT)$markers != "unknown" -->
+<!-- cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)] -->
+<!-- cls[!sel0] <- getUnknowncol() -->
 
 
-par(mfrow = c(2, 4))
-for (i in c(7, 8, 10, 9)) {
-    plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls,
-         main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"]))
-    points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19)
-    grid()
-    abline(0, 1, col = "red")
-}
-plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "")
-addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7)
+<!-- par(mfrow = c(2, 4)) -->
+<!-- for (i in c(7, 8, 10, 9)) { -->
+<!--     plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls, -->
+<!--          main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"])) -->
+<!--     points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19) -->
+<!--     grid() -->
+<!--     abline(0, 1, col = "red") -->
+<!-- } -->
+<!-- plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "") -->
+<!-- addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7) -->
 
 
-i <- fData(hyperLOPIT)$markers == "Mitochondrion"
-plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
-         featureNames(hyperLOPIT)[i], type = "l",
-         mcol = "orange")
-title(main = "Mitochondrion")
-## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
-matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1)
-legend("topleft", paste("Replicate", 1:2),
-       col = c("#F781BF", "orange"),
-       lty = 1, bty = "n")
+<!-- i <- fData(hyperLOPIT)$markers == "Mitochondrion" -->
+<!-- plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2], -->
+<!--          featureNames(hyperLOPIT)[i], type = "l", -->
+<!--          mcol = "orange") -->
+<!-- title(main = "Mitochondrion") -->
+<!-- ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2]) -->
+<!-- matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1) -->
+<!-- legend("topleft", paste("Replicate", 1:2), -->
+<!--        col = c("#F781BF", "orange"), -->
+<!--        lty = 1, bty = "n") -->
 
 
-i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin"
-plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
-         featureNames(hyperLOPIT)[i], type = "l")
-## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
-matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1)
-title(main = "Chromatin")
-legend("topleft", paste("Replicate", 1:2),
-       col = c("#984EA3", "steelblue"),
-       lty = 1, bty = "n")
-```
+<!-- i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin" -->
+<!-- plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2], -->
+<!--          featureNames(hyperLOPIT)[i], type = "l") -->
+<!-- ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2]) -->
+<!-- matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1) -->
+<!-- title(main = "Chromatin") -->
+<!-- legend("topleft", paste("Replicate", 1:2), -->
+<!--        col = c("#984EA3", "steelblue"), -->
+<!--        lty = 1, bty = "n") -->
+<!-- ``` -->
 
 
 The more relevant comparison unit is not a single fraction, but rather
@@ -670,6 +670,8 @@ plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
        mirrorX = TRUE)
 ```
 
+
+
 Peason correlation
 
 ```{r}
@@ -680,44 +682,6 @@ pearcor0 <- cor(t(i1[, seq(1, 10, 2)]), t(i2[, seq(1, 10, 2)]))
 mean(diag(pearcor))
 mean(diag(pearcor0))
 ```
-
-```{r}
-
-data(hyperLOPIT2015ms3r1)
-data(hyperLOPIT2015ms3r2)
-data(hyperLOPIT2015ms3r3)
-
-hyperLOPIT2015ms3r3 <- hyperLOPIT2015ms3r3[, -(2:4)]
-
-hll <- MSnSetList(list(hyperLOPIT2015ms3r1,
-                       hyperLOPIT2015ms3r2,
-                       hyperLOPIT2015ms3r3))
-
-ij <- combn(3, 2)
-pc <- apply(ij, 2,
-            function(.ij) {
-                tmp <- suppressMessages(commonFeatureNames(hll[.ij]))
-                i <- intersect(tmp[[1]]$Fraction.No, tmp[[2]]$Fraction.No)
-                diag(cor(t(exprs(tmp[[1]][, match(i, tmp[[1]]$Fraction.No)])),
-                         t(exprs(tmp[[2]][, match(i, tmp[[2]]$Fraction.No)]))))
-            })
-names(pc) <- apply(ij, 2, paste, collapse = ".")
-sapply(pc, summary)
-
-
-data(hyperLOPIT2015ms3r3)
-tmp <- commonFeatureNames(hyperLOPIT2015ms3r1[, -(2:4)],
-                          hyperLOPIT2015ms3r3[, -(2:4)])
-summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
-
-data(hyperLOPIT2015ms3r3)
-tmp <- commonFeatureNames(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r3)
-summary(diag(cor(t(exprs(tmp[[1]])), t(exprs(tmp[[2]])))))
-
-```
-
-The third replicate was produce over 1 year after the first two by
-another operator.
 
 - What about classification on different replicates?
 
