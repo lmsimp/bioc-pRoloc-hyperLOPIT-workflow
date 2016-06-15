@@ -446,9 +446,9 @@ very interesting gist with intriguing tSNE examples.
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input to a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but it is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `r Biocpkg("pRoloc")` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are also Uniprot IDs (see `head(mrk)` in the code chunk below), so it is straightforward to match names between the markers and the `MSnSet` instance. If the naming between the marker sets and the `MSnSet` dataset are different, one will have to convert and match the proteins according to the appropriate identifier. Sometimes, we find the equivalent entry name, Uniprot ID or accession number is stored with the data, which makes conversion between identifers relatively straightforward. If this is not the case however, there are conversion softwares online available, for example XXX.   
+In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input to a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but it is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. `r Biocpkg("pRoloc")` provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot Accession Numbers (ACs) stored as the `featureNames` (see `head(featureNames(lopit2016))`) and mouse markers in `pRolocmarkers` are also ACs (see `head(mrk)` in the code chunk below), so it is straightforward to match the protein markers in `pRolocmarkers` to the proteins in the `MSnSet` instance. If the naming between the marker sets and the `MSnSet` dataset are different, there are several conversion softwares available online such as the [UniprotKB mapping tool](http://www.uniprot.org/uploadlists/).
 
-In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
+In the code chunk below, we demonstrate how to add markers using the `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
 
 ```{r addmrkers}
 ## List available marker sets
@@ -538,18 +538,43 @@ svmRes <- svmClassification(pdRes, params,
                             fcol = "SVM.marker.set")
 ```
 
-Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located, here for example these are located in the column called `svm`. Additionally, when calling `plot2D` we use the `cex` argument to change the point size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
+Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located e.g. `fcol =  "svm"`. 
+
+Additionally, when calling `plot2D` we can use the `cex` argument to change the size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
 
 ```{r setColors, include=FALSE}
 setStockcol(paste0(getStockcol(), 70))
 ```
 ```{r plotSVM, eval=TRUE}
+## set point size of each protein to be inversely proportional to the SVM score
 ptsze <- exp(fData(svmRes)$svm.scores) - 1
+
+## plot new predictions
 plot2D(svmRes, fcol = "svm", cex = ptsze)
 addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
 
 ## Thresholding
+
+It is common when applying a supervised classification algorithm to set a specific score cutoff on which to define new assignments, below which classifications are set to unknown/unassigned. This is because in a supervised learning setup proteins can only be predicted to be localised to one of the sub-cellular niches that appear in the labelled training data. We can not guaranette (and do not expect) that the whole class diversity to be represented in the training data as (1) finding markers that represent the whole diversity of the cell is challenging and (2) many sub-cellular niches contain too few proteins to train on (note: we recommend a minimum of 13 markers per sub-cellular class for stratified 80/20 partitioning and cross-validation). 
+
+Deciding on a threshold is not trivial as classifier scores are heavily dependent upon the classifier used and different sub-cellular niches can exhibit different score distributions. We recommend one to set class-specific score distributions. In the code chunk below we display a boxplot of the score distributions per organelle.
+
+```{r thresholds}
+
+```
+
+To help examine these distributions there is also a dedicated interactive application in the `r Biocpkg("pRolocGUI")` package. To access this application:
+
+```{r classifyApp}
+
+```
+
+To launch the classify application:
+
+- Essential for protein localisation as we do not want to force all proteins in to one category (allow for multiple lcoalisations or localisations outside the training data set e.g. new novel compartments)
+
+- `getPredictions` function allows you to pass a score threshold. Also `classify` application available to interactively view output of thresholds
 
 
 ## Transfer learning
