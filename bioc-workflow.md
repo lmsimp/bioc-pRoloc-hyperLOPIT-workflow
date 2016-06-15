@@ -73,12 +73,12 @@ As a use-case, we analyse a recent high-throughput spatial proteomics
 dataset from pluripotent mouse embryonic stem cells (E14TG2a)
 [@hyper]. The data was generated using hyperplexed LOPIT (hyperLOPIT),
 an improved method relying on improved sub-cellular fractionation and
-more acurate quantitation, leading to more reliable classification of
+more accurate quantitation, leading to more reliable classification of
 protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
 use of Tandem Mass Tag (TMT) [Thompson:2003] 10-plex and application
 of the MS data acquisition technique named synchronous precursor
-selection MS$^3$ (SPS-MS$^3$) [@McAlister:2014], for TMT
+selection MS^3^ (SPS-MS^3^) [@McAlister:2014], for TMT
 quantification with high accuracy and precision. Three biological
 replicates were generated from the E14TG2a experiment, the first was
 to target low density fractions and the second and third were to
@@ -98,7 +98,7 @@ third-party applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
 relevant for any quantitative spatial proteomics data, irrespective of
-the fractionation or quantitation (i.e. labeled or label-free)
+the fractionation or quantitation (i.e. labelled or label-free)
 methods.
 
 ## The infrastructure: *[pRoloc](http://bioconductor.org/packages/pRoloc)* and *[MSnbase](http://bioconductor.org/packages/MSnbase)* in Bioconductor
@@ -146,7 +146,7 @@ locates the `extdata` in the *[pRolocdata](http://bioconductor.org/packages/pRol
 the hard drive and `dir`, that displays the full path to the file
 matching the `hyperLOPIT-SIData-ms3-rep12-intersect.csv` pattern,
 which corresponds the the file of interest. In the last line, we print
-the filename (not the full path, which will vary from computer to
+the file name (not the full path, which will vary from computer to
 computer). 
 
 
@@ -234,11 +234,11 @@ getEcols(csvfile, split = ",", n = 2)
 It is now easy for one to identify that the quantitation data,
 corresponding to the 10 TMT isobaric tags, is located in columns 8
 to 27. We now have the two mandatory arguments to `readMSnSet2`,
-namely the filename (stored in the `csvfile` variable) and the
+namely the file name (stored in the `csvfile` variable) and the
 quantitation column indices. In addition to these, it is also possible
 to pass the optional argument `fnames` to indicate which column to use
 as the labels by which to identify each protein in the sample. Here,
-we use `fnames = 1` to use the Uniprot identifiers contained in the
+we use `fnames = 1` to use the UniProt identifiers contained in the
 first (unnamed) column of the spreadsheet. We also need to specify to
 skip the first line of the file (for the same reason that we used 
 `n = 2` in `getEcols` above) to read the `csv` data and convert it to an
@@ -275,7 +275,7 @@ hl
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 1.21.6
+##  MSnbase version: 1.21.7
 ```
 
 As briefly mentioned above, the quantitation data is stored in the
@@ -331,7 +331,7 @@ contains 25 columns describing information such as the number of
 peptides, associated markers, machine learning results etc. 
 
 For demonstration in the code chunk below keep the 2nd, 8th and 11th
-columns which contain the Uniprot entry names and two different marker
+columns which contain the UniProt entry names and two different marker
 sets to use an input for machine learning analyses (see sections on
 markers and subsequent sections) and rename the first feature variable
 names.
@@ -444,14 +444,14 @@ hl <- normalise(hl, method = "sum")
 ```
 
 This transformation of the data assures to cancel the effect of the
-absolute intensities of the quantitive features along the rows, to
+absolute intensities of the quantitative features along the rows, to
 focus subsequent analyses on the relative profiles along the
 sub-cellular fractions.
 
 The same `normalise` function (or `normalize`, both spellings are
 supported) can also be applied in the first case described
 above. Different normalisation methods such as mean or median scaling,
-variance stabilitation or quantile normalisation, to cite a few, can
+variance stabilisation or quantile normalisation, to cite a few, can
 be applied to accomodation different needs.
 
 Before combination, the two replicates in the `hl` data that we
@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Jun  6 00:06:24 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Jun 15 10:48:26 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Jun  6 00:06:24 2016 
-## Subset [6725,20][5032,20] Mon Jun  6 00:06:24 2016 
-## Removed features with more than 0 NAs: Mon Jun  6 00:06:24 2016 
-## Dropped featureData's levels Mon Jun  6 00:06:24 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Jun 15 10:48:26 2016 
+## Subset [6725,20][5032,20] Wed Jun 15 10:48:26 2016 
+## Removed features with more than 0 NAs: Wed Jun 15 10:48:26 2016 
+## Dropped featureData's levels Wed Jun 15 10:48:26 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -682,48 +682,44 @@ all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
 ## [1] TRUE
 ```
 
-## Replication
-
-With the aim of maximising the sub-cellular resolution and,
-consequently, the reliability in protein sub-cellular assignments, we
-follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. Trotter et al. have shown
-that ...
-
-Why is the below no a good indication: fraction, even if same index,
-are not necessarily same; replication of single fractions fractions is
-not really relevant, but rather complete profiles; more than single
-profiles, it's rather relative profiles in the frame of whole dataset.
-
-
-```r
-par(mfrow = c(3, 4))
-for (i in 1:10) {
-    plot(exprs(hl[, c(i, i+10)]))
-    grid()
-    abline(0, 1, col = "red")
-}
-```
-
-
-```r
-par(mfrow = c(1, 2))
-plot2D(hl[hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[hl$replicate == 2], fcol = "SVM.marker.set", mirrorY = TRUE, main = "Replicate 2")
-```
-
-![plot of chunk plot2Drep](figure/plot2Drep-1.png)
-
-Could compute squared differences between fractions over profile for
-each protein, and compare to Dunkley 2006, to show improvement in
-replicability. Or to have an internal replication measurement. Or what
-about wave?
-
-This might be better off in the QC section...
+When more than 2 data are to be combine and/or too many proteins were
+not consistently assayed, leading to too many proteins being filtered
+out, we suggest to implement an ensemble of classifiers voting on
+protein-sub-cellular niche membership over the output of several
+experiments (see section *Supervised machine learning* for the
+description of sub-cellular assingments).
 
 # Quality Control
 
-Data quality is routinely examined through visualisation to verify that sub-cellular niches have been separated along the gradient. Based on De Duve's principle [@DeDuve:1981] proteins that co-localise exhibit similar quantitation profiles across the gradient fractions employed. One approach that has been widely used to visualise and inspect high throughput mass spectrometry-based proteomics data is principal components analysis (PCA). PCA is one of many dimensionality reduction methods, that allow one to effectively summarise multi-dimensional data in to 2 or 3 dimensions to enable visualisation. Very generally, the original continuous multi-dimensional data is transformed into a set of orthogonal components ordered according to the amount of variability that they describe. The `plot2D` method in *[pRoloc](http://bioconductor.org/packages/pRoloc)* allows one to plot the principal components (PCs) of a dataset against one another, by default the first two components are plotted on the x- and y-axis, respectively (the `dims` argument can be used to plot other PCs). If distinct clusters are observed, we assume that there is organellar separation present in the data. In the code chunk below we produce a PCA plot of the mouse stem cell dataset. One point on the plot represents one protein. We can indeed see several distinct protein clusters. Although, plotting the PCs does not give us a hard quantitative measure of separation, it is extremely useful summarising complex experimental information in one figure, to get an simplified overview of the data. 
+Data quality is routinely examined through visualisation to verify
+that sub-cellular niches have been separated along the gradient. Based
+on De Duve's principle [@DeDuve:1981] proteins that co-localise
+exhibit similar quantitation profiles across the gradient fractions
+employed. One approach that has been widely used to visualise and
+inspect high throughput mass spectrometry-based proteomics data is
+principal components analysis (PCA). PCA is one of many dimensionality
+reduction methods, that allow one to effectively summarise
+multi-dimensional data in to 2 or 3 dimensions to enable
+visualisation. Very generally, the original continuous
+multi-dimensional data is transformed into a set of orthogonal
+components ordered according to the amount of variability that they
+describe. The `plot2D` method in *[pRoloc](http://bioconductor.org/packages/pRoloc)* allows one to
+plot the principal components (PCs) of a dataset against one another,
+by default the first two components are plotted on the x- and y-axis,
+respectively (the `dims` argument can be used to plot other PCs). If
+distinct clusters are observed, we assume that there is organellar
+separation present in the data. In the code chunk below we produce a
+PCA plot of the mouse stem cell dataset. One point on the plot
+represents one protein. We can indeed see several distinct protein
+clusters. Although, representing the multi-dimensional data along a
+limited set of PCs does not give us a hard quantitative measure of
+separation, it is extremely useful summarising complex experimental
+information in one figure, to get an simplified overview of the data.
+
+In the code chunk below, we specify `fcol = NULL`, which means not to
+consider any feature variable to annotate the features with
+colours. We will see later how to use this to annotate the PCA plot
+with prior information about sub-cellular markers.
 
 
 ```r
@@ -733,16 +729,57 @@ plot2D(hl, fcol = NULL)
 
 ![plot of chunk qcplot](figure/qcplot-1.png)
 
-**TODO** Mention that there are other dimensionality reduction
-techniques. Advantages, disadvantages? See
+We advise to visualise the without any annotation (i.e. with `fcol =
+NULL`) in a first place, before proceeding with data annotation. The
+identification of well resolved clusters in the data, constitutes an
+unbiased assessment of the data structure, demonstrating the
+successful separation of sub-cellular clusters.
+
+**TODO** There are other dimensionality reduction methods available in
+the `plot2D` function, which can be parametrised with the `method`
+argument.  Advantages, disadvantages? See
 [this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
-very interesting gist with intriguing tSNE examples.
+very interesting gist with intriguing tSNE examples. This might be
+better to come after markers.
+
+It is also useful to visualise the relative intensities along the
+gradient to identify fractions displaying particularly low yield. This
+can be done using the `plotDist` and `boxplot` functions, that plot
+the protein profiles occupancy along the gradient (we also display the
+mean fraction intensities) and a `boxplot` of the column
+intensities. In the two plots displayed below, we re-order the
+fractions to pair corresponding fractions in the two replicates
+(rather than ordering the fractions by replicate).
+
+
+```r
+par(mfrow = c(1, 2))
+o <- order(hyperLOPIT$Fraction.No)
+plotDist(hyperLOPIT[, o], pcol = "#00000010")
+lines(colMeans(exprs(hyperLOPIT[, o])), col = "red", type = "b")
+boxplot(exprs(hyperLOPIT[, o]))
+```
+
+![plot of chunk qcbx](figure/qcbx-1.png)
 
 # Markers
 
-In the context of spatial proteomics, a marker protein is defined as a well-known resident of a specific sub-cellular niche in a species *and* condition of interest. Applying this to machine learning (ML), and specifically supervised learning, for the task of protein localisation prediction, markers constitute the labelled training data to use as input to a classification analyses. Defining well-known residents, and obtaining labelled training data for ML analyses can be time consuming, but it is important to define markers that are representative of the multivariate data space and on which a classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)* provides a convenience function, `addMarkers`, to directly add markers to a `MSnSet` object, as demonstrated in the code chunk below. These marker sets can be accessed using the `pRolocmarkers()` function. Marker sets are stored as a simple named vector in R, and originate from in-house user-defined spreadsheets or a set of markers from previous published studies. The marker vectors that can be accessed from `pRolocmarkers` are named vectors and to enable mapping between the markers and the `MSnSet` instance it is required that the `featureNames` of the `MSnSet` instance match the `names` of the marker. The mouse dataset used here has Uniprot IDs stored as the `featureNames` (see `head(featureNames(lopit2016))`) and the names of the vector of the mouse markers (`mmus` markers) are also Uniprot IDs (see `head(mrk)` in the code chunk below), so it is straightforward to match names between the markers and the `MSnSet` instance. If the naming between the marker sets and the `MSnSet` dataset are different, one will have to convert and match the proteins according to the appropriate identifier. Sometimes, we find the equivalent entry name, Uniprot ID or accession number is stored with the data, which makes conversion between identifers relatively straightforward. If this is not the case however, there are conversion softwares online available, for example XXX.   
-
-In the code chunk below, we demonstrate how to add markers using `pRolocmarkers` function and then visualise these annotations using the `plot2D` function.
+In the context of spatial proteomics, a marker protein is defined as a
+well-known resident of a specific sub-cellular niche in a species
+*and* condition of interest. Applying this to machine learning (ML),
+and specifically supervised learning, for the task of protein
+localisation prediction, markers constitute the labelled training data
+to use as input to a classification analyses. Defining well-known
+residents, and obtaining labelled training data for ML analyses can be
+time consuming, but it is important to define markers that are
+representative of the multivariate data space and on which a
+classifier will be trained and generated. *[pRoloc](http://bioconductor.org/packages/pRoloc)*
+provides a convenience function, `addMarkers`, to directly add markers
+to a `MSnSet` object, as demonstrated in the code chunk below. These
+marker sets can be accessed using the `pRolocmarkers()`
+function. Marker sets are stored as a simple named vector in R, and
+originate from in-house user-defined sets of markers or from previous
+published studies [@Gatto:2014b]. 
 
 
 ```r
@@ -767,6 +804,16 @@ pRolocmarkers()
 ## Saccharomyces cerevisiae [scer_uniprot]:
 ##  Ids: Uniprot Accession, 259 markers
 ```
+
+These markers can then be mapped to an `MSnSet`'s `featureNames`. The
+mouse dataset used here has Uniprot IDs stored as the `featureNames`
+(see `head(featureNames(lopit2016))`) and the names of the vector of
+the mouse markers (`mmus` markers) are also Uniprot IDs (see
+`head(mrk)` in the code chunk below), so it is straightforward to
+match names between the markers and the `MSnSet` instance using the
+`addMarkers` function.
+
+
 
 ```r
 ## Use mouse markers
@@ -806,17 +853,210 @@ hl <- addMarkers(hl, mrk)
 ##                    4095
 ```
 
+If the naming between the marker sets and the `MSnSet` dataset are
+different, one will have to convert and match the proteins according
+to the appropriate identifier. Sometimes, we find the equivalent entry
+name, Uniprot ID or accession number is stored with the data, which
+makes conversion between identifers relatively straightforward. If
+this is not the case however, conversion can be performed using the 
+*[biomaRt](http://bioconductor.org/packages/biomaRt)*, the Bioconductor
+[annotation resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
+or any conversion softwares available online.
+
+We now visualise these annotations along the PCA plot using the
+`plot2D` function. We also use the `addLegend` function to map the
+marker classes to the pre-defined colours. We also display the data
+along the first and seventh PCs using the `dims` argument. Note that
+in this second call to the `plot2D` function, we have omitted the
+`fcol` argument, as the `"markers"` feature variable name is the
+default value. We choose to display PCs 1 and 7 to illustrate that
+while upper principal components explain much less variability in the
+data (2.23% for PC7, as opposed to 48.41% for PC1), we see that the
+mitochondrial and peroxisome clusters can be differenciated, despite
+the apparent overlap in the two first PCs.
+
+
 ```r
-## Plot mouse markers
+par(mfrow = c(1, 2))
 plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
+addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
+plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 ```
 
-![plot of chunk addmrkers](figure/addmrkers-1.png)
+![plot of chunk plotmarkers](figure/plotmarkers-1.png)
 
-In general, the Gene Ontology (GO) [@Ashburner:2000], and in particular the cellular compartment (CC) namespace are a good starting point for protein annotation and marker definition. It is important to note however that automatic retrieval of sub-cellular localisation information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the beginning in defining a marker set for downstream analyses. Expert curation is vital to check that any annotation added is in the correct context for the the biological question under investigation. 
+The colours have been defined so as to enable to differenciate up to
+30 classes. If more are provided, different character symbols
+(circles, squares, ... and empty and solid symbols) are used. The
+colours and the default plotting characters (solid dots for the
+markers and empty circles for the features of unknown localisation)
+can of course be changed, as described in the `setStockcol` manual
+page.
+
+In general, the Gene Ontology (GO) [@Ashburner:2000], and in
+particular the cellular compartment (CC) namespace are a good starting
+point for protein annotation and marker definition. It is important to
+note however that automatic retrieval of sub-cellular localisation
+information, from *[pRoloc](http://bioconductor.org/packages/pRoloc)* or elsewhere, is only the
+beginning in defining a marker set for downstream analyses. Expert
+curation is vital to check that any annotation added is in the correct
+context for the the biological question under investigation.
+
+Another useful visualisation that relies on marker annotation is the
+representation of the protein profiles occupancy along the gradient
+using the `plotDist` function. While the PCA plot enables to
+efficiently visualise the complete dataset and assess the relative
+separation of different sub-cellular niches, comparing profiles of a
+few marker clusters is useful to assess how exactly they differ (in
+terms of peak fractions, for example). Below, we plot the profile of
+the mitochondrial and peroxisome markers to highlight the differences
+in profiles between these two sets of markers along the 6th and 7th
+fractions, as represented above along the 7th PC on the PCA plot.
+
+
+```r
+hlo <- hyperLOPIT[, order(hyperLOPIT$Fraction.No)]
+plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
+         pcol = "purple", fractions = "Fraction.No")
+title(main = "Marker occupancy profiles along the gradient")
+matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
+         lty = 1, col = "darkblue", type = "l")
+legend("topleft", c("Mitochondrion", "Peroxisome"),
+       lty = 1, col = c("purple", "blue"), bty = "n")
+```
+
+![plot of chunk plotDist](figure/plotDist-1.png)
+
+# Replication
+
+With the aim of maximising the sub-cellular resolution and,
+consequently, the reliability in protein sub-cellular assignments, we
+follow the advice in [@Trotter:2010] and combine replicated spatial
+proteomics experiments and described above. Indeed, Trotter et
+al. have shown a significant improvement in protein–organelle
+association upon direct combination of single experiments, in
+particular when these resolve different subcellular niches.
+
+Direct comparisons of individual fractions in replicated experiments
+does not provide an adequate, goal-driven assessment of different
+experiments. Indeed, due to the nature of the experiment and fraction
+collection, the quantitative channels (loosely referred to as
+fractions) do not correspond to identical actual fractions along the
+gradient. As can be seen in the table below (taken from the
+`hyperLOPIT`'s `pData`, focusing on channels 7 to 10), different sets
+of fractions are combined to obtain enough material and optimise
+acurate quantitation.
+
+
+| Replicate|TMT.Reagent |Gradient.Fraction | Iodixonal.Density| Fraction.No|
+|---------:|:-----------|:-----------------|-----------------:|-----------:|
+|         1|X129C       |16                |              20.1|           7|
+|         1|X130N       |18                |              26.8|           8|
+|         1|X130C       |Chromatin         |                NA|          10|
+|         1|X131        |19                |              34.5|           9|
+|         2|X129C       |17                |              20.9|           7|
+|         2|X130N       |18 to 19 (pooled) |              24.7|           8|
+|         2|X130C       |Chromatin         |                NA|          10|
+|         2|X131        |20                |              31.9|           9|
+
+<!-- On the figure below, we compare the relative intensities of channels 7 -->
+<!-- to 10 on scatter plots, highlighting different marker sets. These -->
+<!-- differences result from different peak fractions for these niches on -->
+<!-- the mitochondrial and chromatin occupancy profiles for the two -->
+<!-- replicates. -->
+
+
+<!-- ```{r repl1, eval = TRUE, echo=FALSE, fig.width = 12} -->
+<!-- sel0 <- fData(hyperLOPIT)$markers != "unknown" -->
+<!-- cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)] -->
+<!-- cls[!sel0] <- getUnknowncol() -->
+
+
+<!-- par(mfrow = c(2, 4)) -->
+<!-- for (i in c(7, 8, 10, 9)) { -->
+<!--     plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls, -->
+<!--          main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"])) -->
+<!--     points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19) -->
+<!--     grid() -->
+<!--     abline(0, 1, col = "red") -->
+<!-- } -->
+<!-- plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "") -->
+<!-- addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7) -->
+
+
+<!-- i <- fData(hyperLOPIT)$markers == "Mitochondrion" -->
+<!-- plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2], -->
+<!--          featureNames(hyperLOPIT)[i], type = "l", -->
+<!--          mcol = "orange") -->
+<!-- title(main = "Mitochondrion") -->
+<!-- ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2]) -->
+<!-- matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1) -->
+<!-- legend("topleft", paste("Replicate", 1:2), -->
+<!--        col = c("#F781BF", "orange"), -->
+<!--        lty = 1, bty = "n") -->
+
+
+<!-- i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin" -->
+<!-- plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2], -->
+<!--          featureNames(hyperLOPIT)[i], type = "l") -->
+<!-- ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2]) -->
+<!-- matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1) -->
+<!-- title(main = "Chromatin") -->
+<!-- legend("topleft", paste("Replicate", 1:2), -->
+<!--        col = c("#984EA3", "steelblue"), -->
+<!--        lty = 1, bty = "n") -->
+<!-- ``` -->
+
+
+The more relevant comparison unit is not a single fraction, but rather
+the complete protein occupancy profiles, which are best visualised as
+experiment-wide on a PCA plot. As such, we prefer to focus on the
+direct, qualitative comparison of individual replicate PCA plots,
+assuring that each displays acceptable sub-cellular resolution. Note
+that in the code chunk below, we mirror the x-axis to represent the
+two figures with the same orientation.
+
+
+
+```r
+par(mfrow = c(1, 2))
+plot2D(hl[, hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
+plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+       mirrorX = TRUE)
+```
+
+![plot of chunk plot2Drep](figure/plot2Drep-1.png)
+
+
+
+Peason correlation
+
+
+```r
+i1 <- exprs(hl[, hl$replicate == 1])
+i2 <- exprs(hl[, hl$replicate == 2])
+pearcor <- cor(t(i1), t(i2))
+pearcor0 <- cor(t(i1[, seq(1, 10, 2)]), t(i2[, seq(1, 10, 2)]))
+mean(diag(pearcor))
+```
+
+```
+## [1] 0.7726258
+```
+
+```r
+mean(diag(pearcor0))
+```
+
+```
+## [1] 0.8853138
+```
+
+- What about classification on different replicates?
 
 # Interactive visualisation
 
+A section about  *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)*.
 
 
 # Novelty Detection
@@ -932,10 +1172,10 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.11.0    pRoloc_1.13.4        MLInterfaces_1.53.0 
+##  [1] pRolocdata_1.11.0    pRoloc_1.13.5        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
-## [10] MSnbase_1.21.6       ProtGenerics_1.5.0   BiocParallel_1.7.2  
+## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.7.2  
 ## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
 ## [16] BiocGenerics_0.19.0  gridExtra_2.2.1      BiocStyle_2.1.3     
 ## [19] knitr_1.13          
@@ -947,7 +1187,7 @@ sessionInfo()
 ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
 ## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.4.0        
 ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-## [19] jsonlite_0.9.20       nloptr_1.0.4          caret_6.0-68         
+## [19] jsonlite_0.9.21       nloptr_1.0.4          caret_6.0-68         
 ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
 ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.13.2         
 ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-6         
@@ -962,17 +1202,17 @@ sessionInfo()
 ## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.4 
 ## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
 ## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
-## [64] stringi_1.1.1         RSQLite_1.0.0         genefilter_1.55.2    
-## [67] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
-## [70] prabclus_2.2-6        bitops_1.0-6          rgl_0.95.1441        
-## [73] mzID_1.11.2           evaluate_0.9          lattice_0.20-33      
-## [76] htmlwidgets_0.6       gbm_2.1.1             plyr_1.8.3           
-## [79] magrittr_1.5          R6_2.1.2              DBI_0.4-1            
-## [82] mgcv_1.8-12           survival_2.39-4       RCurl_1.95-4.8       
-## [85] nnet_7.3-12           car_2.1-2             mlbench_2.1-1        
-## [88] grid_3.4.0            FNN_1.1               threejs_0.2.2        
-## [91] digest_0.6.9          diptest_0.75-7        xtable_1.8-2         
-## [94] httpuv_1.3.3          munsell_0.4.3
+## [64] stringi_1.1.1         RSQLite_1.0.0         highr_0.6            
+## [67] genefilter_1.55.2     randomForest_4.6-12   foreach_1.4.3        
+## [70] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
+## [73] rgl_0.95.1441         mzID_1.11.2           evaluate_0.9         
+## [76] lattice_0.20-33       htmlwidgets_0.6       gbm_2.1.1            
+## [79] plyr_1.8.4            magrittr_1.5          R6_2.1.2             
+## [82] DBI_0.4-1             mgcv_1.8-12           survival_2.39-4      
+## [85] RCurl_1.95-4.8        nnet_7.3-12           car_2.1-2            
+## [88] mlbench_2.1-1         grid_3.4.0            FNN_1.1              
+## [91] threejs_0.2.2         digest_0.6.9          diptest_0.75-7       
+## [94] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3
 ```
 
 It is always important to include session information details along
