@@ -757,13 +757,18 @@ svmRes <- svmClassification(pdRes, params,
                             fcol = "SVM.marker.set")
 ```
 
-Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located, here for example these are located in the column called `svm`. Additionally, when calling `plot2D` we use the `cex` argument to change the point size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
+Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located e.g. `fcol =  "svm"`. 
+
+Additionally, when calling `plot2D` we can use the `cex` argument to change the size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
 
 ```{r setColors, include=FALSE}
 setStockcol(paste0(getStockcol(), 70))
 ```
 ```{r plotSVM, eval=TRUE}
+## set point size of each protein to be inversely proportional to the SVM score
 ptsze <- exp(fData(svmRes)$svm.scores) - 1
+
+## plot new predictions
 plot2D(svmRes, fcol = "svm", cex = ptsze)
 addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
@@ -778,6 +783,26 @@ how non-assigned proteins are classifier and with what confidence.
 
 
 ## Thresholding
+
+It is common when applying a supervised classification algorithm to set a specific score cutoff on which to define new assignments, below which classifications are set to unknown/unassigned. This is because in a supervised learning setup proteins can only be predicted to be localised to one of the sub-cellular niches that appear in the labelled training data. We can not guaranette (and do not expect) that the whole class diversity to be represented in the training data as (1) finding markers that represent the whole diversity of the cell is challenging and (2) many sub-cellular niches contain too few proteins to train on (note: we recommend a minimum of 13 markers per sub-cellular class for stratified 80/20 partitioning and cross-validation). 
+
+Deciding on a threshold is not trivial as classifier scores are heavily dependent upon the classifier used and different sub-cellular niches can exhibit different score distributions. We recommend one to set class-specific score distributions. In the code chunk below we display a boxplot of the score distributions per organelle.
+
+```{r thresholds}
+
+```
+
+To help examine these distributions there is also a dedicated interactive application in the `r Biocpkg("pRolocGUI")` package. To access this application:
+
+```{r classifyApp}
+
+```
+
+To launch the classify application:
+
+- Essential for protein localisation as we do not want to force all proteins in to one category (allow for multiple lcoalisations or localisations outside the training data set e.g. new novel compartments)
+
+- `getPredictions` function allows you to pass a score threshold. Also `classify` application available to interactively view output of thresholds
 
 
 ## Transfer learning
