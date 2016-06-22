@@ -768,6 +768,15 @@ plot2D(svmRes, fcol = "svm", cex = ptsze)
 addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
 
+The adjustment of the point size intuitively confers important
+information that is more difficult to defined formally, but that we
+will address in the next section. The classifier (SVM in our case, but
+this is also valid of other classifiers) defines boundaries based on
+the labelled marker proteins. These class/organelle boundaries define
+how non-assigned proteins are classifier and with what confidence. 
+
+
+
 ## Thresholding
 
 

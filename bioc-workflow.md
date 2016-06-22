@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Jun 15 10:48:26 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Jun 17 11:48:46 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Jun 15 10:48:26 2016 
-## Subset [6725,20][5032,20] Wed Jun 15 10:48:26 2016 
-## Removed features with more than 0 NAs: Wed Jun 15 10:48:26 2016 
-## Dropped featureData's levels Wed Jun 15 10:48:26 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Jun 17 11:48:46 2016 
+## Subset [6725,20][5032,20] Fri Jun 17 11:48:46 2016 
+## Removed features with more than 0 NAs: Fri Jun 17 11:48:46 2016 
+## Dropped featureData's levels Fri Jun 17 11:48:46 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -1134,6 +1134,15 @@ addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 
 ![plot of chunk plotSVM](figure/plotSVM-1.png)
 
+The adjustment of the point size intuitively confers important
+information that is more difficult to defined formally, but that we
+will address in the next section. The classifier (SVM in our case, but
+this is also valid of other classifiers) defines boundaries based on
+the labelled marker proteins. These class/organelle boundaries define
+how non-assigned proteins are classifier and with what confidence. 
+
+
+
 ## Thresholding
 
 
@@ -1175,7 +1184,7 @@ sessionInfo()
 ##  [1] pRolocdata_1.11.0    pRoloc_1.13.5        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
-## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.7.2  
+## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.5.21 
 ## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
 ## [16] BiocGenerics_0.19.0  gridExtra_2.2.1      BiocStyle_2.1.3     
 ## [19] knitr_1.13          
