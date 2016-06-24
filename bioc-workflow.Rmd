@@ -780,9 +780,7 @@ this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
 how non-assigned proteins are classifier and with what
 confidence. **TODO** explain how choosing markers
-positively/negatively affects this.
-
-
+positively/negatively affects this, and relation with thresholding.
 
 ## Thresholding
 
