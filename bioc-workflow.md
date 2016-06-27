@@ -605,7 +605,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Jun 17 11:48:46 2016 
+## Combined [6725,20] and [6268,10] MSnSets Mon Jun 27 19:08:04 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +663,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Jun 17 11:48:46 2016 
-## Subset [6725,20][5032,20] Fri Jun 17 11:48:46 2016 
-## Removed features with more than 0 NAs: Fri Jun 17 11:48:46 2016 
-## Dropped featureData's levels Fri Jun 17 11:48:46 2016 
+## Combined [6725,20] and [6268,10] MSnSets Mon Jun 27 19:08:04 2016 
+## Subset [6725,20][5032,20] Mon Jun 27 19:08:04 2016 
+## Removed features with more than 0 NAs: Mon Jun 27 19:08:04 2016 
+## Dropped featureData's levels Mon Jun 27 19:08:04 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -723,7 +723,7 @@ with prior information about sub-cellular markers.
 
 
 ```r
-library('pRoloc')
+library("pRoloc")
 plot2D(hl, fcol = NULL)
 ```
 
@@ -1122,12 +1122,17 @@ svmRes <- svmClassification(pdRes, params,
                             fcol = "SVM.marker.set")
 ```
 
-Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located, here for example these are located in the column called `svm`. Additionally, when calling `plot2D` we use the `cex` argument to change the point size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
+Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located e.g. `fcol =  "svm"`. 
+
+Additionally, when calling `plot2D` we can use the `cex` argument to change the size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
 
 
 
 ```r
+## set point size of each protein to be inversely proportional to the SVM score
 ptsze <- exp(fData(svmRes)$svm.scores) - 1
+
+## plot new predictions
 plot2D(svmRes, fcol = "svm", cex = ptsze)
 addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
@@ -1139,11 +1144,27 @@ information that is more difficult to defined formally, but that we
 will address in the next section. The classifier (SVM in our case, but
 this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
-how non-assigned proteins are classifier and with what confidence. 
-
-
+how non-assigned proteins are classifier and with what
+confidence. **TODO** explain how choosing markers
+positively/negatively affects this, and relation with thresholding.
 
 ## Thresholding
+
+It is common when applying a supervised classification algorithm to set a specific score cutoff on which to define new assignments, below which classifications are set to unknown/unassigned. This is because in a supervised learning setup proteins can only be predicted to be localised to one of the sub-cellular niches that appear in the labelled training data. We can not guaranette (and do not expect) that the whole class diversity to be represented in the training data as (1) finding markers that represent the whole diversity of the cell is challenging and (2) many sub-cellular niches contain too few proteins to train on (note: we recommend a minimum of 13 markers per sub-cellular class for stratified 80/20 partitioning and cross-validation). 
+
+Deciding on a threshold is not trivial as classifier scores are heavily dependent upon the classifier used and different sub-cellular niches can exhibit different score distributions. We recommend one to set class-specific score distributions. In the code chunk below we display a boxplot of the score distributions per organelle.
+
+
+
+To help examine these distributions there is also a dedicated interactive application in the *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)* package. To access this application:
+
+
+
+To launch the classify application:
+
+- Essential for protein localisation as we do not want to force all proteins in to one category (allow for multiple lcoalisations or localisations outside the training data set e.g. new novel compartments)
+
+- `getPredictions` function allows you to pass a score threshold. Also `classify` application available to interactively view output of thresholds
 
 
 ## Transfer learning
@@ -1183,10 +1204,10 @@ sessionInfo()
 ## other attached packages:
 ##  [1] pRolocdata_1.11.0    pRoloc_1.13.5        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
-##  [7] AnnotationDbi_1.35.3 IRanges_2.7.1        S4Vectors_0.11.2    
-## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.5.21 
+##  [7] AnnotationDbi_1.35.3 IRanges_2.7.11       S4Vectors_0.11.7    
+## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.7.4  
 ## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
-## [16] BiocGenerics_0.19.0  gridExtra_2.2.1      BiocStyle_2.1.3     
+## [16] BiocGenerics_0.19.1  gridExtra_2.2.1      BiocStyle_2.1.7     
 ## [19] knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
@@ -1196,14 +1217,14 @@ sessionInfo()
 ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
 ## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.4.0        
 ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-## [19] jsonlite_0.9.21       nloptr_1.0.4          caret_6.0-68         
+## [19] jsonlite_0.9.22       nloptr_1.0.4          caret_6.0-70         
 ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
 ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.13.2         
 ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-6         
-## [31] limma_3.29.5          formatR_1.4           htmltools_0.3.5      
-## [34] quantreg_5.24         tools_3.4.0           ggvis_0.4.2          
+## [31] limma_3.29.12         formatR_1.4           htmltools_0.3.5      
+## [34] quantreg_5.26         tools_3.4.0           ggvis_0.4.2          
 ## [37] gtable_0.2.0          affy_1.51.0           reshape2_1.4.1       
-## [40] dplyr_0.4.3           MALDIquant_1.14       trimcluster_0.1-2    
+## [40] dplyr_0.4.3           MALDIquant_1.15       trimcluster_0.1-2    
 ## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
 ## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.0.0        
 ## [49] lme4_1.1-12           mime_0.4              lpSolve_5.6.13       
