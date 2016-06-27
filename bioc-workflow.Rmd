@@ -436,7 +436,7 @@ colours. We will see later how to use this to annotate the PCA plot
 with prior information about sub-cellular markers.
 
 ```{r qcplot, message=FALSE, warning=FALSE}
-library('pRoloc')
+library("pRoloc")
 plot2D(hl, fcol = NULL)
 ```
 
