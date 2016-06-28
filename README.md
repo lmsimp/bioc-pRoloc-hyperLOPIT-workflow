@@ -1,6 +1,6 @@
 # A Bioconductor workflow for processing and analysing spatial proteomics data
 
-[![Build Status](https://travis-ci.org/lgatto/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lgatto/bioc-pRoloc-hyperLOPIT-workflow)
+[![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow)
 
 NB: think about creating new `MSnSet` for the `hyperLOPIT2015` or writing a function to strip it down some of the `fData` for the purpose of demonstrating this workflow
 
