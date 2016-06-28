@@ -29,7 +29,7 @@ NB: think about creating new `MSnSet` for the `hyperLOPIT2015` or writing a func
 - thresholding
 
 ### Inductive transfer 
-- get running on HPC
+- get running on HPC (re-profile code on HPC)
 
 ### Post-processing
 - overlap with GO, enrichment study?
