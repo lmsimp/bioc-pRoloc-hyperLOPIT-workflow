@@ -1,6 +1,6 @@
 ---
 title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
-author: "Lisa Breckels"
+author: "Lisa Breckels and Laurent Gatto"
 output: html_document
 ---
 
