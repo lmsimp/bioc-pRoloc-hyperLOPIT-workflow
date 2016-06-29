@@ -204,7 +204,7 @@ As briefly mentioned above, the quantitation data is stored in the
 first 5 proteins. It is also possible to access specific rows and
 columns by naming the proteins and fractions of interest.
 
-```{r }
+```{r assesshl}
 exprs(hl)[1:5, ]
 exprs(hl)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
 ```
@@ -294,7 +294,7 @@ do not bear any consequences here.
 The spreadsheet that was used to create the `hl` MSnSet
 included two replicates. We also provide individual replicates in the
 `r Biocexptpkg("pRolocdata")` package. Below, we show how to combine
-`MSnSet` objects and, subsequently, how to filter and hangle missing
+`MSnSet` objects and, subsequently, how to filter and handle missing
 values. We start by loading the experimental data package and the
 equivalent replicates using the `load` function.
 
@@ -318,7 +318,8 @@ Combining data is performed with the `combine` function. This function
 will inspect the feature and sample names to identify how to combine
 the data. As we want our replicates to be combined along the columns
 (same proteins, different sets of fractions), we need to assure that
-the respective sample names differ. 
+the respective sample names differ so they can be identified from one
+another. The function `updateSampleNames` can be used do this.
 
 ```{r samplenames}
 identical(sampleNames(hyperLOPIT2015ms3r1), sampleNames(hyperLOPIT2015ms3r2))
@@ -379,7 +380,7 @@ image2(is.na(hyperLOPIT), col = c("black", "white"),
        main = "Missing values (white cells) after combining replicates")
 ```
 
-We prefer to remove proteins that were not assayed in our two
+We prefer to remove proteins that were not assayed in both of our two
 replicated experiments. This is done with the `filterNA` function that
 removes features that contain more than a certain proportion (default
 is 0) missing values.
@@ -389,19 +390,12 @@ hyperLOPIT <- filterNA(hyperLOPIT)
 hyperLOPIT
 ```
 
-Which results in two identical matrices of quantitative protein
-profiles.
-
-```{r equaldata}
-all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
-```
-
-When more than 2 data are to be combine and/or too many proteins were
+When more than 2 data are to be combined and/or too many proteins were
 not consistently assayed, leading to too many proteins being filtered
 out, we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
 experiments (see section *Supervised machine learning* for the
-description of sub-cellular assingments).
+description of sub-cellular assignments).
 
 # Quality Control
 
@@ -431,20 +425,20 @@ separation, it is extremely useful summarising complex experimental
 information in one figure, to get an simplified overview of the data.
 
 In the code chunk below, we specify `fcol = NULL`, which means not to
-consider any feature variable to annotate the features with
+consider any feature variable to annotate the features (proteins) with
 colours. We will see later how to use this to annotate the PCA plot
-with prior information about sub-cellular markers.
+with prior information about sub-cellular localisation.
 
 ```{r qcplot, message=FALSE, warning=FALSE}
 library("pRoloc")
 plot2D(hl, fcol = NULL)
 ```
 
-We advise to visualise the without any annotation (i.e. with `fcol =
-NULL`) in a first place, before proceeding with data annotation. The
-identification of well resolved clusters in the data, constitutes an
-unbiased assessment of the data structure, demonstrating the
-successful separation of sub-cellular clusters.
+In the first instance we advise one to visualise their data without 
+any annotation (i.e. with `fcol = NULL`), before proceeding with data 
+annotation. The identification of well resolved clusters in the data, 
+constitutes an unbiased assessment of the data structure, demonstrating 
+the successful separation of sub-cellular clusters.
 
 **TODO** There are other dimensionality reduction methods available in
 the `plot2D` function, which can be parametrised with the `method`
@@ -476,8 +470,8 @@ In the context of spatial proteomics, a marker protein is defined as a
 well-known resident of a specific sub-cellular niche in a species
 *and* condition of interest. Applying this to machine learning (ML),
 and specifically supervised learning, for the task of protein
-localisation prediction, markers constitute the labelled training data
-to use as input to a classification analyses. Defining well-known
+localisation prediction, these markers constitute the labelled training
+data to use as input to a classification analyses. Defining well-known
 residents, and obtaining labelled training data for ML analyses can be
 time consuming, but it is important to define markers that are
 representative of the multivariate data space and on which a
@@ -487,7 +481,8 @@ to a `MSnSet` object, as demonstrated in the code chunk below. These
 marker sets can be accessed using the `pRolocmarkers()`
 function. Marker sets are stored as a simple named vector in R, and
 originate from in-house user-defined sets of markers or from previous
-published studies [@Gatto:2014b]. 
+published studies [@Gatto:2014b], which are continuosly updated and 
+integrated. 
 
 ```{r markers}
 ## List available marker sets
@@ -497,10 +492,10 @@ pRolocmarkers()
 These markers can then be mapped to an `MSnSet`'s `featureNames`. The
 mouse dataset used here has Uniprot IDs stored as the `featureNames`
 (see `head(featureNames(lopit2016))`) and the names of the vector of
-the mouse markers (`mmus` markers) are also Uniprot IDs (see
-`head(mrk)` in the code chunk below), so it is straightforward to
-match names between the markers and the `MSnSet` instance using the
-`addMarkers` function.
+the mouse markers stored in `r Biocpkg("pRoloc")` (`mmus` markers) 
+are also Uniprot IDs (see `head(mrk)` in the code chunk below), so 
+it is straightforward to match names between the markers and 
+the `MSnSet` instance using the `addMarkers` function.
 
 
 ```{r addmrkers}
@@ -585,7 +580,7 @@ legend("topleft", c("Mitochondrion", "Peroxisome"),
 With the aim of maximising the sub-cellular resolution and,
 consequently, the reliability in protein sub-cellular assignments, we
 follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. Indeed, Trotter et
+proteomics experiments as described above. Indeed, Trotter et
 al. have shown a significant improvement in protein–organelle
 association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
@@ -602,7 +597,7 @@ acurate quantitation.
 
 ```{r pdtab, echo=FALSE}
 i <- hyperLOPIT$Fraction.No %in% 7:10
-kable(pData(hyperLOPIT)[i, -3], row.names = FALSE)
+pData(hyperLOPIT)[i, -3]
 ```
 
 <!-- On the figure below, we compare the relative intensities of channels 7 -->
