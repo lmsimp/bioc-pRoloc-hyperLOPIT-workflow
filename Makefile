@@ -4,7 +4,7 @@ all:
 	make bioc-workflow.md
 
 %.md: %.Rmd
-	Rscript -e 'require("knitr"); knit("$^")'
+	/opt/Rpatched/lib/R/bin/Rscript -e 'require("knitr"); knit("$^")'
 
 clean:
 	rm -f *~
