@@ -666,8 +666,7 @@ plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
 ```
 
 
-
-Peason correlation
+## Peason correlation
 
 ```{r}
 i1 <- exprs(hl[, hl$replicate == 1])
@@ -682,7 +681,30 @@ mean(diag(pearcor0))
 
 # Interactive visualisation
 
-A section about  `r Biocpkg("pRolocGUI")`.
+Visualisation and data exploration is an important aspect of data analyses allowing one to shed light on data structure and patterns of interest. Using the `r Biocpkg("pRolocGUI")` package we can interactively visualise, explore and interrogate quantitative spatial proteomics data. The `r Biocpkg("pRolocGUI")` package is currently under active development and it relies on the `shiny` framework for reactivity and interactivity. The package currently distributes 3 different GUI's ("main" (default), "compare" or "compare") which are wrapped and launched by the `pRolocVis` function. 
+
+The "main" application is designed for exploratory data analysis and is divied into 3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default view upon loading is the PCA tab, which features a clickable interface and zoomable PCA plot with an interactive data table for displaying the quantitation information. Particular proteins of interest can be highlighted using the text search box. There is also an alternate profiles tab for visualisation of the protein profiles, which can be used to examine the patterns of proteins of interest. The Table selection tab provides an interface to control data table column selection. In the below code chunk we lauch the main app.
+
+```{r mainapp, eval = FALSE, echo = TRUE}
+library("pRolocGUI")
+pRolocVis(hl)
+```
+
+![A screen shot of clickable interface and zoomable PCA plot of the main app in the `r Biocpkg("pRolocGUI")` package.](./Figures/mainapp.png)
+
+The "compare" application is useful for examining two replicate experiments, or two experiments from different conditions, treatments etc. Calling the argument `app = "compare"` as per the below code chunk launches the app wherein two PCA plots are loaded side-by-side. Common proteins between the two data sets can be searched for, identified and highlighted. As per the main application there is also a protein profiles tab to allow one to look at the patterns of protein profiles of interest in each dataset. One key difference between the main and compare app when launching the app is that the compare app requires a `MSnSetList` as input to the `pRolocVis` function. For example, in the code chunk below we first create a `MSnSetList` of replicates 1 and 2 of the hyperLOPIT data.
+
+```{r compareapp, eval = FALSE, echo = TRUE}
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+pRolocVis(mydata, app = "compare")
+```
+
+![The compare application, main panel](./Figures/SS_Compare1.jpg)
+
+The final application "classify", has been designed to view machine learning classification results according to user-specified thresholds for the assignment of proteins to its sub-cellular location. 
+
 
 
 # Novelty Detection
