@@ -1,25 +1,10 @@
 ---
 title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
-author: "Lisa Breckels"
+author: "Lisa Breckels and Laurent Gatto"
 output: html_document
 ---
 
 
-```
-## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
-## undefined subclass "daboostCont" of class "listOrdata.frame"; definition
-## not updated
-```
-
-```
-## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
-## undefined subclass "daboostCont" of class "input"; definition not updated
-```
-
-```
-## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
-## undefined subclass "daboostCont" of class "output"; definition not updated
-```
 
 # Introduction
 
@@ -275,7 +260,7 @@ hl
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 1.21.7
+##  MSnbase version: 1.21.8
 ```
 
 As briefly mentioned above, the quantitation data is stored in the
@@ -487,7 +472,7 @@ do not bear any consequences here.
 The spreadsheet that was used to create the `hl` MSnSet
 included two replicates. We also provide individual replicates in the
 *[pRolocdata](http://bioconductor.org/packages/pRolocdata)* package. Below, we show how to combine
-`MSnSet` objects and, subsequently, how to filter and hangle missing
+`MSnSet` objects and, subsequently, how to filter and handle missing
 values. We start by loading the experimental data package and the
 equivalent replicates using the `load` function.
 
@@ -513,7 +498,8 @@ Combining data is performed with the `combine` function. This function
 will inspect the feature and sample names to identify how to combine
 the data. As we want our replicates to be combined along the columns
 (same proteins, different sets of fractions), we need to assure that
-the respective sample names differ. 
+the respective sample names differ so they can be identified from one
+another. The function `updateSampleNames` can be used do this.
 
 
 ```r
@@ -605,7 +591,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Jun 27 19:08:04 2016 
+## Combined [6725,20] and [6268,10] MSnSets Mon Jul  4 23:44:41 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -635,7 +621,7 @@ image2(is.na(hyperLOPIT), col = c("black", "white"),
 
 ![plot of chunk namap](figure/namap-1.png)
 
-We prefer to remove proteins that were not assayed in our two
+We prefer to remove proteins that were not assayed in both of our two
 replicated experiments. This is done with the `filterNA` function that
 removes features that contain more than a certain proportion (default
 is 0) missing values.
@@ -663,31 +649,19 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Jun 27 19:08:04 2016 
-## Subset [6725,20][5032,20] Mon Jun 27 19:08:04 2016 
-## Removed features with more than 0 NAs: Mon Jun 27 19:08:04 2016 
-## Dropped featureData's levels Mon Jun 27 19:08:04 2016 
+## Combined [6725,20] and [6268,10] MSnSets Mon Jul  4 23:44:41 2016 
+## Subset [6725,20][5032,20] Mon Jul  4 23:44:42 2016 
+## Removed features with more than 0 NAs: Mon Jul  4 23:44:42 2016 
+## Dropped featureData's levels Mon Jul  4 23:44:42 2016 
 ##  MSnbase version: 1.19.3
 ```
 
-Which results in two identical matrices of quantitative protein
-profiles.
-
-
-```r
-all.equal(exprs(hl), exprs(hyperLOPIT), check.attributes = FALSE)
-```
-
-```
-## [1] TRUE
-```
-
-When more than 2 data are to be combine and/or too many proteins were
+When more than 2 data are to be combined and/or too many proteins were
 not consistently assayed, leading to too many proteins being filtered
 out, we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
 experiments (see section *Supervised machine learning* for the
-description of sub-cellular assingments).
+description of sub-cellular assignments).
 
 # Quality Control
 
@@ -717,9 +691,9 @@ separation, it is extremely useful summarising complex experimental
 information in one figure, to get an simplified overview of the data.
 
 In the code chunk below, we specify `fcol = NULL`, which means not to
-consider any feature variable to annotate the features with
+consider any feature variable to annotate the features (proteins) with
 colours. We will see later how to use this to annotate the PCA plot
-with prior information about sub-cellular markers.
+with prior information about sub-cellular localisation.
 
 
 ```r
@@ -729,11 +703,11 @@ plot2D(hl, fcol = NULL)
 
 ![plot of chunk qcplot](figure/qcplot-1.png)
 
-We advise to visualise the without any annotation (i.e. with `fcol =
-NULL`) in a first place, before proceeding with data annotation. The
-identification of well resolved clusters in the data, constitutes an
-unbiased assessment of the data structure, demonstrating the
-successful separation of sub-cellular clusters.
+In the first instance we advise one to visualise their data without 
+any annotation (i.e. with `fcol = NULL`), before proceeding with data 
+annotation. The identification of well resolved clusters in the data, 
+constitutes an unbiased assessment of the data structure, demonstrating 
+the successful separation of sub-cellular clusters.
 
 **TODO** There are other dimensionality reduction methods available in
 the `plot2D` function, which can be parametrised with the `method`
@@ -768,8 +742,8 @@ In the context of spatial proteomics, a marker protein is defined as a
 well-known resident of a specific sub-cellular niche in a species
 *and* condition of interest. Applying this to machine learning (ML),
 and specifically supervised learning, for the task of protein
-localisation prediction, markers constitute the labelled training data
-to use as input to a classification analyses. Defining well-known
+localisation prediction, these markers constitute the labelled training
+data to use as input to a classification analyses. Defining well-known
 residents, and obtaining labelled training data for ML analyses can be
 time consuming, but it is important to define markers that are
 representative of the multivariate data space and on which a
@@ -779,7 +753,8 @@ to a `MSnSet` object, as demonstrated in the code chunk below. These
 marker sets can be accessed using the `pRolocmarkers()`
 function. Marker sets are stored as a simple named vector in R, and
 originate from in-house user-defined sets of markers or from previous
-published studies [@Gatto:2014b]. 
+published studies [@Gatto:2014b], which are continuosly updated and 
+integrated. 
 
 
 ```r
@@ -808,10 +783,10 @@ pRolocmarkers()
 These markers can then be mapped to an `MSnSet`'s `featureNames`. The
 mouse dataset used here has Uniprot IDs stored as the `featureNames`
 (see `head(featureNames(lopit2016))`) and the names of the vector of
-the mouse markers (`mmus` markers) are also Uniprot IDs (see
-`head(mrk)` in the code chunk below), so it is straightforward to
-match names between the markers and the `MSnSet` instance using the
-`addMarkers` function.
+the mouse markers stored in *[pRoloc](http://bioconductor.org/packages/pRoloc)* (`mmus` markers) 
+are also Uniprot IDs (see `head(mrk)` in the code chunk below), so 
+it is straightforward to match names between the markers and 
+the `MSnSet` instance using the `addMarkers` function.
 
 
 
@@ -932,7 +907,7 @@ legend("topleft", c("Mitochondrion", "Peroxisome"),
 With the aim of maximising the sub-cellular resolution and,
 consequently, the reliability in protein sub-cellular assignments, we
 follow the advice in [@Trotter:2010] and combine replicated spatial
-proteomics experiments and described above. Indeed, Trotter et
+proteomics experiments as described above. Indeed, Trotter et
 al. have shown a significant improvement in protein–organelle
 association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
@@ -948,16 +923,26 @@ of fractions are combined to obtain enough material and optimise
 acurate quantitation.
 
 
-| Replicate|TMT.Reagent |Gradient.Fraction | Iodixonal.Density| Fraction.No|
-|---------:|:-----------|:-----------------|-----------------:|-----------:|
-|         1|X129C       |16                |              20.1|           7|
-|         1|X130N       |18                |              26.8|           8|
-|         1|X130C       |Chromatin         |                NA|          10|
-|         1|X131        |19                |              34.5|           9|
-|         2|X129C       |17                |              20.9|           7|
-|         2|X130N       |18 to 19 (pooled) |              24.7|           8|
-|         2|X130C       |Chromatin         |                NA|          10|
-|         2|X131        |20                |              31.9|           9|
+```
+##         Replicate TMT.Reagent Gradient.Fraction Iodixonal.Density
+## X129C.1         1       X129C                16              20.1
+## X130N.1         1       X130N                18              26.8
+## X130C.1         1       X130C         Chromatin                NA
+## X131.1          1        X131                19              34.5
+## X129C.2         2       X129C                17              20.9
+## X130N.2         2       X130N 18 to 19 (pooled)              24.7
+## X130C.2         2       X130C         Chromatin                NA
+## X131.2          2        X131                20              31.9
+##         Fraction.No
+## X129C.1           7
+## X130N.1           8
+## X130C.1          10
+## X131.1            9
+## X129C.2           7
+## X130N.2           8
+## X130C.2          10
+## X131.2            9
+```
 
 <!-- On the figure below, we compare the relative intensities of channels 7 -->
 <!-- to 10 on scatter plots, highlighting different marker sets. These -->
@@ -1028,8 +1013,7 @@ plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
 ![plot of chunk plot2Drep](figure/plot2Drep-1.png)
 
 
-
-Peason correlation
+## Peason correlation
 
 
 ```r
@@ -1056,7 +1040,32 @@ mean(diag(pearcor0))
 
 # Interactive visualisation
 
-A section about  *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)*.
+Visualisation and data exploration is an important aspect of data analyses allowing one to shed light on data structure and patterns of interest. Using the *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)* package we can interactively visualise, explore and interrogate quantitative spatial proteomics data. The *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)* package is currently under active development and it relies on the `shiny` framework for reactivity and interactivity. The package currently distributes 3 different GUI's ("main" (default), "compare" or "compare") which are wrapped and launched by the `pRolocVis` function. 
+
+The "main" application is designed for exploratory data analysis and is divied into 3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default view upon loading is the PCA tab, which features a clickable interface and zoomable PCA plot with an interactive data table for displaying the quantitation information. Particular proteins of interest can be highlighted using the text search box. There is also an alternate profiles tab for visualisation of the protein profiles, which can be used to examine the patterns of proteins of interest. The Table selection tab provides an interface to control data table column selection. In the below code chunk we lauch the main app.
+
+
+```r
+library("pRolocGUI")
+pRolocVis(hl)
+```
+
+![A screen shot of clickable interface and zoomable PCA plot of the main app in the *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)* package.](./Figures/mainapp.png)
+
+The "compare" application is useful for examining two replicate experiments, or two experiments from different conditions, treatments etc. Calling the argument `app = "compare"` as per the below code chunk launches the app wherein two PCA plots are loaded side-by-side. Common proteins between the two data sets can be searched for, identified and highlighted. As per the main application there is also a protein profiles tab to allow one to look at the patterns of protein profiles of interest in each dataset. One key difference between the main and compare app when launching the app is that the compare app requires a `MSnSetList` as input to the `pRolocVis` function. For example, in the code chunk below we first create a `MSnSetList` of replicates 1 and 2 of the hyperLOPIT data.
+
+
+```r
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+pRolocVis(mydata, app = "compare")
+```
+
+![The compare application, main panel](./Figures/SS_Compare1.jpg)
+
+The final application "classify", has been designed to view machine learning classification results according to user-specified thresholds for the assignment of proteins to its sub-cellular location. 
+
 
 
 # Novelty Detection
@@ -1185,7 +1194,7 @@ sessionInfo()
 ```
 
 ```
-## R Under development (unstable) (2016-05-11 r70599)
+## R version 3.3.0 Patched (2016-05-11 r70599)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 14.04.4 LTS
 ## 
@@ -1205,44 +1214,45 @@ sessionInfo()
 ##  [1] pRolocdata_1.11.0    pRoloc_1.13.5        MLInterfaces_1.53.0 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.3 IRanges_2.7.11       S4Vectors_0.11.7    
-## [10] MSnbase_1.21.7       ProtGenerics_1.5.0   BiocParallel_1.7.4  
+## [10] MSnbase_1.21.8       ProtGenerics_1.5.0   BiocParallel_1.7.4  
 ## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
-## [16] BiocGenerics_0.19.1  gridExtra_2.2.1      BiocStyle_2.1.7     
+## [16] BiocGenerics_0.19.1  gridExtra_2.2.1      BiocStyle_2.1.16    
 ## [19] knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] minqa_1.2.4           colorspace_1.2-6      hwriter_1.3.2        
 ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
-##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-15         
+##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
 ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
-## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.4.0        
+## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.3.0        
 ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-## [19] jsonlite_0.9.22       nloptr_1.0.4          caret_6.0-70         
+## [19] jsonlite_1.0          nloptr_1.0.4          caret_6.0-70         
 ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
 ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.13.2         
 ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-6         
-## [31] limma_3.29.12         formatR_1.4           htmltools_0.3.5      
-## [34] quantreg_5.26         tools_3.4.0           ggvis_0.4.2          
+## [31] limma_3.29.14         formatR_1.4           htmltools_0.3.5      
+## [34] quantreg_5.26         tools_3.3.0           ggvis_0.4.2          
 ## [37] gtable_0.2.0          affy_1.51.0           reshape2_1.4.1       
-## [40] dplyr_0.4.3           MALDIquant_1.15       trimcluster_0.1-2    
+## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
 ## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
 ## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.0.0        
-## [49] lme4_1.1-12           mime_0.4              lpSolve_5.6.13       
-## [52] gtools_3.5.0          DEoptimR_1.0-4        zlibbioc_1.19.0      
-## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.4 
+## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.4             
+## [52] gtools_3.5.0          DEoptimR_1.0-5        zlibbioc_1.19.0      
+## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.5 
 ## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
 ## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
-## [64] stringi_1.1.1         RSQLite_1.0.0         highr_0.6            
-## [67] genefilter_1.55.2     randomForest_4.6-12   foreach_1.4.3        
-## [70] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
-## [73] rgl_0.95.1441         mzID_1.11.2           evaluate_0.9         
-## [76] lattice_0.20-33       htmlwidgets_0.6       gbm_2.1.1            
-## [79] plyr_1.8.4            magrittr_1.5          R6_2.1.2             
-## [82] DBI_0.4-1             mgcv_1.8-12           survival_2.39-4      
-## [85] RCurl_1.95-4.8        nnet_7.3-12           car_2.1-2            
-## [88] mlbench_2.1-1         grid_3.4.0            FNN_1.1              
-## [91] threejs_0.2.2         digest_0.6.9          diptest_0.75-7       
-## [94] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3
+## [64] stringi_1.1.1         RSQLite_1.0.0         genefilter_1.55.2    
+## [67] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
+## [70] prabclus_2.2-6        bitops_1.0-6          rgl_0.95.1441        
+## [73] mzID_1.11.2           evaluate_0.9          lattice_0.20-33      
+## [76] htmlwidgets_0.6       gbm_2.1.1             plyr_1.8.4           
+## [79] magrittr_1.5          R6_2.1.2              DBI_0.4-1            
+## [82] mgcv_1.8-12           survival_2.39-5       RCurl_1.95-4.8       
+## [85] nnet_7.3-12           tibble_1.0            msdata_0.12.0        
+## [88] car_2.1-2             mlbench_2.1-1         grid_3.3.0           
+## [91] FNN_1.1               threejs_0.2.2         digest_0.6.9         
+## [94] diptest_0.75-7        xtable_1.8-2          httpuv_1.3.3         
+## [97] munsell_0.4.3
 ```
 
 It is always important to include session information details along
