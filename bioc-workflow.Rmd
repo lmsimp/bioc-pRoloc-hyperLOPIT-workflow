@@ -431,7 +431,7 @@ with prior information about sub-cellular localisation.
 
 ```{r qcplot, message=FALSE, warning=FALSE}
 library("pRoloc")
-plot2D(hl, fcol = NULL)
+plot2D(hyperLOPIT, fcol = NULL)
 ```
 
 In the first instance we advise one to visualise their data without 
@@ -461,7 +461,7 @@ par(mfrow = c(1, 2))
 o <- order(hyperLOPIT$Fraction.No)
 plotDist(hyperLOPIT[, o], pcol = "#00000010")
 lines(colMeans(exprs(hyperLOPIT[, o])), col = "red", type = "b")
-boxplot(exprs(hyperLOPIT[, o]))
+boxplot(exprs(hyperLOPIT[, o]), las = 2)
 ```
 
 # Markers
@@ -681,18 +681,46 @@ mean(diag(pearcor0))
 
 # Interactive visualisation
 
-Visualisation and data exploration is an important aspect of data analyses allowing one to shed light on data structure and patterns of interest. Using the `r Biocpkg("pRolocGUI")` package we can interactively visualise, explore and interrogate quantitative spatial proteomics data. The `r Biocpkg("pRolocGUI")` package is currently under active development and it relies on the `shiny` framework for reactivity and interactivity. The package currently distributes 3 different GUI's ("main" (default), "compare" or "compare") which are wrapped and launched by the `pRolocVis` function. 
-
-The "main" application is designed for exploratory data analysis and is divied into 3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default view upon loading is the PCA tab, which features a clickable interface and zoomable PCA plot with an interactive data table for displaying the quantitation information. Particular proteins of interest can be highlighted using the text search box. There is also an alternate profiles tab for visualisation of the protein profiles, which can be used to examine the patterns of proteins of interest. The Table selection tab provides an interface to control data table column selection. In the below code chunk we lauch the main app.
+Visualisation and data exploration is an important aspect of data
+analyses allowing one to shed light on data structure and patterns of
+interest. Using the `r Biocpkg("pRolocGUI")` package we can
+interactively visualise, explore and interrogate quantitative spatial
+proteomics data. The `r Biocpkg("pRolocGUI")` package is currently
+under active development and it relies on the `shiny` framework for
+reactivity and interactivity. The package currently distributes 3
+different GUI's ("main" (default), "compare" or "compare") which are
+wrapped and launched by the `pRolocVis` function. In the below code
+chunk we lauch the main app (note, we do not need to specify the
+argument, `app = "main"` as it is the default).
 
 ```{r mainapp, eval = FALSE, echo = TRUE}
 library("pRolocGUI")
 pRolocVis(hl)
 ```
 
-![A screen shot of clickable interface and zoomable PCA plot of the main app in the `r Biocpkg("pRolocGUI")` package.](./Figures/mainapp.png)
+![A screen shot of clickable interface and zoomable PCA plot of the
+main app in the `r Biocpkg("pRolocGUI")`
+package.](./Figures/mainapp.png)
 
-The "compare" application is useful for examining two replicate experiments, or two experiments from different conditions, treatments etc. Calling the argument `app = "compare"` as per the below code chunk launches the app wherein two PCA plots are loaded side-by-side. Common proteins between the two data sets can be searched for, identified and highlighted. As per the main application there is also a protein profiles tab to allow one to look at the patterns of protein profiles of interest in each dataset. One key difference between the main and compare app when launching the app is that the compare app requires a `MSnSetList` as input to the `pRolocVis` function. For example, in the code chunk below we first create a `MSnSetList` of replicates 1 and 2 of the hyperLOPIT data.
+As diplayed in the screenshot above, the "main" application is
+designed for exploratory data analysis and is divied into 3 tabs: (1)
+PCA, (2) Profiles and (3) Table selection. The default view upon
+loading is the PCA tab, which features a clickable interface and
+zoomable PCA plot with an interactive data table for displaying the
+quantitation information. Particular proteins of interest can be
+highlighted using the text search box. There is also an alternate
+profiles tab for visualisation of the protein profiles, which can be
+used to examine the patterns of proteins of interest. The Table
+selection tab provides an interface to control data table column
+selection. 
+
+The "compare" application is useful for examining two replicate
+experiments, or two experiments from different conditions, treatments
+etc. The compare application is called by default if the input object
+to `pRolocVis` is a `MSnSetList` of 2 `MSnSets`, but it can also be
+specified by calling the argument `app = "compare"`. For example, in
+the code chunk below we first create a `MSnSetList` of replicates 1
+and 2 of the hyperLOPIT data, this is then passed to `pRolocVis`.
 
 ```{r compareapp, eval = FALSE, echo = TRUE}
 data(hyperLOPIT2015ms3r1)
@@ -703,13 +731,63 @@ pRolocVis(mydata, app = "compare")
 
 ![The compare application, main panel](./Figures/SS_Compare1.jpg)
 
-The final application "classify", has been designed to view machine learning classification results according to user-specified thresholds for the assignment of proteins to its sub-cellular location. 
+The comparison app loads the two PCA plots side-by-side. Only common
+proteins between the two data sets are displayed. As per the main
+application proteins can be searched, identified and highlighted on
+both PCA plots and in the dedicated profiles tab. One key feature of
+the compare application is the ability to re-map the second dataset
+onto the PCA data space of the first (reference) data set (see
+`?pRolocVis` and the argument `remap = TRUE`). Using the first dataset
+as the reference set, PCA is carried out on the first dataset and the
+standard deviations of the principal components (i.e. the square roots
+of the eigenvalues of the covariance/correlation matrix) and the
+matrix of variable loadings (i.e. a matrix whose columns contain the
+eigenvectors) are stored and then used to calculate the principal
+components of the second dataset. Both datasets are scaled and
+centered in the usual way. The first dataset appears on the left, and
+the second re-mapped data appears on the right. The order of the first
+(the reference data for remapping) and second dataset can be changed
+through regeneration/re-ordering of the `MSnSetList` object.
+
+The final application "classify", has been designed to view machine
+learning classification results according to user-specified thresholds
+for the assignment of proteins to its sub-cellular location, this is
+discussed later in the subsection [thresholding](#thresholding) in the
+[supervised machine learning section](#supervised-machine-learning).
 
 
 
 # Novelty Detection
 
-The extraction of sub-cellular protein clusters can be difficult owing to the limited number of marker proteins that exist in databases and elsewhere. Furthermore, given the vast complexity of the cell, automatic annotation retrieval does not always give a full representation of the true sub-cellular diversity in the data. For downstream analyses, such as supervised machine learning, it is desirable to obtain reliable markers that cover as many sub-cellular niches as possible, as these markers are directly used in the training phase of the ML classification. We find that a lack of sub-cellular diversity in the labelled training data leads to prediction errors, as unlabelled instances can only be assigned to a class that exists in the training data [@Breckels:2013]. In such scenarios novelty detection can be useful to identify data-specific sub-cellular groupings such as organelles and protein complexes. The phenotype discovery (phenoDisco) algorithm [@Breckels:2013] is one such method and is available in `r Biocpkg("pRoloc")`. It is an iterative semi-supervised learning method that combines the classification of proteins on existing labelled data with the detection of new clusters. Novelty detection methods are also useful for confirming the presence of known clusters in an unbiased fashion. For example, in [@hyper] the `phenoDisco` algorithm was used to detect the data-specific confirmation and presence of the nucleus and nucleus sub-compartments, as it was expected that nucleus associated clusters existed within the data as the protocol included a separate chromatin-rich fraction to enrich for nuclei. In the code chunk below, we show how to run a series of novelty detection experiments using the `phenoDisco` algorithm on the mouse stem-cell dataset. There are several optional arguments that can be set dependent on the type of biological question of interest. For example, 
+The extraction of sub-cellular protein clusters can be difficult owing
+to the limited number of marker proteins that exist in databases and
+elsewhere. Furthermore, given the vast complexity of the cell,
+automatic annotation retrieval does not always give a full
+representation of the true sub-cellular diversity in the data. For
+downstream analyses, such as supervised machine learning, it is
+desirable to obtain reliable markers that cover as many sub-cellular
+niches as possible, as these markers are directly used in the training
+phase of the ML classification. We find that a lack of sub-cellular
+diversity in the labelled training data leads to prediction errors, as
+unlabelled instances can only be assigned to a class that exists in
+the training data [@Breckels:2013]. In such scenarios novelty
+detection can be useful to identify data-specific sub-cellular
+groupings such as organelles and protein complexes. The phenotype
+discovery (phenoDisco) algorithm [@Breckels:2013] is one such method
+and is available in `r Biocpkg("pRoloc")`. It is an iterative
+semi-supervised learning method that combines the classification of
+proteins on existing labelled data with the detection of new clusters.
+Novelty detection methods are also useful for confirming the presence
+of known clusters in an unbiased fashion. For example, in [@hyper] the
+`phenoDisco` algorithm was used to detect the data-specific
+confirmation and presence of the nucleus and nucleus sub-compartments,
+as it was expected that nucleus associated clusters existed within the
+data as the protocol included a separate chromatin-rich fraction to
+enrich for nuclei. In the code chunk below, we show how to run a
+series of novelty detection experiments using the `phenoDisco`
+algorithm on the mouse stem-cell dataset. There are several optional
+arguments that can be set dependent on the type of biological question
+of interest. For example, 
 
 - Explain how to use different group sizes for detecting small complexes etc.
 - ndims for using >=2 components
@@ -725,16 +803,64 @@ pdRes <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200,
 
 # Supervised machine learning
 
-Supervised machine learning, also known as classification, is an essential tool for the assignment of proteins to distinct sub-cellular niches. Using a set of labelled training examples i.e. markers, we can train a machine learning classifier to learn a mapping between the data i.e. the quantitative protein profiles, and a known localisation. The trained classifier can then be used to predict the localisation of a protein of unknown localisation, based on its observed protein profile. To date, this method has been extensively used in spatial quantitative proteomics to assign thousands of proteins to distinct sub-cellular niches [@hyper; @Groen:2014; @Trotter:2010; @Hall:2009; @Dunkley:2006; @Tan:2009]. 
+Supervised machine learning, also known as classification, is an
+essential tool for the assignment of proteins to distinct sub-cellular
+niches. Using a set of labelled training examples i.e. markers, we can
+train a machine learning classifier to learn a mapping between the
+data i.e. the quantitative protein profiles, and a known localisation.
+The trained classifier can then be used to predict the localisation of
+a protein of unknown localisation, based on its observed protein
+profile. To date, this method has been extensively used in spatial
+quantitative proteomics to assign thousands of proteins to distinct
+sub-cellular niches [@hyper; @Groen:2014; @Trotter:2010; @Hall:2009;
+@Dunkley:2006; @Tan:2009]. 
 
-There are several classification algorithms readily available in `pRoloc`, which are documented in the dedicated [`pRoloc` machine learning techniques vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf). We find the general tendancy to be that it is not the choice of classifier, but the improper optimisation of the algorithmic parameters, that limits classification accuracy. Before employing any classification algorithm and generating a model on the training data, one must first find the optimal parameters for the algorithm of choice. 
+There are several classification algorithms readily available in
+`pRoloc`, which are documented in the dedicated [`pRoloc` machine
+learning techniques
+vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf).
+We find the general tendancy to be that it is not the choice of
+classifier, but the improper optimisation of the algorithmic
+parameters, that limits classification accuracy. Before employing any
+classification algorithm and generating a model on the training data,
+one must first find the optimal parameters for the algorithm of
+choice. 
 
 ## Optimisation
 
-In the code chunk below we employ the use of a Support Vector Machine (SVM) to learn a classifier on the labelled training data. The training data is found in the `featureData` slot in the column called `SVM.marker.set`. As previously mentioned one first needs to train the classifiers parameters before an algorithm can be used to predict the class labels of the proteins with unknown location. One of the most common ways to optimise the parameters of a classifier is to partition the labelled data in to training and testing subsets. In this framework parameters are tested via a grid search using cross-validation on the training partition. The best parameters chosen from the cross-validation stage are then used to build a classifier to predict the class labels of the protein profiles on the test partition. Observed and expected classication results can be compared, and then used to assess how well a given model works by getting an estimate of the classiers ability to achieve a good generalisation i.e. that is given an unknown example predict its class label with high accuracy. In `pRoloc` algorithmic performance is estimated using stratified 80/20 partitioning for the training/testing subsets respectively, in conjuction with five-fold cross-validation in order to optimise the free parameters via a grid search. This procedure is usually repeated 100 times and then the best parameter(s) are selected upon investigation of classifier accuracy, here we use the harmonic mean of precision and recall; the macro F1 score. In the code chunk below we demonstrate how to optimise the free parameters; `sigma` and `cost`, of a classical SVM classifier with a Gaussian kernel using the function `svmOptimisation`. As the number of labelled instances per class varies from organelle to organelle, we can account for class imbalance by setting specific class weights when generating the SVM model. Below the weights, `w` are set to be inversely proportional to the class frequencies. 
+In the code chunk below we employ the use of a Support Vector Machine
+(SVM) to learn a classifier on the labelled training data. The
+training data is found in the `featureData` slot in the column called
+`SVM.marker.set`. As previously mentioned one first needs to train the
+classifiers parameters before an algorithm can be used to predict the
+class labels of the proteins with unknown location. One of the most
+common ways to optimise the parameters of a classifier is to partition
+the labelled data in to training and testing subsets. In this
+framework parameters are tested via a grid search using
+cross-validation on the training partition. The best parameters chosen
+from the cross-validation stage are then used to build a classifier to
+predict the class labels of the protein profiles on the test
+partition. Observed and expected classication results can be compared,
+and then used to assess how well a given model works by getting an
+estimate of the classiers ability to achieve a good generalisation
+i.e. that is given an unknown example predict its class label with
+high accuracy. In `pRoloc` algorithmic performance is estimated using
+stratified 80/20 partitioning for the training/testing subsets
+respectively, in conjuction with five-fold cross-validation in order
+to optimise the free parameters via a grid search. This procedure is
+usually repeated 100 times and then the best parameter(s) are selected
+upon investigation of classifier accuracy, here we use the harmonic
+mean of precision and recall; the macro F1 score. In the code chunk
+below we demonstrate how to optimise the free parameters; `sigma` and
+`cost`, of a classical SVM classifier with a Gaussian kernel using the
+function `svmOptimisation`. As the number of labelled instances per
+class varies from organelle to organelle, we can account for class
+imbalance by setting specific class weights when generating the SVM
+model. Below the weights, `w` are set to be inversely proportional to
+the class frequencies. 
 
 ```{r loadpdRes, include=FALSE}
-pdRes <- hl
+pdRes <- hl 
 load("Data/fusionparams.rda")
 (w <- table(fData(pdRes)[, "SVM.marker.set"]))
 w <- 1/w[names(w) != "unknown"]
@@ -751,7 +877,18 @@ params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
                           verbose = FALSE)
 ```
 
-The output `params` is an object of class `GenRegRes`; a dedicated container for the storage of the design and results from a machine learning optimisation. To assess classifier performance we can examine the macro F1 scores and the most frequently chosen parameters. A high macro F1 score indicates that the marker proteins in the test dataset are consistently and correctly assigned by the the algorithm. Often more than one parameter or set of parameters gives rise to the best generalisation accuracy. As such it is always important to investigate the model parameters and critically assess the best choice. The best choice may not be as simple as the parameter set that gives rise to the highest macro F1 score and one must be careful to avoid overfitting and to choose parameters wisely. 
+The output `params` is an object of class `GenRegRes`; a dedicated
+container for the storage of the design and results from a machine
+learning optimisation. To assess classifier performance we can examine
+the macro F1 scores and the most frequently chosen parameters. A high
+macro F1 score indicates that the marker proteins in the test dataset
+are consistently and correctly assigned by the the algorithm. Often
+more than one parameter or set of parameters gives rise to the best
+generalisation accuracy. As such it is always important to investigate
+the model parameters and critically assess the best choice. The best
+choice may not be as simple as the parameter set that gives rise to
+the highest macro F1 score and one must be careful to avoid
+overfitting and to choose parameters wisely. 
 
 ```{r visualiseOpt, eval=FALSE}
 (best <- getParams(params))
@@ -762,32 +899,58 @@ levelPlot(params)
 grid.arrange(plot(params), levelPlot(params), ncol = 2)
 ```
 
-By using the function `getParams` we can extract the best set of parameters. Currently, `getParams` retrieves the first best set is automatically but users are encouraged to critically assess whether this is the most wise choice by visualising the results using the methods `plot` and `levelPlot`. The `plot` method for `GenRegRes` object shows the respective distributions of the 100 macro F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows the averaged macro F1 scores, for the full range of parameter values. Once we have selected the best parameters we can then use them to build a classifier from the labelled marker proteins. 
+By using the function `getParams` we can extract the best set of
+parameters. Currently, `getParams` retrieves the first best set is
+automatically but users are encouraged to critically assess whether
+this is the most wise choice by visualising the results using the
+methods `plot` and `levelPlot`. The `plot` method for `GenRegRes`
+object shows the respective distributions of the 100 macro F1 scores
+for the best cost/sigma parameter pairs, and `levelPlot` shows the
+averaged macro F1 scores, for the full range of parameter values. Once
+we have selected the best parameters we can then use them to build a
+classifier from the labelled marker proteins. 
 
 ## Classification
 
-We can use the function `svmClassification` to return a classification result for all unlabelled instances in the dataset corresponding to their most likely sub-cellular location. The algorithm parameters are passed to the function, along with the class weights and the `fcol` to tell the function where the labelled training data is located, in our case, our marker proteins are located in the `featureData` with the label `"SVM.marker.set"`.
+We can use the function `svmClassification` to return a classification
+result for all unlabelled instances in the dataset corresponding to
+their most likely sub-cellular location. The algorithm parameters are
+passed to the function, along with the class weights and the `fcol` to
+tell the function where the labelled training data is located, in our
+case, our marker proteins are located in the `featureData` with the
+label `"SVM.marker.set"`.
 
 ```{r classify, eval=TRUE}
-svmRes <- svmClassification(pdRes, params,
+svmres <- svmClassification(pdRes, params,
                             class.weights = w,
                             fcol = "SVM.marker.set")
 ```
 
-Automatically, the output of the above classification; the organelle predictions and assignment scores, are stored in the `featureData` slot of the `MSnSet`. In this case, they are given the labels `svm` and `svm.scores` for the predictions and scores respectively. The resultant predictions can be visualised using `plot2D`. In the code chunk below `plot2D` is called to generate a PCA plot of the data and `fcol` is used to specify where the new assignments are located e.g. `fcol =  "svm"`. 
+Automatically, the output of the above classification; the organelle
+predictions and assignment scores, are stored in the `featureData`
+slot of the `MSnSet`. In this case, they are given the labels `svm`
+and `svm.scores` for the predictions and scores respectively. The
+resultant predictions can be visualised using `plot2D`. In the code
+chunk below `plot2D` is called to generate a PCA plot of the data and
+`fcol` is used to specify where the new assignments are located e.g.
+`fcol =  "svm"`. 
 
-Additionally, when calling `plot2D` we can use the `cex` argument to change the size of each point on the plot (where one point represents one protein) to be inversely proportional to the SVM score. This gives an initial overview of the high scoring localisations from the SVM predictions.
+Additionally, when calling `plot2D` we can use the `cex` argument to
+change the size of each point on the plot (where one point represents
+one protein) to be inversely proportional to the SVM score. This gives
+an initial overview of the high scoring localisations from the SVM
+predictions.
 
 ```{r setColors, include=FALSE}
 setStockcol(paste0(getStockcol(), 70))
 ```
 ```{r plotSVM, eval=TRUE}
-## set point size of each protein to be inversely proportional to the SVM score
-ptsze <- exp(fData(svmRes)$svm.scores) - 1
+## set point size of each protein to be inversely proportional to the
+ptsze <- exp(fData(svmres)$svm.scores) - 1
 
 ## plot new predictions
-plot2D(svmRes, fcol = "svm", cex = ptsze)
-addLegend(svmRes, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
+plot2D(svmres, fcol = "svm", cex = ptsze)
+addLegend(svmres, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
 
 The adjustment of the point size intuitively confers important
@@ -801,25 +964,102 @@ positively/negatively affects this, and relation with thresholding.
 
 ## Thresholding
 
-It is common when applying a supervised classification algorithm to set a specific score cutoff on which to define new assignments, below which classifications are set to unknown/unassigned. This is because in a supervised learning setup proteins can only be predicted to be localised to one of the sub-cellular niches that appear in the labelled training data. We can not guaranette (and do not expect) that the whole class diversity to be represented in the training data as (1) finding markers that represent the whole diversity of the cell is challenging and (2) many sub-cellular niches contain too few proteins to train on (note: we recommend a minimum of 13 markers per sub-cellular class for stratified 80/20 partitioning and cross-validation). 
+It is common when applying a supervised classification algorithm to
+set a specific score cutoff on which to define new assignments, below
+which classifications are set to unknown/unassigned. This is important
+as in a supervised learning setup proteins can only be predicted to be
+localised to one of the sub-cellular niches that appear in the
+labelled training data. We can not guaranette (and do not expect) that
+the whole class diversity to be represented in the labelled training
+data as (1) finding markers that represent the whole diversity of the
+cell is challenging (especially obtaining dual- and multiply-localised
+protein markers) and (2) many sub-cellular niches contain too few
+proteins to train on (we recommend a minimum of 13 markers per
+sub-cellular class for stratified 80/20 partitioning and 5-fold
+cross-validation). <!--Conversely, with defining markers one must also
+be careful to not label too many markers, as this can lead to
+overfitting and mis-assignment.-->
 
-Deciding on a threshold is not trivial as classifier scores are heavily dependent upon the classifier used and different sub-cellular niches can exhibit different score distributions. We recommend one to set class-specific score distributions. In the code chunk below we display a boxplot of the score distributions per organelle.
+Deciding on a threshold is not trivial as classifier scores are
+heavily dependent upon the classifier used and different sub-cellular
+niches can exhibit different score distributions, as highlighted in
+the boxplot below. We recommend users to set class-specific thresholds.
+In the code chunk below we display a boxplot of the score distributions 
+per organelle. 
 
-```{r thresholds}
+```{r thresholds, fig.height=8, fig.width=8}
+## First remove the markers
+preds <- unknownMSnSet(svmres, fcol = "SVM.marker.set")
 
+## Plot a boxplot of the scores of each organelle
+par(oma= c(10.5, 0, 0, 0))
+boxplot(svm.scores ~ svm, data = fData(preds), ylab = "SVM scores", las = 2)
 ```
 
-To help examine these distributions there is also a dedicated interactive application in the `r Biocpkg("pRolocGUI")` package. To access this application:
+There are many ways to set thresholds and the choice of method will depend
+on the biological question and experimental design at hand. One viable
+approach in the frame of the above experimetal design would be to manually
+set a FDR, say 5%, per organelle. To do this the user would examine 
+the top scoring predictions for each organelle, and then set a threshold at
+the score at which they achieve 5% of false assignments per organelle. 
+The definintion of a false assignment would depend on the information 
+available, for example, validity or lack of validity for the localisation
+from another experiment as reported in the literature or a reliable database. 
+If such information is not available, one crude method is to set a threshold  
+per organelle by extracting the median or 3rd quantile score per organelle. 
+For example, in the code chunk below, we use the `orgQuants` function
+to extract the median organelle scores and then pass these scores to the 
+`getPrediction` function to extract the new localisations that meet this
+scoring criteria. Any sub-cellular predictions that fall below the specified
+thresholds are labelled as unknown.
 
-```{r classifyApp}
+```{r orgquants}
+ts <- orgQuants(svmres, 
+                fcol = "svm", 
+                scol = "svm.scores",
+                mcol = "SVM.marker.set", 
+                t = .5)
 
+preds <- getPredictions(svmres, 
+                        fcol = "svm",
+                        scol = "svm.scores", 
+                        mcol = "SVM.marker.set",
+                        t = ts)
 ```
 
-To launch the classify application:
+The output of `getPredictons` is the original `MSnSet` dataset with a new feature variable appended to the feature data called `fcol.pred` (i.e. in our case `svm.pred`) containing the prediction results. The results can also be visualied using `plot2D` function.
 
-- Essential for protein localisation as we do not want to force all proteins in to one category (allow for multiple lcoalisations or localisations outside the training data set e.g. new novel compartments)
+```{r plotres}
+plot2D(preds, fcol = "svm.pred")
+```
 
-- `getPredictions` function allows you to pass a score threshold. Also `classify` application available to interactively view output of thresholds
+
+There is also a dedicated interactive application to help users examine these distributions in the `r Biocpkg("pRolocGUI")` package. This app can be launched via the `pRolocVis` function and specifying the argument `app = "classify"` along with the relevent `fcol`, `scol` and `mcol` which refer to the columns in the feature data that contain the new assignments, assignment scores and markers respectively (see also `fvarLabels(svmres)`).
+
+```{r classifyApp, eval=FALSE}
+library("pRolocGUI")
+pRolocVis(svmres, app = "classify", 
+          fcol = "svm", 
+	        scol = "svm.scores",
+          mcol = "SVM.marker.set")
+```
+
+![The classify application](./Figures/classify.png)
+
+The data is loaded and displayed on a PCA plot and a boxplot is used to
+display the classifier scores by data class. On the left there is
+a sidebar panel with sliders to control the thresholds upon which classifications 
+are made. There are two types of cut-off that the user can choose from: (1)
+"Quantile" and (2) "User-defined". By default, when the application is launched
+quatile scoring is selected and set to 0.5, the median. The 
+class-specific score thresholds that correspond to selecting the desired
+quantile are shown on as red dots on the boxplot. The assignments on the PCA
+plot are also updated according to the selected threshold. The quantile 
+threshold can be set by moving the corresponding quantile slider. If one
+wished to set their own cut-offs the "User-defined" radio button must be selected
+and then the sliders for defining user-specified scores become active and the
+scores and highlighted on the boxplot by blue dots. For more information we refer
+users to the [`r Biocpkg("pRolocGUI")` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 
 ## Transfer learning
