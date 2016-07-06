@@ -1034,7 +1034,13 @@ plot2D(preds, fcol = "svm.pred")
 ```
 
 
-There is also a dedicated interactive application to help users examine these distributions in the `r Biocpkg("pRolocGUI")` package. This app can be launched via the `pRolocVis` function and specifying the argument `app = "classify"` along with the relevent `fcol`, `scol` and `mcol` which refer to the columns in the feature data that contain the new assignments, assignment scores and markers respectively (see also `fvarLabels(svmres)`).
+There is also a dedicated interactive application to help users
+examine these distributions in the `r Biocpkg("pRolocGUI")` package.
+This app can be launched via the `pRolocVis` function and specifying
+the argument `app = "classify"` along with the relevent `fcol`, `scol`
+and `mcol` which refer to the columns in the feature data that contain
+the new assignments, assignment scores and markers respectively (see
+also `fvarLabels(svmres)`).
 
 ```{r classifyApp, eval=FALSE}
 library("pRolocGUI")
@@ -1063,6 +1069,19 @@ users to the [`r Biocpkg("pRolocGUI")` tutorial vignette](http://bioconductor.or
 
 
 ## Transfer learning
+
+In addition to high quality MS-based quantitative proteomics data there exist a number of other sources of information that are freely available in the public domain that may be useful to assign a protein to its sub-cellular niche. For example, imaging from immunofluorescence microscopy, protein
+annotations and sequences, and protein-protein interactions among others, which represent a rich and vast source of complementary information. The integration of data between different technologies is one of the biggest challenges in computational biology to date. A paradigm in machine learning, known as transfer learning (TL) is ideally suited to this task. The `r Biocpkg("pRoloc")` package provides functionality to do such analyses.
+
+In TL one typically has a primary task that they wish to solve, and some complementary (often heterogeneous) auxiliary information that is related to the primary learning objective, that can be used to help solve the primary goal. For example, here our primary task is to assign proteins to their sub-cellular niche with high generalisation accuracy from data collected from quantitative MS-based experiments. One useful source of information that may help us solve our task is Gene Ontology information, such as the cellular compartment namespace, for every protein found in the primary experiment. We have shown that using transfer learning in the context of spatial proteomics results in the assignment of proteins to sub-cellular niches with higher generalisation accuracy than using standard supervised machine learning [@Breckels:2016]. 
+
+In the code chunk below, we extract information from the Gene Ontology to use as an auxiliary data source to be intergrated with our high quality MS-based data.
+
+```{r go}
+
+```
+
+
 
 # Session information
 
