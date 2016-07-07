@@ -1071,15 +1071,45 @@ users to the [`r Biocpkg("pRolocGUI")` tutorial vignette](http://bioconductor.or
 ## Transfer learning
 
 In addition to high quality MS-based quantitative proteomics data there exist a number of other sources of information that are freely available in the public domain that may be useful to assign a protein to its sub-cellular niche. For example, imaging from immunofluorescence microscopy, protein
-annotations and sequences, and protein-protein interactions among others, which represent a rich and vast source of complementary information. The integration of data between different technologies is one of the biggest challenges in computational biology to date. A paradigm in machine learning, known as transfer learning (TL) is ideally suited to this task. The `r Biocpkg("pRoloc")` package provides functionality to do such analyses.
+annotations and sequences, and protein-protein interactions among others, represent a rich and vast source of complementary information. We can integrate this auxiliary information with our primary MS-based quantitative data using a paradigm known as transfer learning (TL). The integration of data between different technologies is one of the biggest challenges in computational biology to date and the `r Biocpkg("pRoloc")` package provides functionality to do such analyses. We recently developed two transfer learning algorithms using a $k$-NN and SVM framework and applied them to the task of protein localisation prediction [@Breckels:2016]. 
 
-In TL one typically has a primary task that they wish to solve, and some complementary (often heterogeneous) auxiliary information that is related to the primary learning objective, that can be used to help solve the primary goal. For example, here our primary task is to assign proteins to their sub-cellular niche with high generalisation accuracy from data collected from quantitative MS-based experiments. One useful source of information that may help us solve our task is Gene Ontology information, such as the cellular compartment namespace, for every protein found in the primary experiment. We have shown that using transfer learning in the context of spatial proteomics results in the assignment of proteins to sub-cellular niches with higher generalisation accuracy than using standard supervised machine learning [@Breckels:2016]. 
+In TL one typically has a primary task that they wish to solve, and some complementary (often heterogeneous) auxiliary information that is related to the primary learning objective, that can be used to help solve the primary goal. For example, here our primary task is to assign proteins to their sub-cellular niche with high generalisation accuracy from data collected from quantitative MS-based experiments. In the example below we extract Gene Ontology (GO) information to use as an auxiliary data source to help solve our task of protein localisation prediction.
+
+Using the functions `setAnnotationParams` and `makeGoSet` we can contruct an auxiliary `MSnSet` of GO terms, from the primary data's features i.e. the protein accession numbers. All the GO terms associated to each accession number are retrieved and used to create a binary matrix where a 1 (0) at position (i; j) indicates that term j has (not) been used to annotate protein i. The GO terms are retrieved from an appropriate repository using the `r Biocpkg("biomaRt")` package. The specific `r Biocpkg("Biomart")` repository and query will depend on the species under study and the type of identifiers. The first step is to condtruct the annotation parameters that will enable to perform the query, this is done using `setAnnotationParams`. Typing into the R console `par <- setAnnotationParams()` will present two menus, firstly asking you to identify the species of study (below, left), then what type of identifier is used to annotate the proteins in your `MSnSet` (below, right). 
+
+![]()
+
+It is also possible to pass patterns to match the species e.g. "Mus musculus", and the identifier used e.g. "Uniprot/Swissprot Accession", for the `Biocpkg("Biomart")` query.
+
+```{r setap}
+par <- setAnnotationParams(inputs = c("Mus musculus", 
+                                      "Uniprot/Swissprot Accession"))
+
+```
+
+Now we have contructed the query parameters we can use the `makeGoSet` function to retrieve and build an auxiliary GO `MSnSet` as described above. By default, the cellular component terms are downloaded, without any filtering on evidence codes. It is also possible to download terms from the molecular function and biological process GO namespaces, and also apply filtering based on evidence codes as desired, see `?makeGoSet` for more details. 
+
+
+```{r}
+gocc <- makeGoSet(hl, params = par, 
+                  namespace = "cellular_component", 
+                  evidence = NULL)
+gocc
+```
+
+
+Now we have generated our auxiliary data we can use the $k$-NN implementation of transfer learning available in `Biocpkg("pRoloc")` to integrate this with our primary MS-based quantitative proteomics data using the functions `knntlOptimisation` to estimate the free-parameters for the integration, and `knntlClassification` for the predictions.
+
+The $k$-NN TL algorithm estimates optimal weights for the different data sources and the spatial niches described for the data at hand with the `knntlOptimisation` function.
+
+
+One useful source of information that may help us solve our task is Gene Ontology information, such as the cellular compartment namespace. We have shown that using transfer learning in the context of spatial proteomics results in the assignment of proteins to sub-cellular niches with a higher generalisation accuracy than using standard supervised machine learning with a single source of information [@Breckels:2016]. 
+
+
 
 In the code chunk below, we extract information from the Gene Ontology to use as an auxiliary data source to be intergrated with our high quality MS-based data.
 
-```{r go}
 
-```
 
 
 
