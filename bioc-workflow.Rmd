@@ -64,7 +64,7 @@ package vignettes and associated papers [@Gatto:2014;@Gatto2015].
 As a use-case, we analyse a recent high-throughput spatial proteomics
 dataset from pluripotent mouse embryonic stem cells (E14TG2a)
 [@hyper]. The data was generated using hyperplexed LOPIT (hyperLOPIT),
-an improved method relying on improved sub-cellular fractionation and
+a method relying on improved sub-cellular fractionation and
 more accurate quantitation, leading to more reliable classification of
 protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
@@ -776,29 +776,135 @@ discovery (phenoDisco) algorithm [@Breckels:2013] is one such method
 and is available in `r Biocpkg("pRoloc")`. It is an iterative
 semi-supervised learning method that combines the classification of
 proteins on existing labelled data with the detection of new clusters.
-Novelty detection methods are also useful for confirming the presence
-of known clusters in an unbiased fashion. For example, in [@hyper] the
-`phenoDisco` algorithm was used to detect the data-specific
-confirmation and presence of the nucleus and nucleus sub-compartments,
-as it was expected that nucleus associated clusters existed within the
-data as the protocol included a separate chromatin-rich fraction to
-enrich for nuclei. In the code chunk below, we show how to run a
-series of novelty detection experiments using the `phenoDisco`
-algorithm on the mouse stem-cell dataset. There are several optional
-arguments that can be set dependent on the type of biological question
-of interest. For example, 
 
-- Explain how to use different group sizes for detecting small complexes etc.
-- ndims for using >=2 components
-- times -> important for convergence
-- input markers are different here -> explain choice of pd.markers
+In addition to extracting new phenotypes, novelty detection methods 
+are also useful for confirming the presence of known or postulated 
+clusters in an unbiased fashion. For example, in [@hyper] 
+the `phenoDisco` algorithm was used to confirm the data-specific
+presence of the nucleus and nucleus sub-compartments. In the code 
+chunk below, we re-run this analysis, highlighting some of the 
+optional arguments and parameters available for phenotype extraction 
+and give some advice on how to interpret the output.
 
-```{r pd, eval = FALSE}
-## As per the hyperLOPIT paper
-pdRes <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, 
-                    GS = 20, p = 0.05)
+As the `phenoDisco` algorithm is semi-supervised it uses both 
+labelled (markers) and unlabelled data to explore the data structure 
+and find new sub-cellular data clusters. Thus the first step is to 
+define some input labelled data i.e. markers, that the algorithm 
+will use as input for the supervised learning aspect of the 
+algorithm. As described in [@hyper] we define a set of markers 
+to use as input for the analyses that cover well-known residents 
+from three distinct organelle structures; the mitochondria, plasma 
+membrane and ER, and from three well-known and abundant protein 
+complexes; the proteasome and two ribosomal subunits, 40S and 60S. 
+These input markers are stored in the `featureData` column of 
+`hl` where `fcol = "phenoDisoc.Input"`. We can use the convenience 
+accessor function `getMarkers` to print out a table of the markers 
+contained in this marker set. These initial markers were manually 
+curated using information from the UniProt database, the Gene 
+Ontology and the literature. 
+
+```{r displayPDmarkers}
+getMarkers(hl, fcol = "phenoDisco.Input")
+```
+
+In the code chunk below we run the `phenoDisco` function and 
+return a novelty detection result stored in `pdRes`, according 
+to the specified parameters. The algorithm parameters `times`, 
+`GS` and `p` are passed to the function, along with the `fcol` 
+telling the algorithm where the input training data is contained.
+
+```{r runPD, eval = FALSE}
+## As per Christoforou et al (2016), 
+pdRes <- phenoDisco(hl, fcol = "phenoDisco.Input", 
+                    times = 200, 
+                    GS = 60)
 
 ```
+
+The argument `times` defined the number of times we run unsupervied 
+Gaussian Mixture Modelling before defining a new phenotype cluster. 
+The recommended minimum and default value is 100. In the below 
+code chunk we increase the value to `times = 200` as we have found 
+for larger datasets (e.g. 5000+ proteins) a higher times is requried 
+for convergence. `GS` defines the minimum number of proteins allowed 
+per new data cluster and thus heavily influences what type of new 
+clusters are extracted. For example, if a user is interesed in the 
+detection of small complexes they may wish to use a small `GS = 10`, 
+or `=20` etc. If they wish to detect larger more abundant sub-cellular 
+niches a higher `GS` would be preferable. Specifying a small `GS` is be 
+more time consuming than a larger `GS`, and there is a trade off 
+between finding interesting small complexes and those that may not 
+be of interest as we find there is a tendancy to find more noise when 
+using a small `GS` compared to using a higher one.
+
+One may also consider increasing the search space for new data 
+clusters by increasing the value of the parameter `G`. This defines 
+the number of GMM components to test and fit; the default is `G = 1:9` 
+(`mclust`'s default). One should note that the choice of decreasing 
+`GS`, and increasing the values of the arguments `times`, `G` 
+(among other function arguments, see `?phenoDisco`) will heavily 
+influence (increase) the total time taken to run the algorithm. 
+`phenoDisco` supports parallelisation and we strongly suggest 
+you make use of a parallel processing to run these analyses (different 
+backends can be set with argument `BPPARAM`). 
+
+The ouput of running the `phenoDisco` algorithm is a `MSnSet` containing 
+the new data clusters, appended to the `featureData` under the name 
+`pd`. We can see by typing `pdRes` directly into the console the 
+processing information has been updated to the `MSnSet` recording the 
+parameters that were used to run the analyses. This is handy for keeping 
+track of data analyses. The results can be displayed by using the 
+`getMarkers` function. We see that 5 new phenotype data clusters were 
+found.
+
+```{r loadPDres, include=FALSE}
+load("Data/pd_runs/pd.rda")
+setStockcol(NULL)
+setStockcol(paste0(getStockcol(), 70))
+```
+```{r showPDres}
+pdRes
+getMarkers(pdRes, fcol = "pd")
+```
+
+We can plot the results using the `plot2D` function.
+
+```{r plotPDres, fig.width=9}
+## Re-order the colours for the phenoDisco output
+cl <- getMarkerClasses(pdRes, "pd", verbose = FALSE)
+cols <- getStockcol()[seq(cl)]
+ind <- grep("Pheno", cl, invert = TRUE)
+cols[ind] <- getStockcol()[seq(cl)][1:length(ind)]
+cols[-ind] <- getStockcol()[seq(cl)][(length(ind) + 1):length(cl)]
+
+## Plot the input and output
+par(mfrow = c(1, 2))
+plot2D(pdRes, fcol = "phenodisco.input", 
+       main = "phenoDisco input markers", col = getStockcol()[1:6])
+addLegend(pdRes, fcol = "phenodisco.input", 
+          where = "bottomleft", cex = .7)
+plot2D(pdRes, fcol = "pd", main = "phenoDisco output", col = cols)
+addLegend(pdRes, fcol = "pd", where = "bottomleft", cex = .7, col = cols)
+```
+
+The five new phenotype data clusters can be extracted and examined. 
+In the code chunk below we write the results to a .csv file. We use 
+the argument `fDataCols` to specify which columns of the `featureData` 
+to write. 
+
+```{r writePDres, eval=FALSE}
+fData(pdRes)$pd <- as.character(fData(pdRes)$pd)
+write.exprs(pdRes, fDataCols = "pd", file = "pd-results.csv", sep = ",")
+```
+
+We can also examine the each phenotype intercatively and visualise 
+their protein profiles by using the `pRolocVis` function in the 
+`pRolocGUI`.
+
+```{r visPDres, eval=FALSE}
+pRolocVis(pdRes, fcol = "pd")
+```
+
 
 # Supervised machine learning
 
