@@ -183,7 +183,7 @@ skip the first line of the file (for the same reason that we used
 `MSnSet` object, named `hl` (for hyperLOPIT).
 
 ```{r readMSnSet2}
-hl <- readMSnSet2(csvfile, ecol = c(8:27), fnames = 1, skip = 1)
+hl <- readMSnSet2(csvfile, ecol = 8:27, fnames = 1, skip = 1)
 ```
 
 Below, we display a short summary of the data. The data contains 
@@ -304,14 +304,14 @@ data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2)
 ```
 
-To list all data distributed with a package, one can use pass the
-package name as input to the `data` function. For instance
+To list all data distributed with a package, one can use use the
+`pRolocdata` function.
 
 ```{r pkgdata, eval=FALSE}
-data(package = "pRolocdata")
+pRolocdata()
 ```
 
-will list the `r nrow(data(package = "pRolocdata")$results)` datasets
+will list the `r nrow(pRolocdata()$results)` datasets
 that are available in `r Biocexptpkg("pRolocdata")`.
 
 Combining data is performed with the `combine` function. This function
