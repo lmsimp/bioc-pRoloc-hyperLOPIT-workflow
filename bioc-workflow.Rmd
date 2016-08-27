@@ -4,7 +4,7 @@ author: "Lisa Breckels and Laurent Gatto"
 output: html_document
 ---
 
-```{r env, echo=FALSE}
+```{r env, echo=FALSE, warning=FALSE}
 library("BiocStyle")
 suppressPackageStartupMessages(library("knitr"))
 suppressPackageStartupMessages(library("gridExtra"))
@@ -426,7 +426,7 @@ information in one figure, to get an simplified overview of the data.
 In the code chunk below, we specify `fcol = NULL`, which means not to
 consider any feature variable to annotate the features (proteins) with
 colours. We will see later how to use this to annotate the PCA plot
-with prior information about sub-cellular localisation.
+with prior information about sub-cellular localisation. 
 
 ```{r qcplot, message=FALSE, warning=FALSE}
 library("pRoloc")
@@ -542,6 +542,20 @@ colours and the default plotting characters (solid dots for the
 markers and empty circles for the features of unknown localisation)
 can of course be changed, as described in the `setStockcol` manual
 page.
+
+As demonstrated in [@hyper] and illustrated in the PCA plot above, the
+Golgi apparatus proteins display a dynamic pattern, noting sets of
+Golgi marker proteins that are distributed amongst other subcellular
+structures, an observation supported by microscopy. As such, we are
+going to reset the annotation of Golgi markers to unknown using the
+`fDataTounknown` function. It is often used to replace empty strings
+("") or missing values in the markers definition to a common
+definition of *unknown localisation*.
+
+```{r}
+hl <- fDataToUnknown(hl, from = "Golgi", to = "unknown")
+getMarkers(hl)
+```
 
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in
 particular the cellular compartment (CC) namespace are a good starting
@@ -659,8 +673,8 @@ two figures with the same orientation.
 
 ```{r plot2Drep, fig.width = 12}
 par(mfrow = c(1, 2))
-plot2D(hl[, hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+plot2D(hl[, hl$replicate == 1], main = "Replicate 1")
+plot2D(hl[, hl$replicate == 2], main = "Replicate 2",
        mirrorX = TRUE)
 ```
 
@@ -871,7 +885,7 @@ We can plot the results using the `plot2D` function.
 
 ```{r plotPDres, fig.width=9}
 ## Re-order the colours for the phenoDisco output
-cl <- getMarkerClasses(pdRes, "pd", verbose = FALSE)
+cl <- getMarkerClasses(pdRes, "pd")
 cols <- getStockcol()[seq(cl)]
 ind <- grep("Pheno", cl, invert = TRUE)
 cols[ind] <- getStockcol()[seq(cl)][1:length(ind)]
@@ -934,53 +948,56 @@ choice.
 ## Optimisation
 
 In the code chunk below we employ the use of a Support Vector Machine
-(SVM) to learn a classifier on the labelled training data. The
-training data is found in the `featureData` slot in the column called
-`SVM.marker.set`. As previously mentioned one first needs to train the
-classifiers parameters before an algorithm can be used to predict the
-class labels of the proteins with unknown location. One of the most
-common ways to optimise the parameters of a classifier is to partition
-the labelled data in to training and testing subsets. In this
-framework parameters are tested via a grid search using
-cross-validation on the training partition. The best parameters chosen
-from the cross-validation stage are then used to build a classifier to
-predict the class labels of the protein profiles on the test
-partition. Observed and expected classication results can be compared,
-and then used to assess how well a given model works by getting an
-estimate of the classiers ability to achieve a good generalisation
-i.e. that is given an unknown example predict its class label with
-high accuracy. In `pRoloc` algorithmic performance is estimated using
-stratified 80/20 partitioning for the training/testing subsets
-respectively, in conjuction with five-fold cross-validation in order
-to optimise the free parameters via a grid search. This procedure is
-usually repeated 100 times and then the best parameter(s) are selected
-upon investigation of classifier accuracy, here we use the harmonic
-mean of precision and recall; the macro F1 score. In the code chunk
-below we demonstrate how to optimise the free parameters; `sigma` and
-`cost`, of a classical SVM classifier with a Gaussian kernel using the
-function `svmOptimisation`. As the number of labelled instances per
-class varies from organelle to organelle, we can account for class
-imbalance by setting specific class weights when generating the SVM
-model. Below the weights, `w` are set to be inversely proportional to
-the class frequencies. 
+(SVM) to learn a classifier on the labelled training data. As
+previously mentioned one first needs to train the classifiers
+parameters before an algorithm can be used to predict the class labels
+of the proteins with unknown location. One of the most common ways to
+optimise the parameters of a classifier is to partition the labelled
+data in to training and testing subsets. In this framework parameters
+are tested via a grid search using cross-validation on the training
+partition. The best parameters chosen from the cross-validation stage
+are then used to build a classifier to predict the class labels of the
+protein profiles on the test partition. Observed and expected
+classication results can be compared, and then used to assess how well
+a given model works by getting an estimate of the classiers ability to
+achieve a good generalisation i.e. that is given an unknown example
+predict its class label with high accuracy. In `pRoloc` algorithmic
+performance is estimated using stratified 80/20 partitioning for the
+training/testing subsets respectively, in conjuction with five-fold
+cross-validation in order to optimise the free parameters via a grid
+search. This procedure is usually repeated 100 times and then the best
+parameter(s) are selected upon investigation of classifier accuracy,
+here we use the harmonic mean of precision and recall; the macro F1
+score. In the code chunk below we demonstrate how to optimise the free
+parameters; `sigma` and `cost`, of a classical SVM classifier with a
+Gaussian kernel using the function `svmOptimisation`. As the number of
+labelled instances per class varies from organelle to organelle, we
+can account for class imbalance by setting specific class weights when
+generating the SVM model. Below the weights, `w` are set to be
+inversely proportional to the class frequencies. 
 
 ```{r loadpdRes, include=FALSE}
 pdRes <- hl 
 load("Data/fusionparams.rda")
-(w <- table(fData(pdRes)[, "SVM.marker.set"]))
+w <- table(getMarkers(pdRes, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 ```
 
 ```{r optimise, eval=FALSE}
-(w <- table(fData(pdRes)[, "SVM.marker.set"]))
+w <- table(getMarkers(pdRes, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 
 ## 100 rounds of optimisation with five-fold cross-validation
-params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
+params <- svmOptimisation(pdRes, fcol = "markers",
                           times = 100, xval = 5,
                           class.weights = w,
                           verbose = FALSE)
 ```
+
+As mentioned previously, we reply on the default feature variable
+`"markers"` to define the class labels and hence can ommit it. To use
+another feature variables, one need to explicitly specify its name
+using the `fcol` argument (for example `fcol = "markers2"`).
 
 The output `params` is an object of class `GenRegRes`; a dedicated
 container for the storage of the design and results from a machine
@@ -1020,15 +1037,14 @@ classifier from the labelled marker proteins.
 We can use the function `svmClassification` to return a classification
 result for all unlabelled instances in the dataset corresponding to
 their most likely sub-cellular location. The algorithm parameters are
-passed to the function, along with the class weights and the `fcol` to
-tell the function where the labelled training data is located, in our
-case, our marker proteins are located in the `featureData` with the
-label `"SVM.marker.set"`.
+passed to the function, along with the class weights. As above, `fcol`
+can be ignored as we use the labels defined in the default `"markers"`
+feature variable.
 
 ```{r classify, eval=TRUE}
 svmres <- svmClassification(pdRes, params,
                             class.weights = w,
-                            fcol = "SVM.marker.set")
+                            fcol = "markers")
 ```
 
 Automatically, the output of the above classification; the organelle
@@ -1082,7 +1098,10 @@ cell is challenging (especially obtaining dual- and multiply-localised
 protein markers) and (2) many sub-cellular niches contain too few
 proteins to train on (we recommend a minimum of 13 markers per
 sub-cellular class for stratified 80/20 partitioning and 5-fold
-cross-validation - this allows a minimum of ~10 examples for parameter optimisation on the training partition i.e. 2 per fold for 5-fold cross-validation, and then 3 for testing the best parameters on the validation set). <!--Conversely, with defining markers one must also
+cross-validation - this allows a minimum of ~10 examples for parameter
+optimisation on the training partition i.e. 2 per fold for 5-fold
+cross-validation, and then 3 for testing the best parameters on the
+validation set). <!--Conversely, with defining markers one must also
 be careful to not label too many markers, as this can lead to
 overfitting and mis-assignment.-->
 
@@ -1095,7 +1114,7 @@ per organelle.
 
 ```{r thresholds, fig.height=8, fig.width=8}
 ## First remove the markers
-preds <- unknownMSnSet(svmres, fcol = "SVM.marker.set")
+preds <- unknownMSnSet(svmres)
 
 ## Plot a boxplot of the scores of each organelle
 par(oma= c(10.5, 0, 0, 0))
@@ -1123,13 +1142,13 @@ thresholds are labelled as unknown.
 ts <- orgQuants(svmres, 
                 fcol = "svm", 
                 scol = "svm.scores",
-                mcol = "SVM.marker.set", 
+                mcol = "markers", 
                 t = .5)
 
 preds <- getPredictions(svmres, 
                         fcol = "svm",
                         scol = "svm.scores", 
-                        mcol = "SVM.marker.set",
+                        mcol = "markers",
                         t = ts)
 ```
 
@@ -1150,10 +1169,10 @@ also `fvarLabels(svmres)`).
 
 ```{r classifyApp, eval=FALSE}
 library("pRolocGUI")
-pRolocVis(svmres, app = "classify", 
-          fcol = "svm", 
+pRolocVis(svmres, app = "classify",
+          fcol = "svm",
 	        scol = "svm.scores",
-          mcol = "SVM.marker.set")
+          mcol = "markers")
 ```
 
 ![The classify application](./Figures/classify.png)
@@ -1171,7 +1190,8 @@ threshold can be set by moving the corresponding quantile slider. If one
 wished to set their own cut-offs the "User-defined" radio button must be selected
 and then the sliders for defining user-specified scores become active and the
 scores and highlighted on the boxplot by blue dots. For more information we refer
-users to the [`r Biocpkg("pRolocGUI")` tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
+users to the `r Biocpkg("pRolocGUI")` tutorial 
+[vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 
 ## Transfer learning

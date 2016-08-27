@@ -5,21 +5,6 @@ output: html_document
 ---
 
 
-```
-## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
-## undefined subclass "daboostCont" of class "listOrdata.frame"; definition
-## not updated
-```
-
-```
-## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
-## undefined subclass "daboostCont" of class "input"; definition not updated
-```
-
-```
-## Warning in .recacheSubclasses(def@className, def, doSubclasses, env):
-## undefined subclass "daboostCont" of class "output"; definition not updated
-```
 
 # Introduction
 
@@ -606,7 +591,7 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Aug 25 13:21:59 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Aug 27 16:30:57 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -663,10 +648,10 @@ hyperLOPIT
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Aug 25 13:21:59 2016 
-## Subset [6725,20][5032,20] Thu Aug 25 13:21:59 2016 
-## Removed features with more than 0 NAs: Thu Aug 25 13:22:00 2016 
-## Dropped featureData's levels Thu Aug 25 13:22:00 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Aug 27 16:30:57 2016 
+## Subset [6725,20][5032,20] Sat Aug 27 16:30:58 2016 
+## Removed features with more than 0 NAs: Sat Aug 27 16:30:58 2016 
+## Dropped featureData's levels Sat Aug 27 16:30:58 2016 
 ##  MSnbase version: 1.19.3
 ```
 
@@ -882,6 +867,37 @@ markers and empty circles for the features of unknown localisation)
 can of course be changed, as described in the `setStockcol` manual
 page.
 
+As demonstrated in [@hyper] and illustrated in the PCA plot above, the
+Golgi apparatus proteins display a dynamic pattern, noting sets of
+Golgi marker proteins that are distributed amongst other subcellular
+structures, an observation supported by microscopy. As such, we are
+going to reset the annotation of Golgi markers to unknown using the
+`fDataTounknown` function. It is often used to replace empty strings
+("") or missing values in the markers definition to a common
+definition of *unknown localisation*.
+
+
+```r
+hl <- fDataToUnknown(hl, from = "Golgi", to = "unknown")
+getMarkers(hl)
+```
+
+```
+## organelleMarkers
+##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
+##                      27                      43                      13 
+##                 Cytosol   Endoplasmic reticulum                Endosome 
+##                      43                      95                      12 
+##    Extracellular matrix                Lysosome           Mitochondrion 
+##                      10                      33                     383 
+##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
+##                      64                      85                      17 
+##         Plasma membrane              Proteasome                 unknown 
+##                      51                      34                    4095 
+##       unknown apparatus 
+##                      27
+```
+
 In general, the Gene Ontology (GO) [@Ashburner:2000], and in
 particular the cellular compartment (CC) namespace are a good starting
 point for protein annotation and marker definition. It is important to
@@ -999,8 +1015,8 @@ two figures with the same orientation.
 
 ```r
 par(mfrow = c(1, 2))
-plot2D(hl[, hl$replicate == 1], fcol = "SVM.marker.set", main = "Replicate 1")
-plot2D(hl[, hl$replicate == 2], fcol = "SVM.marker.set", main = "Replicate 2",
+plot2D(hl[, hl$replicate == 1], main = "Replicate 1")
+plot2D(hl[, hl$replicate == 2], main = "Replicate 2",
        mirrorX = TRUE)
 ```
 
@@ -1298,7 +1314,7 @@ We can plot the results using the `plot2D` function.
 
 ```r
 ## Re-order the colours for the phenoDisco output
-cl <- getMarkerClasses(pdRes, "pd", verbose = FALSE)
+cl <- getMarkerClasses(pdRes, "pd")
 cols <- getStockcol()[seq(cl)]
 ind <- grep("Pheno", cl, invert = TRUE)
 cols[ind] <- getStockcol()[seq(cl)][1:length(ind)]
@@ -1365,49 +1381,52 @@ choice.
 ## Optimisation
 
 In the code chunk below we employ the use of a Support Vector Machine
-(SVM) to learn a classifier on the labelled training data. The
-training data is found in the `featureData` slot in the column called
-`SVM.marker.set`. As previously mentioned one first needs to train the
-classifiers parameters before an algorithm can be used to predict the
-class labels of the proteins with unknown location. One of the most
-common ways to optimise the parameters of a classifier is to partition
-the labelled data in to training and testing subsets. In this
-framework parameters are tested via a grid search using
-cross-validation on the training partition. The best parameters chosen
-from the cross-validation stage are then used to build a classifier to
-predict the class labels of the protein profiles on the test
-partition. Observed and expected classication results can be compared,
-and then used to assess how well a given model works by getting an
-estimate of the classiers ability to achieve a good generalisation
-i.e. that is given an unknown example predict its class label with
-high accuracy. In `pRoloc` algorithmic performance is estimated using
-stratified 80/20 partitioning for the training/testing subsets
-respectively, in conjuction with five-fold cross-validation in order
-to optimise the free parameters via a grid search. This procedure is
-usually repeated 100 times and then the best parameter(s) are selected
-upon investigation of classifier accuracy, here we use the harmonic
-mean of precision and recall; the macro F1 score. In the code chunk
-below we demonstrate how to optimise the free parameters; `sigma` and
-`cost`, of a classical SVM classifier with a Gaussian kernel using the
-function `svmOptimisation`. As the number of labelled instances per
-class varies from organelle to organelle, we can account for class
-imbalance by setting specific class weights when generating the SVM
-model. Below the weights, `w` are set to be inversely proportional to
-the class frequencies. 
+(SVM) to learn a classifier on the labelled training data. As
+previously mentioned one first needs to train the classifiers
+parameters before an algorithm can be used to predict the class labels
+of the proteins with unknown location. One of the most common ways to
+optimise the parameters of a classifier is to partition the labelled
+data in to training and testing subsets. In this framework parameters
+are tested via a grid search using cross-validation on the training
+partition. The best parameters chosen from the cross-validation stage
+are then used to build a classifier to predict the class labels of the
+protein profiles on the test partition. Observed and expected
+classication results can be compared, and then used to assess how well
+a given model works by getting an estimate of the classiers ability to
+achieve a good generalisation i.e. that is given an unknown example
+predict its class label with high accuracy. In `pRoloc` algorithmic
+performance is estimated using stratified 80/20 partitioning for the
+training/testing subsets respectively, in conjuction with five-fold
+cross-validation in order to optimise the free parameters via a grid
+search. This procedure is usually repeated 100 times and then the best
+parameter(s) are selected upon investigation of classifier accuracy,
+here we use the harmonic mean of precision and recall; the macro F1
+score. In the code chunk below we demonstrate how to optimise the free
+parameters; `sigma` and `cost`, of a classical SVM classifier with a
+Gaussian kernel using the function `svmOptimisation`. As the number of
+labelled instances per class varies from organelle to organelle, we
+can account for class imbalance by setting specific class weights when
+generating the SVM model. Below the weights, `w` are set to be
+inversely proportional to the class frequencies. 
 
 
 
 
 ```r
-(w <- table(fData(pdRes)[, "SVM.marker.set"]))
+w <- table(getMarkers(pdRes, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 
 ## 100 rounds of optimisation with five-fold cross-validation
-params <- svmOptimisation(pdRes, fcol = "SVM.marker.set",
+params <- svmOptimisation(pdRes, fcol = "markers",
                           times = 100, xval = 5,
                           class.weights = w,
                           verbose = FALSE)
 ```
+
+As mentioned previously, we reply on the default feature variable
+`"markers"` to define the class labels and hence can ommit it. To use
+another feature variables, one need to explicitly specify its name
+using the `fcol` argument (for example `fcol = "markers2"`).
 
 The output `params` is an object of class `GenRegRes`; a dedicated
 container for the storage of the design and results from a machine
@@ -1446,16 +1465,15 @@ classifier from the labelled marker proteins.
 We can use the function `svmClassification` to return a classification
 result for all unlabelled instances in the dataset corresponding to
 their most likely sub-cellular location. The algorithm parameters are
-passed to the function, along with the class weights and the `fcol` to
-tell the function where the labelled training data is located, in our
-case, our marker proteins are located in the `featureData` with the
-label `"SVM.marker.set"`.
+passed to the function, along with the class weights. As above, `fcol`
+can be ignored as we use the labels defined in the default `"markers"`
+feature variable.
 
 
 ```r
 svmres <- svmClassification(pdRes, params,
                             class.weights = w,
-                            fcol = "SVM.marker.set")
+                            fcol = "markers")
 ```
 
 Automatically, the output of the above classification; the organelle
@@ -1509,7 +1527,10 @@ cell is challenging (especially obtaining dual- and multiply-localised
 protein markers) and (2) many sub-cellular niches contain too few
 proteins to train on (we recommend a minimum of 13 markers per
 sub-cellular class for stratified 80/20 partitioning and 5-fold
-cross-validation - this allows a minimum of ~10 examples for parameter optimisation on the training partition i.e. 2 per fold for 5-fold cross-validation, and then 3 for testing the best parameters on the validation set). <!--Conversely, with defining markers one must also
+cross-validation - this allows a minimum of ~10 examples for parameter
+optimisation on the training partition i.e. 2 per fold for 5-fold
+cross-validation, and then 3 for testing the best parameters on the
+validation set). <!--Conversely, with defining markers one must also
 be careful to not label too many markers, as this can lead to
 overfitting and mis-assignment.-->
 
@@ -1523,7 +1544,7 @@ per organelle.
 
 ```r
 ## First remove the markers
-preds <- unknownMSnSet(svmres, fcol = "SVM.marker.set")
+preds <- unknownMSnSet(svmres)
 
 ## Plot a boxplot of the scores of each organelle
 par(oma= c(10.5, 0, 0, 0))
@@ -1554,81 +1575,45 @@ thresholds are labelled as unknown.
 ts <- orgQuants(svmres, 
                 fcol = "svm", 
                 scol = "svm.scores",
-                mcol = "SVM.marker.set", 
+                mcol = "markers", 
                 t = .5)
 ```
 
 ```
-##                          40S Ribosome 
-##                             0.4341137 
-##                          60S Ribosome 
-##                             0.3010607 
-##                    Actin cytoskeleton 
-##                             0.3893434 
-##                               Cytosol 
-##                             0.6559441 
-## Endoplasmic reticulum/Golgi apparatus 
-##                             0.7104011 
-##                              Endosome 
-##                             0.4060792 
-##                  Extracellular matrix 
-##                             0.4083229 
-##                              Lysosome 
-##                             0.5933408 
-##                         Mitochondrion 
-##                             0.9372301 
-##                   Nucleus - Chromatin 
-##                             0.7953840 
-##               Nucleus - Non-chromatin 
-##                             0.7015457 
-##                            Peroxisome 
-##                             0.3152419 
-##                       Plasma membrane 
-##                             0.7053194 
-##                            Proteasome 
-##                             0.4236308
+##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
+##               0.4770151               0.4057463               0.3935451 
+##                 Cytosol   Endoplasmic reticulum                Endosome 
+##               0.7711319               0.7608277               0.3955721 
+##    Extracellular matrix                Lysosome           Mitochondrion 
+##               0.3657065               0.6190396               0.9659837 
+##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
+##               0.8173867               0.7896030               0.4852385 
+##         Plasma membrane              Proteasome       unknown apparatus 
+##               0.7156504               0.4644731               0.3999325
 ```
 
 ```r
 preds <- getPredictions(svmres, 
                         fcol = "svm",
                         scol = "svm.scores", 
-                        mcol = "SVM.marker.set",
+                        mcol = "markers",
                         t = ts)
 ```
 
 ```
 ## ans
-##                          40S Ribosome 
-##                                    85 
-##                          60S Ribosome 
-##                                   177 
-##                    Actin cytoskeleton 
-##                                    92 
-##                               Cytosol 
-##                                   305 
-## Endoplasmic reticulum/Golgi apparatus 
-##                                   426 
-##                              Endosome 
-##                                    98 
-##                  Extracellular matrix 
-##                                    28 
-##                              Lysosome 
-##                                   126 
-##                         Mitochondrion 
-##                                   537 
-##                   Nucleus - Chromatin 
-##                                   229 
-##               Nucleus - Non-chromatin 
-##                                   349 
-##                            Peroxisome 
-##                                    39 
-##                       Plasma membrane 
-##                                   332 
-##                            Proteasome 
-##                                   159 
-##                               unknown 
-##                                  2050
+##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
+##                      76                      96                      66 
+##                 Cytosol   Endoplasmic reticulum                Endosome 
+##                     248                     283                      52 
+##    Extracellular matrix                Lysosome           Mitochondrion 
+##                      20                     103                     491 
+##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
+##                     218                     308                      26 
+##         Plasma membrane              Proteasome                 unknown 
+##                     282                     138                    2044 
+##       unknown apparatus 
+##                     581
 ```
 
 The output of `getPredictons` is the original `MSnSet` dataset with a new feature variable appended to the feature data called `fcol.pred` (i.e. in our case `svm.pred`) containing the prediction results. The results can also be visualied using `plot2D` function.
@@ -1652,10 +1637,10 @@ also `fvarLabels(svmres)`).
 
 ```r
 library("pRolocGUI")
-pRolocVis(svmres, app = "classify", 
-          fcol = "svm", 
+pRolocVis(svmres, app = "classify",
+          fcol = "svm",
 	        scol = "svm.scores",
-          mcol = "SVM.marker.set")
+          mcol = "markers")
 ```
 
 ![The classify application](./Figures/classify.png)
@@ -1673,7 +1658,8 @@ threshold can be set by moving the corresponding quantile slider. If one
 wished to set their own cut-offs the "User-defined" radio button must be selected
 and then the sliders for defining user-specified scores become active and the
 scores and highlighted on the boxplot by blue dots. For more information we refer
-users to the [*[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)* tutorial vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
+users to the *[pRolocGUI](http://bioconductor.org/packages/pRolocGUI)* tutorial 
+[vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 
 ## Transfer learning
@@ -1838,11 +1824,11 @@ sessionInfo()
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.11.4    pRoloc_1.13.11       MLInterfaces_1.53.1 
+##  [1] pRolocdata_1.11.4    pRoloc_1.13.12       MLInterfaces_1.53.1 
 ##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.12       S4Vectors_0.11.10   
 ## [10] MSnbase_1.99.0       ProtGenerics_1.5.1   BiocParallel_1.7.8  
-## [13] mzR_2.7.3            Rcpp_0.12.6          Biobase_2.33.0      
+## [13] mzR_2.7.4            Rcpp_0.12.6          Biobase_2.33.1      
 ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.23    
 ## [19] knitr_1.14          
 ## 
@@ -1865,7 +1851,7 @@ sessionInfo()
 ## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.0.0        
 ## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
 ## [52] gtools_3.5.0          DEoptimR_1.0-6        zlibbioc_1.19.0      
-## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.6 
+## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.7 
 ## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
 ## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
 ## [64] stringi_1.1.1         RSQLite_1.0.0         genefilter_1.55.2    
