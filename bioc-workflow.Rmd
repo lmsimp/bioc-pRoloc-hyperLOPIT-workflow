@@ -130,14 +130,7 @@ To use the `readMSnSet2` function, as a minimum one must specify the
 file path to the data and which columns of the spreadsheet contain
 quantitation data. The `getEcols` function exists to help users
 identify which columns of the spreadsheet contain the
-quantitation data. 
-
-We first locate the the spreadsheet of E14TG2a data distributed with
-the `r Biocexptpkg("pRolocdata")` data using `system.file`, that
-locates the `extdata` in the `r Biocexptpkg("pRolocdata")` package on
-the hard drive and `dir`, that displays the full path to the file
-matching the `hyperLOPIT-SIData-ms3-rep12-intersect.csv` pattern,
-which corresponds the the file of interest. In the last line, we print
+quantitation data. In the last line of the code chunk below, we print
 the file name (not the full path, which will vary from computer to
 computer). 
 
@@ -198,9 +191,8 @@ etc (see below).
 hl
 ```
 
-As briefly mentioned above, the quantitation data is stored in the
-`exprs` slot of the `MSnSet` and can be accessed by
-`exprs(hl)`. Below, we examine the quantitative information for
+
+Below, we examine the quantitative information for
 first 5 proteins. It is also possible to access specific rows and
 columns by naming the proteins and fractions of interest.
 
@@ -238,8 +230,30 @@ well. Below, we annotate the replicate from which the profiles
 originate and the TMT tag (extracted from the sample/fraction names).
 
 ```{r pdata}
-pData(hl)$replicate <- rep(1:2, each = 10)
-pData(hl)$tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
+pData(hl)$Replicate <- rep(1:2, each = 10)
+pData(hl)$Tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
+pData(hl)
+```
+
+Sample meta-data distributed with
+the `r Biocexptpkg("pRolocdata")` and as above with the quantitation
+data file is located in the `extdata` in the `r Biocexptpkg("pRolocdata")` 
+package on the hard drive. In the code chunk below we again use the `dir` 
+function to locate the filepath to the meta-data `csv` file and then read 
+it into R using `read.csv` and append the meta-data to the `pData` slot. 
+We add information on the gradient fractions used and the associated 
+subcellular fraction densities in % w/v Iodixanol for each replicate.
+
+
+```{r morepdata}
+expinfo <- dir(extdatadir, full.names = TRUE,
+               pattern = "hyperLOPIT-SIData-fraction-info.csv")
+
+fracinfo <- read.csv(expinfo, row.names=1, skip = 2, 
+                     header = FALSE, stringsAsFactors = FALSE)
+
+pData(hl)$Gradient.Fraction <- c(fracinfo[, 1], fracinfo[, 2])
+pData(hl)$Iodixonal.Density <- c(fracinfo[, 4], fracinfo[, 5])
 pData(hl)
 ```
 
@@ -257,8 +271,11 @@ design, and will not be addressed in this workflow. In addition, and
 more specific to spatial proteomics data, it is fundamental to scale
 all the organelle-specific profiles into a same intensity interval
 (typically 0 and 1) by, for example, diving each intensity by the sum
-of the intensities for that quantitative feature, as illustrated
-below.
+of the intensities for that quantitative feature. This is not necessary 
+in this example as the intensities for each replicate have already 
+been re-scaled to 1 in Proteome Discoverer. However, if one wanted
+to do this they would execute the `normalise` function as demonstrated 
+in the below code chunk.
 
 ```{r normsum, eval = FALSE}
 hl <- normalise(hl, method = "sum")
@@ -275,15 +292,16 @@ above. Different normalisation methods such as mean or median scaling,
 variance stabilisation or quantile normalisation, to cite a few, can
 be applied to accomodation different needs.
 
-Before combination, the two replicates in the `hl` data that we
-read into R were separately normalised by sum across the 10 channels
-for each replicate respectively. We can verify this by summing each
-rows for each replicate:
+As previously mentioned, before combination, the two replicates in 
+the `hl` data that we read into R were separately normalised 
+by sum (i.e. to 1) across the 10 channels for each replicate 
+respectively. We can verify this by summing each rows for each replicate:
 
 ```{r normcheck}
 summary(rowSums(exprs(hl[, hl$replicate == 1])))
 summary(rowSums(exprs(hl[, hl$replicate == 2])))
 ```
+
 We see that some features do not add up exactly to 1 due to rounding
 errors after exporting to intermediate files. These small deviations
 do not bear any consequences here.
@@ -296,7 +314,7 @@ included two replicates. We also provide individual replicates in the
 `r Biocexptpkg("pRolocdata")` package. Below, we show how to combine
 `MSnSet` objects and, subsequently, how to filter and handle missing
 values. We start by loading the experimental data package and the
-equivalent replicates using the `load` function.
+equivalent replicates using the `data` function.
 
 ```{r reps4combine}
 library("pRolocdata")
@@ -347,14 +365,15 @@ remove the shared annotation.
 ```{r fvarnames2}
 fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
 fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
-fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
+fData(hyperLOPIT2015ms3r1) <- fData(hyperLOPIT2015ms3r1)[1:5] 
+fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5] 
 ```
 
 We can now combine the two experiments into a single `MSnSet`:
 
 ```{r combine}
-hyperLOPIT <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
-hyperLOPIT
+combined <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+combined
 ```
 
 More details above combining data are given in the dedicated
@@ -375,7 +394,7 @@ particular case, missing values are indicative of protein groups that
 were not profiles in both replicates.
 
 ```{r namap}
-image2(is.na(hyperLOPIT), col = c("black", "white"),
+image2(is.na(combined), col = c("black", "white"),
        main = "Missing values (white cells) after combining replicates")
 ```
 
@@ -385,8 +404,8 @@ removes features that contain more than a certain proportion (default
 is 0) missing values.
 
 ```{r filterNA}
-hyperLOPIT <- filterNA(hyperLOPIT)
-hyperLOPIT
+combined <- filterNA(combined)
+combined
 ```
 
 When more than 2 data are to be combined and/or too many proteins were
@@ -430,7 +449,7 @@ with prior information about sub-cellular localisation.
 
 ```{r qcplot, message=FALSE, warning=FALSE}
 library("pRoloc")
-plot2D(hyperLOPIT, fcol = NULL)
+plot2D(hl, fcol = NULL, col = "black")
 ```
 
 In the first instance we advise one to visualise their data without 
@@ -443,8 +462,8 @@ the successful separation of sub-cellular clusters.
 the `plot2D` function, which can be parametrised with the `method`
 argument.  Advantages, disadvantages? See
 [this](https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32)
-very interesting gist with intriguing tSNE examples. This might be
-better to come after markers.
+very interesting gist with intriguing tSNE examples. <!--This might be
+better to come after markers.-->
 
 It is also useful to visualise the relative intensities along the
 gradient to identify fractions displaying particularly low yield. This
@@ -457,10 +476,10 @@ fractions to pair corresponding fractions in the two replicates
 
 ```{r qcbx, fig.width = 12}
 par(mfrow = c(1, 2))
-o <- order(hyperLOPIT$Iodixonal.Density)
-plotDist(hyperLOPIT[, o], pcol = "#00000010")
-lines(colMeans(exprs(hyperLOPIT[, o])), col = "red", type = "b")
-boxplot(exprs(hyperLOPIT[, o]), las = 2)
+o <- order(hl$Iodixonal.Density)
+plotDist(hl[, o], pcol = "#00000010")
+lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
+boxplot(exprs(hl[, o]), las = 2)
 ```
 
 # Markers
@@ -530,8 +549,8 @@ the apparent overlap in the two first PCs.
 
 ```{r plotmarkers, fig.width = 12}
 par(mfrow = c(1, 2))
-plot2D(hl, fcol = "markers", main = "pRolocmarkers for mouse")
-addLegend(hl, fcol = "markers", where = "bottomleft", cex = .7)
+plot2D(hl, main = "pRolocmarkers for mouse")
+addLegend(hl, cex = .7)
 plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 ```
 
@@ -578,7 +597,7 @@ in profiles between these two sets of markers along the 6th and 7th
 fractions, as represented above along the 7th PC on the PCA plot.
 
 ```{r plotDist}
-hlo <- hyperLOPIT[, order(hyperLOPIT$Iodixonal.Density)]
+hlo <- hl[, order(hl$Iodixonal.Density)]
 plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
          pcol = "purple", fractions = "Fraction.No")
 title(main = "Marker occupancy profiles along the gradient")
@@ -609,8 +628,8 @@ of fractions are combined to obtain enough material and optimise
 acurate quantitation.
 
 ```{r pdtab, echo=FALSE, eval = FALSE}
-i <- hyperLOPIT$Fraction.No %in% 7:10
-pData(hyperLOPIT)[i, -3]
+i <- c(2, 3, 4, 13, 14)
+pData(hl)[i, -3]
 ```
 
 <!-- On the figure below, we compare the relative intensities of channels 7 -->
@@ -673,17 +692,17 @@ two figures with the same orientation.
 
 ```{r plot2Drep, fig.width = 12}
 par(mfrow = c(1, 2))
-plot2D(hl[, hl$replicate == 1], main = "Replicate 1")
-plot2D(hl[, hl$replicate == 2], main = "Replicate 2",
+plot2D(hl[, hl$Replicate == 1], main = "Replicate 1")
+plot2D(hl[, hl$Replicate == 2], main = "Replicate 2",
        mirrorX = TRUE)
 ```
 
 
 ## Peason correlation
 
-```{r}
-i1 <- exprs(hl[, hl$replicate == 1])
-i2 <- exprs(hl[, hl$replicate == 2])
+```{r pearson}
+i1 <- exprs(hl[, hl$Replicate == 1])
+i2 <- exprs(hl[, hl$Replicate == 2])
 pearcor <- cor(t(i1), t(i2))
 pearcor0 <- cor(t(i1[, seq(1, 10, 2)]), t(i2[, seq(1, 10, 2)]))
 mean(diag(pearcor))
