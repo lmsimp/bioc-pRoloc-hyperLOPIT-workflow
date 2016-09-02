@@ -848,9 +848,9 @@ telling the algorithm where the input training data is contained.
 
 ```{r runPD, eval = FALSE}
 ## As per Christoforou et al (2016), 
-pdRes <- phenoDisco(hl, fcol = "phenoDisco.Input", 
-                    times = 200, 
-                    GS = 60)
+hl <- phenoDisco(hl, fcol = "phenoDisco.Input", 
+                 times = 200, 
+                 GS = 60)
 
 ```
 
@@ -892,19 +892,20 @@ found.
 
 ```{r loadPDres, include=FALSE}
 load("Data/pd_runs/pd.rda")
+hl <- pdRes
 setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 ```
 ```{r showPDres}
-pdRes
-getMarkers(pdRes, fcol = "pd")
+hl
+getMarkers(hl, fcol = "pd")
 ```
 
 We can plot the results using the `plot2D` function.
 
 ```{r plotPDres, fig.width=9}
 ## Re-order the colours for the phenoDisco output
-cl <- getMarkerClasses(pdRes, "pd")
+cl <- getMarkerClasses(hl, "pd")
 cols <- getStockcol()[seq(cl)]
 ind <- grep("Pheno", cl, invert = TRUE)
 cols[ind] <- getStockcol()[seq(cl)][1:length(ind)]
@@ -912,12 +913,11 @@ cols[-ind] <- getStockcol()[seq(cl)][(length(ind) + 1):length(cl)]
 
 ## Plot the input and output
 par(mfrow = c(1, 2))
-plot2D(pdRes, fcol = "phenodisco.input", 
+plot2D(hl, fcol = "phenodisco.input", 
        main = "phenoDisco input markers", col = getStockcol()[1:6])
-addLegend(pdRes, fcol = "phenodisco.input", 
-          where = "bottomleft", cex = .7)
-plot2D(pdRes, fcol = "pd", main = "phenoDisco output", col = cols)
-addLegend(pdRes, fcol = "pd", where = "bottomleft", cex = .7, col = cols)
+addLegend(hl, fcol = "phenodisco.input", cex = .7)
+plot2D(hl, fcol = "pd", main = "phenoDisco output", col = cols)
+addLegend(hl, fcol = "pd", cex = .7, col = cols)
 ```
 
 The five new phenotype data clusters can be extracted and examined. 
@@ -925,19 +925,26 @@ In the code chunk below we write the results to a .csv file. We use
 the argument `fDataCols` to specify which columns of the `featureData` 
 to write. 
 
-```{r writePDres, eval=FALSE}
-fData(pdRes)$pd <- as.character(fData(pdRes)$pd)
-write.exprs(pdRes, fDataCols = "pd", file = "pd-results.csv", sep = ",")
+```{r writehl, eval=FALSE}
+fData(hl)$pd <- as.character(fData(hl)$pd)
+write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
 ```
 
 We can also examine the each phenotype intercatively and visualise 
 their protein profiles by using the `pRolocVis` function in the 
 `pRolocGUI`.
 
-```{r visPDres, eval=FALSE}
-pRolocVis(pdRes, fcol = "pd")
+```{r vishl, eval=FALSE}
+pRolocVis(hl, fcol = "pd")
 ```
 
+From examining the literature and the Gene Ontology we find that
+phenotype 1 is enriched in proteins that localise to the nucleus
+(non-chromatin associated proteins), phenotype 2 is enriched in
+chromatin associated proteins, phenotype 3 contains many cytosolic
+proteins and phenotypes 4 and 5 contain lysosmal and endosomal
+proteins. From curating these phenotypes we obtain new marker proteins
+that can be used as input for supervised classification.
 
 # Supervised machine learning
 
@@ -996,21 +1003,19 @@ generating the SVM model. Below the weights, `w` are set to be
 inversely proportional to the class frequencies. 
 
 ```{r loadpdRes, include=FALSE}
-pdRes <- hl 
 load("Data/fusionparams.rda")
-w <- table(getMarkers(pdRes, verbose = TRUE))
+w <- table(getMarkers(hl, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 ```
 
 ```{r optimise, eval=FALSE}
-w <- table(getMarkers(pdRes, verbose = TRUE))
+w <- table(getMarkers(hl, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 
 ## 100 rounds of optimisation with five-fold cross-validation
-params <- svmOptimisation(pdRes, fcol = "markers",
+params <- svmOptimisation(hl, fcol = "markers",
                           times = 100, xval = 5,
-                          class.weights = w,
-                          verbose = FALSE)
+                          class.weights = w)
 ```
 
 As mentioned previously, we reply on the default feature variable
@@ -1037,6 +1042,7 @@ plot(params)
 levelPlot(params)
 ```
 ```{r visualiseOptHide, echo=FALSE, fig.width = 12}
+library('gridExtra')
 grid.arrange(plot(params), levelPlot(params), ncol = 2)
 ```
 
@@ -1061,9 +1067,9 @@ can be ignored as we use the labels defined in the default `"markers"`
 feature variable.
 
 ```{r classify, eval=TRUE}
-svmres <- svmClassification(pdRes, params,
-                            class.weights = w,
-                            fcol = "markers")
+hl <- svmClassification(hl, params,
+                        class.weights = w,
+                        fcol = "markers")
 ```
 
 Automatically, the output of the above classification; the organelle
@@ -1084,14 +1090,15 @@ predictions.
 ```{r setColors, include=FALSE}
 setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
+par(mfrow = c(1, 1))
 ```
 ```{r plotSVM, eval=TRUE}
 ## set point size of each protein to be inversely proportional to the
-ptsze <- exp(fData(svmres)$svm.scores) - 1
+ptsze <- exp(fData(hl)$svm.scores) - 1
 
 ## plot new predictions
-plot2D(svmres, fcol = "svm", cex = ptsze)
-addLegend(svmres, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
+plot2D(hl, fcol = "svm", cex = ptsze)
+addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 ```
 
 The adjustment of the point size intuitively confers important
@@ -1099,7 +1106,7 @@ information that is more difficult to defined formally, but that we
 will address in the next section. The classifier (SVM in our case, but
 this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
-how non-assigned proteins are classifier and with what
+how non-assigned proteins are classified and with what
 confidence. **TODO** explain how choosing markers
 positively/negatively affects this, and relation with thresholding.
 
@@ -1119,8 +1126,8 @@ proteins to train on (we recommend a minimum of 13 markers per
 sub-cellular class for stratified 80/20 partitioning and 5-fold
 cross-validation - this allows a minimum of ~10 examples for parameter
 optimisation on the training partition i.e. 2 per fold for 5-fold
-cross-validation, and then 3 for testing the best parameters on the
-validation set). <!--Conversely, with defining markers one must also
+cross-validation, and then ~3 for testing the best parameters on the
+validation set). <!--Conversely, when defining markers one must also
 be careful to not label too many markers, as this can lead to
 overfitting and mis-assignment.-->
 
@@ -1133,7 +1140,7 @@ per organelle.
 
 ```{r thresholds, fig.height=8, fig.width=8}
 ## First remove the markers
-preds <- unknownMSnSet(svmres)
+preds <- unknownMSnSet(hl)
 
 ## Plot a boxplot of the scores of each organelle
 par(oma= c(10.5, 0, 0, 0))
@@ -1158,23 +1165,27 @@ scoring criteria. Any sub-cellular predictions that fall below the specified
 thresholds are labelled as unknown.
 
 ```{r orgquants}
-ts <- orgQuants(svmres, 
+ts <- orgQuants(hl, 
                 fcol = "svm", 
                 scol = "svm.scores",
                 mcol = "markers", 
                 t = .5)
 
-preds <- getPredictions(svmres, 
-                        fcol = "svm",
-                        scol = "svm.scores", 
-                        mcol = "markers",
-                        t = ts)
+hl <- getPredictions(hl,
+                     fcol = "svm",
+                     scol = "svm.scores", 
+                     mcol = "markers",
+                     t = ts)
+                        
 ```
 
 The output of `getPredictons` is the original `MSnSet` dataset with a new feature variable appended to the feature data called `fcol.pred` (i.e. in our case `svm.pred`) containing the prediction results. The results can also be visualied using `plot2D` function.
 
+```{r resetpar}
+dev.off()
+```
 ```{r plotres}
-plot2D(preds, fcol = "svm.pred")
+plot2D(hl, fcol = "svm.pred")
 ```
 
 
@@ -1188,7 +1199,8 @@ also `fvarLabels(svmres)`).
 
 ```{r classifyApp, eval=FALSE}
 library("pRolocGUI")
-pRolocVis(svmres, app = "classify",
+pRolocVis(hl, 
+          app = "classify",
           fcol = "svm",
 	        scol = "svm.scores",
           mcol = "markers")
@@ -1294,51 +1306,149 @@ sub-cellular niches with a higher generalisation accuracy than using
 standard supervised machine learning with a single source of
 information [@Breckels:2016]. 
 
-The first step, as with any machine learning algorithm, is to
-optimise any free paramaters of the classifier. For the *k*-NN TL
-classifier these are the class weights, one per subcellular niche,
-that control the proportion of primary and auxiliary data to use for
-learning. A weight can take any real value number between 0 and 1. A
-weight of $\theta = 1$ indicates that all weight is given to the primary
-data (and this implicitly implies that a weight of $1 - \theta$ is given to
-the auxiliary data, similarly a weight of $\theta = 0$ implies that all
-weight is given to the auxiliary data (so 0 to the primary source).
-If we conduct a parameter seach and test weights $\theta = {0, 1/3, 2/3, 1}$
-for each class, and if we have say 10 subcellular niches, this
-will result in `4^10` different combinations of parameters to test. The
-parameter optimisation is therefore time consuming and as such
-we recommend you make use of a computing cluster. 
+The first step, as with any machine learning algorithm, is to optimise
+any free paramaters of the classifier. For the *k*-NN TL classifier
+there are two sets of parameters that need optimising: the first set
+are the $k$'s for the primary and auxiliary data sources required for
+the nearest neighbour calculations for each data source.  The second
+set of parameters (which is noted by a vector of $\theta$ weights)
+that require optimising are the class weights, one per subcellular
+niche, that control the proportion of primary and auxiliary data to
+use for learning. A weight can take any real value number between 0
+and 1. A weight of $\theta = 1$ indicates that all weight is given to
+the primary data (and this implicitly implies that a weight of $1 -
+\theta$ is given to the auxiliary data, similarly a weight of $\theta
+= 0$ implies that all weight is given to the auxiliary data (so 0 is
+given to the primary source). If we conduct a parameter seach and test
+weights $\theta = {0, 1/3, 2/3, 1}$ for each class, and if we have,
+for example 10 subcellular niches, this will result in `4^10`
+different combinations of parameters to test. The parameter
+optimisation is therefore time consuming and as such we recommend you
+make use of a computing cluster (code and submissing scripts are also
+available in the supporting information). The markers in the `hl`
+dataset contain 14 subcellular classes. If we examine these markers
+and classes on the PCA plot above we can see that in particular the
+two ribosomes and two nuclear compartments are highly separated along
+the first two components, this is also evident from the profiles plot
+which gives us a good indication that these subcellular niches are
+well-resolved in the hyperLOPIT dataset. Transfer learning is
+particularly useful for classes that are not as well separated, we
+find that subcellular niches that are well-separated under hyperLOPIT
+and LOPIT obtain a class score of 1 (i.e. use only primary data from
+transfer learning [@Breckels:2016]). Therefore, for the optimisation
+stage of the analyses we can already infer a subcellular class weight
+of 1 for these niches and only optimise over the remaining organelles.
+This can signifciantly cut down optimisation time as by removing these
+4 classes from the optimisation (and not the classification) we only
+have `4^10` class weight combinations to consider instead of `4^14`
+combinations. In the example below we remove these 4 classes from the
+marker set, re-run the `knnOptimisation` for each data source and then
+run the `knntlOptimisation` with the 10 remaining classes. (Note: this
+is not run live as this the `hl` dataset with 10 classes, 707 markers
+and `4^10` combinations of parameters takes ~76 hours to run on the
+University of Cambridge HPC using 256 workers). 
 
-<!--In the example below
-we first examine a PCA plot of the data and overlay the remaining
-subcellular markers. We can see that the two ribosomes, two nuclear
-compartments and plasma membrane are quite well-defined and separated
-form the rest of the plot, indicating that they are well-resolved in
-the hyperLOPIT experiments. For this reason, and in the interest of
-parameter optimisation and time we have removed these classes from the
-$k$-NN TL optimisation as we expect their weight to be 1.
+In the example code below we first remove the 2 ribosomes and nuclear
+classes and then run the `knnOptimisation` followed by the
+`knntlOptimisation` (specifying snow with a MPI
+backend with 255 workers for parallelisation on the Cambridge HPC).
 
-- add code here
- 
-We begin by performing the optimisation. The `knntlOptimisation`
-function estimates the optimal weights for the different data sources
-and the spatial niches described for the data.
-
-- first need to do k-NN optimisation to get best k's for P and A
-- explain weight matrix of thetas, `by` and `length,out`
-- explain how to do this on the cluster, in practise too computationally heavy on a single processor
 
 ```{r tlopt, eval=FALSE}
+## create new markers column for tl markers
+fData(hl)$tlmarkers <- fData(hl)$markers
+fData(gocc)$tlmarkers <- fData(gocc)$markers
 
-opt <- knntlOptimisation(hl, gocc,
-                         fcol = ,
-                         by = .5, 
-                         times = 1,
-                         xval = 5, k = c(3,3),
-                         BPPARAM = par
+## Remove 4 classes
+torm  <- c("40S Ribosome", "60S Ribosome",
+           "Nucleus - Chromatin", 
+           "Nucleus - Non-chromatin")
+for (i in seq(torm)) {
+  hl <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
+  gocc <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
+}
+getMarkerClasses(hl, fcol = "tlmarkers")
+getMarkerClasses(hl, fcol = "tlmarkers")
+
+## get best k's
+kp <- knnOptimisation(hl, fcol = "tlmarkers")
+ka <- knnOptimisation(gocc, fcol = "tlmarkers")
+
+## Set appropriate backend and workers for the tl
+par <- SnowParam(255L, type = "MPI")
+
+## Now peform tl optimisation 
+tlopt <- knntlOptimisation(hl, gocc,
+                           fcol = "tlmarkers",
+                           length.out = 4, 
+                           times = 50,
+                           xval = 5, k = c(kp,ka),
+                           BPPARAM = par
   )
 ```
--->
+```{r loadtlres, include = FALSE}
+load("Data/tl_runs/tlopt.rda")
+```
+
+The results of the optimisation can be visalised using the `plot`
+method for `"ThetaRegRes"` objects:
+
+```{r plottl}
+plot(tlopt)
+```
+
+Looking at the bubble plot displaying the distribution of best weights
+over the 50 runs we find that for many of the subcellular niches a
+weight of 1 is most popular (i.e. use only primary hyperLOPIT data in
+classification), this is unsuprising as we already know the dataset is
+well resolved for these classes. We see that the most popular weights
+for the proteasome and lysosome tend to be towards 0, indicating that
+these niches are well-resolved in the Gene Ontology. This tells us
+that we would benefit from including auxiliary GO information in our
+classifier for these subcellular compartments. The plasma membrane
+weights are relatively equally spread between using hyperLOPIT and GO
+data. Using the `getParams` function we can return the best weights
+and then use this as input for the classification. 
+
+One of the benefits of the algorithm is the ability to manually select
+weights for each class. In the optimisation above, for time
+constraints, we removed the two ribosomal subunits and the two nulcear
+compartments, and therefore in the code chunk below when we extract
+the best parameters, these subcellular niches are not included. To
+include these 4 subcellular niches in the next classification step we
+must include them in the parameters so we infer a weight of 1 for each
+of these niches as we know they are well resolved in hyperLOPIT. We
+then re-order the weights according to `getMarkerClasses` and perform
+the classification using the function `knntlClassification`. 
+
+```{r tlclassify}
+## best parameters for the 10 classes
+(bestpar <- getParams(tlopt))
+
+## add weights for classes not included in the optimisation
+otherweights <- rep(1, 4)
+names(otherweights) <- c("40S Ribosome", "60S Ribosome", 
+                         "Nucleus - Chromatin", 
+                         "Nucleus - Non-chromatin")
+(bestpar <- c(bestpar, otherweights))
+
+## re-order classes 
+bestpar <- bestpar[getMarkerClasses(hl)]
+
+## Do the classification
+hl <- knntlClassification(hl, gocc, bestTheta = bestpar, 
+                          k = c(kp, ka))
+
+```
+
+The results from the classification results and associated scores are
+appended to the `fData` slot and named `knntl` and `knntl.scores`
+respectively. Results can be visualised using `plot2D`, scores
+assessed and cutoffs calculated using the `classify` app in
+`pRolocVis`, predictions obtained using `getPredictions` in the same
+way as demonstrated above for the SVM classifier.
+
+
 
 
 # Session information
