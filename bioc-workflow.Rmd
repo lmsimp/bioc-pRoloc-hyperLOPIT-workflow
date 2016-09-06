@@ -607,6 +607,9 @@ legend("topleft", c("Mitochondrion", "Peroxisome"),
        lty = 1, col = c("purple", "blue"), bty = "n")
 ```
 
+**TODO** Possibly mention `plot3D` and `mrkHClust`, although these are
+only available in the development version.
+
 # Replication
 
 With the aim of maximising the sub-cellular resolution and,
