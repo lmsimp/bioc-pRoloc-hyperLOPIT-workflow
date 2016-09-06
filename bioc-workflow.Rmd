@@ -700,20 +700,6 @@ plot2D(hl[, hl$Replicate == 2], main = "Replicate 2",
        mirrorX = TRUE)
 ```
 
-
-## Peason correlation
-
-```{r pearson}
-i1 <- exprs(hl[, hl$Replicate == 1])
-i2 <- exprs(hl[, hl$Replicate == 2])
-pearcor <- cor(t(i1), t(i2))
-pearcor0 <- cor(t(i1[, seq(1, 10, 2)]), t(i2[, seq(1, 10, 2)]))
-mean(diag(pearcor))
-mean(diag(pearcor0))
-```
-
-- What about classification on different replicates?
-
 # Interactive visualisation
 
 Visualisation and data exploration is an important aspect of data
