@@ -17,20 +17,20 @@ suppressPackageStartupMessages(library("pRolocdata"))
 
 Quantitative mass spectrometry based spatial proteomics involves
 elaborate, expensive and time consuming experimental procedures and
-considerable effort is invested in the generation of such
-data. Multiple research groups have described a variety of approaches
-to establish high quality proteome-wide datasets. However, data
-analysis is as critical as data production for reliable and insightful
+considerable effort is invested in the generation of such data.
+Multiple research groups have described a variety of approaches to
+establish high quality proteome-wide datasets. However, data analysis
+is as critical as data production for reliable and insightful
 biological interpretation. Here, we walk the reader through a typical
 pipeline for the analysis of such data using several Bioconductor
 packages for the R statistical programming environment.
 
-The main package to analyse protein localisation data is
-`r Biocpkg("pRoloc")`, which offers a set of dedicated functions for the
-analysis of such data. `r Biocpkg("pRoloc")` itself relies on `r Biocpkg("MSnbase")` to
-manipulate and process quantitative proteomics data. Many other
-packages are used by `r Biocpkg("pRoloc")` for clustering, classification and
-visualisation.
+The main package to analyse protein localisation data is `r
+Biocpkg("pRoloc")`, which offers a set of dedicated functions for the
+analysis of such data. `r Biocpkg("pRoloc")` itself relies on `r
+Biocpkg("MSnbase")` to manipulate and process quantitative proteomics
+data. Many other packages are used by `r Biocpkg("pRoloc")` for
+clustering, classification and visualisation.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
@@ -239,12 +239,12 @@ pData(hl)
 The sample meta-data that is distributed with
 the `r Biocexptpkg("pRolocdata")` package and (as above) the quantitation
 data file are located in the `extdata` in the `r Biocexptpkg("pRolocdata")` 
-package on the hard drive. In the code chunk below we again use the `dir` 
-function to locate the filepath to the meta-data `csv` file and then read 
-it into R using `read.csv`. We then append the meta-data to the `pData` slot. 
-Information about the gradient fractions used and the associated 
-subcellular fraction densities in % w/v Iodixanol for each replicate
-are stored here.
+package on the hard drive. In the code chunk below we again use the
+`dir` function to locate the filepath to the meta-data `csv` file and
+then read it into R using `read.csv`. We then append the meta-data to
+the `pData` slot.  Information about the gradient fractions used and
+the associated subcellular fraction densities in % w/v Iodixanol for
+each replicate are stored here.
 
 
 ```{r morepdata}
@@ -267,21 +267,19 @@ There are two aspects related to data normalisation that are relevant
 to spatial proteomics data processing. The first one focuses on
 reducing purely technical variation between fractions without
 affecting biological variability (i.e. the shape of the quantitative
-profiles). This normalisation will
-depend on the underlying quantitative technology and the experimental
-design, and will not be addressed in this workflow. The second aspect, and
-more specific to spatial proteomics data, is scaling
-all the organelle-specific profiles into a same intensity interval
-(typically 0 and 1) by, for example, diving each intensity by the sum
-of the intensities for that quantitative feature. This is not necessary 
-in this example as the intensities for each replicate have already 
-been re-scaled to 1 in Proteome Discoverer. However, if one wanted
-to do this they would execute the `normalise` function as demonstrated 
-in the below code chunk.
+profiles). This normalisation will depend on the underlying
+quantitative technology and the experimental design, and will not be
+addressed in this workflow. The second aspect, and more specific to
+spatial proteomics data, is scaling all the organelle-specific
+profiles into a same intensity interval (typically 0 and 1) by, for
+example, diving each intensity by the sum of the intensities for that
+quantitative feature. This is not necessary in this example as the
+intensities for each replicate have already been re-scaled to 1 in
+Proteome Discoverer. However, if one wanted to do this they would
+execute the `normalise` function as demonstrated in the below code
+chunk.
 
-```{r normsum, eval = FALSE}
-hl <- normalise(hl, method = "sum")
-```
+```{r normsum, eval = FALSE} hl <- normalise(hl, method = "sum") ```
 
 This transformation of the data assures to cancel the effect of the
 absolute intensities of the quantitative features along the rows, to
@@ -289,15 +287,15 @@ focus subsequent analyses on the relative profiles along the
 sub-cellular fractions.
 
 The same `normalise` function (or `normalize`, both spellings are
-supported) can also be applied in the first case described
-above. Different normalisation methods such as mean or median scaling,
+supported) can also be applied in the first case described above.
+Different normalisation methods such as mean or median scaling,
 variance stabilisation or quantile normalisation, to cite a few, can
 be applied to accomodation different needs.
 
-As previously mentioned, before combination, the two replicates in 
-the `hl` data that we read into R were separately normalised 
-by sum (i.e. to 1) across the 10 channels for each replicate 
-respectively. We can verify this by summing each rows for each replicate:
+As previously mentioned, before combination, the two replicates in the
+`hl` data that we read into R were separately normalised by sum (i.e.
+to 1) across the 10 channels for each replicate respectively. We can
+verify this by summing each rows for each replicate:
 
 ```{r normcheck}
 summary(rowSums(exprs(hl[, hl$replicate == 1])))
@@ -311,13 +309,13 @@ do not bear any consequences here.
 
 ### Combining acquisitions
 
-The spreadsheet that was used to create the `hl` MSnSet
-included the two replicates within one .csv file. 
-We also provide individual replicates in the
-`r Biocexptpkg("pRolocdata")` package. Below, we show how to combine
-`MSnSet` objects and, subsequently, how to filter and handle missing
-values. We start by loading the `r Biocexptpkg("pRolocdata")` package and the
-equivalent replicates using the `data` function.
+The spreadsheet that was used to create the `hl` MSnSet included the
+two replicates within one .csv file.  We also provide individual
+replicates in the `r Biocexptpkg("pRolocdata")` package. Below, we
+show how to combine `MSnSet` objects and, subsequently, how to filter
+and handle missing values. We start by loading the `r
+Biocexptpkg("pRolocdata")` package and the equivalent replicates using
+the `data` function.
 
 ```{r reps4combine}
 library("pRolocdata")
@@ -438,30 +436,29 @@ plot the principal components (PCs) of a dataset against one another,
 by default the first two components are plotted on the x- and y-axis,
 respectively (the `dims` argument can be used to plot other PCs). If
 distinct clusters are observed, we assume that there is organellar
-separation present in the data. Although, representing the 
-multi-dimensional data along a
-limited set of PCs does not give us a hard quantitative measure of
-separation, it is extremely useful summarising complex experimental
-information in one figure, to get an simplified overview of the data.
+separation present in the data. Although, representing the
+multi-dimensional data along a limited set of PCs does not give us a
+hard quantitative measure of separation, it is extremely useful
+summarising complex experimental information in one figure, to get an
+simplified overview of the data.
 
-In the code chunk below we produce a
-PCA plot of the mouse stem cell dataset. One point on the plot
-represents one protein. We can indeed see several distinct protein
-clusters. We specify `fcol = NULL`, which means not to
-consider any feature variable to annotate the features (proteins) with
-colours. We will see later how to use this to annotate the PCA plot
-with prior information about sub-cellular localisation. 
+In the code chunk below we produce a PCA plot of the mouse stem cell
+dataset. One point on the plot represents one protein. We can indeed
+see several distinct protein clusters. We specify `fcol = NULL`, which
+means not to consider any feature variable to annotate the features
+(proteins) with colours. We will see later how to use this to annotate
+the PCA plot with prior information about sub-cellular localisation. 
 
 ```{r qcplot, message=FALSE, warning=FALSE}
 library("pRoloc")
 plot2D(hl, fcol = NULL, col = "black")
 ```
 
-In the first instance we advise one to visualise their data without 
-any annotation (i.e. with `fcol = NULL`), before proceeding with data 
-annotation. The identification of well resolved clusters in the data, 
-constitutes an unbiased assessment of the data structure, demonstrating 
-the successful separation of sub-cellular clusters.
+In the first instance we advise one to visualise their data without
+any annotation (i.e. with `fcol = NULL`), before proceeding with data
+annotation. The identification of well resolved clusters in the data,
+constitutes an unbiased assessment of the data structure,
+demonstrating the successful separation of sub-cellular clusters.
 
 **TODO** There are other dimensionality reduction methods available in
 the `plot2D` function, which can be parametrised with the `method`
@@ -474,18 +471,15 @@ It is also useful to visualise the relative intensities along the
 gradient to identify fractions displaying particularly low yield. This
 can be done using the `plotDist` and `boxplot` functions, that plot
 the protein profiles occupancy along the gradient (we also display the
-mean fraction intensities) and a `boxplot` of the column
-intensities. In the two plots displayed below, we re-order the
-fractions to pair corresponding fractions in the two replicates
-(rather than ordering the fractions by replicate).
+mean fraction intensities) and a `boxplot` of the column intensities.
+In the two plots displayed below, we re-order the fractions to pair
+corresponding fractions in the two replicates (rather than ordering
+the fractions by replicate).
 
-```{r qcbx, fig.width = 12}
-par(mfrow = c(1, 2))
-o <- order(hl$Iodixonal.Density)
-plotDist(hl[, o], pcol = "#00000010")
+```{r qcbx, fig.width = 12} par(mfrow = c(1, 2)) o <-
+order(hl$Iodixonal.Density) plotDist(hl[, o], pcol = "#00000010")
 lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
-boxplot(exprs(hl[, o]), las = 2)
-```
+boxplot(exprs(hl[, o]), las = 2) ```
 
 # Markers
 
@@ -698,12 +692,9 @@ that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation.
 
 
-```{r plot2Drep, fig.width = 12}
-par(mfrow = c(1, 2))
-plot2D(hl[, hl$Replicate == 1], main = "Replicate 1")
-plot2D(hl[, hl$Replicate == 2], main = "Replicate 2",
-       mirrorX = TRUE)
-```
+```{r plot2Drep, fig.width = 12} par(mfrow = c(1, 2)) plot2D(hl[,
+hl$Replicate == 1], main = "Replicate 1") plot2D(hl[, hl$Replicate ==
+2], main = "Replicate 2", mirrorX = TRUE) ```
 
 # Interactive visualisation
 
@@ -804,41 +795,40 @@ and is available in `r Biocpkg("pRoloc")`. It is an iterative
 semi-supervised learning method that combines the classification of
 proteins on existing labelled data with the detection of new clusters.
 
-In addition to extracting new phenotypes, novelty detection methods 
-are also useful for confirming the presence of known or postulated 
-clusters in an unbiased fashion. For example, in [@hyper] 
-the `phenoDisco` algorithm was used to confirm the data-specific
-presence of the nucleus and nucleus sub-compartments. In the code 
-chunk below, we demonstrate how to do this analysis, highlighting some of the 
-optional arguments and parameters available for phenotype extraction 
+In addition to extracting new phenotypes, novelty detection methods
+are also useful for confirming the presence of known or postulated
+clusters in an unbiased fashion. For example, in [@hyper] the
+`phenoDisco` algorithm was used to confirm the data-specific presence
+of the nucleus and nucleus sub-compartments. In the code chunk below,
+we demonstrate how to do this analysis, highlighting some of the
+optional arguments and parameters available for phenotype extraction
 and give some advice on how to interpret the output.
 
-As the `phenoDisco` algorithm is semi-supervised it uses both 
-labelled (markers) and unlabelled data to explore the data structure 
-and find new sub-cellular data clusters. Thus the first step is to 
-define some input labelled data i.e. markers, that the algorithm 
-will use as input for the supervised learning aspect of the 
-algorithm. As described in [@hyper] we define a set of markers 
-to use as input for the analyses that cover well-known residents 
-from three distinct organelle structures; the mitochondria, plasma 
-membrane and ER, and from three well-known and abundant protein 
-complexes; the proteasome and two ribosomal subunits, 40S and 60S. 
-These input markers are stored in the `featureData` column of 
-`hl` where `fcol = "phenoDisco.Input"`. We can use the convenience 
-accessor function `getMarkers` to print out a table of the markers 
-contained in this marker set. These initial markers were manually 
-curated using information from the UniProt database, the Gene 
-Ontology and the literature. 
+As the `phenoDisco` algorithm is semi-supervised it uses both labelled
+(markers) and unlabelled data to explore the data structure and find
+new sub-cellular data clusters. Thus the first step is to define some
+input labelled data i.e. markers, that the algorithm will use as input
+for the supervised learning aspect of the algorithm. As described in
+[@hyper] we define a set of markers to use as input for the analyses
+that cover well-known residents from three distinct organelle
+structures; the mitochondria, plasma membrane and ER, and from three
+well-known and abundant protein complexes; the proteasome and two
+ribosomal subunits, 40S and 60S.  These input markers are stored in
+the `featureData` column of `hl` where `fcol = "phenoDisco.Input"`. We
+can use the convenience accessor function `getMarkers` to print out a
+table of the markers contained in this marker set. These initial
+markers were manually curated using information from the UniProt
+database, the Gene Ontology and the literature. 
 
 ```{r displayPDmarkers}
 getMarkers(hl, fcol = "phenoDisco.Input")
 ```
 
-In the code chunk below we demonstrate how to run the `phenoDisco` function and 
-return a novelty detection result, according 
-to the specified parameters. The algorithm parameters `times`, 
-`GS` and `p` are passed to the function, along with the `fcol` 
-to tell the algorithm where the input training data is contained. 
+In the code chunk below we demonstrate how to run the `phenoDisco`
+function and return a novelty detection result, according to the
+specified parameters. The algorithm parameters `times`, `GS` and `p`
+are passed to the function, along with the `fcol` to tell the
+algorithm where the input training data is contained. 
 
 ```{r runPD, eval = FALSE}
 ## As per Christoforou et al (2016), 
@@ -847,34 +837,37 @@ hl <- phenoDisco(hl, fcol = "phenoDisco.Input",
                  GS = 20)
 ```
 
-*Note: We do not evaluate this code chunk in this document as the algorithm is computational intensive and best parallelised over multiple workers. This phenoDisco analysis took ~24 hours to complete when parallelised over 40 workers.*
+*Note: We do not evaluate this code chunk in this document as the
+algorithm is computational intensive and best parallelised over
+multiple workers. This phenoDisco analysis took ~24 hours to complete
+when parallelised over 40 workers.*
 
-The argument `times` indicated the number of times we run unsupervied 
-Gaussian Mixture Modelling before defining a new phenotype cluster. 
-The recommended minimum and default value is 100. In the above 
-code chunk we increase the value to `times = 200` as we have found 
-for larger datasets (e.g. 5000+ proteins) a higher times is requried 
-for convergence. `GS` defines the minimum number of proteins allowed 
-per new data cluster and thus heavily influences what type of new 
-clusters are extracted. For example, if a user is interesed in the 
-detection of small complexes they may wish to use a small `GS = 10`, 
-or `= 20` etc. If they wish to detect larger more abundant sub-cellular 
-niches a much higher `GS` would be preferable. Specifying a small `GS` can be 
-more time consuming than using a larger `GS`, and there is a trade off 
-between finding interesting small complexes and those that may not 
-be of interest as we find there is a tendancy to find more noise when 
+The argument `times` indicated the number of times we run unsupervied
+Gaussian Mixture Modelling before defining a new phenotype cluster.
+The recommended minimum and default value is 100. In the above code
+chunk we increase the value to `times = 200` as we have found for
+larger datasets (e.g. 5000+ proteins) a higher times is requried for
+convergence. `GS` defines the minimum number of proteins allowed per
+new data cluster and thus heavily influences what type of new clusters
+are extracted. For example, if a user is interesed in the detection of
+small complexes they may wish to use a small `GS = 10`, or `= 20` etc.
+If they wish to detect larger more abundant sub-cellular niches a much
+higher `GS` would be preferable. Specifying a small `GS` can be more
+time consuming than using a larger `GS`, and there is a trade off
+between finding interesting small complexes and those that may not be
+of interest as we find there is a tendancy to find more noise when
 using a small `GS` compared to using a higher one.
 
-One may also consider increasing the search space for new data 
-clusters by increasing the value of the parameter `G`. This defines 
-the number of GMM components to test and fit; the default is `G = 1:9` 
-(`mclust`'s default). One should note that the decreasing the 
-`GS`, and increasing the values of the arguments `times`, `G` 
-(among other function arguments, see `?phenoDisco`) will heavily 
-influence (increase) the total time taken to run the algorithm. 
-`phenoDisco` supports parallelisation and we strongly suggest 
-you make use of a parallel processing to run these analyses (different 
-backends can be set with argument `BPPARAM`). 
+One may also consider increasing the search space for new data
+clusters by increasing the value of the parameter `G`. This defines
+the number of GMM components to test and fit; the default is `G = 1:9`
+(`mclust`'s default). One should note that the decreasing the `GS`,
+and increasing the values of the arguments `times`, `G` (among other
+function arguments, see `?phenoDisco`) will heavily influence
+(increase) the total time taken to run the algorithm.  `phenoDisco`
+supports parallelisation and we strongly suggest you make use of a
+parallel processing to run these analyses (different backends can be
+set with argument `BPPARAM`). 
 
 ```{r loadPDres, include=FALSE}
 load("Data/pd_runs/pd.rda")
@@ -883,14 +876,14 @@ setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 ```
 
-The ouput of running the `phenoDisco` algorithm is a `MSnSet` containing 
-the new data clusters, appended to the `featureData` under the name 
-`pd`. We can see by typing `hl@processingData` directly into the console the 
-processing information has been updated to the `MSnSet` recording the 
-parameters that were used to run the analyses. This is handy for keeping 
-track of data analyses. The results can be displayed by using the 
-`getMarkers` function. We see that 5 new phenotype data clusters were 
-found.
+The ouput of running the `phenoDisco` algorithm is a `MSnSet`
+containing the new data clusters, appended to the `featureData` under
+the name `pd`. We can see by typing `hl@processingData` directly into
+the console the processing information has been updated to the
+`MSnSet` recording the parameters that were used to run the analyses.
+This is handy for keeping track of data analyses. The results can be
+displayed by using the `getMarkers` function. We see that 5 new
+phenotype data clusters were found.
 
 ```{r showPDres}
 hl
@@ -916,9 +909,9 @@ plot2D(hl, fcol = "pd", main = "phenoDisco output", col = cols)
 addLegend(hl, fcol = "pd", cex = .7, col = cols)
 ```
 
-The five new phenotype data clusters can be extracted and examined. 
-In the code chunk below we write the results to a .csv file. We use 
-the argument `fDataCols` to specify which columns of the `featureData` 
+The five new phenotype data clusters can be extracted and examined.
+In the code chunk below we write the results to a .csv file. We use
+the argument `fDataCols` to specify which columns of the `featureData`
 to write. 
 
 ```{r writehl, eval=FALSE}
@@ -926,9 +919,12 @@ fData(hl)$pd <- as.character(fData(hl)$pd)
 write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
 ```
 
-We can also examine the each phenotype intercatively and visualise 
-their protein profiles by using the `pRolocVis` function in the 
-`pRolocGUI`. We found that phenotype 1 was enriched in nucleus associated proteins, phenotype 2 in chromatin associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5 in lysosomal and endosomal proteins.
+We can also examine the each phenotype intercatively and visualise
+their protein profiles by using the `pRolocVis` function in the
+`pRolocGUI`. We found that phenotype 1 was enriched in nucleus
+associated proteins, phenotype 2 in chromatin associated proteins,
+phenotype 3 in cytosolic and phenotypes 4 and 5 in lysosomal and
+endosomal proteins.
 
 ```{r vishl, eval=FALSE}
 pRolocVis(hl, fcol = "pd")
@@ -1095,9 +1091,9 @@ information that is more difficult to defined formally, but that we
 will address in the next section. The classifier (SVM in our case, but
 this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
-how non-assigned proteins are classified and with what
-confidence. **TODO** explain how choosing markers
-positively/negatively affects this, and relation with thresholding.
+how non-assigned proteins are classified and with what confidence.
+**TODO** explain how choosing markers positively/negatively affects
+this, and relation with thresholding.
 
 ## Thresholding
 
@@ -1123,9 +1119,9 @@ overfitting and mis-assignment.-->
 Deciding on a threshold is not trivial as classifier scores are
 heavily dependent upon the classifier used and different sub-cellular
 niches can exhibit different score distributions, as highlighted in
-the boxplot below. We recommend users to set class-specific thresholds.
-In the code chunk below we display a boxplot of the score distributions 
-per organelle. 
+the boxplot below. We recommend users to set class-specific
+thresholds.  In the code chunk below we display a boxplot of the score
+distributions per organelle. 
 
 ```{r thresholds, fig.height=8, fig.width=8}
 ## First remove the markers
@@ -1136,22 +1132,24 @@ par(oma = c(10.5, 0, 0, 0))
 boxplot(svm.scores ~ svm, data = fData(preds), ylab = "SVM scores", las = 2)
 ```
 
-There are many ways to set thresholds and the choice of method will depend
-on the biological question and experimental design at hand. One viable
-approach in the frame of the above experimetal design would be to manually
-set a FDR, say 5%, per organelle. To do this the user would examine 
-the top scoring predictions for each organelle, and then set a threshold at
-the score at which they achieve 5% of false assignments per organelle. 
-The definintion of a false assignment would depend on the information 
-available, for example, validity or lack of validity for the localisation
-from another experiment as reported in the literature or a reliable database. 
-If such information is not available, one crude method is to set a threshold  
-per organelle by extracting the median or 3rd quantile score per organelle. 
-For example, in the code chunk below, we use the `orgQuants` function
-to extract the median organelle scores and then pass these scores to the 
-`getPrediction` function to extract the new localisations that meet this
-scoring criteria. Any sub-cellular predictions that fall below the specified
-thresholds are labelled as unknown.
+There are many ways to set thresholds and the choice of method will
+depend on the biological question and experimental design at hand. One
+viable approach in the frame of the above experimetal design would be
+to manually set a FDR, say 5%, per organelle. To do this the user
+would examine the top scoring predictions for each organelle, and then
+set a threshold at the score at which they achieve 5% of false
+assignments per organelle.  The definintion of a false assignment
+would depend on the information available, for example, validity or
+lack of validity for the localisation from another experiment as
+reported in the literature or a reliable database.  If such
+information is not available, one crude method is to set a threshold
+per organelle by extracting the median or 3rd quantile score per
+organelle.  For example, in the code chunk below, we use the
+`orgQuants` function to extract the median organelle scores and then
+pass these scores to the `getPrediction` function to extract the new
+localisations that meet this scoring criteria. Any sub-cellular
+predictions that fall below the specified thresholds are labelled as
+unknown.
 
 ```{r orgquants}
 ts <- orgQuants(hl, 
@@ -1168,7 +1166,10 @@ hl <- getPredictions(hl,
                         
 ```
 
-The output of `getPredictons` is the original `MSnSet` dataset with a new feature variable appended to the feature data called `fcol.pred` (i.e. in our case `svm.pred`) containing the prediction results. The results can also be visualied using `plot2D` function.
+The output of `getPredictons` is the original `MSnSet` dataset with a
+new feature variable appended to the feature data called `fcol.pred`
+(i.e. in our case `svm.pred`) containing the prediction results. The
+results can also be visualied using `plot2D` function.
 
 ```{r resetpar}
 dev.off()
@@ -1176,7 +1177,6 @@ dev.off()
 ```{r plotres}
 plot2D(hl, fcol = "svm.pred")
 ```
-
 
 There is also a dedicated interactive application to help users
 examine these distributions in the `r Biocpkg("pRolocGUI")` package.
@@ -1197,20 +1197,21 @@ pRolocVis(hl,
 
 ![The classify application](./Figures/classify.png)
 
-The data is loaded and displayed on a PCA plot and a boxplot is used to
-display the classifier scores by data class. On the left there is
-a sidebar panel with sliders to control the thresholds upon which classifications 
-are made. There are two types of cut-off that the user can choose from: (1)
-"Quantile" and (2) "User-defined". By default, when the application is launched
-quatile scoring is selected and set to 0.5, the median. The 
-class-specific score thresholds that correspond to selecting the desired
-quantile are shown on as red dots on the boxplot. The assignments on the PCA
-plot are also updated according to the selected threshold. The quantile 
-threshold can be set by moving the corresponding quantile slider. If one
-wished to set their own cut-offs the "User-defined" radio button must be selected
-and then the sliders for defining user-specified scores become active and the
-scores and highlighted on the boxplot by blue dots. For more information we refer
-users to the `r Biocpkg("pRolocGUI")` tutorial 
+The data is loaded and displayed on a PCA plot and a boxplot is used
+to display the classifier scores by data class. On the left there is a
+sidebar panel with sliders to control the thresholds upon which
+classifications are made. There are two types of cut-off that the user
+can choose from: (1) "Quantile" and (2) "User-defined". By default,
+when the application is launched quatile scoring is selected and set
+to 0.5, the median. The class-specific score thresholds that
+correspond to selecting the desired quantile are shown on as red dots
+on the boxplot. The assignments on the PCA plot are also updated
+according to the selected threshold. The quantile threshold can be set
+by moving the corresponding quantile slider. If one wished to set
+their own cut-offs the "User-defined" radio button must be selected
+and then the sliders for defining user-specified scores become active
+and the scores and highlighted on the boxplot by blue dots. For more
+information we refer users to the `r Biocpkg("pRolocGUI")` tutorial 
 [vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 
