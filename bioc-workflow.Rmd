@@ -438,15 +438,16 @@ plot the principal components (PCs) of a dataset against one another,
 by default the first two components are plotted on the x- and y-axis,
 respectively (the `dims` argument can be used to plot other PCs). If
 distinct clusters are observed, we assume that there is organellar
-separation present in the data. In the code chunk below we produce a
-PCA plot of the mouse stem cell dataset. One point on the plot
-represents one protein. We can indeed see several distinct protein
-clusters. Although, representing the multi-dimensional data along a
+separation present in the data. Although, representing the 
+multi-dimensional data along a
 limited set of PCs does not give us a hard quantitative measure of
 separation, it is extremely useful summarising complex experimental
 information in one figure, to get an simplified overview of the data.
 
-In the code chunk below, we specify `fcol = NULL`, which means not to
+In the code chunk below we produce a
+PCA plot of the mouse stem cell dataset. One point on the plot
+represents one protein. We can indeed see several distinct protein
+clusters. We specify `fcol = NULL`, which means not to
 consider any feature variable to annotate the features (proteins) with
 colours. We will see later how to use this to annotate the PCA plot
 with prior information about sub-cellular localisation. 
@@ -511,9 +512,9 @@ integrated.
 pRolocmarkers()
 ```
 
-These markers can then be mapped to an `MSnSet`'s `featureNames`. The
+These markers can then be mapped to a `MSnSet`'s `featureNames`. The
 mouse dataset used here has Uniprot IDs stored as the `featureNames`
-(see `head(featureNames(lopit2016))`) and the names of the vector of
+(see `head(featureNames(hl))`) and the names of the vector of
 the mouse markers stored in `r Biocpkg("pRoloc")` (`mmus` markers) 
 are also Uniprot IDs (see `head(mrk)` in the code chunk below), so 
 it is straightforward to match names between the markers and 
@@ -534,13 +535,13 @@ different, one will have to convert and match the proteins according
 to the appropriate identifier. Sometimes, we find the equivalent entry
 name, Uniprot ID or accession number is stored with the data, which
 makes conversion between identifers relatively straightforward. If
-this is not the case however, conversion can be performed using the 
+this is not the case however, conversion can be performed using 
 `r Biocpkg("biomaRt")`, the Bioconductor
 [annotation resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
 or any conversion softwares available online.
 
 We now visualise these annotations along the PCA plot using the
-`plot2D` function. We also use the `addLegend` function to map the
+`plot2D` function and then use the `addLegend` function to map the
 marker classes to the pre-defined colours. We also display the data
 along the first and seventh PCs using the `dims` argument. Note that
 in this second call to the `plot2D` function, we have omitted the
@@ -576,7 +577,7 @@ going to reset the annotation of Golgi markers to unknown using the
 definition of *unknown localisation*.
 
 ```{r}
-hl <- fDataToUnknown(hl, from = "Golgi", to = "unknown")
+hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
 getMarkers(hl)
 ```
 
@@ -636,7 +637,7 @@ acurate quantitation.
 
 ```{r pdtab, echo=FALSE, eval = FALSE}
 i <- c(2, 3, 4, 13, 14)
-pData(hl)[i, -3]
+pData(hl)[i, ]
 ```
 
 <!-- On the figure below, we compare the relative intensities of channels 7 -->
@@ -808,7 +809,7 @@ are also useful for confirming the presence of known or postulated
 clusters in an unbiased fashion. For example, in [@hyper] 
 the `phenoDisco` algorithm was used to confirm the data-specific
 presence of the nucleus and nucleus sub-compartments. In the code 
-chunk below, we re-run this analysis, highlighting some of the 
+chunk below, we demonstrate how to do this analysis, highlighting some of the 
 optional arguments and parameters available for phenotype extraction 
 and give some advice on how to interpret the output.
 
@@ -823,7 +824,7 @@ from three distinct organelle structures; the mitochondria, plasma
 membrane and ER, and from three well-known and abundant protein 
 complexes; the proteasome and two ribosomal subunits, 40S and 60S. 
 These input markers are stored in the `featureData` column of 
-`hl` where `fcol = "phenoDisoc.Input"`. We can use the convenience 
+`hl` where `fcol = "phenoDisco.Input"`. We can use the convenience 
 accessor function `getMarkers` to print out a table of the markers 
 contained in this marker set. These initial markers were manually 
 curated using information from the UniProt database, the Gene 
@@ -833,32 +834,33 @@ Ontology and the literature.
 getMarkers(hl, fcol = "phenoDisco.Input")
 ```
 
-In the code chunk below we run the `phenoDisco` function and 
-return a novelty detection result stored in `pdRes`, according 
+In the code chunk below we demonstrate how to run the `phenoDisco` function and 
+return a novelty detection result, according 
 to the specified parameters. The algorithm parameters `times`, 
 `GS` and `p` are passed to the function, along with the `fcol` 
-telling the algorithm where the input training data is contained.
+to tell the algorithm where the input training data is contained. 
 
 ```{r runPD, eval = FALSE}
 ## As per Christoforou et al (2016), 
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", 
                  times = 200, 
-                 GS = 60)
-
+                 GS = 20)
 ```
 
-The argument `times` defined the number of times we run unsupervied 
+*Note: We do not evaluate this code chunk in this document as the algorithm is computational intensive and best parallelised over multiple workers. This phenoDisco analysis took ~24 hours to complete when parallelised over 40 workers.*
+
+The argument `times` indicated the number of times we run unsupervied 
 Gaussian Mixture Modelling before defining a new phenotype cluster. 
-The recommended minimum and default value is 100. In the below 
+The recommended minimum and default value is 100. In the above 
 code chunk we increase the value to `times = 200` as we have found 
 for larger datasets (e.g. 5000+ proteins) a higher times is requried 
 for convergence. `GS` defines the minimum number of proteins allowed 
 per new data cluster and thus heavily influences what type of new 
 clusters are extracted. For example, if a user is interesed in the 
 detection of small complexes they may wish to use a small `GS = 10`, 
-or `=20` etc. If they wish to detect larger more abundant sub-cellular 
-niches a higher `GS` would be preferable. Specifying a small `GS` is be 
-more time consuming than a larger `GS`, and there is a trade off 
+or `= 20` etc. If they wish to detect larger more abundant sub-cellular 
+niches a much higher `GS` would be preferable. Specifying a small `GS` can be 
+more time consuming than using a larger `GS`, and there is a trade off 
 between finding interesting small complexes and those that may not 
 be of interest as we find there is a tendancy to find more noise when 
 using a small `GS` compared to using a higher one.
@@ -866,7 +868,7 @@ using a small `GS` compared to using a higher one.
 One may also consider increasing the search space for new data 
 clusters by increasing the value of the parameter `G`. This defines 
 the number of GMM components to test and fit; the default is `G = 1:9` 
-(`mclust`'s default). One should note that the choice of decreasing 
+(`mclust`'s default). One should note that the decreasing the 
 `GS`, and increasing the values of the arguments `times`, `G` 
 (among other function arguments, see `?phenoDisco`) will heavily 
 influence (increase) the total time taken to run the algorithm. 
@@ -874,21 +876,22 @@ influence (increase) the total time taken to run the algorithm.
 you make use of a parallel processing to run these analyses (different 
 backends can be set with argument `BPPARAM`). 
 
-The ouput of running the `phenoDisco` algorithm is a `MSnSet` containing 
-the new data clusters, appended to the `featureData` under the name 
-`pd`. We can see by typing `pdRes` directly into the console the 
-processing information has been updated to the `MSnSet` recording the 
-parameters that were used to run the analyses. This is handy for keeping 
-track of data analyses. The results can be displayed by using the 
-`getMarkers` function. We see that 5 new phenotype data clusters were 
-found.
-
 ```{r loadPDres, include=FALSE}
 load("Data/pd_runs/pd.rda")
 hl <- pdRes
 setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 ```
+
+The ouput of running the `phenoDisco` algorithm is a `MSnSet` containing 
+the new data clusters, appended to the `featureData` under the name 
+`pd`. We can see by typing `hl@processingData` directly into the console the 
+processing information has been updated to the `MSnSet` recording the 
+parameters that were used to run the analyses. This is handy for keeping 
+track of data analyses. The results can be displayed by using the 
+`getMarkers` function. We see that 5 new phenotype data clusters were 
+found.
+
 ```{r showPDres}
 hl
 getMarkers(hl, fcol = "pd")
@@ -925,7 +928,7 @@ write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
 
 We can also examine the each phenotype intercatively and visualise 
 their protein profiles by using the `pRolocVis` function in the 
-`pRolocGUI`.
+`pRolocGUI`. We found that phenotype 1 was enriched in nucleus associated proteins, phenotype 2 in chromatin associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5 in lysosomal and endosomal proteins.
 
 ```{r vishl, eval=FALSE}
 pRolocVis(hl, fcol = "pd")
@@ -1437,7 +1440,6 @@ respectively. Results can be visualised using `plot2D`, scores
 assessed and cutoffs calculated using the `classify` app in
 `pRolocVis`, predictions obtained using `getPredictions` in the same
 way as demonstrated above for the SVM classifier.
-
 
 
 
