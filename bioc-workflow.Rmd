@@ -1,7 +1,7 @@
 ---
 title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
 author: "Lisa Breckels and Laurent Gatto"
-output: html_document
+output: pdf_document
 ---
 
 ```{r env, echo=FALSE, warning=FALSE}
@@ -43,11 +43,13 @@ Installation of Bioconductor package is documented in details on the
 [Bioconductor installation help page](http://bioconductor.org/install/#install-bioconductor-packages). This
 procedure is also applicable to any packages, from
 [CRAN](https://cran.r-project.org/) as well as GitHub. Once a package
-has been installed, it needs to be loaded for it functionality become
-available in the R session; this is done with the `library` function.
+has been installed, it needs to be loaded for its functionality to become
+available in the R session; this is done with the `library` function e.g. 
+to load the `r Biocpkg("pRoloc")` one would type `library("pRoloc")` after
+installation.
 
 If you have questions about this workflow in particular, or about
-other Bioconductor packages in general, they a best asked on the
+other Bioconductor packages in general, they are best asked on the
 [Bioconductor support site](https://support.bioconductor.org/)
 following the
 [posting guidelines](http://www.bioconductor.org/help/support/posting-guide/). Questions
@@ -64,7 +66,7 @@ package vignettes and associated papers [@Gatto:2014;@Gatto2015].
 As a use-case, we analyse a recent high-throughput spatial proteomics
 dataset from pluripotent mouse embryonic stem cells (E14TG2a)
 [@hyper]. The data was generated using hyperplexed LOPIT (hyperLOPIT),
-a method relying on improved sub-cellular fractionation and
+a state-of-the-art method relying on improved sub-cellular fractionation and
 more accurate quantitation, leading to more reliable classification of
 protein localisation across the whole sub-cellular space. The method
 uses an elaborate sub-cellular fractionation scheme, enabled by the
@@ -110,7 +112,7 @@ the `pData` slot for storing the sample meta-data.
 ## Importing data
 
 There are a number of ways to import quantitation data and create an
-`MSnSet` instance and all methods are described in the `r Biocpkg("MSnbase")`
+`MSnSet` instance. All methods are described in the `r Biocpkg("MSnbase")`
 [input/output capabilities vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf). One
 suggested simple method is to use the function `readMSnSet2` in 
 `r Biocpkg("MSnbase")`. The function takes a single spreadsheet as input
@@ -205,23 +207,22 @@ The feature meta-data is stored in the `fData`
 slot and can be accessed by `fData(hl)`. When using
 `readMSnSet2`, automatically, everything that is not defined as
 quantitation data by `ecol` or the feature names by `fnames` is
-deposited to the `fData` slot. As we wish to demonstrate the complete
-analysis of this data we remove the results from the prior analysis
-described in [@hyper] in the code chunk below. We see the `fData`
-contains 25 columns describing information such as the number of
-peptides, associated markers, machine learning results etc. 
+deposited to the `fData` slot. 
 
-For demonstration in the code chunk below keep the 2nd, 8th and 11th
-columns which contain the UniProt entry names and two different marker
-sets to use an input for machine learning analyses (see sections on
-markers and subsequent sections) and rename the first feature variable
-names.
+We see the `fData`
+contains 25 columns describing information such as the number of
+peptides, associated markers, machine learning results etc. To
+identify the feature variable names we can use the function 
+`fvarLabels`. We see that the first 6 feature variable names 
+contain non-discriminatory label names, so we relabel them to
+help us identify what feature data information is stored in
+the associated columns.
 
 ```{r removefData}
 fvarLabels(hl)
-fData(hl) <- fData(hl)[, c(2, 8, 11)]
-fvarLabels(hl)[1] <- "UniProtId"
-head(fData(hl))
+fvarLabels(hl)[1:3] <- c("UniProtAccession", "UniProtID", "Description")
+fvarLabels(hl)[4:6] <- paste0("Peptides.expt", 1:3)
+fData(hl)[1:4, 1:6]
 ```
 
 Note that when using the simple `readMSnSet2` procedure, sample
@@ -235,14 +236,15 @@ pData(hl)$Tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
 pData(hl)
 ```
 
-Sample meta-data distributed with
-the `r Biocexptpkg("pRolocdata")` and as above with the quantitation
-data file is located in the `extdata` in the `r Biocexptpkg("pRolocdata")` 
+The sample meta-data that is distributed with
+the `r Biocexptpkg("pRolocdata")` package and (as above) the quantitation
+data file are located in the `extdata` in the `r Biocexptpkg("pRolocdata")` 
 package on the hard drive. In the code chunk below we again use the `dir` 
 function to locate the filepath to the meta-data `csv` file and then read 
-it into R using `read.csv` and append the meta-data to the `pData` slot. 
-We add information on the gradient fractions used and the associated 
-subcellular fraction densities in % w/v Iodixanol for each replicate.
+it into R using `read.csv`. We then append the meta-data to the `pData` slot. 
+Information about the gradient fractions used and the associated 
+subcellular fraction densities in % w/v Iodixanol for each replicate
+are stored here.
 
 
 ```{r morepdata}
@@ -265,10 +267,10 @@ There are two aspects related to data normalisation that are relevant
 to spatial proteomics data processing. The first one focuses on
 reducing purely technical variation between fractions without
 affecting biological variability (i.e. the shape of the quantitative
-profiles) too much, as generally focused on. This normalisation will
+profiles). This normalisation will
 depend on the underlying quantitative technology and the experimental
-design, and will not be addressed in this workflow. In addition, and
-more specific to spatial proteomics data, it is fundamental to scale
+design, and will not be addressed in this workflow. The second aspect, and
+more specific to spatial proteomics data, is scaling
 all the organelle-specific profiles into a same intensity interval
 (typically 0 and 1) by, for example, diving each intensity by the sum
 of the intensities for that quantitative feature. This is not necessary 
@@ -310,10 +312,11 @@ do not bear any consequences here.
 ### Combining acquisitions
 
 The spreadsheet that was used to create the `hl` MSnSet
-included two replicates. We also provide individual replicates in the
+included the two replicates within one .csv file. 
+We also provide individual replicates in the
 `r Biocexptpkg("pRolocdata")` package. Below, we show how to combine
 `MSnSet` objects and, subsequently, how to filter and handle missing
-values. We start by loading the experimental data package and the
+values. We start by loading the `r Biocexptpkg("pRolocdata")` package and the
 equivalent replicates using the `data` function.
 
 ```{r reps4combine}
@@ -322,8 +325,7 @@ data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2)
 ```
 
-To list all data distributed with a package, one can use use the
-`pRolocdata` function.
+At the R prompt, typing
 
 ```{r pkgdata, eval=FALSE}
 pRolocdata()
@@ -353,7 +355,7 @@ to be combined. In particular for these data, we expect the same
 proteins in each replicates to be annotated with the same UniProt
 entry names and descriptions, but not with the same coverage of number
 of peptides or peptide-spectrum matches (PSMs).
-vfn
+
 ```{r fvarnames}
 fvarLabels(hyperLOPIT2015ms3r1)
 fvarLabels(hyperLOPIT2015ms3r2)
@@ -366,7 +368,9 @@ remove the shared annotation.
 fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
 fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
 fData(hyperLOPIT2015ms3r1) <- fData(hyperLOPIT2015ms3r1)[1:5] 
-fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5] 
+fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
+fvarLabels(hyperLOPIT2015ms3r1)
+fvarLabels(hyperLOPIT2015ms3r2)
 ```
 
 We can now combine the two experiments into a single `MSnSet`:
@@ -938,13 +942,6 @@ their protein profiles by using the `pRolocVis` function in the
 pRolocVis(hl, fcol = "pd")
 ```
 
-From examining the literature and the Gene Ontology we find that
-phenotype 1 is enriched in proteins that localise to the nucleus
-(non-chromatin associated proteins), phenotype 2 is enriched in
-chromatin associated proteins, phenotype 3 contains many cytosolic
-proteins and phenotypes 4 and 5 contain lysosmal and endosomal
-proteins. From curating these phenotypes we obtain new marker proteins
-that can be used as input for supervised classification.
 
 # Supervised machine learning
 
@@ -1143,7 +1140,7 @@ per organelle.
 preds <- unknownMSnSet(hl)
 
 ## Plot a boxplot of the scores of each organelle
-par(oma= c(10.5, 0, 0, 0))
+par(oma = c(10.5, 0, 0, 0))
 boxplot(svm.scores ~ svm, data = fData(preds), ylab = "SVM scores", las = 2)
 ```
 
@@ -1353,8 +1350,13 @@ classes and then run the `knnOptimisation` followed by the
 `knntlOptimisation` (specifying snow with a MPI
 backend with 255 workers for parallelisation on the Cambridge HPC).
 
-
-```{r tlopt, eval=FALSE}
+```{r loadtlres, include = FALSE}
+load("Data/tl_runs/tlopt.rda")
+data("hyperLOPIT2015goCC")
+gocc <-hyperLOPIT2015goCC
+ka <- kp <- 3
+```
+```{r setuptlopt, eval=TRUE}
 ## create new markers column for tl markers
 fData(hl)$tlmarkers <- fData(hl)$markers
 fData(gocc)$tlmarkers <- fData(gocc)$markers
@@ -1369,7 +1371,8 @@ for (i in seq(torm)) {
 }
 getMarkerClasses(hl, fcol = "tlmarkers")
 getMarkerClasses(hl, fcol = "tlmarkers")
-
+```
+```{r runtlopts, eval=FALSE}
 ## get best k's
 kp <- knnOptimisation(hl, fcol = "tlmarkers")
 ka <- knnOptimisation(gocc, fcol = "tlmarkers")
@@ -1386,9 +1389,7 @@ tlopt <- knntlOptimisation(hl, gocc,
                            BPPARAM = par
   )
 ```
-```{r loadtlres, include = FALSE}
-load("Data/tl_runs/tlopt.rda")
-```
+
 
 The results of the optimisation can be visalised using the `plot`
 method for `"ThetaRegRes"` objects:
