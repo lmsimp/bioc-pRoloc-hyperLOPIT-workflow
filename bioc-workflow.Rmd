@@ -220,8 +220,8 @@ the associated columns.
 
 ```{r removefData}
 fvarLabels(hl)
-fvarLabels(hl)[1:3] <- c("UniProtAccession", "UniProtID", "Description")
-fvarLabels(hl)[4:6] <- paste0("Peptides.expt", 1:3)
+fvarLabels(hl)[1:3] <- c("uniprot.accession", "uniprot.id", "description")
+fvarLabels(hl)[4:6] <- paste0("peptides.expt", 1:3)
 fData(hl)[1:4, 1:6]
 ```
 
@@ -570,7 +570,7 @@ going to reset the annotation of Golgi markers to unknown using the
 ("") or missing values in the markers definition to a common
 definition of *unknown localisation*.
 
-```{r}
+```{r removeGA}
 hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
 getMarkers(hl)
 ```
@@ -692,9 +692,11 @@ that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation.
 
 
-```{r plot2Drep, fig.width = 12} par(mfrow = c(1, 2)) plot2D(hl[,
-hl$Replicate == 1], main = "Replicate 1") plot2D(hl[, hl$Replicate ==
-2], main = "Replicate 2", mirrorX = TRUE) ```
+```{r plot2Drep, fig.width = 12} 
+par(mfrow = c(1, 2)) 
+plot2D(hl[, hl$Replicate == 1], main = "Replicate 1") 
+plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE) 
+```
 
 # Interactive visualisation
 
@@ -904,9 +906,9 @@ cols[-ind] <- getStockcol()[seq(cl)][(length(ind) + 1):length(cl)]
 
 ## Plot the input and output
 par(mfrow = c(1, 2))
-plot2D(hl, fcol = "phenodisco.input", 
+plot2D(hl, fcol = "phenoDisco.Input", 
        main = "phenoDisco input markers", col = getStockcol()[1:6])
-addLegend(hl, fcol = "phenodisco.input", cex = .7)
+addLegend(hl, fcol = "phenoDisco.Input", cex = .7)
 plot2D(hl, fcol = "pd", main = "phenoDisco output", col = cols)
 addLegend(hl, fcol = "pd", cex = .7, col = cols)
 ```
@@ -995,10 +997,11 @@ svmf <- dir(extdatadir, full.names = TRUE,
               pattern = "bpw-svmopt.rds") 
 params <- readRDS(svmf)
 ```
-```{r optimise, eval=FALSE}
+```{r getsvmweight}
 w <- table(getMarkers(hl, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
-
+```
+```{r dosvmopt, eval=FALSE}
 ## 100 rounds of optimisation with five-fold cross-validation
 params <- svmOptimisation(hl, fcol = "markers",
                           times = 100, xval = 5,
@@ -1348,7 +1351,12 @@ and `4^10` combinations of parameters takes ~76 hours to run on the
 University of Cambridge HPC using 256 workers). 
 
 To remove the 4 classes and create a new column of markers in the feature data called `tlmarkers` to use for the analysis:
-```{r setuptlopt, eval=TRUE}
+```{r loadgocc, include=FALSE}
+gofile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-gocc.rds")
+gocc <- readRDS(gofile)
+```
+```{r setuptlopt}
 ## create new markers column for tl markers
 fData(hl)$tlmarkers <- fData(hl)$markers
 fData(gocc)$tlmarkers <- fData(gocc)$markers
@@ -1359,10 +1367,10 @@ torm  <- c("40S Ribosome", "60S Ribosome",
            "Nucleus - Non-chromatin")
 for (i in seq(torm)) {
   hl <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
-  gocc <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
+  gocc <- fDataToUnknown(gocc, from = torm[i], fcol = "tlmarkers")
 }
 getMarkerClasses(hl, fcol = "tlmarkers")
-getMarkerClasses(hl, fcol = "tlmarkers")
+getMarkerClasses(gocc, fcol = "tlmarkers")
 ```
 
 Optimisation stage 1: run `knnOptimisation` to get the best $k$'s for each data source.
@@ -1370,9 +1378,10 @@ Optimisation stage 1: run `knnOptimisation` to get the best $k$'s for each data 
 ## get best k's
 kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
 kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
-kp <- getParams(kpopt)
-ka <- getParams(kaopt)
+plot(kpopt)
+plot(kaopt)
 ```
+From examining the parameter seach plots we find the best $k$'s for both the primary and auxiliary are 3.
 
 Optimisation stage 2: run `knntlOptimisation` to get the best transfer learning weights for each sub-cellular class.
 ```{r runtlopts, eval=FALSE}
@@ -1385,7 +1394,7 @@ tlopt <- knntlOptimisation(hl, gocc,
                            fcol = "tlmarkers",
                            length.out = 4, 
                            times = 50,
-                           xval = 5, k = c(kp,ka),
+                           xval = 5, k = c(3, 3),
                            BPPARAM = par
   )
 ```
@@ -1397,7 +1406,8 @@ method for `"ThetaRegRes"` objects:
 tlfile <- dir(extdatadir, full.names = TRUE,
               pattern = "bpw-tlopt.rds")
 tlopt <- readRDS(tlfile)
-
+colnames(tlopt@results)[4] <- "Endoplasmic reticulum"
+setStockcol(NULL)
 ```
 ```{r plottl}
 plot(tlopt)
@@ -1443,8 +1453,7 @@ bestpar <- bestpar[getMarkerClasses(hl)]
 
 ## Do the classification
 hl <- knntlClassification(hl, gocc, bestTheta = bestpar, 
-                          k = c(kp, ka))
-
+                          k = c(3, 3))
 ```
 
 The results from the classification results and associated scores are
