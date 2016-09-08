@@ -834,7 +834,7 @@ algorithm where the input training data is contained.
 ## As per Christoforou et al (2016), 
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", 
                  times = 200, 
-                 GS = 20)
+                 GS = 60)
 ```
 
 *Note: We do not evaluate this code chunk in this document as the
@@ -1282,7 +1282,12 @@ desired, see `?makeGoSet` for more details.
 gocc <- makeGoSet(hl, params = par, 
                   namespace = "cellular_component", 
                   evidence = NULL)
-gocc
+```
+
+The function `makeGoSet` uses the `r Biocpkg("biomaRt")` package to query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All GO terms that have been observed for the 5032 proteins in the hyperLOPIT dataset are retieved. Users should note that the number of GO terms retreived is also dependent on the database version queried and thus is always subject to change. We find it is common to see many GO terms with only one protein assigned to that term, these such terms generally do not bring and information generally for building the classifier and thus we can remove such GO terms by using the function `filterBinMSnSet`. 
+
+```{r filtergo, eval=FALSE}
+gocc <- filterBinMSnSet(hl)
 ```
 
 Now we have generated our auxiliary data we can use the *k*-NN
@@ -1300,7 +1305,18 @@ The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the *k*-NN TL classifier
 there are two sets of parameters that need optimising: the first set
 are the $k$'s for the primary and auxiliary data sources required for
-the nearest neighbour calculations for each data source.  The second
+the nearest neighbour calculations for each data source. 
+
+```{r knnoptfortl, eval=FALSE}
+## get best k's
+kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
+kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
+kp <- getParams(kpopt)
+ka <- getParams(kaopt)
+```
+
+
+The second
 set of parameters (which is noted by a vector of $\theta$ weights)
 that require optimising are the class weights, one per subcellular
 niche, that control the proportion of primary and auxiliary data to
@@ -1349,6 +1365,7 @@ data("hyperLOPIT2015goCC")
 gocc <-hyperLOPIT2015goCC
 ka <- kp <- 3
 ```
+
 ```{r setuptlopt, eval=TRUE}
 ## create new markers column for tl markers
 fData(hl)$tlmarkers <- fData(hl)$markers
