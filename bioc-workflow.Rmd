@@ -1305,18 +1305,7 @@ The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the *k*-NN TL classifier
 there are two sets of parameters that need optimising: the first set
 are the $k$'s for the primary and auxiliary data sources required for
-the nearest neighbour calculations for each data source. 
-
-```{r knnoptfortl, eval=FALSE}
-## get best k's
-kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
-kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
-kp <- getParams(kpopt)
-ka <- getParams(kaopt)
-```
-
-
-The second
+the nearest neighbour calculations for each data source. The second
 set of parameters (which is noted by a vector of $\theta$ weights)
 that require optimising are the class weights, one per subcellular
 niche, that control the proportion of primary and auxiliary data to
@@ -1347,25 +1336,16 @@ of 1 for these niches and only optimise over the remaining organelles.
 This can signifciantly cut down optimisation time as by removing these
 4 classes from the optimisation (and not the classification) we only
 have `4^10` class weight combinations to consider instead of `4^14`
-combinations. In the example below we remove these 4 classes from the
+combinations. 
+
+In the example below we remove these 4 classes from the
 marker set, re-run the `knnOptimisation` for each data source and then
 run the `knntlOptimisation` with the 10 remaining classes. (Note: this
 is not run live as this the `hl` dataset with 10 classes, 707 markers
 and `4^10` combinations of parameters takes ~76 hours to run on the
 University of Cambridge HPC using 256 workers). 
 
-In the example code below we first remove the 2 ribosomes and nuclear
-classes and then run the `knnOptimisation` followed by the
-`knntlOptimisation` (specifying snow with a MPI
-backend with 255 workers for parallelisation on the Cambridge HPC).
-
-```{r loadtlres, include = FALSE}
-load("Data/tl_runs/tlopt.rda")
-data("hyperLOPIT2015goCC")
-gocc <-hyperLOPIT2015goCC
-ka <- kp <- 3
-```
-
+To remove the 4 classes and create a new column of markers in the feature data called `tlmarkers` to use for the analysis:
 ```{r setuptlopt, eval=TRUE}
 ## create new markers column for tl markers
 fData(hl)$tlmarkers <- fData(hl)$markers
@@ -1382,12 +1362,20 @@ for (i in seq(torm)) {
 getMarkerClasses(hl, fcol = "tlmarkers")
 getMarkerClasses(hl, fcol = "tlmarkers")
 ```
-```{r runtlopts, eval=FALSE}
-## get best k's
-kp <- knnOptimisation(hl, fcol = "tlmarkers")
-ka <- knnOptimisation(gocc, fcol = "tlmarkers")
 
-## Set appropriate backend and workers for the tl
+Optimisation stage 1: run `knnOptimisation` to get the best $k$'s for each data source.
+```{r knnoptfortl, eval=FALSE}
+## get best k's
+kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
+kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
+kp <- getParams(kpopt)
+ka <- getParams(kaopt)
+```
+
+Optimisation stage 2: run `knntlOptimisation` to get the best transfer learning weights for each sub-cellular class.
+```{r runtlopts, eval=FALSE}
+## Set appropriate parallelisation backend and  
+## number of workers for the tl
 par <- SnowParam(255L, type = "MPI")
 
 ## Now peform tl optimisation 
@@ -1400,10 +1388,15 @@ tlopt <- knntlOptimisation(hl, gocc,
   )
 ```
 
-
 The results of the optimisation can be visalised using the `plot`
 method for `"ThetaRegRes"` objects:
 
+```{r loadtlres, echo=FALSE}
+tlfile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-tlopt.rds")
+tlopt <- readRDS(tlfile)
+
+```
 ```{r plottl}
 plot(tlopt)
 ```
