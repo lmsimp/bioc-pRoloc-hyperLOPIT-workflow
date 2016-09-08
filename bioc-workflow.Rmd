@@ -824,7 +824,7 @@ database, the Gene Ontology and the literature.
 getMarkers(hl, fcol = "phenoDisco.Input")
 ```
 
-In the code chunk below we demonstrate how to run the `phenoDisco`
+In the code chunk below we show how to run the `phenoDisco`
 function and return a novelty detection result, according to the
 specified parameters. The algorithm parameters `times`, `GS` and `p`
 are passed to the function, along with the `fcol` to tell the
@@ -869,9 +869,11 @@ supports parallelisation and we strongly suggest you make use of a
 parallel processing to run these analyses (different backends can be
 set with argument `BPPARAM`). 
 
-```{r loadPDres, include=FALSE}
-load("Data/pd_runs/pd.rda")
-hl <- pdRes
+```{r loadPDres, echo=FALSE}
+f0 <- dir(extdatadir, full.names = TRUE,
+          pattern = "bpw-pdres.rds")
+pdres <- readRDS(f0)
+hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE)
 setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 ```
