@@ -989,12 +989,12 @@ can account for class imbalance by setting specific class weights when
 generating the SVM model. Below the weights, `w` are set to be
 inversely proportional to the class frequencies. 
 
-```{r loadpdRes, include=FALSE}
-load("Data/fusionparams.rda")
-w <- table(getMarkers(hl, verbose = TRUE))
-w <- 1/w[names(w) != "unknown"]
-```
 
+```{r loadpdRes, echo=FALSE}
+svmf <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-svmopt.rds") 
+params <- readRDS(svmf)
+```
 ```{r optimise, eval=FALSE}
 w <- table(getMarkers(hl, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
