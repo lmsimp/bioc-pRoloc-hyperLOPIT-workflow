@@ -279,7 +279,9 @@ Proteome Discoverer. However, if one wanted to do this they would
 execute the `normalise` function as demonstrated in the below code
 chunk.
 
-```{r normsum, eval = FALSE} hl <- normalise(hl, method = "sum") ```
+```{r normsum, eval = FALSE} 
+hl <- normalise(hl, method = "sum") 
+```
 
 This transformation of the data assures to cancel the effect of the
 absolute intensities of the quantitative features along the rows, to
@@ -1056,7 +1058,7 @@ passed to the function, along with the class weights. As above, `fcol`
 can be ignored as we use the labels defined in the default `"markers"`
 feature variable.
 
-```{r classify, eval=TRUE}
+```{r classify}
 hl <- svmClassification(hl, params,
                         class.weights = w,
                         fcol = "markers")
@@ -1082,7 +1084,7 @@ setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 par(mfrow = c(1, 1))
 ```
-```{r plotSVM, eval=TRUE}
+```{r plotSVM}
 ## set point size of each protein to be inversely proportional to the
 ptsze <- exp(fData(hl)$svm.scores) - 1
 
