@@ -220,8 +220,8 @@ the associated columns.
 
 ```{r removefData}
 fvarLabels(hl)
-fvarLabels(hl)[1:3] <- c("UniProtAccession", "UniProtID", "Description")
-fvarLabels(hl)[4:6] <- paste0("Peptides.expt", 1:3)
+fvarLabels(hl)[1:3] <- c("uniprot.accession", "uniprot.id", "description")
+fvarLabels(hl)[4:6] <- paste0("peptides.expt", 1:3)
 fData(hl)[1:4, 1:6]
 ```
 
@@ -279,7 +279,9 @@ Proteome Discoverer. However, if one wanted to do this they would
 execute the `normalise` function as demonstrated in the below code
 chunk.
 
-```{r normsum, eval = FALSE} hl <- normalise(hl, method = "sum") ```
+```{r normsum, eval = FALSE} 
+hl <- normalise(hl, method = "sum") 
+```
 
 This transformation of the data assures to cancel the effect of the
 absolute intensities of the quantitative features along the rows, to
@@ -570,7 +572,7 @@ going to reset the annotation of Golgi markers to unknown using the
 ("") or missing values in the markers definition to a common
 definition of *unknown localisation*.
 
-```{r}
+```{r removeGA}
 hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
 getMarkers(hl)
 ```
@@ -692,9 +694,11 @@ that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation.
 
 
-```{r plot2Drep, fig.width = 12} par(mfrow = c(1, 2)) plot2D(hl[,
-hl$Replicate == 1], main = "Replicate 1") plot2D(hl[, hl$Replicate ==
-2], main = "Replicate 2", mirrorX = TRUE) ```
+```{r plot2Drep, fig.width = 12} 
+par(mfrow = c(1, 2)) 
+plot2D(hl[, hl$Replicate == 1], main = "Replicate 1") 
+plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE) 
+```
 
 # Interactive visualisation
 
@@ -824,7 +828,7 @@ database, the Gene Ontology and the literature.
 getMarkers(hl, fcol = "phenoDisco.Input")
 ```
 
-In the code chunk below we demonstrate how to run the `phenoDisco`
+In the code chunk below we show how to run the `phenoDisco`
 function and return a novelty detection result, according to the
 specified parameters. The algorithm parameters `times`, `GS` and `p`
 are passed to the function, along with the `fcol` to tell the
@@ -834,7 +838,7 @@ algorithm where the input training data is contained.
 ## As per Christoforou et al (2016), 
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", 
                  times = 200, 
-                 GS = 20)
+                 GS = 60)
 ```
 
 *Note: We do not evaluate this code chunk in this document as the
@@ -869,9 +873,11 @@ supports parallelisation and we strongly suggest you make use of a
 parallel processing to run these analyses (different backends can be
 set with argument `BPPARAM`). 
 
-```{r loadPDres, include=FALSE}
-load("Data/pd_runs/pd.rda")
-hl <- pdRes
+```{r loadPDres, echo=FALSE}
+f0 <- dir(extdatadir, full.names = TRUE,
+          pattern = "bpw-pdres.rds")
+pdres <- readRDS(f0)
+hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE)
 setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 ```
@@ -902,9 +908,9 @@ cols[-ind] <- getStockcol()[seq(cl)][(length(ind) + 1):length(cl)]
 
 ## Plot the input and output
 par(mfrow = c(1, 2))
-plot2D(hl, fcol = "phenodisco.input", 
+plot2D(hl, fcol = "phenoDisco.Input", 
        main = "phenoDisco input markers", col = getStockcol()[1:6])
-addLegend(hl, fcol = "phenodisco.input", cex = .7)
+addLegend(hl, fcol = "phenoDisco.Input", cex = .7)
 plot2D(hl, fcol = "pd", main = "phenoDisco output", col = cols)
 addLegend(hl, fcol = "pd", cex = .7, col = cols)
 ```
@@ -987,16 +993,17 @@ can account for class imbalance by setting specific class weights when
 generating the SVM model. Below the weights, `w` are set to be
 inversely proportional to the class frequencies. 
 
-```{r loadpdRes, include=FALSE}
-load("Data/fusionparams.rda")
+
+```{r loadpdRes, echo=FALSE}
+svmf <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-svmopt.rds") 
+params <- readRDS(svmf)
+```
+```{r getsvmweight}
 w <- table(getMarkers(hl, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 ```
-
-```{r optimise, eval=FALSE}
-w <- table(getMarkers(hl, verbose = TRUE))
-w <- 1/w[names(w) != "unknown"]
-
+```{r dosvmopt, eval=FALSE}
 ## 100 rounds of optimisation with five-fold cross-validation
 params <- svmOptimisation(hl, fcol = "markers",
                           times = 100, xval = 5,
@@ -1051,7 +1058,7 @@ passed to the function, along with the class weights. As above, `fcol`
 can be ignored as we use the labels defined in the default `"markers"`
 feature variable.
 
-```{r classify, eval=TRUE}
+```{r classify}
 hl <- svmClassification(hl, params,
                         class.weights = w,
                         fcol = "markers")
@@ -1077,7 +1084,7 @@ setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 par(mfrow = c(1, 1))
 ```
-```{r plotSVM, eval=TRUE}
+```{r plotSVM}
 ## set point size of each protein to be inversely proportional to the
 ptsze <- exp(fData(hl)$svm.scores) - 1
 
@@ -1282,7 +1289,12 @@ desired, see `?makeGoSet` for more details.
 gocc <- makeGoSet(hl, params = par, 
                   namespace = "cellular_component", 
                   evidence = NULL)
-gocc
+```
+
+The function `makeGoSet` uses the `r Biocpkg("biomaRt")` package to query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All GO terms that have been observed for the 5032 proteins in the hyperLOPIT dataset are retieved. Users should note that the number of GO terms retreived is also dependent on the database version queried and thus is always subject to change. We find it is common to see many GO terms with only one protein assigned to that term, these such terms generally do not bring and information generally for building the classifier and thus we can remove such GO terms by using the function `filterBinMSnSet`. 
+
+```{r filtergo, eval=FALSE}
+gocc <- filterBinMSnSet(hl)
 ```
 
 Now we have generated our auxiliary data we can use the *k*-NN
@@ -1300,7 +1312,7 @@ The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the *k*-NN TL classifier
 there are two sets of parameters that need optimising: the first set
 are the $k$'s for the primary and auxiliary data sources required for
-the nearest neighbour calculations for each data source.  The second
+the nearest neighbour calculations for each data source. The second
 set of parameters (which is noted by a vector of $\theta$ weights)
 that require optimising are the class weights, one per subcellular
 niche, that control the proportion of primary and auxiliary data to
@@ -1331,25 +1343,22 @@ of 1 for these niches and only optimise over the remaining organelles.
 This can signifciantly cut down optimisation time as by removing these
 4 classes from the optimisation (and not the classification) we only
 have `4^10` class weight combinations to consider instead of `4^14`
-combinations. In the example below we remove these 4 classes from the
+combinations. 
+
+In the example below we remove these 4 classes from the
 marker set, re-run the `knnOptimisation` for each data source and then
 run the `knntlOptimisation` with the 10 remaining classes. (Note: this
 is not run live as this the `hl` dataset with 10 classes, 707 markers
 and `4^10` combinations of parameters takes ~76 hours to run on the
 University of Cambridge HPC using 256 workers). 
 
-In the example code below we first remove the 2 ribosomes and nuclear
-classes and then run the `knnOptimisation` followed by the
-`knntlOptimisation` (specifying snow with a MPI
-backend with 255 workers for parallelisation on the Cambridge HPC).
-
-```{r loadtlres, include = FALSE}
-load("Data/tl_runs/tlopt.rda")
-data("hyperLOPIT2015goCC")
-gocc <-hyperLOPIT2015goCC
-ka <- kp <- 3
+To remove the 4 classes and create a new column of markers in the feature data called `tlmarkers` to use for the analysis:
+```{r loadgocc, include=FALSE}
+gofile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-gocc.rds")
+gocc <- readRDS(gofile)
 ```
-```{r setuptlopt, eval=TRUE}
+```{r setuptlopt}
 ## create new markers column for tl markers
 fData(hl)$tlmarkers <- fData(hl)$markers
 fData(gocc)$tlmarkers <- fData(gocc)$markers
@@ -1360,17 +1369,26 @@ torm  <- c("40S Ribosome", "60S Ribosome",
            "Nucleus - Non-chromatin")
 for (i in seq(torm)) {
   hl <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
-  gocc <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
+  gocc <- fDataToUnknown(gocc, from = torm[i], fcol = "tlmarkers")
 }
 getMarkerClasses(hl, fcol = "tlmarkers")
-getMarkerClasses(hl, fcol = "tlmarkers")
+getMarkerClasses(gocc, fcol = "tlmarkers")
 ```
-```{r runtlopts, eval=FALSE}
-## get best k's
-kp <- knnOptimisation(hl, fcol = "tlmarkers")
-ka <- knnOptimisation(gocc, fcol = "tlmarkers")
 
-## Set appropriate backend and workers for the tl
+Optimisation stage 1: run `knnOptimisation` to get the best $k$'s for each data source.
+```{r knnoptfortl, eval=FALSE}
+## get best k's
+kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
+kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
+plot(kpopt)
+plot(kaopt)
+```
+From examining the parameter seach plots we find the best $k$'s for both the primary and auxiliary are 3.
+
+Optimisation stage 2: run `knntlOptimisation` to get the best transfer learning weights for each sub-cellular class.
+```{r runtlopts, eval=FALSE}
+## Set appropriate parallelisation backend and  
+## number of workers for the tl
 par <- SnowParam(255L, type = "MPI")
 
 ## Now peform tl optimisation 
@@ -1378,15 +1396,21 @@ tlopt <- knntlOptimisation(hl, gocc,
                            fcol = "tlmarkers",
                            length.out = 4, 
                            times = 50,
-                           xval = 5, k = c(kp,ka),
+                           xval = 5, k = c(3, 3),
                            BPPARAM = par
   )
 ```
 
-
 The results of the optimisation can be visalised using the `plot`
 method for `"ThetaRegRes"` objects:
 
+```{r loadtlres, echo=FALSE}
+tlfile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-tlopt.rds")
+tlopt <- readRDS(tlfile)
+colnames(tlopt@results)[4] <- "Endoplasmic reticulum"
+setStockcol(NULL)
+```
 ```{r plottl}
 plot(tlopt)
 ```
@@ -1431,8 +1455,7 @@ bestpar <- bestpar[getMarkerClasses(hl)]
 
 ## Do the classification
 hl <- knntlClassification(hl, gocc, bestTheta = bestpar, 
-                          k = c(kp, ka))
-
+                          k = c(3, 3))
 ```
 
 The results from the classification results and associated scores are
