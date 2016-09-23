@@ -1483,8 +1483,15 @@ powerful method for data visualisation and quality control. We do not
 do any unsupervised clustering in the frame of the above spatial
 proteomics workflow as although clustering can be useful for grouping
 labelled data into categories e.g. see the `mrkHClust` function, we do
-not find it adaquete for protein localisation prediction and spatial
-proteomics data analysis in general. 
+not find it adaquete for spatial proteomics data analysis. We find
+supervised learning more suited to the task of protein localisation
+prediction in which we use high-quality curated marker proteins to
+build a classifier, instead of using an entirely unsupervised approach
+to look for clusters and then look for enrichment of organelles and
+complexes. In the latter we do not make good use of valuable prior
+knowledge, and in our experience unsupervised clustering can be
+extremely difficult due poor estimates of the number of clusters that
+may appear in the data.
 
 
 # Session information
