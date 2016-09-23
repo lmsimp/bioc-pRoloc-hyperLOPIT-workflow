@@ -1466,6 +1466,26 @@ assessed and cutoffs calculated using the `classify` app in
 way as demonstrated above for the SVM classifier.
 
 
+## Unsupervised machine learning
+In `pRoloc` there is functionality for unsupervsied machine learning
+methods. In unsupervised learning, the training data consists of a
+set of input vectors e.g. protein profiles, for which we do not have
+information about the class label e.g. localisation. The main goal in
+unsupervised learning is to uncover groups of similar examples within
+the data, this is termed clustering. Ordinance methods such as
+principal components analysis (PCA) also fall into the category of
+unsupervised learning methods, where the data can be projected from a
+high-dimensional spcae down to two or three dimensions for the purpose
+of visualisation. 
+
+As described and demonstrated already above, PCA is a valuable and
+powerful method for data visualisation and quality control. We do not
+do any unsupervised clustering in the frame of the above spatial
+proteomics workflow as although clustering can be useful for grouping
+labelled data into categories e.g. see the `mrkHClust` function, we do
+not find it adaquete for protein localisation prediction and spatial
+proteomics data analysis in general. 
+
 
 # Session information
 
