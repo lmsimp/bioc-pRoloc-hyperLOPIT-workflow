@@ -77,8 +77,8 @@ quantification with high accuracy and precision. Three biological
 replicates were generated from the E14TG2a experiment, the first was
 to target low density fractions and the second and third were to
 emphasis separation of the denser organelles.  The intersect of
-replicates 1 and 2 was treated as a 20-plex dataset for the analysis
-discussed in the manuscript [@hyper] as it has been shown that
+replicates 1 and 2 was treated as a 20-plex dataset for the analysis.
+As discussed in the manuscript [@hyper] as it has been shown that
 combining replicates across from different gradients can increase
 spatial resolution [@Trotter:2010]. The combination of replicates resulted
 in 5032 proteins common in both experiments.
@@ -124,9 +124,9 @@ meta-data slot.  By example, in the code chunk below we read in the
 of replicates 1 and 2 of the mouse map [@hyper], using the
 `readMSnSet2` function. The data is as available online with the
 manuscript (see tab 2 of the `xlsx` supplementary data set 1 in
-[@hyper], which should be exported as a text-based spreadsheet) and
-also as a `csv` in the Bioconductor `r Biocexptpkg("pRolocdata")` data
-package.
+[@hyper], which should be exported as a text-based spreadsheet). It
+is also available as a `csv` in the Bioconductor `r
+Biocexptpkg("pRolocdata")` data package. 
 
 To use the `readMSnSet2` function, as a minimum one must specify the
 file path to the data and which columns of the spreadsheet contain
@@ -193,30 +193,26 @@ etc (see below).
 hl
 ```
 
-
-Below, we examine the quantitative information for
-first 5 proteins. It is also possible to access specific rows and
-columns by naming the proteins and fractions of interest.
+Below, we examine the quantitative information for first 5 proteins.
+It is also possible to access specific rows and columns by naming the
+proteins and TMT tag channels of interest. 
 
 ```{r assesshl}
 exprs(hl)[1:5, ]
 exprs(hl)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
 ```
 
-The feature meta-data is stored in the `fData`
-slot and can be accessed by `fData(hl)`. When using
-`readMSnSet2`, automatically, everything that is not defined as
-quantitation data by `ecol` or the feature names by `fnames` is
-deposited to the `fData` slot. 
+The feature meta-data is stored in the `fData` slot and can be
+accessed by `fData(hl)`. When using `readMSnSet2`, automatically,
+everything that is not defined as quantitation data by `ecol` or the
+feature names by `fnames` is deposited to the `fData` slot. 
 
-We see the `fData`
-contains 25 columns describing information such as the number of
-peptides, associated markers, machine learning results etc. To
-identify the feature variable names we can use the function 
-`fvarLabels`. We see that the first 6 feature variable names 
-contain non-discriminatory label names, so we relabel them to
-help us identify what feature data information is stored in
-the associated columns.
+We see the `fData` contains 25 columns describing information such as
+the number of peptides, associated markers, machine learning results
+etc. To identify the feature variable names we can use the function
+`fvarLabels`. We see that the first 6 feature variable names contain
+non-discriminatory label names, so we relabel them to help us identify
+what feature data information is stored in the associated columns.
 
 ```{r removefData}
 fvarLabels(hl)
@@ -225,10 +221,11 @@ fvarLabels(hl)[4:6] <- paste0("peptides.expt", 1:3)
 fData(hl)[1:4, 1:6]
 ```
 
-Note that when using the simple `readMSnSet2` procedure, sample
-meta-data is kept empty. It is advised to annotate the fractions as
+Note that when using the simple `readMSnSet2` procedure, the `pData`
+slot which is used to store information about the samples/channels
+is kept empty. It is advised to annotate the channels as
 well. Below, we annotate the replicate from which the profiles
-originate and the TMT tag (extracted from the sample/fraction names).
+originate and the TMT tag (extracted from the sample/channel names).
 
 ```{r pdata}
 pData(hl)$Replicate <- rep(1:2, each = 10)
@@ -236,16 +233,29 @@ pData(hl)$Tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
 pData(hl)
 ```
 
+Throughout this workflow we refer to the different columns that
+are found in the `exprs` (expression data) slot as channels (short for TMT channels).
+In the frame of LOPIT and hyperLOPIT these channels consititue the
+relative abundance of each protein (along the rows) in the channel of
+interest. Each TMT channel originates from fractions collected from
+the density gradient, or a set of pooled fractions or may be a sample
+originating from an alternative preparation e.g. such as from the
+chromatin enrichment performed in Christoforou et al [@hyper].
+Information about which gradient fractions were used for which tag
+should also be stored in the sample meta-data `pData` slot.
+
 The sample meta-data that is distributed with
-the `r Biocexptpkg("pRolocdata")` package and (as above) the quantitation
-data file are located in the `extdata` in the `r Biocexptpkg("pRolocdata")` 
-package on the hard drive. In the code chunk below we again use the
+the `r Biocexptpkg("pRolocdata")` package for Christoforou's
+hyperLOPIT experiment and (as above) the quantitation
+data file, are located in the `extdata` in the `r Biocexptpkg("pRolocdata")` 
+package on the hard drive. 
+
+In the code chunk below we again use the
 `dir` function to locate the filepath to the meta-data `csv` file and
 then read it into R using `read.csv`. We then append the meta-data to
 the `pData` slot.  Information about the gradient fractions used and
 the associated subcellular fraction densities in % w/v Iodixanol for
 each replicate are stored here.
-
 
 ```{r morepdata}
 expinfo <- dir(extdatadir, full.names = TRUE,
@@ -265,7 +275,7 @@ pData(hl)
 
 There are two aspects related to data normalisation that are relevant
 to spatial proteomics data processing. The first one focuses on
-reducing purely technical variation between fractions without
+reducing purely technical variation between channels without
 affecting biological variability (i.e. the shape of the quantitative
 profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
@@ -286,7 +296,7 @@ hl <- normalise(hl, method = "sum")
 This transformation of the data assures to cancel the effect of the
 absolute intensities of the quantitative features along the rows, to
 focus subsequent analyses on the relative profiles along the
-sub-cellular fractions.
+sub-cellular channels.
 
 The same `normalise` function (or `normalize`, both spellings are
 supported) can also be applied in the first case described above.
@@ -337,7 +347,7 @@ that are available in `r Biocexptpkg("pRolocdata")`.
 Combining data is performed with the `combine` function. This function
 will inspect the feature and sample names to identify how to combine
 the data. As we want our replicates to be combined along the columns
-(same proteins, different sets of fractions), we need to assure that
+(same proteins, different sets of channels), we need to assure that
 the respective sample names differ so they can be identified from one
 another. The function `updateSampleNames` can be used do this.
 
@@ -470,13 +480,13 @@ very interesting gist with intriguing tSNE examples. <!--This might be
 better to come after markers.-->
 
 It is also useful to visualise the relative intensities along the
-gradient to identify fractions displaying particularly low yield. This
+gradient to identify channels displaying particularly low yield. This
 can be done using the `plotDist` and `boxplot` functions, that plot
 the protein profiles occupancy along the gradient (we also display the
-mean fraction intensities) and a `boxplot` of the column intensities.
-In the two plots displayed below, we re-order the fractions to pair
-corresponding fractions in the two replicates (rather than ordering
-the fractions by replicate).
+mean channel intensities) and a `boxplot` of the column intensities.
+In the two plots displayed below, we re-order the TMT channles to pair
+corresponding channels in the two replicates (rather than ordering
+the channels by replicate).
 
 ```{r qcbx, fig.width = 12} par(mfrow = c(1, 2)) o <-
 order(hl$Iodixonal.Density) plotDist(hl[, o], pcol = "#00000010")
@@ -592,10 +602,10 @@ using the `plotDist` function. While the PCA plot enables to
 efficiently visualise the complete dataset and assess the relative
 separation of different sub-cellular niches, comparing profiles of a
 few marker clusters is useful to assess how exactly they differ (in
-terms of peak fractions, for example). Below, we plot the profile of
+terms of peak channels, for example). Below, we plot the profile of
 the mitochondrial and peroxisome markers to highlight the differences
 in profiles between these two sets of markers along the 6th and 7th
-fractions, as represented above along the 7th PC on the PCA plot.
+channels, as represented above along the 7th PC on the PCA plot.
 
 ```{r plotDist}
 hlo <- hl[, order(hl$Iodixonal.Density)]
@@ -621,14 +631,14 @@ al. have shown a significant improvement in protein–organelle
 association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
 
-Direct comparisons of individual fractions in replicated experiments
+Direct comparisons of individual channels in replicated experiments
 does not provide an adequate, goal-driven assessment of different
-experiments. Indeed, due to the nature of the experiment and fraction
-collection, the quantitative channels (loosely referred to as
-fractions) do not correspond to identical actual fractions along the
+experiments. Indeed, due to the nature of the experiment and gradient fraction
+collection, the quantitative channels 
+do not correspond to identical selected fractions along the
 gradient. As can be seen in the table below (taken from the
 `hyperLOPIT`'s `pData`, focusing on channels 7 to 10), different sets
-of fractions are combined to obtain enough material and optimise
+of gradient fractions are pooled to obtain enough material and optimise
 acurate quantitation.
 
 ```{r pdtab, echo=FALSE, eval = FALSE}
@@ -685,7 +695,7 @@ pData(hl)[i, ]
 <!-- ``` -->
 
 
-The more relevant comparison unit is not a single fraction, but rather
+The more relevant comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised as
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
@@ -1493,6 +1503,38 @@ knowledge, and in our experience unsupervised clustering can be
 extremely difficult due poor estimates of the number of clusters that
 may appear in the data.
 
+# Writing and exporting data
+A `MSnSet` can be exported from R using the `write.exprs` function.
+This function writes the expression values to a tab (the defualt, or
+other type e.g.e.g. comma, as specified in `write,table`) separated
+file. There argument `fDataCols` can be used to specify which
+`featureData` columns (as column names, column number or `logical`) to
+append to the right of the expression matrix. 
+
+In the below code chunk we write the `hl` object to a csv file. The
+`file` argument is used to specify the file path, the `sep` argument
+specifies the field separator string, here we use a comma, finally as
+we want to write all the information in the `featureData` to the file,
+as well as the expression data, we specify `fDataCols = 1:ncol(hl)`
+i.e. write everything in the `featureData` to the file `"hl.csv"`.
+
+```{r writeData, eval = FALSE}
+write.exprs(hl, file = "hl.csv", sep = ",", 
+            fDataCols = 1:ncol(hl))
+```
+
+Individual R objects, such a parameters from the machine learning
+optimisations, can be save using the standard `save` function in R.
+For example, to save and then re-load the parameters from the SVM
+optimisation,
+
+```{r saveData, eval = FALSE}
+## To save the parameters as an R object
+save(params, file = "svmparams.rda")
+
+## To re-load after saving
+load(file = "svmparams.rda")
+```
 
 # Session information
 
