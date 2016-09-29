@@ -100,7 +100,7 @@ the \texttt{pData} slot for storing the sample meta-data.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.45\textwidth]{./Figures/msnset.png}
+  \includegraphics[width=.5\textwidth]{./Figures/msnset.png}
   \caption{Simplified representation of the \texttt{MSnSet} data
     structure (reproduced with permission from the \Biocpkg{MSnbase}
     vignette)}
@@ -739,7 +739,7 @@ were not profiles in both replicates.
        \hlkwc{main} \hlstd{=} \hlstr{"Missing values (white cells) after combining replicates"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/namap-1} 
+\includegraphics[width=.65\textwidth]{figure/namap-1} 
 
 \end{knitrout}
   \caption{Heatmap of missing values}
@@ -775,9 +775,9 @@ is 0) missing values.
 ## Annotation:  
 ## - - - Processing information - - -
 ## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-## Subset [6725,20][5032,20] Thu Sep 29 20:32:05 2016 
-## Removed features with more than 0 NAs: Thu Sep 29 20:32:05 2016 
-## Dropped featureData's levels Thu Sep 29 20:32:05 2016 
+## Subset [6725,20][5032,20] Thu Sep 29 21:02:54 2016 
+## Removed features with more than 0 NAs: Thu Sep 29 21:02:54 2016 
+## Dropped featureData's levels Thu Sep 29 21:02:54 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -831,7 +831,7 @@ the PCA plot with prior information about sub-cellular localisation.
 \hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlkwa{NULL}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"black"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/qcplot-1} 
+\includegraphics[width=.65\textwidth]{figure/qcplot-1} 
 
 \end{knitrout}
   \caption{PCA plot of the mouse stem cell data \texttt{hl}.}
@@ -1087,7 +1087,7 @@ channels, as represented above along the 7th PC on the PCA plot.
        \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"purple"}\hlstd{,} \hlstr{"blue"}\hlstd{),} \hlkwc{bty} \hlstd{=} \hlstr{"n"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/plotDist-1} 
+\includegraphics[width=.65\textwidth]{figure/plotDist-1} 
 
 \end{knitrout}
   \caption{Mitochondrion and peroxisome protein profiles.}
@@ -1442,8 +1442,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Sep 29 20:32:06 2016 
-## Added markers from  'pdres' marker vector. Thu Sep 29 20:32:07 2016 
+## Added markers from  'mrk' marker vector. Thu Sep 29 21:02:55 2016 
+## Added markers from  'pdres' marker vector. Thu Sep 29 21:02:56 2016 
 ##  MSnbase version: 1.99.2
 \end{verbatim}
 \begin{alltt}
@@ -1666,7 +1666,7 @@ careful to avoid overfitting and to choose parameters wisely.
   \centering
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\textwidth]{figure/visualiseOptHide-1} 
+\includegraphics[width=.65\textwidth]{figure/visualiseOptHide-1} 
 
 \end{knitrout}
   \caption{Assessment of the classification model parameter optimisation.}
@@ -1733,7 +1733,7 @@ localisations from the SVM predictions.
 \hlkwd{addLegend}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{where} \hlstd{=} \hlstr{"bottomleft"}\hlstd{,} \hlkwc{bty} \hlstd{=} \hlstr{"n"}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{.5}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/plotSVM-1} 
+\includegraphics[width=.8\textwidth]{figure/plotSVM-1} 
 
 \end{knitrout}
   \caption{Classification results.}
@@ -1793,7 +1793,7 @@ distributions per organelle.
         \hlkwc{ylab} \hlstd{=} \hlstr{"SVM scores"}\hlstd{,} \hlkwc{las} \hlstd{=} \hlnum{2}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/thresholds-1} 
+\includegraphics[width=.8\textwidth]{figure/thresholds-1} 
 
 \end{knitrout}
   \caption{Visualistion of class-specific classification score distribution.}
@@ -1889,7 +1889,7 @@ using \texttt{plot2D} function.
 \hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm.pred"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/plotres-1} 
+\includegraphics[width=.8\textwidth]{figure/plotres-1} 
 
 \end{knitrout}
   \caption{Results of the localisation preductions after thresholding.}
@@ -2192,10 +2192,10 @@ method for \texttt{"ThetaRegRes"} objects:
 \hlkwd{plot}\hlstd{(tlopt)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/plottl-1} 
+\includegraphics[width=.6\textwidth]{figure/plottl-1} 
 
 \end{knitrout}
-  \caption{Visualisation of the tTransfer learning parameter optimisation procedure.}
+  \caption{Visualisation of the transfer learning parameter optimisation procedure.}
   \label{fig:plottl}
 \end{figure}
 
@@ -2436,3 +2436,38 @@ It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
 \href{https://support.bioconductor.org/}{question} at hand.
+
+\bigskip
+
+\subsection*{Author contributions}
+
+\textbf{TODO} In order to give appropriate credit to each author of an
+article, the individual contributions of each author to the manuscript
+should be detailed in this section. We recommend using author initials
+and then stating briefly how they contributed.
+
+\subsection*{Competing interests}
+
+No conflict of interest.
+
+
+\subsection*{Grant information}
+
+L.M.B is supported by a Wellcome Trust Technology Development Grant
+(grant number 108467/Z/15/Z). L.G. is supported by the BBSRC Strategic
+Longer and Larger grant (Award BB/L002817/1).
+
+
+\subsection*{Acknowledgements}
+
+The authors would like to thank the Cambridge Computational Biology
+Institute and the Centre for Mathematical Sciences for hosting them
+when writing this article. The authors would like to thank Dr Claire
+M. Mulvey for helpful comments on early versions of this
+manuscript. The authors would also like to thank Dr. Stuart Rankin
+from the High Performance Computing Service for his support. Part of
+this work was performed using the Darwin Supercomputer of the
+University of Cambridge High Performance Computing Service, provided
+by Dell Inc. using Strategic Research Infrastructure Funding from the
+Higher Education Funding Council for England and funding from the
+Science and Technology Facilities Council.

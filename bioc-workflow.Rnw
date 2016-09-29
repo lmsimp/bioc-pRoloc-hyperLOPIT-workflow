@@ -108,7 +108,7 @@ the \texttt{pData} slot for storing the sample meta-data.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.45\textwidth]{./Figures/msnset.png}
+  \includegraphics[width=.5\textwidth]{./Figures/msnset.png}
   \caption{Simplified representation of the \texttt{MSnSet} data
     structure (reproduced with permission from the \Biocpkg{MSnbase}
     vignette)}
@@ -428,7 +428,7 @@ were not profiles in both replicates.
 
 \begin{figure}[!ht]
   \centering
-<<namap, out.width="\\textwidth">>=
+<<namap, out.width=".65\\textwidth">>=
 image2(is.na(combined), col = c("black", "white"),
        main = "Missing values (white cells) after combining replicates")
 @  
@@ -487,7 +487,7 @@ the PCA plot with prior information about sub-cellular localisation.
 
 \begin{figure}[!ht]
   \centering
-<<qcplot, message=FALSE, warning=FALSE, out.width="\\textwidth">>=
+<<qcplot, message=FALSE, warning=FALSE, out.width=".65\\textwidth">>=
 library("pRoloc")
 plot2D(hl, fcol = NULL, col = "black")
 @  
@@ -519,7 +519,7 @@ the channels by replicate).
 
 \begin{figure}[!ht]
   \centering
-<<qcbx, out.width="\\textwidth">>=
+<<qcbx, out.width="\\textwidth", fig.asp=1/2>>=
 par(mfrow = c(1, 2))
 o <- order(hl$Iodixonal.Density)
 plotDist(hl[, o], pcol = "#00000010")
@@ -598,7 +598,7 @@ the apparent overlap in the two first PCs.
 
 \begin{figure}[!ht]
   \centering
-<<plotmarkers, out.width="\\textwidth">>=
+<<plotmarkers, fig.width=12, out.width="\\textwidth", fig.asp=1/2>>=
 par(mfrow = c(1, 2))
 plot2D(hl, main = "pRolocmarkers for mouse")
 addLegend(hl, cex = .7)
@@ -653,7 +653,7 @@ channels, as represented above along the 7th PC on the PCA plot.
 
 \begin{figure}[!ht]
   \centering
-<<plotDist, out.width="\\textwidth">>=
+<<plotDist, out.width=".65\\textwidth">>=
 hlo <- hl[, order(hl$Iodixonal.Density)]
 plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
          pcol = "purple", fractions = "Fraction.No")
@@ -756,10 +756,10 @@ two figures with the same orientation.
 
 \begin{figure}[!ht]
   \centering
-<<plot2Drep, out.width="\\textwidth">>= 
+<<plot2Drep, fig.width=12, out.width="\\textwidth", fig.asp=1/2>>= 
 par(mfrow = c(1, 2)) 
-plot2D(hl[, hl$Replicate == 1], main = "Replicate 1") 
-plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE) 
+plot2D(hl[, hl$Replicate == 1], main = "Replicate 1")
+plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE)
 @  
   \caption{PCA plots of replicates 1 and 2}
   \label{fig:plot2Drep}
@@ -974,7 +974,7 @@ We can plot the results using the \texttt{plot2D} function.
 
 \begin{figure}[!ht]
   \centering
-<<plotPDres, out.width="\\textwidth">>=
+<<plotPDres, fig.width=12, out.width="\\textwidth", fig.asp=1/2>>=
 ## Re-order the colours for the phenoDisco output
 cl <- getMarkerClasses(hl, "pd")
 cols <- getStockcol()[seq(cl)]
@@ -1118,7 +1118,7 @@ levelPlot(params)
 
 \begin{figure}[!ht]
   \centering
-<<visualiseOptHide, echo=FALSE, out.width="\\textwidth">>=
+<<visualiseOptHide, echo=FALSE, out.width=".65\\textwidth">>=
 library('gridExtra')
 grid.arrange(plot(params), levelPlot(params), ncol = 2)
 @  
@@ -1176,7 +1176,7 @@ par(mfrow = c(1, 1))
 
 \begin{figure}[!ht]
   \centering
-<<plotSVM, out.width="\\textwidth">>=
+<<plotSVM, out.width=".8\\textwidth">>=
 ## set point size of each protein to be inversely proportional to the
 ptsze <- exp(fData(hl)$svm.scores) - 1
 ## plot new predictions
@@ -1229,7 +1229,7 @@ distributions per organelle.
 
 \begin{figure}[!ht]
   \centering
-<<thresholds, out.width="\\textwidth">>=
+<<thresholds, out.width=".8\\textwidth">>=
 ## First remove the markers
 preds <- unknownMSnSet(hl)
 ## Plot a boxplot of the scores of each organelle
@@ -1286,7 +1286,7 @@ dev.off()
 
 \begin{figure}[!ht]
     \centering
-<<plotres, out.width="\\textwidth">>=
+<<plotres, out.width=".8\\textwidth">>=
 plot2D(hl, fcol = "svm.pred")
 @  
   \caption{Results of the localisation preductions after thresholding.}
@@ -1550,10 +1550,10 @@ setStockcol(NULL)
 
 \begin{figure}[!ht]
   \centering
-<<plottl, out.width="\\textwidth">>=
+<<plottl, out.width=".6\\textwidth">>=
 plot(tlopt)
 @  
-  \caption{Visualisation of the tTransfer learning parameter optimisation procedure.}
+  \caption{Visualisation of the transfer learning parameter optimisation procedure.}
   \label{fig:plottl}
 \end{figure}
 
@@ -1693,3 +1693,38 @@ It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
 \href{https://support.bioconductor.org/}{question} at hand.
+
+\bigskip
+
+\subsection*{Author contributions}
+
+\textbf{TODO} In order to give appropriate credit to each author of an
+article, the individual contributions of each author to the manuscript
+should be detailed in this section. We recommend using author initials
+and then stating briefly how they contributed.
+
+\subsection*{Competing interests}
+
+No conflict of interest.
+
+
+\subsection*{Grant information}
+
+L.M.B is supported by a Wellcome Trust Technology Development Grant
+(grant number 108467/Z/15/Z). L.G. is supported by the BBSRC Strategic
+Longer and Larger grant (Award BB/L002817/1).
+
+
+\subsection*{Acknowledgements}
+
+The authors would like to thank the Cambridge Computational Biology
+Institute and the Centre for Mathematical Sciences for hosting them
+when writing this article. The authors would like to thank Dr Claire
+M. Mulvey for helpful comments on early versions of this
+manuscript. The authors would also like to thank Dr. Stuart Rankin
+from the High Performance Computing Service for his support. Part of
+this work was performed using the Darwin Supercomputer of the
+University of Cambridge High Performance Computing Service, provided
+by Dell Inc. using Strategic Research Infrastructure Funding from the
+Higher Education Funding Council for England and funding from the
+Science and Technology Facilities Council.
