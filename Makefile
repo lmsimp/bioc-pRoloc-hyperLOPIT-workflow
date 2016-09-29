@@ -6,6 +6,9 @@ all:
 %.md: %.Rmd
 	/opt/Rpatched/lib/R/bin/Rscript -e 'require("knitr"); knit("$^")'
 
+%.tex: %.md
+	pandoc $^ -o $@
+
 clean:
 	rm -f *~
 	rm -rf .Rcache
