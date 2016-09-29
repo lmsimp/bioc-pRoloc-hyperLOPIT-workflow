@@ -7,7 +7,7 @@ all:
 	/opt/Rpatched/lib/R/bin/Rscript -e 'require("knitr"); knit("$^")'
 
 %.tex: %.md
-	pandoc $^ -o $@
+	pandoc $^ -o $@ -N --bibliography=bibliography.bib
 
 clean:
 	rm -f *~

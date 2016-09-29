@@ -49,7 +49,7 @@ following the
 can be tagged with specific package names or keywords. For more
 general information about mass spectrometry and proteomics, the
 readers are invited to read the *[RforProteomics](http://bioconductor.org/packages/RforProteomics)*
-package vignettes and associated papers [@Gatto:2014;@Gatto2015]. 
+package vignettes and associated papers [@Gatto:2014;@Gatto:2015]. 
 
 
 # Reading and processing spatial proteomics data
@@ -669,7 +669,7 @@ combined
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 10:28:15 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 13:42:11 2016 
 ##  MSnbase version: 1.21.7
 ```
 
@@ -726,10 +726,10 @@ combined
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 10:28:15 2016 
-## Subset [6725,20][5032,20] Thu Sep 29 10:28:15 2016 
-## Removed features with more than 0 NAs: Thu Sep 29 10:28:15 2016 
-## Dropped featureData's levels Thu Sep 29 10:28:15 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 13:42:11 2016 
+## Subset [6725,20][5032,20] Thu Sep 29 13:42:11 2016 
+## Removed features with more than 0 NAs: Thu Sep 29 13:42:11 2016 
+## Dropped featureData's levels Thu Sep 29 13:42:11 2016 
 ##  MSnbase version: 1.21.7
 ```
 
@@ -1321,8 +1321,8 @@ hl
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Sep 29 10:28:15 2016 
-## Added markers from  'pdres' marker vector. Thu Sep 29 10:28:17 2016 
+## Added markers from  'mrk' marker vector. Thu Sep 29 13:42:12 2016 
+## Added markers from  'pdres' marker vector. Thu Sep 29 13:42:13 2016 
 ##  MSnbase version: 1.99.2
 ```
 
@@ -1652,15 +1652,15 @@ ts <- orgQuants(hl,
 
 ```
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4356698               0.3028843               0.3825420 
+##               0.4361037               0.3025581               0.3909670 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6825826               0.5995243               0.4245311 
+##               0.6803283               0.6104122               0.4318449 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4034908               0.5882168               0.9501241 
+##               0.4172007               0.5869100               0.9490415 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7951459               0.7096694               0.3149301 
+##               0.7940276               0.7083168               0.3151153 
 ##         Plasma membrane              Proteasome 
-##               0.7091667               0.4204304
+##               0.7224713               0.4169904
 ```
 
 ```r
@@ -1674,15 +1674,15 @@ hl <- getPredictions(hl,
 ```
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      86                     169                      86 
+##                      86                     169                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     295                     479                      91 
+##                     297                     476                     103 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      26                     125                     522 
+##                      24                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     344                      38 
+##                     229                     344                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     325                     159                    2057
+##                     315                     158                    2057
 ```
 
 The output of `getPredictons` is the original `MSnSet` dataset with a

@@ -56,7 +56,7 @@ following the
 can be tagged with specific package names or keywords. For more
 general information about mass spectrometry and proteomics, the
 readers are invited to read the `r Biocexptpkg("RforProteomics")`
-package vignettes and associated papers [@Gatto:2014;@Gatto2015]. 
+package vignettes and associated papers [@Gatto:2014;@Gatto:2015]. 
 
 
 # Reading and processing spatial proteomics data

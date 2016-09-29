@@ -22,8 +22,9 @@ clustering, classification and visualisation.
 In this workflow, we will describe how to prepare the spatial proteomics
 data starting from a spreadsheet containing quantitative mass
 spectrometry data. We will focus on a recent pluripotent mouse embryonic
-stem cells experiment {[}@hyper{]}. Additional annotated and
-pre-formatted datasets from various species are readily available in the
+stem cells experiment (A. Christoforou et al. 2016). Additional
+annotated and pre-formatted datasets from various species are readily
+available in the
 \emph{\href{http://bioconductor.org/packages/pRolocdata}{pRolocdata}}
 package.
 
@@ -46,7 +47,8 @@ guidelines}. Questions can be tagged with specific package names or
 keywords. For more general information about mass spectrometry and
 proteomics, the readers are invited to read the
 \emph{\href{http://bioconductor.org/packages/RforProteomics}{RforProteomics}}
-package vignettes and associated papers {[}@Gatto:2014;@Gatto2015{]}.
+package vignettes and associated papers (L. Gatto and Christoforou 2014;
+Gatto et al. 2015).
 
 \section{Reading and processing spatial proteomics
 data}\label{reading-and-processing-spatial-proteomics-data}
@@ -56,23 +58,24 @@ pluripotent embryonic mouse stem
 cells}\label{the-use-case-predicting-sub-cellular-localisation-in-pluripotent-embryonic-mouse-stem-cells}
 
 As a use-case, we analyse a recent high-throughput spatial proteomics
-dataset from pluripotent mouse embryonic stem cells (E14TG2a)
-{[}@hyper{]}. The data was generated using hyperplexed LOPIT
-(hyperLOPIT), a state-of-the-art method relying on improved sub-cellular
-fractionation and more accurate quantitation, leading to more reliable
-classification of protein localisation across the whole sub-cellular
-space. The method uses an elaborate sub-cellular fractionation scheme,
-enabled by the use of Tandem Mass Tag (TMT) {[}Thompson:2003{]} 10-plex
-and application of the MS data acquisition technique named synchronous
-precursor selection MS\textsuperscript{3} (SPS-MS\textsuperscript{3})
-{[}@McAlister:2014{]}, for TMT quantification with high accuracy and
-precision. Three biological replicates were generated from the E14TG2a
-experiment, the first was to target low density fractions and the second
-and third were to emphasis separation of the denser organelles. The
-intersect of replicates 1 and 2 was treated as a 20-plex dataset for the
-analysis. As discussed in the manuscript {[}@hyper{]} as it has been
-shown that combining replicates across from different gradients can
-increase spatial resolution {[}@Trotter:2010{]}. The combination of
+dataset from pluripotent mouse embryonic stem cells (E14TG2a) (A.
+Christoforou et al. 2016). The data was generated using hyperplexed
+LOPIT (hyperLOPIT), a state-of-the-art method relying on improved
+sub-cellular fractionation and more accurate quantitation, leading to
+more reliable classification of protein localisation across the whole
+sub-cellular space. The method uses an elaborate sub-cellular
+fractionation scheme, enabled by the use of Tandem Mass Tag (TMT)
+{[}Thompson:2003{]} 10-plex and application of the MS data acquisition
+technique named synchronous precursor selection MS\textsuperscript{3}
+(SPS-MS\textsuperscript{3}) (McAlister et al. 2014), for TMT
+quantification with high accuracy and precision. Three biological
+replicates were generated from the E14TG2a experiment, the first was to
+target low density fractions and the second and third were to emphasis
+separation of the denser organelles. The intersect of replicates 1 and 2
+was treated as a 20-plex dataset for the analysis. As discussed in the
+manuscript (A. Christoforou et al. 2016) as it has been shown that
+combining replicates across from different gradients can increase
+spatial resolution (M. W. B. Trotter et al. 2010). The combination of
 replicates resulted in 5032 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
@@ -127,12 +130,12 @@ containing the quantitation data, as identified by the argument
 the spreadsheet are appended to the feature meta-data slot. By example,
 in the code chunk below we read in the \texttt{csv} spreadsheet
 containing the quantitation data from the intersect of replicates 1 and
-2 of the mouse map {[}@hyper{]}, using the \texttt{readMSnSet2}
-function. The data is as available online with the manuscript (see tab 2
-of the \texttt{xlsx} supplementary data set 1 in {[}@hyper{]}, which
-should be exported as a text-based spreadsheet). It is also available as
-a \texttt{csv} in the Bioconductor \texttt{r Biocexptpkg("pRolocdata")}
-data package.
+2 of the mouse map (A. Christoforou et al. 2016), using the
+\texttt{readMSnSet2} function. The data is as available online with the
+manuscript (see tab 2 of the \texttt{xlsx} supplementary data set 1 in
+(A. Christoforou et al. 2016), which should be exported as a text-based
+spreadsheet). It is also available as a \texttt{csv} in the Bioconductor
+\texttt{r Biocexptpkg("pRolocdata")} data package.
 
 To use the \texttt{readMSnSet2} function, as a minimum one must specify
 the file path to the data and which columns of the spreadsheet contain
@@ -438,10 +441,10 @@ consititue the relative abundance of each protein (along the rows) in
 the channel of interest. Each TMT channel originates from fractions
 collected from the density gradient, or a set of pooled fractions or may
 be a sample originating from an alternative preparation e.g.~such as
-from the chromatin enrichment performed in Christoforou et al
-{[}@hyper{]}. Information about which gradient fractions were used for
-which tag should also be stored in the sample meta-data \texttt{pData}
-slot.
+from the chromatin enrichment performed in Christoforou et al (A.
+Christoforou et al. 2016). Information about which gradient fractions
+were used for which tag should also be stored in the sample meta-data
+\texttt{pData} slot.
 
 The sample meta-data that is distributed with the
 \emph{\href{http://bioconductor.org/packages/pRolocdata}{pRolocdata}}
@@ -717,7 +720,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 10:28:15 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 13:42:11 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 
@@ -730,8 +733,8 @@ vignette}.
 \subsubsection{Missing data}\label{missing-data}
 
 Missing data are a recurrent issue in mass spectrometry applications,
-and should be addressed independently of this workflow
-{[}@Webb-Robertson:2015;@Lazar:2016{]}. In {[}@Gatto:2014b{]}, we have
+and should be addressed independently of this workflow (Webb-Robertson
+et al. 2015; Lazar et al. 2016). In (Gatto et al. 2014), we have
 described how a high content in missing values in spatial proteomics
 data and their inappropriate handling leads to a reduction of
 sub-cellular resolution. Missing data can be imputated using
@@ -783,10 +786,10 @@ that removes features that contain more than a certain proportion
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 10:28:15 2016 
-## Subset [6725,20][5032,20] Thu Sep 29 10:28:15 2016 
-## Removed features with more than 0 NAs: Thu Sep 29 10:28:15 2016 
-## Dropped featureData's levels Thu Sep 29 10:28:15 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 13:42:11 2016 
+## Subset [6725,20][5032,20] Thu Sep 29 13:42:11 2016 
+## Removed features with more than 0 NAs: Thu Sep 29 13:42:11 2016 
+## Dropped featureData's levels Thu Sep 29 13:42:11 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 
@@ -801,16 +804,16 @@ description of sub-cellular assignments).
 
 Data quality is routinely examined through visualisation to verify that
 sub-cellular niches have been separated along the gradient. Based on De
-Duve's principle {[}@DeDuve:1981{]} proteins that co-localise exhibit
-similar quantitation profiles across the gradient fractions employed.
-One approach that has been widely used to visualise and inspect high
-throughput mass spectrometry-based proteomics data is principal
-components analysis (PCA). PCA is one of many dimensionality reduction
-methods, that allow one to effectively summarise multi-dimensional data
-in to 2 or 3 dimensions to enable visualisation. Very generally, the
-original continuous multi-dimensional data is transformed into a set of
-orthogonal components ordered according to the amount of variability
-that they describe. The \texttt{plot2D} method in
+Duve's principle (De Duve and Beaufay 1981) proteins that co-localise
+exhibit similar quantitation profiles across the gradient fractions
+employed. One approach that has been widely used to visualise and
+inspect high throughput mass spectrometry-based proteomics data is
+principal components analysis (PCA). PCA is one of many dimensionality
+reduction methods, that allow one to effectively summarise
+multi-dimensional data in to 2 or 3 dimensions to enable visualisation.
+Very generally, the original continuous multi-dimensional data is
+transformed into a set of orthogonal components ordered according to the
+amount of variability that they describe. The \texttt{plot2D} method in
 \emph{\href{http://bioconductor.org/packages/pRoloc}{pRoloc}} allows one
 to plot the principal components (PCs) of a dataset against one another,
 by default the first two components are plotted on the x- and y-axis,
@@ -884,7 +887,7 @@ convenience function, \texttt{addMarkers}, to directly add markers to a
 marker sets can be accessed using the \texttt{pRolocmarkers()} function.
 Marker sets are stored as a simple named vector in R, and originate from
 in-house user-defined sets of markers or from previous published studies
-{[}@Gatto:2014b{]}, which are continuosly updated and integrated.
+(Gatto et al. 2014), which are continuosly updated and integrated.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1009,12 +1012,12 @@ the default plotting characters (solid dots for the markers and empty
 circles for the features of unknown localisation) can of course be
 changed, as described in the \texttt{setStockcol} manual page.
 
-As demonstrated in {[}@hyper{]} and illustrated in the PCA plot above,
-the Golgi apparatus proteins display a dynamic pattern, noting sets of
-Golgi marker proteins that are distributed amongst other subcellular
-structures, an observation supported by microscopy. As such, we are
-going to reset the annotation of Golgi markers to unknown using the
-\texttt{fDataTounknown} function. It is often used to replace empty
+As demonstrated in (A. Christoforou et al. 2016) and illustrated in the
+PCA plot above, the Golgi apparatus proteins display a dynamic pattern,
+noting sets of Golgi marker proteins that are distributed amongst other
+subcellular structures, an observation supported by microscopy. As such,
+we are going to reset the annotation of Golgi markers to unknown using
+the \texttt{fDataTounknown} function. It is often used to replace empty
 strings (``'') or missing values in the markers definition to a common
 definition of \emph{unknown localisation}.
 
@@ -1039,7 +1042,7 @@ definition of \emph{unknown localisation}.
 ##                      51                      34                    4122
 \end{verbatim}
 
-In general, the Gene Ontology (GO) {[}@Ashburner:2000{]}, and in
+In general, the Gene Ontology (GO) (Ashburner et al. 2000), and in
 particular the cellular compartment (CC) namespace are a good starting
 point for protein annotation and marker definition. It is important to
 note however that automatic retrieval of sub-cellular localisation
@@ -1087,11 +1090,12 @@ although these are only available in the development version.
 
 With the aim of maximising the sub-cellular resolution and,
 consequently, the reliability in protein sub-cellular assignments, we
-follow the advice in {[}@Trotter:2010{]} and combine replicated spatial
-proteomics experiments as described above. Indeed, Trotter et al. have
-shown a significant improvement in protein--organelle association upon
-direct combination of single experiments, in particular when these
-resolve different subcellular niches.
+follow the advice in (M. W. B. Trotter et al. 2010) and combine
+replicated spatial proteomics experiments as described above. Indeed,
+Trotter et al. have shown a significant improvement in
+protein--organelle association upon direct combination of single
+experiments, in particular when these resolve different subcellular
+niches.
 
 Direct comparisons of individual channels in replicated experiments does
 not provide an adequate, goal-driven assessment of different
@@ -1230,10 +1234,11 @@ markers are directly used in the training phase of the ML
 classification. We find that a lack of sub-cellular diversity in the
 labelled training data leads to prediction errors, as unlabelled
 instances can only be assigned to a class that exists in the training
-data {[}@Breckels:2013{]}. In such scenarios novelty detection can be
-useful to identify data-specific sub-cellular groupings such as
+data (L. M. Breckels et al. 2013). In such scenarios novelty detection
+can be useful to identify data-specific sub-cellular groupings such as
 organelles and protein complexes. The phenotype discovery (phenoDisco)
-algorithm {[}@Breckels:2013{]} is one such method and is available in
+algorithm (L. M. Breckels et al. 2013) is one such method and is
+available in
 \emph{\href{http://bioconductor.org/packages/pRoloc}{pRoloc}}. It is an
 iterative semi-supervised learning method that combines the
 classification of proteins on existing labelled data with the detection
@@ -1241,8 +1246,8 @@ of new clusters.
 
 In addition to extracting new phenotypes, novelty detection methods are
 also useful for confirming the presence of known or postulated clusters
-in an unbiased fashion. For example, in {[}@hyper{]} the
-\texttt{phenoDisco} algorithm was used to confirm the data-specific
+in an unbiased fashion. For example, in (A. Christoforou et al. 2016)
+the \texttt{phenoDisco} algorithm was used to confirm the data-specific
 presence of the nucleus and nucleus sub-compartments. In the code chunk
 below, we demonstrate how to do this analysis, highlighting some of the
 optional arguments and parameters available for phenotype extraction and
@@ -1253,12 +1258,12 @@ labelled (markers) and unlabelled data to explore the data structure and
 find new sub-cellular data clusters. Thus the first step is to define
 some input labelled data i.e.~markers, that the algorithm will use as
 input for the supervised learning aspect of the algorithm. As described
-in {[}@hyper{]} we define a set of markers to use as input for the
-analyses that cover well-known residents from three distinct organelle
-structures; the mitochondria, plasma membrane and ER, and from three
-well-known and abundant protein complexes; the proteasome and two
-ribosomal subunits, 40S and 60S. These input markers are stored in the
-\texttt{featureData} column of \texttt{hl} where
+in (A. Christoforou et al. 2016) we define a set of markers to use as
+input for the analyses that cover well-known residents from three
+distinct organelle structures; the mitochondria, plasma membrane and ER,
+and from three well-known and abundant protein complexes; the proteasome
+and two ribosomal subunits, 40S and 60S. These input markers are stored
+in the \texttt{featureData} column of \texttt{hl} where
 \texttt{fcol = "phenoDisco.Input"}. We can use the convenience accessor
 function \texttt{getMarkers} to print out a table of the markers
 contained in this marker set. These initial markers were manually
@@ -1371,8 +1376,8 @@ were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Sep 29 10:28:15 2016 
-## Added markers from  'pdres' marker vector. Thu Sep 29 10:28:17 2016 
+## Added markers from  'mrk' marker vector. Thu Sep 29 13:42:12 2016 
+## Added markers from  'pdres' marker vector. Thu Sep 29 13:42:13 2016 
 ##  MSnbase version: 1.99.2
 \end{verbatim}
 
@@ -1474,8 +1479,9 @@ trained classifier can then be used to predict the localisation of a
 protein of unknown localisation, based on its observed protein profile.
 To date, this method has been extensively used in spatial quantitative
 proteomics to assign thousands of proteins to distinct sub-cellular
-niches {[}@hyper; @Groen:2014; @Trotter:2010; @Hall:2009; @Dunkley:2006;
-@Tan:2009{]}.
+niches (A. Christoforou et al. 2016; A. J. Groen et al. 2014; M. W. B.
+Trotter et al. 2010; Hall et al. 2009; Dunkley et al. 2006; Tan et al.
+2009).
 
 There are several classification algorithms readily available in
 \texttt{pRoloc}, which are documented in the dedicated
@@ -1730,15 +1736,15 @@ labelled as unknown.
 
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4356698               0.3028843               0.3825420 
+##               0.4361037               0.3025581               0.3909670 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6825826               0.5995243               0.4245311 
+##               0.6803283               0.6104122               0.4318449 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4034908               0.5882168               0.9501241 
+##               0.4172007               0.5869100               0.9490415 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7951459               0.7096694               0.3149301 
+##               0.7940276               0.7083168               0.3151153 
 ##         Plasma membrane              Proteasome 
-##               0.7091667               0.4204304
+##               0.7224713               0.4169904
 \end{verbatim}
 
 \begin{Shaded}
@@ -1754,15 +1760,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      86                     169                      86 
+##                      86                     169                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     295                     479                      91 
+##                     297                     476                     103 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      26                     125                     522 
+##                      24                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     344                      38 
+##                     229                     344                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     325                     159                    2057
+##                     315                     158                    2057
 \end{verbatim}
 
 The output of \texttt{getPredictons} is the original \texttt{MSnSet}
@@ -1856,10 +1862,10 @@ to date and the
 \emph{\href{http://bioconductor.org/packages/pRoloc}{pRoloc}} package
 provides functionality to do such analyses. We recently developed two
 transfer learning algorithms using a \emph{k}-NN and SVM framework and
-applied them to the task of protein localisation prediction
-{[}@Breckels:2016{]}. In this section we will begin with explaining the
-concept of transfer learning and then show how to apply this in the
-frame of spatial proteomics and protein localisation prediction.
+applied them to the task of protein localisation prediction (Breckels et
+al. 2016). In this section we will begin with explaining the concept of
+transfer learning and then show how to apply this in the frame of
+spatial proteomics and protein localisation prediction.
 
 In TL one typically has a primary task that they wish to solve, and some
 complementary (often heterogeneous) auxiliary information that is
@@ -1943,8 +1949,8 @@ integration, and \texttt{knntlClassification} to do the predictions. We
 have shown that using transfer learning in the context of spatial
 proteomics results in the assignment of proteins to sub-cellular niches
 with a higher generalisation accuracy than using standard supervised
-machine learning with a single source of information
-{[}@Breckels:2016{]}.
+machine learning with a single source of information (Breckels et al.
+2016).
 
 The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the \emph{k}-NN TL classifier
@@ -1974,14 +1980,13 @@ good indication that these subcellular niches are well-resolved in the
 hyperLOPIT dataset. Transfer learning is particularly useful for classes
 that are not as well separated, we find that subcellular niches that are
 well-separated under hyperLOPIT and LOPIT obtain a class score of 1
-(i.e.~use only primary data from transfer learning
-{[}@Breckels:2016{]}). Therefore, for the optimisation stage of the
-analyses we can already infer a subcellular class weight of 1 for these
-niches and only optimise over the remaining organelles. This can
-signifciantly cut down optimisation time as by removing these 4 classes
-from the optimisation (and not the classification) we only have
-\texttt{4\^{}10} class weight combinations to consider instead of
-\texttt{4\^{}14} combinations.
+(i.e.~use only primary data from transfer learning (Breckels et al.
+2016)). Therefore, for the optimisation stage of the analyses we can
+already infer a subcellular class weight of 1 for these niches and only
+optimise over the remaining organelles. This can signifciantly cut down
+optimisation time as by removing these 4 classes from the optimisation
+(and not the classification) we only have \texttt{4\^{}10} class weight
+combinations to consider instead of \texttt{4\^{}14} combinations.
 
 In the example below we remove these 4 classes from the marker set,
 re-run the \texttt{knnOptimisation} for each data source and then run
@@ -2320,3 +2325,100 @@ It is always important to include session information details along with
 a \href{http://adv-r.had.co.nz/Reproducibility.html}{short reproducible
 example} highlighting the problem or
 \href{https://support.bioconductor.org/}{question} at hand.
+
+Ashburner, M., C. A. Ball, J. A. Blake, D. Botstein, H. Butler, J. M.
+Cherry, A. P. Davis, et al. 2000. ``Gene Ontology: tool for the
+Unification of Biology. the Gene Ontology Consortium.'' \emph{Nat Genet}
+25 (1): 25--29.
+doi:\href{http://dx.doi.org/10.1038/75556}{10.1038/75556}.
+
+Breckels, L. M., L. Gatto, A. Christoforou, A. J. Groen, K. S. Lilley,
+and M. W. Trotter. 2013. ``The Effect of Organelle Discovery Upon
+Sub-Cellular Protein Localisation.'' \emph{J Proteomics} 88 (Aug):
+129--40.
+doi:\href{http://dx.doi.org/10.1016/j.jprot.2013.02.019}{10.1016/j.jprot.2013.02.019}.
+
+Breckels, Lisa M., Sean B. Holden, David Wojnar, Claire M. Mulvey, Andy
+Christoforou, Arnoud Groen, Matthew W. B. Trotter, Oliver Kohlbacher,
+Kathryn S. Lilley, and Laurent Gatto. 2016. ``Learning from
+Heterogeneous Data Sources: An Application in Spatial Proteomics.''
+Edited by Thomas Dandekar. \emph{PLOS Computational Biology} 12 (5).
+Public Library of Science (PLoS): e1004920.
+doi:\href{http://dx.doi.org/10.1371/journal.pcbi.1004920}{10.1371/journal.pcbi.1004920}.
+\url{http://dx.doi.org/10.1371/journal.pcbi.1004920}.
+
+Christoforou, Andy, Claire M. Mulvey, Lisa M. Breckels, Penelope C.
+Hayward, Ekaterini Geladaki, Tracey Hurrell, Thomas Naake, et al. 2016.
+``A Draft Map of the Mouse Pluripotent Stem Cell Spatial Proteome.''
+\emph{Nat Commun} 7 (January): 9992.
+doi:\href{http://dx.doi.org/10.1038/ncomms9992}{10.1038/ncomms9992}.
+\url{http://dx.doi.org/10.1038/ncomms9992}.
+
+De Duve, C, and H Beaufay. 1981. ``A Short History of Tissue
+Fractionation.'' \emph{J Cell Biol} 91 (3 Pt 2): 293s--s.
+
+Dunkley, T. P. J., S. Hester, I. P. Shadforth, J. Runions, T. Weimar, S.
+L. Hanton, J. L. Griffin, et al. 2006. ``Mapping the Arabidopsis
+Organelle Proteome.'' \emph{Proc Natl Acad Sci USA} 103 (17): 6518--23.
+doi:\href{http://dx.doi.org/10.1073/pnas.0506958103}{10.1073/pnas.0506958103}.
+\url{http://dx.doi.org/10.1073/pnas.0506958103}.
+
+Gatto, L, L M Breckels, T Burger, D J Nightingale, A J Groen, C
+Campbell, N Nikolovski, et al. 2014. ``A Foundation for Reliable Spatial
+Proteomics Data Analysis.'' \emph{Mol Cell Proteomics} 13 (8): 1937--52.
+doi:\href{http://dx.doi.org/10.1074/mcp.M113.036350}{10.1074/mcp.M113.036350}.
+
+Gatto, L., and A. Christoforou. 2014. ``Using R and Bioconductor for
+Proteomics Data Analysis.'' \emph{Biochim Biophys Acta} 1844 (1 Pt A):
+42--51.
+doi:\href{http://dx.doi.org/10.1016/j.bbapap.2013.04.032}{10.1016/j.bbapap.2013.04.032}.
+
+Gatto, Laurent, Lisa M. Breckels, Thomas Naake, and Sebastian Gibb.
+2015. ``Visualization of Proteomics Data Using R and Bioconductor.''
+\emph{PROTEOMICS} 15 (8): 1375--89.
+doi:\href{http://dx.doi.org/10.1002/pmic.201400392}{10.1002/pmic.201400392}.
+\url{http://dx.doi.org/10.1002/pmic.201400392}.
+
+Groen, Arnoud J, Gloria Sancho-Andr{é}s, Lisa M Breckels, Laurent Gatto,
+Fernando Aniento, and Kathryn S Lilley. 2014. ``Identification of
+Trans-Golgi Network Proteins in Arabidopsis Thaliana Root Tissue.''
+\emph{J Proteome Res} 13 (2): 763--76.
+doi:\href{http://dx.doi.org/10.1021/pr4008464}{10.1021/pr4008464}.
+
+Hall, S. L., S. Hester, J. L. Griffin, K. S. Lilley, and A. P. Jackson.
+2009. ``The Organelle Proteome of the DT40 Lymphocyte Cell Line.''
+\emph{Mol Cell Proteomics} 8 (6): 1295--1305.
+doi:\href{http://dx.doi.org/10.1074/mcp.M800394-MCP200}{10.1074/mcp.M800394-MCP200}.
+\url{http://dx.doi.org/10.1074/mcp.M800394-MCP200}.
+
+Lazar, C, L Gatto, M Ferro, C Bruley, and T Burger. 2016. ``Accounting
+for the Multiple Natures of Missing Values in Label-Free Quantitative
+Proteomics Data Sets to Compare Imputation Strategies.'' \emph{J
+Proteome Res} 15 (4): 1116--25.
+doi:\href{http://dx.doi.org/10.1021/acs.jproteome.5b00981}{10.1021/acs.jproteome.5b00981}.
+
+McAlister, G C, D P Nusinow, M P Jedrychowski, M W{ü}hr, E L Huttlin, B
+K Erickson, R Rad, W Haas, and S P Gygi. 2014. ``MultiNotch MS3 Enables
+Accurate, Sensitive, and Multiplexed Detection of Differential
+Expression Across Cancer Cell Line Proteomes.'' \emph{Anal Chem} 86
+(14): 7150--8.
+doi:\href{http://dx.doi.org/10.1021/ac502040v}{10.1021/ac502040v}.
+
+Tan, D. J., H. Dvinge, A. Christoforou, P. Bertone, A. A. Martinez, and
+K. S. Lilley. 2009. ``Mapping Organelle Proteins and Protein Complexes
+in Drosophila Melanogaster.'' \emph{J Proteome Res} 8 (6): 2667--78.
+doi:\href{http://dx.doi.org/10.1021/pr800866n}{10.1021/pr800866n}.
+
+Trotter, M. W. B., P. G. Sadowski, T. P. J. Dunkley, A. J. Groen, and K.
+S. Lilley. 2010. ``Improved Sub-Cellular Resolution via Simultaneous
+Analysis of Organelle Proteomics Data Across Varied Experimental
+Conditions.'' \emph{Proteomics} 10 (23). WILEY-VCH Verlag: 4213--19.
+doi:\href{http://dx.doi.org/10.1002/pmic.201000359}{10.1002/pmic.201000359}.
+\url{http://dx.doi.org/10.1002/pmic.201000359}.
+
+Webb-Robertson, B J, H K Wiberg, M M Matzke, J N Brown, J Wang, J E
+McDermott, R D Smith, et al. 2015. ``Review, Evaluation, and Discussion
+of the Challenges of Missing Value Imputation for Mass
+Spectrometry-Based Label-Free Global Proteomics.'' \emph{J Proteome Res}
+14 (5): 1993--2001.
+doi:\href{http://dx.doi.org/10.1021/pr501138h}{10.1021/pr501138h}.
