@@ -1,8 +1,3 @@
----
-title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
-author: "Lisa Breckels and Laurent Gatto"
-output: pdf_document
----
 
 
 
@@ -18,12 +13,12 @@ biological interpretation. Here, we walk the reader through a typical
 pipeline for the analysis of such data using several Bioconductor
 packages for the R statistical programming environment.
 
-The main package to analyse protein localisation data is `r
-Biocpkg("pRoloc")`, which offers a set of dedicated functions for the
-analysis of such data. *[pRoloc](http://bioconductor.org/packages/pRoloc)* itself relies on `r
-Biocpkg("MSnbase")` to manipulate and process quantitative proteomics
-data. Many other packages are used by *[pRoloc](http://bioconductor.org/packages/pRoloc)* for
-clustering, classification and visualisation.
+The main package to analyse protein localisation data is 
+*[pRoloc](http://bioconductor.org/packages/pRoloc)*, which offers a set of dedicated functions for
+the analysis of such data. *[pRoloc](http://bioconductor.org/packages/pRoloc)* itself relies on 
+*[MSnbase](http://bioconductor.org/packages/MSnbase)* to manipulate and process quantitative
+proteomics data. Many other packages are used by *[pRoloc](http://bioconductor.org/packages/pRoloc)*
+for clustering, classification and visualisation.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
@@ -669,7 +664,7 @@ combined
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 13:42:11 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 15:57:59 2016 
 ##  MSnbase version: 1.21.7
 ```
 
@@ -726,10 +721,10 @@ combined
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 13:42:11 2016 
-## Subset [6725,20][5032,20] Thu Sep 29 13:42:11 2016 
-## Removed features with more than 0 NAs: Thu Sep 29 13:42:11 2016 
-## Dropped featureData's levels Thu Sep 29 13:42:11 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 15:57:59 2016 
+## Subset [6725,20][5032,20] Thu Sep 29 15:58:00 2016 
+## Removed features with more than 0 NAs: Thu Sep 29 15:58:00 2016 
+## Dropped featureData's levels Thu Sep 29 15:58:00 2016 
 ##  MSnbase version: 1.21.7
 ```
 
@@ -802,10 +797,16 @@ In the two plots displayed below, we re-order the TMT channles to pair
 corresponding channels in the two replicates (rather than ordering
 the channels by replicate).
 
-```{r qcbx, fig.width = 12} par(mfrow = c(1, 2)) o <-
-order(hl$Iodixonal.Density) plotDist(hl[, o], pcol = "#00000010")
+
+```r
+par(mfrow = c(1, 2))
+o <- order(hl$Iodixonal.Density)
+plotDist(hl[, o], pcol = "#00000010")
 lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
-boxplot(exprs(hl[, o]), las = 2) ```
+boxplot(exprs(hl[, o]), las = 2)
+```
+
+![plot of chunk qcbx](figure/qcbx-1.png)
 
 # Markers
 
@@ -1321,8 +1322,8 @@ hl
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Sep 29 13:42:12 2016 
-## Added markers from  'pdres' marker vector. Thu Sep 29 13:42:13 2016 
+## Added markers from  'mrk' marker vector. Thu Sep 29 15:58:02 2016 
+## Added markers from  'pdres' marker vector. Thu Sep 29 15:58:04 2016 
 ##  MSnbase version: 1.99.2
 ```
 
@@ -1652,15 +1653,15 @@ ts <- orgQuants(hl,
 
 ```
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4361037               0.3025581               0.3909670 
+##               0.4340436               0.3052853               0.3841285 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6803283               0.6104122               0.4318449 
+##               0.6832155               0.6044216               0.4299509 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4172007               0.5869100               0.9490415 
+##               0.4219314               0.5884075               0.9496249 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7940276               0.7083168               0.3151153 
+##               0.7959727               0.7080595               0.3160456 
 ##         Plasma membrane              Proteasome 
-##               0.7224713               0.4169904
+##               0.7123378               0.4218183
 ```
 
 ```r
@@ -1674,15 +1675,15 @@ hl <- getPredictions(hl,
 ```
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      86                     169                      88 
+##                      84                     171                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     297                     476                     103 
+##                     295                     477                      99 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      24                     124                     523 
+##                      27                     123                     524 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     344                      39 
+##                     229                     344                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     315                     158                    2057
+##                     317                     158                    2058
 ```
 
 The output of `getPredictons` is the original `MSnSet` dataset with a

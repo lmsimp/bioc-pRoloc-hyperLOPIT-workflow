@@ -2,34 +2,45 @@
 
 [![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow)
 
-NB: think about creating new `MSnSet` for the `hyperLOPIT2015` or writing a function to strip it down some of the `fData` for the purpose of demonstrating this workflow
+This workflow describes the detailed analysis of a mouse embryonic
+stem cell spatial proteomics dataset using the
+[pRoloc`](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html)
+suite of software. This workflow will be submitted for peer review to
+F1000research.
 
-### Data import
-- Start with protein level and `readMSnSet2`
-- Brief explanation of what a `MSnSet` is, how to access and what can be found in the `pData`, `fData`, refer to `hyperLOPIT2015` specifically (e.g. two replicates combined refer to MWBT paper, acquired using MS3, intrument etc.)
 
-### Normalisation
-- Normalise by sum
-- Highlight that many methods available to use directly with `MSnSet` in `MSnbase`
+It is made available under the [Creative Commons Attribution
+license](https://creativecommons.org/licenses/by/4.0/). The following
+is a human-readable summary of (and not a substitute for) the [full
+legal text of the CC BY
+4.0](https://creativecommons.org/licenses/by/4.0/legalcode).
 
-### Quality control
-- Data structure, quality control
-- Mention `pRolocGUI` here
+You are free:
 
-### Markers
-- importance of organelle markers and implications
-- `addMarkers`, `getMarkers` and friends
-- manual curation, quality control
-- revisting visualisation with markers
+* to **Share** - copy and redistribute the material in any medium or format
+* to **Adapt** - remix, transform, and build upon the material
 
-### Novelty detection
-- get running on HPC
+for any purpose, even commercially. The licensor cannot revoke these
+freedoms as long as you follow these license terms:
 
-### Supervised ML
-- thresholding
+* **Attribution** - You must give appropriate credit (mentioning that
+    your work is derived from work that is Copyright (c) Software
+    Carpentry and, where practical, linking to
+    http://software-carpentry.org/), provide a link to the license,
+    and indicate if changes were made. You may do so in any reasonable
+    manner, but not in any way that suggests the licensor endorses you
+    or your use.
 
-### Inductive transfer 
-- get running on HPC (re-profile code on HPC)
+**No additional restrictions** - You may not apply legal terms or
+technological measures that legally restrict others from doing
+anything the license permits. With the understanding that:
 
-### Post-processing
-- overlap with GO, enrichment study?
+* You do not have to comply with the license for elements of the
+  material in the public domain or where your use is permitted by an
+  applicable exception or limitation.
+
+* No warranties are given. The license may not give you all of the
+  permissions necessary for your intended use. For example, other
+  rights such as publicity, privacy, or moral rights may limit how you
+  use the material.
+	

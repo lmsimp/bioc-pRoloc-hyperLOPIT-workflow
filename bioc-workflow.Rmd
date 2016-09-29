@@ -1,8 +1,3 @@
----
-title: "A Bioconductor Workflow for Processing and Analysing Spatial Proteomics Data"
-author: "Lisa Breckels and Laurent Gatto"
-output: pdf_document
----
 
 ```{r env, echo=FALSE, warning=FALSE}
 library("BiocStyle")
@@ -25,12 +20,12 @@ biological interpretation. Here, we walk the reader through a typical
 pipeline for the analysis of such data using several Bioconductor
 packages for the R statistical programming environment.
 
-The main package to analyse protein localisation data is `r
-Biocpkg("pRoloc")`, which offers a set of dedicated functions for the
-analysis of such data. `r Biocpkg("pRoloc")` itself relies on `r
-Biocpkg("MSnbase")` to manipulate and process quantitative proteomics
-data. Many other packages are used by `r Biocpkg("pRoloc")` for
-clustering, classification and visualisation.
+The main package to analyse protein localisation data is 
+`r Biocpkg("pRoloc")`, which offers a set of dedicated functions for
+the analysis of such data. `r Biocpkg("pRoloc")` itself relies on 
+`r Biocpkg("MSnbase")` to manipulate and process quantitative
+proteomics data. Many other packages are used by `r Biocpkg("pRoloc")`
+for clustering, classification and visualisation.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
@@ -488,10 +483,13 @@ In the two plots displayed below, we re-order the TMT channles to pair
 corresponding channels in the two replicates (rather than ordering
 the channels by replicate).
 
-```{r qcbx, fig.width = 12} par(mfrow = c(1, 2)) o <-
-order(hl$Iodixonal.Density) plotDist(hl[, o], pcol = "#00000010")
+```{r qcbx}
+par(mfrow = c(1, 2))
+o <- order(hl$Iodixonal.Density)
+plotDist(hl[, o], pcol = "#00000010")
 lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
-boxplot(exprs(hl[, o]), las = 2) ```
+boxplot(exprs(hl[, o]), las = 2)
+```
 
 # Markers
 
@@ -558,7 +556,7 @@ data (2.23% for PC7, as opposed to 48.41% for PC1), we see that the
 mitochondrial and peroxisome clusters can be differenciated, despite
 the apparent overlap in the two first PCs.
 
-```{r plotmarkers, fig.width = 12}
+```{r plotmarkers}
 par(mfrow = c(1, 2))
 plot2D(hl, main = "pRolocmarkers for mouse")
 addLegend(hl, cex = .7)
@@ -704,7 +702,7 @@ that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation.
 
 
-```{r plot2Drep, fig.width = 12} 
+```{r plot2Drep} 
 par(mfrow = c(1, 2)) 
 plot2D(hl[, hl$Replicate == 1], main = "Replicate 1") 
 plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE) 
@@ -908,7 +906,7 @@ getMarkers(hl, fcol = "pd")
 
 We can plot the results using the `plot2D` function.
 
-```{r plotPDres, fig.width=9}
+```{r plotPDres}
 ## Re-order the colours for the phenoDisco output
 cl <- getMarkerClasses(hl, "pd")
 cols <- getStockcol()[seq(cl)]
@@ -1043,7 +1041,7 @@ overfitting and to choose parameters wisely.
 plot(params)
 levelPlot(params)
 ```
-```{r visualiseOptHide, echo=FALSE, fig.width = 12}
+```{r visualiseOptHide, echo=FALSE}
 library('gridExtra')
 grid.arrange(plot(params), levelPlot(params), ncol = 2)
 ```

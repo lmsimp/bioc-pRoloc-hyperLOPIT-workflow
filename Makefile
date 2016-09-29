@@ -1,15 +1,11 @@
-.PHONY: clean all
-
-all:
-	make bioc-workflow.md
-
-%.md: %.Rmd
+%.tex: %.Rnw
 	/opt/Rpatched/lib/R/bin/Rscript -e 'require("knitr"); knit("$^")'
 
-%.tex: %.md
-	pandoc $^ -o $@ -N --bibliography=bibliography.bib
+%.md: %.tex
+	pandoc $^ -o $@ 
 
 clean:
 	rm -f *~
 	rm -rf .Rcache
 
+.PHONY: clean all

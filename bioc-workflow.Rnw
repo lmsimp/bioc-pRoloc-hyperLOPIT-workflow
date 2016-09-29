@@ -1,5 +1,13 @@
 
-
+<<env, echo=FALSE, warning=FALSE>>=
+library("BiocStyle")
+suppressPackageStartupMessages(library("knitr"))
+suppressPackageStartupMessages(library("gridExtra"))
+suppressPackageStartupMessages(library("MSnbase"))
+suppressPackageStartupMessages(library("pRoloc"))
+suppressPackageStartupMessages(library("pRolocdata"))
+cache <- TRUE
+@ 
 
 \section*{Introduction}
 
@@ -137,20 +145,13 @@ the file name (not the full path, which will vary from computer to
 computer). 
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(}\hlstr{"MSnbase"}\hlstd{)}
-\hlstd{extdatadir} \hlkwb{<-} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlkwc{package} \hlstd{=} \hlstr{"pRolocdata"}\hlstd{)}
-\hlstd{csvfile} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
-          \hlkwc{pattern} \hlstd{=} \hlstr{"hyperLOPIT-SIData-ms3-rep12-intersect.csv"}\hlstd{)}
-\hlkwd{basename}\hlstd{(csvfile)}
-\end{alltt}
-\begin{verbatim}
-## [1] "hyperLOPIT-SIData-ms3-rep12-intersect.csv.gz"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<getFilename, cache = cache>>=
+library("MSnbase")
+extdatadir <- system.file("extdata", package = "pRolocdata")
+csvfile <- dir(extdatadir, full.names = TRUE,
+          pattern = "hyperLOPIT-SIData-ms3-rep12-intersect.csv")
+basename(csvfile)
+@
 
 Note that the file is compressed (as indicated by the \texttt{gz}, for
 \texttt{gzip}, extension), and will be decompressed on-the-fly when read into
@@ -174,60 +175,9 @@ We can display the names of the second header by calling the
 second line.
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{getEcols}\hlstd{(csvfile,} \hlkwc{split} \hlstd{=} \hlstr{","}\hlstd{,} \hlkwc{n} \hlstd{=} \hlnum{2}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-##  [1] ""                                 
-##  [2] ""                                 
-##  [3] ""                                 
-##  [4] "Experiment 1"                     
-##  [5] "Experiment 2"                     
-##  [6] "Experiment 1"                     
-##  [7] "Experiment 2"                     
-##  [8] "126"                              
-##  [9] "127N"                             
-## [10] "127C"                             
-## [11] "128N"                             
-## [12] "128C"                             
-## [13] "129N"                             
-## [14] "129C"                             
-## [15] "130N"                             
-## [16] "130C"                             
-## [17] "131"                              
-## [18] "126"                              
-## [19] "127N"                             
-## [20] "127C"                             
-## [21] "128N"                             
-## [22] "128C"                             
-## [23] "129N"                             
-## [24] "129C"                             
-## [25] "130N"                             
-## [26] "130C"                             
-## [27] "131"                              
-## [28] "phenoDisco Input"                 
-## [29] "phenoDisco Output"                
-## [30] "Curated phenoDisco Output"        
-## [31] "SVM marker set"                   
-## [32] "SVM classification"               
-## [33] "SVM score"                        
-## [34] "SVM classification (top quartile)"
-## [35] "Final Localization Assignment"    
-## [36] "First localization evidence?"     
-## [37] "Curated Organelles"               
-## [38] "Cytoskeletal Components"          
-## [39] "Trafficking Proteins"             
-## [40] "Protein Complexes"                
-## [41] "Signaling Cascades"               
-## [42] "Oct4 Interactome"                 
-## [43] "Nanog Interactome"                
-## [44] "Sox2 Interactome"                 
-## [45] "Cell Surface Proteins"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<getEcols>>=
+getEcols(csvfile, split = ",", n = 2)
+@
 
 It is now easy for one to identify that the quantitation data,
 corresponding to the 10 TMT isobaric tags, is located in columns 8
@@ -242,84 +192,30 @@ skip the first line of the file (for the same reason that we used
 \texttt{n = 2} in \texttt{getEcols} above) to read the \texttt{csv} data and convert it to an
 \texttt{MSnSet} object, named \texttt{hl} (for hyperLOPIT).
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hl} \hlkwb{<-} \hlkwd{readMSnSet2}\hlstd{(csvfile,} \hlkwc{ecol} \hlstd{=} \hlnum{8}\hlopt{:}\hlnum{27}\hlstd{,} \hlkwc{fnames} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{skip} \hlstd{=} \hlnum{1}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<readMSnSet2>>=
+hl <- readMSnSet2(csvfile, ecol = 8:27, fnames = 1, skip = 1)
+@
 
 Below, we display a short summary of the data. The data contains 
-5032 proteins/features common across the 2 biological replicates
-for the respective 2 x 10-plex reporter tags (20
+\Sexpr{nrow(hl)} proteins/features common across the 2 biological replicates
+for the respective 2 x 10-plex reporter tags (\Sexpr{ncol(hl)}
 columns/samples), along with associated feature meta-data such as
 protein markers, protein description, number of quantified peptides
 etc (see below).
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hl}
-\end{alltt}
-\begin{verbatim}
-## MSnSet (storageMode: lockedEnvironment)
-## assayData: 5032 features, 20 samples 
-##   element names: exprs 
-## protocolData: none
-## phenoData: none
-## featureData
-##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
-##   fvarLabels: X X.1 ... Cell.Surface.Proteins (25 total)
-##   fvarMetadata: labelDescription
-## experimentData: use 'experimentData(object)'
-## Annotation:  
-## - - - Processing information - - -
-##  MSnbase version: 1.99.2
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<showhl>>=
+hl
+@
 
 Below, we examine the quantitative information for first 5 proteins.
 It is also possible to access specific rows and columns by naming the
 proteins and TMT tag channels of interest. 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{exprs}\hlstd{(hl)[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{, ]}
-\end{alltt}
-\begin{verbatim}
-##           X126 X127N X127C X128N X128C X129N X129C X130N X130C  X131
-## Q9JHU4   0.028 0.034 0.024 0.014 0.026 0.045 0.107 0.341 0.059 0.321
-## Q9QXS1-3 0.039 0.134 0.095 0.053 0.084 0.121 0.107 0.128 0.122 0.117
-## Q9ERU9   0.021 0.013 0.014 0.009 0.024 0.054 0.116 0.257 0.209 0.284
-## P26039   0.120 0.255 0.148 0.091 0.135 0.095 0.041 0.057 0.014 0.043
-## Q8BTM8   0.055 0.139 0.078 0.050 0.077 0.098 0.093 0.171 0.079 0.160
-##          X126.1 X127N.1 X127C.1 X128N.1 X128C.1 X129N.1 X129C.1 X130N.1
-## Q9JHU4    0.037   0.064   0.058   0.059   0.067   0.078   0.140   0.208
-## Q9QXS1-3  0.033   0.073   0.074   0.062   0.081   0.142   0.190   0.069
-## Q9ERU9    0.026   0.017   0.023   0.029   0.039   0.071   0.105   0.171
-## P26039    0.111   0.181   0.141   0.144   0.152   0.119   0.075   0.028
-## Q8BTM8    0.062   0.108   0.091   0.086   0.099   0.111   0.117   0.095
-##          X130C.1 X131.1
-## Q9JHU4     0.141  0.147
-## Q9QXS1-3   0.151  0.125
-## Q9ERU9     0.304  0.215
-## P26039     0.017  0.033
-## Q8BTM8     0.144  0.087
-\end{verbatim}
-\begin{alltt}
-\hlkwd{exprs}\hlstd{(hl)[}\hlkwd{c}\hlstd{(}\hlstr{"Q9ERU9"}\hlstd{,} \hlstr{"Q9Z2R6"}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"X126"}\hlstd{,} \hlstr{"X131.1"}\hlstd{)]}
-\end{alltt}
-\begin{verbatim}
-##         X126 X131.1
-## Q9ERU9 0.021  0.215
-## Q9Z2R6 0.563  0.000
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<assesshl>>=
+exprs(hl)[1:5, ]
+exprs(hl)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
+@
 
 The feature meta-data is stored in the \texttt{fData} slot and can be
 accessed by \texttt{fData(hl)}. When using \texttt{readMSnSet2}, automatically,
@@ -333,62 +229,12 @@ etc. To identify the feature variable names we can use the function
 non-discriminatory label names, so we relabel them to help us identify
 what feature data information is stored in the associated columns.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{fvarLabels}\hlstd{(hl)}
-\end{alltt}
-\begin{verbatim}
-##  [1] "X"                                
-##  [2] "X.1"                              
-##  [3] "X.2"                              
-##  [4] "Experiment.1"                     
-##  [5] "Experiment.2"                     
-##  [6] "Experiment.1.1"                   
-##  [7] "Experiment.2.1"                   
-##  [8] "phenoDisco.Input"                 
-##  [9] "phenoDisco.Output"                
-## [10] "Curated.phenoDisco.Output"        
-## [11] "SVM.marker.set"                   
-## [12] "SVM.classification"               
-## [13] "SVM.score"                        
-## [14] "SVM.classification..top.quartile."
-## [15] "Final.Localization.Assignment"    
-## [16] "First.localization.evidence."     
-## [17] "Curated.Organelles"               
-## [18] "Cytoskeletal.Components"          
-## [19] "Trafficking.Proteins"             
-## [20] "Protein.Complexes"                
-## [21] "Signaling.Cascades"               
-## [22] "Oct4.Interactome"                 
-## [23] "Nanog.Interactome"                
-## [24] "Sox2.Interactome"                 
-## [25] "Cell.Surface.Proteins"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{fvarLabels}\hlstd{(hl)[}\hlnum{1}\hlopt{:}\hlnum{3}\hlstd{]} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"uniprot.accession"}\hlstd{,} \hlstr{"uniprot.id"}\hlstd{,} \hlstr{"description"}\hlstd{)}
-\hlkwd{fvarLabels}\hlstd{(hl)[}\hlnum{4}\hlopt{:}\hlnum{6}\hlstd{]} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlstr{"peptides.expt"}\hlstd{,} \hlnum{1}\hlopt{:}\hlnum{3}\hlstd{)}
-\hlkwd{fData}\hlstd{(hl)[}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{,} \hlnum{1}\hlopt{:}\hlnum{6}\hlstd{]}
-\end{alltt}
-\begin{verbatim}
-##          uniprot.accession  uniprot.id
-## Q9JHU4              Q9JHU4 DYHC1_MOUSE
-## Q9QXS1-3          Q9QXS1-3  PLEC_MOUSE
-## Q9ERU9              Q9ERU9  RBP2_MOUSE
-## P26039              P26039  TLN1_MOUSE
-##                                                                                                                                 description
-## Q9JHU4                                              Cytoplasmic dynein 1 heavy chain 1 OS=Mus musculus GN=Dync1h1 PE=1 SV=2 - [DYHC1_MOUSE]
-## Q9QXS1-3 Isoform PLEC-1 of Plectin OS=Mus musculus GN=Plec - [PLEC_MOUSE]|Isoform PLEC-1A of Plectin OS=Mus musculus GN=Plec - [PLEC_MOUSE]
-## Q9ERU9                                                     E3 SUMO-protein ligase RanBP2 OS=Mus musculus GN=Ranbp2 PE=1 SV=2 - [RBP2_MOUSE]
-## P26039                                                                             Talin-1 OS=Mus musculus GN=Tln1 PE=1 SV=2 - [TLN1_MOUSE]
-##          peptides.expt1 peptides.expt2 peptides.expt3
-## Q9JHU4              175            166            322
-## Q9QXS1-3            123            150            174
-## Q9ERU9              101             90            181
-## P26039              101             94            167
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<removefData>>=
+fvarLabels(hl)
+fvarLabels(hl)[1:3] <- c("uniprot.accession", "uniprot.id", "description")
+fvarLabels(hl)[4:6] <- paste0("peptides.expt", 1:3)
+fData(hl)[1:4, 1:6]
+@
 
 Note that when using the simple \texttt{readMSnSet2} procedure, the \texttt{pData}
 slot which is used to store information about the samples/channels
@@ -396,38 +242,11 @@ is kept empty. It is advised to annotate the channels as
 well. Below, we annotate the replicate from which the profiles
 originate and the TMT tag (extracted from the sample/channel names).
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{pData}\hlstd{(hl)}\hlopt{$}\hlstd{Replicate} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlnum{2}\hlstd{,} \hlkwc{each} \hlstd{=} \hlnum{10}\hlstd{)}
-\hlkwd{pData}\hlstd{(hl)}\hlopt{$}\hlstd{Tag} \hlkwb{<-} \hlkwd{sub}\hlstd{(}\hlstr{"\textbackslash{}\textbackslash{}.1$"}\hlstd{,} \hlstr{""}\hlstd{,} \hlkwd{sub}\hlstd{(}\hlstr{"^X"}\hlstd{,} \hlstr{""}\hlstd{,} \hlkwd{sampleNames}\hlstd{(hl)))}
-\hlkwd{pData}\hlstd{(hl)}
-\end{alltt}
-\begin{verbatim}
-##         Replicate  Tag
-## X126            1  126
-## X127N           1 127N
-## X127C           1 127C
-## X128N           1 128N
-## X128C           1 128C
-## X129N           1 129N
-## X129C           1 129C
-## X130N           1 130N
-## X130C           1 130C
-## X131            1  131
-## X126.1          2  126
-## X127N.1         2 127N
-## X127C.1         2 127C
-## X128N.1         2 128N
-## X128C.1         2 128C
-## X129N.1         2 129N
-## X129C.1         2 129C
-## X130N.1         2 130N
-## X130C.1         2 130C
-## X131.1          2  131
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<pdata>>=
+pData(hl)$Replicate <- rep(1:2, each = 10)
+pData(hl)$Tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
+pData(hl)
+@
 
 Throughout this workflow we refer to the different columns that
 are found in the \texttt{exprs} (expression data) slot as channels (short for TMT channels).
@@ -453,44 +272,17 @@ the \texttt{pData} slot.  Information about the gradient fractions used and
 the associated subcellular fraction densities in % w/v Iodixanol for
 each replicate are stored here.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{expinfo} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
-               \hlkwc{pattern} \hlstd{=} \hlstr{"hyperLOPIT-SIData-fraction-info.csv"}\hlstd{)}
+<<morepdata>>=
+expinfo <- dir(extdatadir, full.names = TRUE,
+               pattern = "hyperLOPIT-SIData-fraction-info.csv")
 
-\hlstd{fracinfo} \hlkwb{<-} \hlkwd{read.csv}\hlstd{(expinfo,} \hlkwc{row.names}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{skip} \hlstd{=} \hlnum{2}\hlstd{,}
-                     \hlkwc{header} \hlstd{=} \hlnum{FALSE}\hlstd{,} \hlkwc{stringsAsFactors} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+fracinfo <- read.csv(expinfo, row.names=1, skip = 2, 
+                     header = FALSE, stringsAsFactors = FALSE)
 
-\hlkwd{pData}\hlstd{(hl)}\hlopt{$}\hlstd{Gradient.Fraction} \hlkwb{<-} \hlkwd{c}\hlstd{(fracinfo[,} \hlnum{1}\hlstd{], fracinfo[,} \hlnum{2}\hlstd{])}
-\hlkwd{pData}\hlstd{(hl)}\hlopt{$}\hlstd{Iodixonal.Density} \hlkwb{<-} \hlkwd{c}\hlstd{(fracinfo[,} \hlnum{4}\hlstd{], fracinfo[,} \hlnum{5}\hlstd{])}
-\hlkwd{pData}\hlstd{(hl)}
-\end{alltt}
-\begin{verbatim}
-##         Replicate  Tag Gradient.Fraction Iodixonal.Density
-## X126            1  126           Cytosol               0.0
-## X127N           1 127N   1 to 6 (pooled)               6.0
-## X127C           1 127C   8 to 9 (pooled)              11.0
-## X128N           1 128N 10 to 11 (pooled)              13.3
-## X128C           1 128C                12              14.6
-## X129N           1 129N                14              17.4
-## X129C           1 129C                16              20.1
-## X130N           1 130N                18              26.8
-## X130C           1 130C         Chromatin                NA
-## X131            1  131                19              34.5
-## X126.1          2  126           Cytosol               0.0
-## X127N.1         2 127N   1 to 6 (pooled)               5.2
-## X127C.1         2 127C   7 to 9 (pooled)              10.0
-## X128N.1         2 128N 10 to 11 (pooled)              12.5
-## X128C.1         2 128C                12              14.0
-## X129N.1         2 129N 14 to 15 (pooled)              17.3
-## X129C.1         2 129C                17              20.9
-## X130N.1         2 130N 18 to 19 (pooled)              24.7
-## X130C.1         2 130C         Chromatin                NA
-## X131.1          2  131                20              31.9
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+pData(hl)$Gradient.Fraction <- c(fracinfo[, 1], fracinfo[, 2])
+pData(hl)$Iodixonal.Density <- c(fracinfo[, 4], fracinfo[, 5])
+pData(hl)
+@
 
 \subsection*{Data processing}
 
@@ -512,13 +304,9 @@ Proteome Discoverer. However, if one wanted to do this they would
 execute the \texttt{normalise} function as demonstrated in the below code
 chunk.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hl} \hlkwb{<-} \hlkwd{normalise}\hlstd{(hl,} \hlkwc{method} \hlstd{=} \hlstr{"sum"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<normsum, eval = FALSE>>= 
+hl <- normalise(hl, method = "sum") 
+@
 
 This transformation of the data assures to cancel the effect of the
 absolute intensities of the quantitative features along the rows, to
@@ -536,24 +324,10 @@ As previously mentioned, before combination, the two replicates in the
 to 1) across the 10 channels for each replicate respectively. We can
 verify this by summing each rows for each replicate:
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{summary}\hlstd{(}\hlkwd{rowSums}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, hl}\hlopt{$}\hlstd{replicate} \hlopt{==} \hlnum{1}\hlstd{])))}
-\end{alltt}
-\begin{verbatim}
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##       0       0       0       0       0       0
-\end{verbatim}
-\begin{alltt}
-\hlkwd{summary}\hlstd{(}\hlkwd{rowSums}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, hl}\hlopt{$}\hlstd{replicate} \hlopt{==} \hlnum{2}\hlstd{])))}
-\end{alltt}
-\begin{verbatim}
-##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-##       0       0       0       0       0       0
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<normcheck>>=
+summary(rowSums(exprs(hl[, hl$replicate == 1])))
+summary(rowSums(exprs(hl[, hl$replicate == 2])))
+@
 
 We see that some features do not add up exactly to 1 due to rounding
 errors after exporting to intermediate files. These small deviations
@@ -570,27 +344,19 @@ subsequently, how to filter and handle missing values. We start by
 loading the \Biocexptpkg{pRolocdata} package and the
 equivalent replicates using the \texttt{data} function.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(}\hlstr{"pRolocdata"}\hlstd{)}
-\hlkwd{data}\hlstd{(hyperLOPIT2015ms3r1)}
-\hlkwd{data}\hlstd{(hyperLOPIT2015ms3r2)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<reps4combine>>=
+library("pRolocdata")
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+@
 
 At the R prompt, typing
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{pRolocdata}\hlstd{()}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<pkgdata, eval=FALSE>>=
+pRolocdata()
+@
 
-will list the 54 datasets that are
+will list the \Sexpr{nrow(pRolocdata()$results)} datasets that are
 available in \Biocexptpkg{pRolocdata}.
 
 %% $
@@ -603,32 +369,13 @@ that the respective sample names differ so they can be identified from
 one another. The function \texttt{updateSampleNames} can be used do
 this.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{identical}\hlstd{(}\hlkwd{sampleNames}\hlstd{(hyperLOPIT2015ms3r1),} \hlkwd{sampleNames}\hlstd{(hyperLOPIT2015ms3r2))}
-\end{alltt}
-\begin{verbatim}
-## [1] TRUE
-\end{verbatim}
-\begin{alltt}
-\hlstd{hyperLOPIT2015ms3r1} \hlkwb{<-} \hlkwd{updateSampleNames}\hlstd{(hyperLOPIT2015ms3r1,} \hlnum{1}\hlstd{)}
-\hlstd{hyperLOPIT2015ms3r2} \hlkwb{<-} \hlkwd{updateSampleNames}\hlstd{(hyperLOPIT2015ms3r2,} \hlnum{2}\hlstd{)}
-\hlkwd{sampleNames}\hlstd{(hyperLOPIT2015ms3r1)}
-\end{alltt}
-\begin{verbatim}
-##  [1] "X126.1"  "X127N.1" "X127C.1" "X128N.1" "X128C.1" "X129N.1" "X129C.1"
-##  [8] "X130N.1" "X130C.1" "X131.1"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{sampleNames}\hlstd{(hyperLOPIT2015ms3r2)}
-\end{alltt}
-\begin{verbatim}
-##  [1] "X126.2"  "X127N.2" "X127C.2" "X128N.2" "X128C.2" "X129N.2" "X129C.2"
-##  [8] "X130N.2" "X130C.2" "X131.2"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<samplenames>>=
+identical(sampleNames(hyperLOPIT2015ms3r1), sampleNames(hyperLOPIT2015ms3r2))
+hyperLOPIT2015ms3r1 <- updateSampleNames(hyperLOPIT2015ms3r1, 1)
+hyperLOPIT2015ms3r2 <- updateSampleNames(hyperLOPIT2015ms3r2, 2)
+sampleNames(hyperLOPIT2015ms3r1)
+sampleNames(hyperLOPIT2015ms3r2)
+@
 
 In addition, to matching names, the content of the feature metadata
 for identical feature annotations must match exactly across the data
@@ -637,80 +384,29 @@ proteins in each replicates to be annotated with the same UniProt
 entry names and descriptions, but not with the same coverage of number
 of peptides or peptide-spectrum matches (PSMs).
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r1)}
-\end{alltt}
-\begin{verbatim}
-## [1] "EntryName"          "ProteinDescription" "Peptides"          
-## [4] "PSMs"               "ProteinCoverage"    "markers"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r2)}
-\end{alltt}
-\begin{verbatim}
-## [1] "EntryName"          "ProteinDescription" "Peptides"          
-## [4] "PSMs"               "ProteinCoverage"    "markers"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<fvarnames>>=
+fvarLabels(hyperLOPIT2015ms3r1)
+fvarLabels(hyperLOPIT2015ms3r2)
+@
 
 Below, we update the replicate specific feature variable names and
 remove the shared annotation.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r1)[}\hlnum{3}\hlopt{:}\hlnum{5}\hlstd{]} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r1)[}\hlnum{3}\hlopt{:}\hlnum{5}\hlstd{],} \hlnum{1}\hlstd{)}
-\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r2)[}\hlnum{3}\hlopt{:}\hlnum{5}\hlstd{]} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r2)[}\hlnum{3}\hlopt{:}\hlnum{5}\hlstd{],} \hlnum{2}\hlstd{)}
-\hlkwd{fData}\hlstd{(hyperLOPIT2015ms3r1)} \hlkwb{<-} \hlkwd{fData}\hlstd{(hyperLOPIT2015ms3r1)[}\hlnum{1}\hlopt{:}\hlnum{5}\hlstd{]}
-\hlkwd{fData}\hlstd{(hyperLOPIT2015ms3r2)} \hlkwb{<-} \hlkwd{fData}\hlstd{(hyperLOPIT2015ms3r2)[}\hlnum{3}\hlopt{:}\hlnum{5}\hlstd{]}
-\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r1)}
-\end{alltt}
-\begin{verbatim}
-## [1] "EntryName"          "ProteinDescription" "Peptides1"         
-## [4] "PSMs1"              "ProteinCoverage1"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{fvarLabels}\hlstd{(hyperLOPIT2015ms3r2)}
-\end{alltt}
-\begin{verbatim}
-## [1] "Peptides2"        "PSMs2"            "ProteinCoverage2"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<fvarnames2>>=
+fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
+fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
+fData(hyperLOPIT2015ms3r1) <- fData(hyperLOPIT2015ms3r1)[1:5] 
+fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
+fvarLabels(hyperLOPIT2015ms3r1)
+fvarLabels(hyperLOPIT2015ms3r2)
+@
 
 We can now combine the two experiments into a single \texttt{MSnSet}:
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{combined} \hlkwb{<-} \hlkwd{combine}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)}
-\hlstd{combined}
-\end{alltt}
-\begin{verbatim}
-## MSnSet (storageMode: lockedEnvironment)
-## assayData: 6725 features, 20 samples 
-##   element names: exprs 
-## protocolData: none
-## phenoData
-##   sampleNames: X126.1 X127N.1 ... X131.2 (20 total)
-##   varLabels: Replicate TMT.Reagent ... Iodixonal.Density (5 total)
-##   varMetadata: labelDescription
-## featureData
-##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2Y3-3 (6725 total)
-##   fvarLabels: EntryName ProteinDescription ... ProteinCoverage2 (8
-##     total)
-##   fvarMetadata: labelDescription
-## experimentData: use 'experimentData(object)'
-## Annotation:  
-## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-##  MSnbase version: 1.21.7
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<combine, cache = cache>>=
+combined <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+combined
+@
 
 More details above combining data are given in the dedicated
 *Combining MSnSet instances* section of the \Biocpkg{MSnbase}
@@ -732,16 +428,10 @@ were not profiles in both replicates.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{image2}\hlstd{(}\hlkwd{is.na}\hlstd{(combined),} \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"black"}\hlstd{,} \hlstr{"white"}\hlstd{),}
-       \hlkwc{main} \hlstd{=} \hlstr{"Missing values (white cells) after combining replicates"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/namap-1} 
-
-\end{knitrout}
+<<namap, out.width="\\textwidth">>=
+image2(is.na(combined), col = c("black", "white"),
+       main = "Missing values (white cells) after combining replicates")
+@  
   \caption{Heatmap of missing values}
   \label{fig:namap}
 \end{figure}
@@ -751,37 +441,10 @@ replicated experiments. This is done with the \texttt{filterNA} function that
 removes features that contain more than a certain proportion (default
 is 0) missing values.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{combined} \hlkwb{<-} \hlkwd{filterNA}\hlstd{(combined)}
-\hlstd{combined}
-\end{alltt}
-\begin{verbatim}
-## MSnSet (storageMode: lockedEnvironment)
-## assayData: 5032 features, 20 samples 
-##   element names: exprs 
-## protocolData: none
-## phenoData
-##   sampleNames: X126.1 X127N.1 ... X131.2 (20 total)
-##   varLabels: Replicate TMT.Reagent ... Iodixonal.Density (5 total)
-##   varMetadata: labelDescription
-## featureData
-##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
-##   fvarLabels: EntryName ProteinDescription ... ProteinCoverage2 (8
-##     total)
-##   fvarMetadata: labelDescription
-## experimentData: use 'experimentData(object)'
-## Annotation:  
-## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-## Subset [6725,20][5032,20] Thu Sep 29 20:32:05 2016 
-## Removed features with more than 0 NAs: Thu Sep 29 20:32:05 2016 
-## Dropped featureData's levels Thu Sep 29 20:32:05 2016 
-##  MSnbase version: 1.21.7
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<filterNA>>=
+combined <- filterNA(combined)
+combined
+@
 
 When more than 2 data are to be combined and/or too many proteins were
 not consistently assayed, leading to too many proteins being filtered
@@ -824,16 +487,10 @@ the PCA plot with prior information about sub-cellular localisation.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(}\hlstr{"pRoloc"}\hlstd{)}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlkwa{NULL}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"black"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/qcplot-1} 
-
-\end{knitrout}
+<<qcplot, message=FALSE, warning=FALSE, out.width="\\textwidth">>=
+library("pRoloc")
+plot2D(hl, fcol = NULL, col = "black")
+@  
   \caption{PCA plot of the mouse stem cell data \texttt{hl}.}
   \label{fig:pcahl}
 \end{figure}
@@ -862,19 +519,13 @@ the channels by replicate).
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
-\hlstd{o} \hlkwb{<-} \hlkwd{order}\hlstd{(hl}\hlopt{$}\hlstd{Iodixonal.Density)}
-\hlkwd{plotDist}\hlstd{(hl[, o],} \hlkwc{pcol} \hlstd{=} \hlstr{"#00000010"}\hlstd{)}
-\hlkwd{lines}\hlstd{(}\hlkwd{colMeans}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, o])),} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{)}
-\hlkwd{boxplot}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, o]),} \hlkwc{las} \hlstd{=} \hlnum{2}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/qcbx-1} 
-
-\end{knitrout}
+<<qcbx, out.width="\\textwidth">>=
+par(mfrow = c(1, 2))
+o <- order(hl$Iodixonal.Density)
+plotDist(hl[, o], pcol = "#00000010")
+lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
+boxplot(exprs(hl[, o]), las = 2)
+@  
   \caption{Protein profiles and distribution of channel intensities.}
   \label{fig:qcbx}
 \end{figure}
@@ -900,31 +551,10 @@ originate from in-house user-defined sets of markers or from previous
 published studies \cite{Gatto:2014b}, which are continuosly updated and 
 integrated. 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## List available marker sets}
-\hlkwd{pRolocmarkers}\hlstd{()}
-\end{alltt}
-\begin{verbatim}
-## 7 marker lists available:
-## Arabidopsis thaliana [atha]:
-##  Ids: TAIR, 543 markers
-## Drosophila melanogaster [dmel]:
-##  Ids: Uniprot, 179 markers
-## Gallus gallus [ggal]:
-##  Ids: IPI, 102 markers
-## Homo sapiens [hsap]:
-##  Ids: Uniprot ID, 205 markers
-## Mus musculus [mmus]:
-##  Ids: Uniprot, 937 markers
-## Saccharomyces cerevisiae [scer_sgd]:
-##  Ids: SGD, 259 markers
-## Saccharomyces cerevisiae [scer_uniprot]:
-##  Ids: Uniprot Accession, 259 markers
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<markers>>=
+## List available marker sets
+pRolocmarkers()
+@
 
 These markers can then be mapped to a \texttt{MSnSet}'s \texttt{featureNames}. The
 mouse dataset used here has Uniprot IDs stored as the \texttt{featureNames}
@@ -935,42 +565,14 @@ it is straightforward to match names between the markers and
 the \texttt{MSnSet} instance using the \texttt{addMarkers} function.
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## Use mouse markers}
-\hlstd{mrk} \hlkwb{<-} \hlkwd{pRolocmarkers}\hlstd{(}\hlkwc{species} \hlstd{=} \hlstr{"mmus"}\hlstd{)}
-\hlkwd{head}\hlstd{(mrk)}
-\end{alltt}
-\begin{verbatim}
-##                 P26039                 Q6PB66                 P11276 
-##   "Actin cytoskeleton"        "Mitochondrion" "Extracellular matrix" 
-##                 Q6PR54                 Q05793                 P19096 
-##  "Nucleus - Chromatin" "Extracellular matrix"              "Cytosol"
-\end{verbatim}
-\begin{alltt}
-\hlcom{## Add mouse markers}
-\hlstd{hl} \hlkwb{<-} \hlkwd{addMarkers}\hlstd{(hl, mrk)}
-\end{alltt}
+<<addmrkers>>=
+## Use mouse markers
+mrk <- pRolocmarkers(species = "mmus")
+head(mrk)
 
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Markers in data: 937 out of 5032}}\begin{verbatim}
-## organelleMarkers
-##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      27                      43                      13 
-##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                      43                      95                      12 
-##    Extracellular matrix         Golgi apparatus                Lysosome 
-##                      10                      27                      33 
-##           Mitochondrion     Nucleus - Chromatin Nucleus - Non-chromatin 
-##                     383                      64                      85 
-##              Peroxisome         Plasma membrane              Proteasome 
-##                      17                      51                      34 
-##                 unknown 
-##                    4095
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+## Add mouse markers
+hl <- addMarkers(hl, mrk)
+@
 
 If the naming between the marker sets and the \texttt{MSnSet} dataset
 are different, one will have to convert and match the proteins
@@ -996,18 +598,12 @@ the apparent overlap in the two first PCs.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{main} \hlstd{=} \hlstr{"pRolocmarkers for mouse"}\hlstd{)}
-\hlkwd{addLegend}\hlstd{(hl,} \hlkwc{cex} \hlstd{=} \hlnum{.7}\hlstd{)}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{dims} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{7}\hlstd{),} \hlkwc{main} \hlstd{=} \hlstr{"Marker resolution along PC 1 and 7"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plotmarkers-1} 
-
-\end{knitrout}
+<<plotmarkers, out.width="\\textwidth">>=
+par(mfrow = c(1, 2))
+plot2D(hl, main = "pRolocmarkers for mouse")
+addLegend(hl, cex = .7)
+plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
+@  
   \caption{Annotated PCA plots of the \texttt{hl} data.}
   \label{fig:plotmarkers}
 \end{figure}
@@ -1030,27 +626,10 @@ going to reset the annotation of Golgi markers to unknown using the
 strings ("") or missing values in the markers definition to a common
 definition of *unknown localisation*.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hl} \hlkwb{<-} \hlkwd{fDataToUnknown}\hlstd{(hl,} \hlkwc{from} \hlstd{=} \hlstr{"Golgi apparatus"}\hlstd{,} \hlkwc{to} \hlstd{=} \hlstr{"unknown"}\hlstd{)}
-\hlkwd{getMarkers}\hlstd{(hl)}
-\end{alltt}
-\begin{verbatim}
-## organelleMarkers
-##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      27                      43                      13 
-##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                      43                      95                      12 
-##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      10                      33                     383 
-##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                      64                      85                      17 
-##         Plasma membrane              Proteasome                 unknown 
-##                      51                      34                    4122
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<removeGA>>=
+hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
+getMarkers(hl)
+@
 
 In general, the Gene Ontology (GO) \cite{Ashburner:2000}, and in
 particular the cellular compartment (CC) namespace are a good starting
@@ -1074,22 +653,16 @@ channels, as represented above along the 7th PC on the PCA plot.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hlo} \hlkwb{<-} \hlstd{hl[,} \hlkwd{order}\hlstd{(hl}\hlopt{$}\hlstd{Iodixonal.Density)]}
-\hlkwd{plotDist}\hlstd{(hlo[}\hlkwd{fData}\hlstd{(hlo)}\hlopt{$}\hlstd{markers} \hlopt{==} \hlstr{"Mitochondrion"}\hlstd{, ],}
-         \hlkwc{pcol} \hlstd{=} \hlstr{"purple"}\hlstd{,} \hlkwc{fractions} \hlstd{=} \hlstr{"Fraction.No"}\hlstd{)}
-\hlkwd{title}\hlstd{(}\hlkwc{main} \hlstd{=} \hlstr{"Marker occupancy profiles along the gradient"}\hlstd{)}
-\hlkwd{matlines}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{exprs}\hlstd{(hlo[}\hlkwd{fData}\hlstd{(hlo)}\hlopt{$}\hlstd{markers} \hlopt{==} \hlstr{"Peroxisome"}\hlstd{, ])),}
-         \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"darkblue"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{)}
-\hlkwd{legend}\hlstd{(}\hlstr{"topleft"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"Mitochondrion"}\hlstd{,} \hlstr{"Peroxisome"}\hlstd{),}
-       \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"purple"}\hlstd{,} \hlstr{"blue"}\hlstd{),} \hlkwc{bty} \hlstd{=} \hlstr{"n"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plotDist-1} 
-
-\end{knitrout}
+<<plotDist, out.width="\\textwidth">>=
+hlo <- hl[, order(hl$Iodixonal.Density)]
+plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
+         pcol = "purple", fractions = "Fraction.No")
+title(main = "Marker occupancy profiles along the gradient")
+matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
+         lty = 1, col = "darkblue", type = "l")
+legend("topleft", c("Mitochondrion", "Peroxisome"),
+       lty = 1, col = c("purple", "blue"), bty = "n")
+@  
   \caption{Mitochondrion and peroxisome protein profiles.}
   \label{fig:plotDist2}
 \end{figure}
@@ -1118,7 +691,10 @@ gradient. As can be seen in the table below (taken from the
 of gradient fractions are pooled to obtain enough material and optimise
 acurate quantitation.
 
-
+<<pdtab, echo=FALSE, eval = FALSE>>=
+i <- c(2, 3, 4, 13, 14)
+pData(hl)[i, ]
+@
 
 % On the figure below, we compare the relative intensities of channels 7
 % to 10 on scatter plots, highlighting different marker sets. These
@@ -1180,17 +756,11 @@ two figures with the same orientation.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
-\hlkwd{plot2D}\hlstd{(hl[, hl}\hlopt{$}\hlstd{Replicate} \hlopt{==} \hlnum{1}\hlstd{],} \hlkwc{main} \hlstd{=} \hlstr{"Replicate 1"}\hlstd{)}
-\hlkwd{plot2D}\hlstd{(hl[, hl}\hlopt{$}\hlstd{Replicate} \hlopt{==} \hlnum{2}\hlstd{],} \hlkwc{main} \hlstd{=} \hlstr{"Replicate 2"}\hlstd{,} \hlkwc{mirrorX} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plot2Drep-1} 
-
-\end{knitrout}
+<<plot2Drep, out.width="\\textwidth">>= 
+par(mfrow = c(1, 2)) 
+plot2D(hl[, hl$Replicate == 1], main = "Replicate 1") 
+plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE) 
+@  
   \caption{PCA plots of replicates 1 and 2}
   \label{fig:plot2Drep}
 \end{figure}
@@ -1210,14 +780,10 @@ wrapped and launched by the \texttt{pRolocVis} function. In the below code
 chunk we lauch the main app (note, we do not need to specify the
 argument, \texttt{app = "main"} as it is the default).
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(}\hlstr{"pRolocGUI"}\hlstd{)}
-\hlkwd{pRolocVis}\hlstd{(hl)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<mainapp, eval = FALSE, echo = TRUE>>=
+library("pRolocGUI")
+pRolocVis(hl)
+@
 
 \begin{figure}[!ht]
   \centering
@@ -1247,16 +813,12 @@ but it can also be specified by calling the argument \texttt{app =
 \texttt{MSnSetList} of replicates 1 and 2 of the hyperLOPIT data, this
 is then passed to \texttt{pRolocVis}.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{data}\hlstd{(hyperLOPIT2015ms3r1)}
-\hlkwd{data}\hlstd{(hyperLOPIT2015ms3r2)}
-\hlstd{mydata} \hlkwb{<-} \hlkwd{MSnSetList}\hlstd{(}\hlkwd{list}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))}
-\hlkwd{pRolocVis}\hlstd{(mydata,} \hlkwc{app} \hlstd{=} \hlstr{"compare"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<compareapp, eval = FALSE, echo = TRUE>>=
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+pRolocVis(mydata, app = "compare")
+@
 
 \begin{figure}[!ht]
   \centering
@@ -1336,30 +898,9 @@ table of the markers contained in this marker set. These initial
 markers were manually curated using information from the UniProt
 database, the Gene Ontology and the literature. 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"phenoDisco.Input"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## organelleMarkers
-##                          40S Ribosome 
-##                                    26 
-##                          60S Ribosome 
-##                                    43 
-## Endoplasmic reticulum/Golgi apparatus 
-##                                    76 
-##                         Mitochondrion 
-##                                   261 
-##                       Plasma membrane 
-##                                    50 
-##                            Proteasome 
-##                                    34 
-##                               unknown 
-##                                  4542
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<displayPDmarkers>>=
+getMarkers(hl, fcol = "phenoDisco.Input")
+@
 
 In the code chunk below we show how to run the \texttt{phenoDisco}
 function and return a novelty detection result, according to the
@@ -1367,16 +908,12 @@ specified parameters. The algorithm parameters \texttt{times}, \texttt{GS} and \
 are passed to the function, along with the \texttt{fcol} to tell the
 algorithm where the input training data is contained. 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## As per Christoforou et al (2016), }
-\hlstd{hl} \hlkwb{<-} \hlkwd{phenoDisco}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"phenoDisco.Input"}\hlstd{,}
-                 \hlkwc{times} \hlstd{=} \hlnum{200}\hlstd{,}
-                 \hlkwc{GS} \hlstd{=} \hlnum{60}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<runPD, eval = FALSE>>=
+## As per Christoforou et al (2016), 
+hl <- phenoDisco(hl, fcol = "phenoDisco.Input", 
+                 times = 200, 
+                 GS = 60)
+@
 
 Note: We do not evaluate this code chunk in this document as the
 algorithm is computational intensive and best parallelised over
@@ -1410,7 +947,14 @@ supports parallelisation and we strongly suggest you make use of a
 parallel processing to run these analyses (different backends can be
 set with argument \texttt{BPPARAM}). 
 
-
+<<loadPDres, echo=FALSE>>=
+f0 <- dir(extdatadir, full.names = TRUE,
+          pattern = "bpw-pdres.rds")
+pdres <- readRDS(f0)
+hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE)
+setStockcol(NULL)
+setStockcol(paste0(getStockcol(), 70))
+@
 
 The ouput of running the \texttt{phenoDisco} algorithm is a \texttt{MSnSet}
 containing the new data clusters, appended to the \texttt{featureData} under
@@ -1421,90 +965,31 @@ This is handy for keeping track of data analyses. The results can be
 displayed by using the \texttt{getMarkers} function. We see that 5 new
 phenotype data clusters were found.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hl}
-\end{alltt}
-\begin{verbatim}
-## MSnSet (storageMode: lockedEnvironment)
-## assayData: 5032 features, 20 samples 
-##   element names: exprs 
-## protocolData: none
-## phenoData
-##   sampleNames: X126 X127N ... X131.1 (20 total)
-##   varLabels: Replicate Tag Gradient.Fraction Iodixonal.Density
-##   varMetadata: labelDescription
-## featureData
-##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
-##   fvarLabels: uniprot.accession uniprot.id ... pd (27 total)
-##   fvarMetadata: labelDescription
-## experimentData: use 'experimentData(object)'
-## Annotation:  
-## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Sep 29 20:32:06 2016 
-## Added markers from  'pdres' marker vector. Thu Sep 29 20:32:07 2016 
-##  MSnbase version: 1.99.2
-\end{verbatim}
-\begin{alltt}
-\hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-## organelleMarkers
-##                          40S Ribosome 
-##                                   106 
-##                          60S Ribosome 
-##                                    95 
-## Endoplasmic reticulum/Golgi apparatus 
-##                                   393 
-##                         Mitochondrion 
-##                                   525 
-##                           Phenotype 1 
-##                                   300 
-##                           Phenotype 2 
-##                                   253 
-##                           Phenotype 3 
-##                                   203 
-##                           Phenotype 4 
-##                                    74 
-##                           Phenotype 5 
-##                                    91 
-##                       Plasma membrane 
-##                                   421 
-##                            Proteasome 
-##                                    92 
-##                               unknown 
-##                                  2479
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<showPDres>>=
+hl
+getMarkers(hl, fcol = "pd")
+@
 
 We can plot the results using the \texttt{plot2D} function.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## Re-order the colours for the phenoDisco output}
-\hlstd{cl} \hlkwb{<-} \hlkwd{getMarkerClasses}\hlstd{(hl,} \hlstr{"pd"}\hlstd{)}
-\hlstd{cols} \hlkwb{<-} \hlkwd{getStockcol}\hlstd{()[}\hlkwd{seq}\hlstd{(cl)]}
-\hlstd{ind} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"Pheno"}\hlstd{, cl,} \hlkwc{invert} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\hlstd{cols[ind]} \hlkwb{<-} \hlkwd{getStockcol}\hlstd{()[}\hlkwd{seq}\hlstd{(cl)][}\hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(ind)]}
-\hlstd{cols[}\hlopt{-}\hlstd{ind]} \hlkwb{<-} \hlkwd{getStockcol}\hlstd{()[}\hlkwd{seq}\hlstd{(cl)][(}\hlkwd{length}\hlstd{(ind)} \hlopt{+} \hlnum{1}\hlstd{)}\hlopt{:}\hlkwd{length}\hlstd{(cl)]}
+<<plotPDres, out.width="\\textwidth">>=
+## Re-order the colours for the phenoDisco output
+cl <- getMarkerClasses(hl, "pd")
+cols <- getStockcol()[seq(cl)]
+ind <- grep("Pheno", cl, invert = TRUE)
+cols[ind] <- getStockcol()[seq(cl)][1:length(ind)]
+cols[-ind] <- getStockcol()[seq(cl)][(length(ind) + 1):length(cl)]
 
-\hlcom{## Plot the input and output}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"phenoDisco.Input"}\hlstd{,}
-       \hlkwc{main} \hlstd{=} \hlstr{"phenoDisco input markers"}\hlstd{,} \hlkwc{col} \hlstd{=} \hlkwd{getStockcol}\hlstd{()[}\hlnum{1}\hlopt{:}\hlnum{6}\hlstd{])}
-\hlkwd{addLegend}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"phenoDisco.Input"}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{.7}\hlstd{)}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{main} \hlstd{=} \hlstr{"phenoDisco output"}\hlstd{,} \hlkwc{col} \hlstd{= cols)}
-\hlkwd{addLegend}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{.7}\hlstd{,} \hlkwc{col} \hlstd{= cols)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plotPDres-1} 
-
-\end{knitrout}
+## Plot the input and output
+par(mfrow = c(1, 2))
+plot2D(hl, fcol = "phenoDisco.Input", 
+       main = "phenoDisco input markers", col = getStockcol()[1:6])
+addLegend(hl, fcol = "phenoDisco.Input", cex = .7)
+plot2D(hl, fcol = "pd", main = "phenoDisco output", col = cols)
+addLegend(hl, fcol = "pd", cex = .7, col = cols)
+@
   \caption{Results of the novelty detection algorithm.}
   \label{fig:plotPDres}
 \end{figure}
@@ -1515,14 +1000,10 @@ In the code chunk below we write the results to a .csv file. We use
 the argument \texttt{fDataCols} to specify which columns of the
 \texttt{featureData} to write.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{pd} \hlkwb{<-} \hlkwd{as.character}\hlstd{(}\hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{pd)}
-\hlkwd{write.exprs}\hlstd{(hl,} \hlkwc{fDataCols} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{file} \hlstd{=} \hlstr{"pd-results.csv"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<writehl, eval=FALSE>>=
+fData(hl)$pd <- as.character(fData(hl)$pd)
+write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
+@
 
 We can also examine the each phenotype intercatively and visualise
 their protein profiles by using the \texttt{pRolocVis} function in the
@@ -1531,13 +1012,9 @@ enriched in nucleus associated proteins, phenotype 2 in chromatin
 associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
 in lysosomal and endosomal proteins.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{pRolocVis}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<vishl, eval=FALSE>>=
+pRolocVis(hl, fcol = "pd")
+@
 
 \section*{Supervised machine learning}
 
@@ -1596,42 +1073,23 @@ model. Below the weights, \texttt{w} are set to be inversely proportional to
 the class frequencies.
 
 
+<<loadpdRes, echo=FALSE>>=
+svmf <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-svmopt.rds") 
+params <- readRDS(svmf)
+@
 
+<<getsvmweight>>=
+w <- table(getMarkers(hl, verbose = TRUE))
+w <- 1/w[names(w) != "unknown"]
+@
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{w} \hlkwb{<-} \hlkwd{table}\hlstd{(}\hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{verbose} \hlstd{=} \hlnum{TRUE}\hlstd{))}
-\end{alltt}
-\begin{verbatim}
-## organelleMarkers
-##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      27                      43                      13 
-##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                      43                      95                      12 
-##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      10                      33                     383 
-##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                      64                      85                      17 
-##         Plasma membrane              Proteasome                 unknown 
-##                      51                      34                    4122
-\end{verbatim}
-\begin{alltt}
-\hlstd{w} \hlkwb{<-} \hlnum{1}\hlopt{/}\hlstd{w[}\hlkwd{names}\hlstd{(w)} \hlopt{!=} \hlstr{"unknown"}\hlstd{]}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## 100 rounds of optimisation with five-fold cross-validation}
-\hlstd{params} \hlkwb{<-} \hlkwd{svmOptimisation}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"markers"}\hlstd{,}
-                          \hlkwc{times} \hlstd{=} \hlnum{100}\hlstd{,} \hlkwc{xval} \hlstd{=} \hlnum{5}\hlstd{,}
-                          \hlkwc{class.weights} \hlstd{= w)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<dosvmopt, eval=FALSE>>=
+## 100 rounds of optimisation with five-fold cross-validation
+params <- svmOptimisation(hl, fcol = "markers",
+                          times = 100, xval = 5,
+                          class.weights = w)
+@
 
 As mentioned previously, we reply on the default feature variable
 \texttt{"markers"} to define the class labels and hence can ommit
@@ -1652,23 +1110,18 @@ the best choice. The best choice may not be as simple as the parameter
 set that gives rise to the highest macro F1 score and one must be
 careful to avoid overfitting and to choose parameters wisely.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{(best} \hlkwb{<-} \hlkwd{getParams}\hlstd{(params))}
-\hlkwd{plot}\hlstd{(params)}
-\hlkwd{levelPlot}\hlstd{(params)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<visualiseOpt, eval=FALSE>>=
+(best <- getParams(params))
+plot(params)
+levelPlot(params)
+@
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=\textwidth]{figure/visualiseOptHide-1} 
-
-\end{knitrout}
+<<visualiseOptHide, echo=FALSE, out.width="\\textwidth">>=
+library('gridExtra')
+grid.arrange(plot(params), levelPlot(params), ncol = 2)
+@  
   \caption{Assessment of the classification model parameter optimisation.}
   \label{fig:visualisOptHide}
 \end{figure}
@@ -1693,15 +1146,11 @@ passed to the function, along with the class weights. As above, \texttt{fcol}
 can be ignored as we use the labels defined in the default \texttt{"markers"}
 feature variable.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{hl} \hlkwb{<-} \hlkwd{svmClassification}\hlstd{(hl, params,}
-                        \hlkwc{class.weights} \hlstd{= w,}
-                        \hlkwc{fcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<classify>>=
+hl <- svmClassification(hl, params,
+                        class.weights = w,
+                        fcol = "markers")
+@
 
 Automatically, the output of the above classification; the organelle
 predictions and assignment scores, are stored in the
@@ -1719,23 +1168,21 @@ represents one protein) to be inversely proportional to the SVM
 score. This gives an initial overview of the high scoring
 localisations from the SVM predictions.
 
-
+<<setColors, include=FALSE>>=
+setStockcol(NULL)
+setStockcol(paste0(getStockcol(), 70))
+par(mfrow = c(1, 1))
+@
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## set point size of each protein to be inversely proportional to the}
-\hlstd{ptsze} \hlkwb{<-} \hlkwd{exp}\hlstd{(}\hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{svm.scores)} \hlopt{-} \hlnum{1}
-\hlcom{## plot new predictions}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{cex} \hlstd{= ptsze)}
-\hlkwd{addLegend}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{where} \hlstd{=} \hlstr{"bottomleft"}\hlstd{,} \hlkwc{bty} \hlstd{=} \hlstr{"n"}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{.5}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plotSVM-1} 
-
-\end{knitrout}
+<<plotSVM, out.width="\\textwidth">>=
+## set point size of each protein to be inversely proportional to the
+ptsze <- exp(fData(hl)$svm.scores) - 1
+## plot new predictions
+plot2D(hl, fcol = "svm", cex = ptsze)
+addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
+@  
   \caption{Classification results.}
   \label{fig:plotSVM}
 \end{figure}
@@ -1782,20 +1229,14 @@ distributions per organelle.
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## First remove the markers}
-\hlstd{preds} \hlkwb{<-} \hlkwd{unknownMSnSet}\hlstd{(hl)}
-\hlcom{## Plot a boxplot of the scores of each organelle}
-\hlkwd{par}\hlstd{(}\hlkwc{oma} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{10.5}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{))}
-\hlkwd{boxplot}\hlstd{(svm.scores} \hlopt{~} \hlstd{svm,} \hlkwc{data} \hlstd{=} \hlkwd{fData}\hlstd{(preds),}
-        \hlkwc{ylab} \hlstd{=} \hlstr{"SVM scores"}\hlstd{,} \hlkwc{las} \hlstd{=} \hlnum{2}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/thresholds-1} 
-
-\end{knitrout}
+<<thresholds, out.width="\\textwidth">>=
+## First remove the markers
+preds <- unknownMSnSet(hl)
+## Plot a boxplot of the scores of each organelle
+par(oma = c(10.5, 0, 0, 0))
+boxplot(svm.scores ~ svm, data = fData(preds), 
+        ylab = "SVM scores", las = 2)
+@
   \caption{Visualistion of class-specific classification score distribution.}
   \label{fig:threshold}
 \end{figure}
@@ -1819,49 +1260,19 @@ extract the new localisations that meet this scoring criteria. Any
 sub-cellular predictions that fall below the specified thresholds are
 labelled as unknown.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{ts} \hlkwb{<-} \hlkwd{orgQuants}\hlstd{(hl,}
-                \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,}
-                \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,}
-                \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,}
-                \hlkwc{t} \hlstd{=} \hlnum{.5}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4383808               0.3028615               0.3856431 
-##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6859801               0.5995991               0.4350839 
-##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4307964               0.5935764               0.9500433 
-##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7953738               0.7087561               0.3155507 
-##         Plasma membrane              Proteasome 
-##               0.7171990               0.4185577
-\end{verbatim}
-\begin{alltt}
-\hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,}
-                     \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,}
-                     \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,}
-                     \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,}
-                     \hlkwc{t} \hlstd{= ts)}
-\end{alltt}
-\begin{verbatim}
-## ans
-##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      87                     169                      88 
-##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     298                     475                      98 
-##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      31                     123                     521 
-##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     344                      38 
-##         Plasma membrane              Proteasome                 unknown 
-##                     319                     157                    2055
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<orgquants>>=
+ts <- orgQuants(hl, 
+                fcol = "svm", 
+                scol = "svm.scores",
+                mcol = "markers", 
+                t = .5)
+
+hl <- getPredictions(hl,
+                     fcol = "svm",
+                     scol = "svm.scores", 
+                     mcol = "markers",
+                     t = ts)                        
+@
 
 The output of \texttt{getPredictons} is the original \texttt{MSnSet}
 dataset with a new feature variable appended to the feature data
@@ -1869,29 +1280,15 @@ called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
 containing the prediction results. The results can also be visualied
 using \texttt{plot2D} function.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{dev.off}\hlstd{()}
-\end{alltt}
-\begin{verbatim}
-## null device 
-##           1
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<resetpar>>=
+dev.off()
+@
 
 \begin{figure}[!ht]
     \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm.pred"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plotres-1} 
-
-\end{knitrout}
+<<plotres, out.width="\\textwidth">>=
+plot2D(hl, fcol = "svm.pred")
+@  
   \caption{Results of the localisation preductions after thresholding.}
   \label{fig:plotres}
 \end{figure}
@@ -1905,18 +1302,14 @@ and \texttt{mcol} which refer to the columns in the feature data that contain
 the new assignments, assignment scores and markers respectively (see
 also \texttt{fvarLabels(svmres)}).
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{library}\hlstd{(}\hlstr{"pRolocGUI"}\hlstd{)}
-\hlkwd{pRolocVis}\hlstd{(hl,}
-          \hlkwc{app} \hlstd{=} \hlstr{"classify"}\hlstd{,}
-          \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,}
-                \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,}
-          \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<classifyApp, eval=FALSE>>=
+library("pRolocGUI")
+pRolocVis(hl, 
+          app = "classify",
+          fcol = "svm",
+	        scol = "svm.scores",
+          mcol = "markers")
+@
 
 \begin{figure}[!ht]
   \centering
@@ -1995,14 +1388,11 @@ below we pass "Mus musculus", and the identifier type for our data
 (see \texttt{featureNames(hl)}) which is "Uniprot/Swissprot", for the
 Biomart query.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{par} \hlkwb{<-} \hlkwd{setAnnotationParams}\hlstd{(}\hlkwc{inputs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Mus musculus"}\hlstd{,}
-                                      \hlstr{"UniProt/Swissprot"}\hlstd{))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<setap, eval=FALSE>>=
+par <- setAnnotationParams(inputs = c("Mus musculus", 
+                                      "UniProt/Swissprot"))
+
+@
 
 Now we have contructed the query parameters we can use the
 \texttt{makeGoSet} function to retrieve and build an auxiliary GO
@@ -2012,15 +1402,11 @@ also possible to download terms from the molecular function and
 biological process GO namespaces, and also apply filtering based on
 evidence codes as desired, see \texttt{?makeGoSet} for more details.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{gocc} \hlkwb{<-} \hlkwd{makeGoSet}\hlstd{(hl,} \hlkwc{params} \hlstd{= par,}
-                  \hlkwc{namespace} \hlstd{=} \hlstr{"cellular_component"}\hlstd{,}
-                  \hlkwc{evidence} \hlstd{=} \hlkwa{NULL}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<makego, eval=FALSE>>=
+gocc <- makeGoSet(hl, params = par, 
+                  namespace = "cellular_component",
+                  evidence = NULL)
+@
 
 The function \texttt{makeGoSet} uses the \Biocpkg{biomaRt} package to
 query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All
@@ -2033,13 +1419,9 @@ generally do not bring and information generally for building the
 classifier and thus we can remove such GO terms by using the function
 \texttt{filterBinMSnSet}.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{gocc} \hlkwb{<-} \hlkwd{filterBinMSnSet}\hlstd{(hl)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<filtergo, eval=FALSE>>=
+gocc <- filterBinMSnSet(hl)
+@
 
 Now we have generated our auxiliary data we can use the \textit{k}-NN
 implementation of transfer learning available in \Biocpkg{pRoloc} to
@@ -2101,59 +1483,39 @@ To remove the 4 classes and create a new column of markers in the
 feature data called \texttt{tlmarkers} to use for the analysis:
 
 
+<<loadgocc, include=FALSE>>=
+gofile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-gocc.rds")
+gocc <- readRDS(gofile)
+@
 
+<<setuptlopt>>=
+## create new markers column for tl markers
+fData(hl)$tlmarkers <- fData(hl)$markers
+fData(gocc)$tlmarkers <- fData(gocc)$markers
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## create new markers column for tl markers}
-\hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{tlmarkers} \hlkwb{<-} \hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{markers}
-\hlkwd{fData}\hlstd{(gocc)}\hlopt{$}\hlstd{tlmarkers} \hlkwb{<-} \hlkwd{fData}\hlstd{(gocc)}\hlopt{$}\hlstd{markers}
-
-\hlcom{## Remove 4 classes}
-\hlstd{torm}  \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"40S Ribosome"}\hlstd{,} \hlstr{"60S Ribosome"}\hlstd{,}
-           \hlstr{"Nucleus - Chromatin"}\hlstd{,}
-           \hlstr{"Nucleus - Non-chromatin"}\hlstd{)}
-\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlkwd{seq}\hlstd{(torm)) \{}
-  \hlstd{hl} \hlkwb{<-} \hlkwd{fDataToUnknown}\hlstd{(hl,} \hlkwc{from} \hlstd{= torm[i],} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-  \hlstd{gocc} \hlkwb{<-} \hlkwd{fDataToUnknown}\hlstd{(gocc,} \hlkwc{from} \hlstd{= torm[i],} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-\hlstd{\}}
-\hlkwd{getMarkerClasses}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-##  [1] "Actin cytoskeleton"    "Cytosol"              
-##  [3] "Endoplasmic reticulum" "Endosome"             
-##  [5] "Extracellular matrix"  "Lysosome"             
-##  [7] "Mitochondrion"         "Peroxisome"           
-##  [9] "Plasma membrane"       "Proteasome"
-\end{verbatim}
-\begin{alltt}
-\hlkwd{getMarkerClasses}\hlstd{(gocc,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-##  [1] "Actin cytoskeleton"    "Cytosol"              
-##  [3] "Endoplasmic reticulum" "Endosome"             
-##  [5] "Extracellular matrix"  "Lysosome"             
-##  [7] "Mitochondrion"         "Peroxisome"           
-##  [9] "Plasma membrane"       "Proteasome"
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+## Remove 4 classes
+torm  <- c("40S Ribosome", "60S Ribosome",
+           "Nucleus - Chromatin", 
+           "Nucleus - Non-chromatin")
+for (i in seq(torm)) {
+  hl <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
+  gocc <- fDataToUnknown(gocc, from = torm[i], fcol = "tlmarkers")
+}
+getMarkerClasses(hl, fcol = "tlmarkers")
+getMarkerClasses(gocc, fcol = "tlmarkers")
+@
 
 Optimisation stage 1: run \texttt{knnOptimisation} to get the best
 $k$'s for each data source.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## get best k's}
-\hlstd{kpopt} \hlkwb{<-} \hlkwd{knnOptimisation}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-\hlstd{kaopt} \hlkwb{<-} \hlkwd{knnOptimisation}\hlstd{(gocc,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-\hlkwd{plot}\hlstd{(kpopt)}
-\hlkwd{plot}\hlstd{(kaopt)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<knnoptfortl, eval=FALSE>>=
+## get best k's
+kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
+kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
+plot(kpopt)
+plot(kaopt)
+@
 
 From examining the parameter seach plots we find the best $k$'s for
 both the primary and auxiliary are 3.
@@ -2161,40 +1523,36 @@ both the primary and auxiliary are 3.
 Optimisation stage 2: run \texttt{knntlOptimisation} to get the best
 transfer learning weights for each sub-cellular class.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## Set appropriate parallelisation backend and  }
-\hlcom{## number of workers for the tl}
-\hlstd{par} \hlkwb{<-} \hlkwd{SnowParam}\hlstd{(}\hlnum{255L}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"MPI"}\hlstd{)}
+<<runtlopts, eval=FALSE>>=
+## Set appropriate parallelisation backend and  
+## number of workers for the tl
+par <- SnowParam(255L, type = "MPI")
 
-\hlcom{## Now peform tl optimisation }
-\hlstd{tlopt} \hlkwb{<-} \hlkwd{knntlOptimisation}\hlstd{(hl, gocc,}
-                           \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{,}
-                           \hlkwc{length.out} \hlstd{=} \hlnum{4}\hlstd{,}
-                           \hlkwc{times} \hlstd{=} \hlnum{50}\hlstd{,}
-                           \hlkwc{xval} \hlstd{=} \hlnum{5}\hlstd{,} \hlkwc{k} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{),}
-                           \hlkwc{BPPARAM} \hlstd{= par)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+## Now peform tl optimisation 
+tlopt <- knntlOptimisation(hl, gocc,
+                           fcol = "tlmarkers",
+                           length.out = 4,
+                           times = 50,
+                           xval = 5, k = c(3, 3),
+                           BPPARAM = par)
+@
 
 The results of the optimisation can be visalised using the \texttt{plot}
 method for \texttt{"ThetaRegRes"} objects:
 
-
+<<loadtlres, echo=FALSE>>=
+tlfile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-tlopt.rds")
+tlopt <- readRDS(tlfile)
+colnames(tlopt@results)[4] <- "Endoplasmic reticulum"
+setStockcol(NULL)
+@
 
 \begin{figure}[!ht]
   \centering
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{plot}\hlstd{(tlopt)}
-\end{alltt}
-\end{kframe}
-\includegraphics[width=\textwidth]{figure/plottl-1} 
-
-\end{knitrout}
+<<plottl, out.width="\\textwidth">>=
+plot(tlopt)
+@  
   \caption{Visualisation of the tTransfer learning parameter optimisation procedure.}
   \label{fig:plottl}
 \end{figure}
@@ -2225,52 +1583,24 @@ then re-order the weights according to \texttt{getMarkerClasses} and
 perform the classification using the function
 \texttt{knntlClassification}.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## best parameters for the 10 classes}
-\hlstd{(bestpar} \hlkwb{<-} \hlkwd{getParams}\hlstd{(tlopt))}
-\end{alltt}
-\begin{verbatim}
-##    Actin cytoskeleton               Cytosol Endoplasmic reticulum 
-##             1.0000000             1.0000000             0.6666667 
-##              Endosome  Extracellular matrix              Lysosome 
-##             1.0000000             1.0000000             0.3333333 
-##         Mitochondrion            Peroxisome       Plasma membrane 
-##             1.0000000             1.0000000             0.6666667 
-##            Proteasome 
-##             0.3333333
-\end{verbatim}
-\begin{alltt}
-\hlcom{## add weights for classes not included in the optimisation}
-\hlstd{otherweights} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{4}\hlstd{)}
-\hlkwd{names}\hlstd{(otherweights)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"40S Ribosome"}\hlstd{,} \hlstr{"60S Ribosome"}\hlstd{,}
-                         \hlstr{"Nucleus - Chromatin"}\hlstd{,}
-                         \hlstr{"Nucleus - Non-chromatin"}\hlstd{)}
-\hlstd{(bestpar} \hlkwb{<-} \hlkwd{c}\hlstd{(bestpar, otherweights))}
-\end{alltt}
-\begin{verbatim}
-##      Actin cytoskeleton                 Cytosol   Endoplasmic reticulum 
-##               1.0000000               1.0000000               0.6666667 
-##                Endosome    Extracellular matrix                Lysosome 
-##               1.0000000               1.0000000               0.3333333 
-##           Mitochondrion              Peroxisome         Plasma membrane 
-##               1.0000000               1.0000000               0.6666667 
-##              Proteasome            40S Ribosome            60S Ribosome 
-##               0.3333333               1.0000000               1.0000000 
-##     Nucleus - Chromatin Nucleus - Non-chromatin 
-##               1.0000000               1.0000000
-\end{verbatim}
-\begin{alltt}
-\hlcom{## re-order classes }
-\hlstd{bestpar} \hlkwb{<-} \hlstd{bestpar[}\hlkwd{getMarkerClasses}\hlstd{(hl)]}
+<<tlclassify, cache = cache>>=
+## best parameters for the 10 classes
+(bestpar <- getParams(tlopt))
 
-\hlcom{## Do the classification}
-\hlstd{hl} \hlkwb{<-} \hlkwd{knntlClassification}\hlstd{(hl, gocc,} \hlkwc{bestTheta} \hlstd{= bestpar,}
-                          \hlkwc{k} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+## add weights for classes not included in the optimisation
+otherweights <- rep(1, 4)
+names(otherweights) <- c("40S Ribosome", "60S Ribosome", 
+                         "Nucleus - Chromatin", 
+                         "Nucleus - Non-chromatin")
+(bestpar <- c(bestpar, otherweights))
+
+## re-order classes 
+bestpar <- bestpar[getMarkerClasses(hl)]
+
+## Do the classification
+hl <- knntlClassification(hl, gocc, bestTheta = bestpar, 
+                          k = c(3, 3))
+@
 
 The results from the classification results and associated scores are
 appended to the \texttt{fData} slot and named \texttt{knntl} and
@@ -2327,31 +1657,23 @@ use a comma, finally as we want to write all the information in the
 specify \texttt{fDataCols = 1:ncol(hl)} i.e. write everything in the
 \texttt{featureData} to the file \texttt{"hl.csv"}.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{write.exprs}\hlstd{(hl,} \hlkwc{file} \hlstd{=} \hlstr{"hl.csv"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{,}
-            \hlkwc{fDataCols} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(hl))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<writeData, eval = FALSE>>=
+write.exprs(hl, file = "hl.csv", sep = ",", 
+            fDataCols = 1:ncol(hl))
+@
 
 Individual R objects, such a parameters from the machine learning
 optimisations, can be save using the standard \texttt{save} function
 in R.  For example, to save and then re-load the parameters from the
 SVM optimisation,
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## To save the parameters as an R object}
-\hlkwd{save}\hlstd{(params,} \hlkwc{file} \hlstd{=} \hlstr{"svmparams.rda"}\hlstd{)}
+<<saveData, eval = FALSE>>=
+## To save the parameters as an R object
+save(params, file = "svmparams.rda")
 
-\hlcom{## To re-load after saving}
-\hlkwd{load}\hlstd{(}\hlkwc{file} \hlstd{=} \hlstr{"svmparams.rda"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+## To re-load after saving
+load(file = "svmparams.rda")
+@
 
 \section*{Session information}
 
@@ -2363,74 +1685,9 @@ different results, we are in a position to re-generate the original
 results using the adequate software versions and retrace changes in
 the software that lead to failure and/or different results.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{sessionInfo}\hlstd{()}
-\end{alltt}
-\begin{verbatim}
-## R version 3.3.1 Patched (2016-08-02 r71022)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 14.04.5 LTS
-## 
-## locale:
-##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
-##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
-##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
-## 
-## attached base packages:
-## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
-## [8] datasets  base     
-## 
-## other attached packages:
-##  [1] pRolocdata_1.11.9    pRoloc_1.13.15       MLInterfaces_1.53.1 
-##  [4] cluster_2.0.4        annotate_1.51.1      XML_3.98-1.4        
-##  [7] AnnotationDbi_1.35.4 IRanges_2.7.15       S4Vectors_0.11.17   
-## [10] MSnbase_1.99.2       ProtGenerics_1.5.1   BiocParallel_1.7.8  
-## [13] mzR_2.7.6            Rcpp_0.12.7          Biobase_2.33.3      
-## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.32    
-## [19] knitr_1.14          
-## 
-## loaded via a namespace (and not attached):
-##  [1] minqa_1.2.4           colorspace_1.2-6      hwriter_1.3.2        
-##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
-##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
-## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
-## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.3.1        
-## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-71         
-## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
-## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.14           
-## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
-## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
-## [34] quantreg_5.29         tools_3.3.1           ggvis_0.4.3          
-## [37] gtable_0.2.0          affy_1.51.1           reshape2_1.4.1       
-## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
-## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
-## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.1.0        
-## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
-## [52] gtools_3.5.0          dendextend_1.3.0      DEoptimR_1.0-6       
-## [55] zlibbioc_1.19.0       MASS_7.3-45           scales_0.4.0         
-## [58] BiocInstaller_1.23.9  pcaMethods_1.65.0     SparseM_1.72         
-## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.29.2       
-## [64] rpart_4.1-10          stringi_1.1.1         RSQLite_1.0.0        
-## [67] highr_0.6             genefilter_1.55.2     randomForest_4.6-12  
-## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
-## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.9         
-## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
-## [79] plyr_1.8.4            magrittr_1.5          R6_2.1.3             
-## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
-## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
-## [88] tibble_1.2            msdata_0.12.1         car_2.1-3            
-## [91] mlbench_2.1-1         grid_3.3.1            FNN_1.1              
-## [94] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
-## [97] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<si>>=
+sessionInfo()
+@
 
 It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
