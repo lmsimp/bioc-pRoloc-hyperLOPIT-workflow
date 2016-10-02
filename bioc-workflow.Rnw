@@ -501,13 +501,6 @@ annotation. The identification of well resolved clusters in the data,
 constitutes an unbiased assessment of the data structure,
 demonstrating the successful separation of sub-cellular clusters.
 
-**TODO** There are other dimensionality reduction methods available in
-the \texttt{plot2D} function, which can be parametrised with the
-\texttt{method} argument.  Advantages, disadvantages? See
-\href{https://gist.github.com/mikelove/74bbf5c41010ae1dc94281cface90d32}
-very interesting gist with intriguing tSNE examples. (This might be
-better to come after markers.)
-
 It is also useful to visualise the relative intensities along the
 gradient to identify channels displaying particularly low yield. This
 can be done using the \texttt{plotDist} and \texttt{boxplot} functions, that plot
@@ -667,9 +660,8 @@ legend("topleft", c("Mitochondrion", "Peroxisome"),
   \label{fig:plotDist2}
 \end{figure}
 
-\textbf{TODO} Possibly mention \texttt{plot3D} and \texttt{mrkHClust}
-(also mentioned later), although these are only available in the
-development version.
+Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
+allows to interactively explore a 3-dimensional plot of the data.
 
 \section*{Replication}
 
@@ -1195,7 +1187,6 @@ this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
 how non-assigned proteins are classified and with what confidence.
 
-
 \textbf{TODO} explain how choosing markers positively/negatively
 affects this, and relation with thresholding.
 
@@ -1698,20 +1689,17 @@ with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
 
 \subsection*{Author contributions}
 
-\textbf{TODO} In order to give appropriate credit to each author of an
-article, the individual contributions of each author to the manuscript
-should be detailed in this section. We recommend using author initials
-and then stating briefly how they contributed.
+All authors developed the software presented in this workflow and
+wrote and approved the manuscript.
 
 \subsection*{Competing interests}
 
-No conflict of interest.
-
+The authors declare that they have no competing interest. 
 
 \subsection*{Grant information}
 
-L.M.B is supported by a Wellcome Trust Technology Development Grant
-(grant number 108467/Z/15/Z). L.G. is supported by the BBSRC Strategic
+LMB is supported by a Wellcome Trust Technology Development Grant
+(grant number 108467/Z/15/Z). LG is supported by the BBSRC Strategic
 Longer and Larger grant (Award BB/L002817/1).
 
 
