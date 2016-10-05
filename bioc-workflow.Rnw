@@ -1190,7 +1190,7 @@ how non-assigned proteins are classified and with what confidence.
 \textbf{TODO} explain how choosing markers positively/negatively
 affects this, and relation with thresholding.
 
-\subsubsection*{Thresholding}\label{sec:thresholding}
+\subsection*{Thresholding}\label{sec:thresholding}
 
 It is common when applying a supervised classification algorithm to
 set a specific score cutoff on which to define new assignments, below
@@ -1329,7 +1329,7 @@ tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 
 
-\subsection*{Transfer learning}
+\section*{Transfer learning}
 
 In addition to high quality MS-based quantitative proteomics data
 there exist a number of other sources of information that are freely
@@ -1602,7 +1602,7 @@ using \texttt{getPredictions} in the same way as demonstrated above
 for the SVM classifier.
 
 
-\subsection*{Unsupervised machine learning}
+\section*{Unsupervised machine learning}
 
 In \texttt{pRoloc} there is functionality for unsupervsied machine
 learning methods. In unsupervised learning, the training data consists
