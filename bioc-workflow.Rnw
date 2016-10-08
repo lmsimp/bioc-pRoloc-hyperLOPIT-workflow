@@ -31,9 +31,9 @@ for clustering, classification and visualisation.
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
 mass spectrometry data. We will focus on a recent pluripotent mouse
-embryonic stem cells experiment \cite{hyper}. Additional annotated and
-pre-formatted datasets from various species are readily available in
-the \Biocexptpkg{pRolocdata} package.
+embryonic stem cells experiment \cite{hyper}. These data, as well as
+additional annotated and pre-formatted datasets from various species
+are readily available in the \Biocexptpkg{pRolocdata} package.
 
 Installation of Bioconductor package is documented in details on the
 \href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
@@ -77,8 +77,8 @@ from the E14TG2a experiment, the first was to target low density
 fractions and the second and third were to emphasis separation of the
 denser organelles.  The intersect of replicates 1 and 2 was treated as
 a 20-plex dataset for the analysis.  As discussed in the manuscript
-\cite{hyper} as it has been shown that combining replicates across
-from different gradients can increase spatial resolution
+\cite{hyper}, it has been shown that combining replicates across from
+different gradients can increase spatial resolution
 \cite{Trotter:2010}. The combination of replicates resulted in 5032
 proteins common in both experiments.
 
@@ -432,7 +432,9 @@ were not profiles in both replicates.
 image2(is.na(combined), col = c("black", "white"),
        main = "Missing values (white cells) after combining replicates")
 @  
-  \caption{Heatmap of missing values}
+\caption{Heatmap of missing values. Note that the features are
+  re-ordered to highlight cluster of proteins with similar numbers of
+  missing values.}
   \label{fig:namap}
 \end{figure}
 
