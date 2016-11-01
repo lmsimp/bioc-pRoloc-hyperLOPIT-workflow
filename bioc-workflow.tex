@@ -279,7 +279,7 @@ etc (see below).
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 1.99.7
+##  MSnbase version: 1.21.8
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -593,7 +593,7 @@ At the R prompt, typing
 \end{kframe}
 \end{knitrout}
 
-will list the 54 datasets that are
+will list the 41 datasets that are
 available in \Biocexptpkg{pRolocdata}.
 
 %% $
@@ -716,7 +716,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 \end{knitrout}
 
 More details above combining data are given in the dedicated
-*Combining MSnSet instances* section of the \Biocpkg{MSnbase}
+\textit{Combining MSnSet instances} section of the \Biocpkg{MSnbase}
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf}{tutorial
   vignette}.
 
@@ -727,11 +727,12 @@ and should be addressed independently of this workflow
 \cite{Webb-Robertson:2015,Lazar:2016}. In \cite{Gatto:2014b}, we have
 described how a high content in missing values in spatial proteomics
 data and their inappropriate handling leads to a reduction of
-sub-cellular resolution. Missing data can be imputated using 
-\Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying the
-imputation method is then determined by a \texttt{methods} parameter. In our
-particular case, missing values are indicative of protein groups that
-were not profiles in both replicates.
+sub-cellular resolution. Missing data can be imputated using
+\Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
+the imputation method is then determined by a \texttt{methods}
+parameter. In our particular case, missing values are indicative of
+protein groups that were not acquired in both replicates (Figures
+\ref{fig:namap}).
 
 \begin{figure}[!ht]
   \centering
@@ -751,8 +752,8 @@ were not profiles in both replicates.
   \label{fig:namap}
 \end{figure}
 
-We prefer to remove proteins that were not assayed in both of our two
-replicated experiments. This is done with the \texttt{filterNA} function that
+We prefer to remove proteins that were not assayed in both replicated
+experiments. This is done with the \texttt{filterNA} function that
 removes features that contain more than a certain proportion (default
 is 0) missing values.
 
@@ -780,20 +781,20 @@ is 0) missing values.
 ## Annotation:  
 ## - - - Processing information - - -
 ## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-## Subset [6725,20][5032,20] Tue Nov  1 11:26:17 2016 
-## Removed features with more than 0 NAs: Tue Nov  1 11:26:17 2016 
-## Dropped featureData's levels Tue Nov  1 11:26:17 2016 
+## Subset [6725,20][5032,20] Tue Nov  1 14:26:12 2016 
+## Removed features with more than 0 NAs: Tue Nov  1 14:26:12 2016 
+## Dropped featureData's levels Tue Nov  1 14:26:12 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-When more than 2 data are to be combined and/or too many proteins were
-not consistently assayed, leading to too many proteins being filtered
-out, we suggest to implement an ensemble of classifiers voting on
-protein-sub-cellular niche membership over the output of several
-experiments (see section *Supervised machine learning* for the
-description of sub-cellular assignments).
+When more than 2 data are to be combined and, as a result, too many
+proteins were not consistently assayed, leading to too many proteins
+being filtered out, we suggest to implement an ensemble of classifiers
+voting on protein-sub-cellular niche membership over the output of
+several experiments (see section \textit{Supervised machine learning}
+for the description of sub-cellular assignments).
 
 \section*{Quality Control}
 
@@ -1003,8 +1004,6 @@ the apparent overlap in the two first PCs.
 \hlkwd{plot2D}\hlstd{(hl,} \hlkwc{dims} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{7}\hlstd{),} \hlkwc{main} \hlstd{=} \hlstr{"Marker resolution along PC 1 and 7"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/plotmarkers-1} 
-
 \end{knitrout}
   \caption{Annotated PCA plots of the \texttt{hl} data.}
   \label{fig:plotmarkers}
@@ -1439,9 +1438,9 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Nov  1 11:26:18 2016 
-## Added markers from  'pdres' marker vector. Tue Nov  1 11:26:19 2016 
-##  MSnbase version: 1.99.7
+## Added markers from  'mrk' marker vector. Tue Nov  1 14:26:14 2016 
+## Added markers from  'pdres' marker vector. Tue Nov  1 14:26:15 2016 
+##  MSnbase version: 1.21.8
 \end{verbatim}
 \begin{alltt}
 \hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
@@ -1485,6 +1484,21 @@ We can plot the results using the \texttt{plot2D} function.
 \begin{alltt}
 \hlcom{## Re-order the colours for the phenoDisco output}
 \hlstd{cl} \hlkwb{<-} \hlkwd{getMarkerClasses}\hlstd{(hl,} \hlstr{"pd"}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##  [1] "40S Ribosome"                         
+##  [2] "60S Ribosome"                         
+##  [3] "Endoplasmic reticulum/Golgi apparatus"
+##  [4] "Mitochondrion"                        
+##  [5] "Phenotype 1"                          
+##  [6] "Phenotype 2"                          
+##  [7] "Phenotype 3"                          
+##  [8] "Phenotype 4"                          
+##  [9] "Phenotype 5"                          
+## [10] "Plasma membrane"                      
+## [11] "Proteasome"
+\end{verbatim}
+\begin{alltt}
 \hlstd{cols} \hlkwb{<-} \hlkwd{getStockcol}\hlstd{()[}\hlkwd{seq}\hlstd{(cl)]}
 \hlstd{ind} \hlkwb{<-} \hlkwd{grep}\hlstd{(}\hlstr{"Pheno"}\hlstd{, cl,} \hlkwc{invert} \hlstd{=} \hlnum{TRUE}\hlstd{)}
 \hlstd{cols[ind]} \hlkwb{<-} \hlkwd{getStockcol}\hlstd{()[}\hlkwd{seq}\hlstd{(cl)][}\hlnum{1}\hlopt{:}\hlkwd{length}\hlstd{(ind)]}
@@ -1499,8 +1513,6 @@ We can plot the results using the \texttt{plot2D} function.
 \hlkwd{addLegend}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{cex} \hlstd{=} \hlnum{.7}\hlstd{,} \hlkwc{col} \hlstd{= cols)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=\textwidth]{figure/plotPDres-1} 
-
 \end{knitrout}
   \caption{Results of the novelty detection algorithm.}
   \label{fig:plotPDres}
@@ -1871,8 +1883,8 @@ using \texttt{plot2D} function.
 \hlkwd{dev.off}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## null device 
-##           1
+## pdf 
+##   3
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2187,9 +2199,9 @@ method for \texttt{"ThetaRegRes"} objects:
 \begin{alltt}
 \hlkwd{plot}\hlstd{(tlopt)}
 \end{alltt}
-\end{kframe}
-\includegraphics[width=.6\textwidth]{figure/plottl-1} 
 
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in .local(x, y, ...): could not find function "{}aes"{}}}\end{kframe}
 \end{knitrout}
   \caption{Visualisation of the transfer learning parameter optimisation procedure.}
   \label{fig:plottl}
@@ -2365,7 +2377,7 @@ the software that lead to failure and/or different results.
 \hlkwd{sessionInfo}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## R version 3.3.1 Patched (2016-08-02 r71022)
+## R Under development (unstable) (2016-05-11 r70599)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 14.04.5 LTS
 ## 
@@ -2382,48 +2394,48 @@ the software that lead to failure and/or different results.
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.11.9    pRoloc_1.13.17       MLInterfaces_1.53.1 
-##  [4] cluster_2.0.5        annotate_1.51.1      XML_3.98-1.4        
-##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.19   
-## [10] MSnbase_1.99.7       ProtGenerics_1.5.1   BiocParallel_1.7.9  
-## [13] mzR_2.7.12           Rcpp_0.12.7          Biobase_2.33.4      
-## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.33    
-## [19] knitr_1.14          
+##  [1] pRolocdata_1.11.0    pRoloc_1.13.5        MLInterfaces_1.53.0 
+##  [4] cluster_2.0.4        annotate_1.51.0      XML_3.98-1.4        
+##  [7] AnnotationDbi_1.35.3 IRanges_2.7.11       S4Vectors_0.11.7    
+## [10] MSnbase_1.21.8       ProtGenerics_1.5.1   BiocParallel_1.7.4  
+## [13] mzR_2.7.3            Rcpp_0.12.5          Biobase_2.33.0      
+## [16] BiocGenerics_0.19.1  gridExtra_2.2.1      BiocStyle_2.1.7     
+## [19] knitr_1.13          
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
+##  [1] minqa_1.2.4           colorspace_1.2-6      hwriter_1.3.2        
 ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
-##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
+##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-15         
 ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
-## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.1        
+## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.4.0        
 ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-71         
-## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
-## [25] vsn_3.41.5            sfsmisc_1.1-0         shiny_0.14.1         
-## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
-## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
-## [34] quantreg_5.29         tools_3.3.1           ggvis_0.4.3          
-## [37] gtable_0.2.0          affy_1.51.1           reshape2_1.4.1       
-## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
+## [19] jsonlite_0.9.22       nloptr_1.0.4          caret_6.0-70         
+## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
+## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.13.2         
+## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-6         
+## [31] limma_3.29.12         formatR_1.4           htmltools_0.3.5      
+## [34] quantreg_5.26         tools_3.4.0           ggvis_0.4.2          
+## [37] gtable_0.2.0          affy_1.51.0           reshape2_1.4.1       
+## [40] dplyr_0.4.3           MALDIquant_1.15       trimcluster_0.1-2    
 ## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
-## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.1.0        
-## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
-## [52] gtools_3.5.0          dendextend_1.3.0      DEoptimR_1.0-6       
-## [55] zlibbioc_1.19.0       MASS_7.3-45           scales_0.4.0         
-## [58] BiocInstaller_1.24.0  pcaMethods_1.65.0     SparseM_1.72         
-## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.29.2       
-## [64] rpart_4.1-10          stringi_1.1.2         RSQLite_1.0.0        
-## [67] highr_0.6             genefilter_1.55.2     randomForest_4.6-12  
-## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
-## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.10        
-## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
-## [79] plyr_1.8.4            magrittr_1.5          R6_2.2.0             
-## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
-## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
-## [88] tibble_1.2            msdata_0.14.0         car_2.1-3            
-## [91] mlbench_2.1-1         grid_3.3.1            FNN_1.1              
-## [94] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
-## [97] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3
+## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.0.0        
+## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.4             
+## [52] gtools_3.5.0          DEoptimR_1.0-4        zlibbioc_1.19.0      
+## [55] MASS_7.3-45           scales_0.4.0          BiocInstaller_1.23.4 
+## [58] pcaMethods_1.65.0     SparseM_1.7           RColorBrewer_1.1-2   
+## [61] ggplot2_2.1.0         biomaRt_2.29.2        rpart_4.1-10         
+## [64] stringi_1.1.1         RSQLite_1.0.0         highr_0.6            
+## [67] genefilter_1.55.2     randomForest_4.6-12   foreach_1.4.3        
+## [70] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
+## [73] rgl_0.95.1441         mzID_1.11.2           evaluate_0.9         
+## [76] lattice_0.20-33       htmlwidgets_0.6       gbm_2.1.1            
+## [79] plyr_1.8.4            magrittr_1.5          R6_2.1.2             
+## [82] DBI_0.4-1             mgcv_1.8-12           survival_2.39-4      
+## [85] RCurl_1.95-4.8        nnet_7.3-12           msdata_0.12.0        
+## [88] car_2.1-2             mlbench_2.1-1         grid_3.4.0           
+## [91] FNN_1.1               threejs_0.2.2         digest_0.6.9         
+## [94] diptest_0.75-7        xtable_1.8-2          httpuv_1.3.3         
+## [97] munsell_0.4.3
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

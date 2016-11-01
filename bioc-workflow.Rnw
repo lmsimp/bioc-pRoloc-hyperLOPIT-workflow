@@ -412,7 +412,7 @@ combined
 @
 
 More details above combining data are given in the dedicated
-*Combining MSnSet instances* section of the \Biocpkg{MSnbase}
+\textit{Combining MSnSet instances} section of the \Biocpkg{MSnbase}
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf}{tutorial
   vignette}.
 
@@ -423,11 +423,12 @@ and should be addressed independently of this workflow
 \cite{Webb-Robertson:2015,Lazar:2016}. In \cite{Gatto:2014b}, we have
 described how a high content in missing values in spatial proteomics
 data and their inappropriate handling leads to a reduction of
-sub-cellular resolution. Missing data can be imputated using 
-\Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying the
-imputation method is then determined by a \texttt{methods} parameter. In our
-particular case, missing values are indicative of protein groups that
-were not profiles in both replicates.
+sub-cellular resolution. Missing data can be imputated using
+\Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
+the imputation method is then determined by a \texttt{methods}
+parameter. In our particular case, missing values are indicative of
+protein groups that were not acquired in both replicates (Figures
+\ref{fig:namap}).
 
 \begin{figure}[!ht]
   \centering
@@ -441,8 +442,8 @@ image2(is.na(combined), col = c("black", "white"),
   \label{fig:namap}
 \end{figure}
 
-We prefer to remove proteins that were not assayed in both of our two
-replicated experiments. This is done with the \texttt{filterNA} function that
+We prefer to remove proteins that were not assayed in both replicated
+experiments. This is done with the \texttt{filterNA} function that
 removes features that contain more than a certain proportion (default
 is 0) missing values.
 
@@ -451,11 +452,11 @@ combined <- filterNA(combined)
 combined
 @
 
-When more than 2 data are to be combined and/or too many proteins were
+When more than 2 data are to be combined and too many proteins were
 not consistently assayed, leading to too many proteins being filtered
 out, we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
-experiments (see section *Supervised machine learning* for the
+experiments (see section \textit{Supervised machine learning} for the
 description of sub-cellular assignments).
 
 \section*{Quality Control}
