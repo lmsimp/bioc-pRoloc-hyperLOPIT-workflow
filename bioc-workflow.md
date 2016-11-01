@@ -82,16 +82,17 @@ fractionation or quantitation (i.e. labelled or label-free) methods.
 The infrastructure: `pRoloc` and `MSnbase` packages {#the-infrastructure-proloc-and-msnbase-packages .unnumbered}
 ---------------------------------------------------
 
-To make use of the full functionality of the software, users need to
+To make use of the full functionality of the software one needs to
 import their data into R and prepare them as an `MSnSet`. The `MSnSet`
 is a dedicated data structure for the efficient manipulation and
 processing of mass spectrometry and proteomics data in R. Figure 1
 illustrates a simplified view of the `MSnSet` structure; there exists 3
-key sub-parts (termed slots) to such a data object: (1) the `exprs` slot
-(short for *expression* data) for storing the quantitation data, (2) the
-`fData` slot (short for *feature*-metadata) for storing the feature
-meta-data, and finally (3) the `pData` slot (short for *pheno*-metadata,
-i.e. sample phenotypic data) for storing the sample meta-data.
+key sub-parts (termed slots) to such a data object: (1) the `exprs`
+(short for *expression* data) slot for storing the quantitation data,
+(2) the `fData` slot (short for *feature*-metadata) for storing the
+feature meta-data, and finally (3) the `pData` slot (short for
+*pheno*-metadata, i.e. sample phenotypic data) for storing the sample
+meta-data.
 
 ![Simplified representation of the `MSnSet` data structure (reproduced
 with permission from the vignette)](./Figures/msnset.png)
@@ -229,7 +230,7 @@ description, number of quantified peptides etc (see below).
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ##  MSnbase version: 1.99.2
+    ##  MSnbase version: 1.99.7
 
 Below, we examine the quantitative information for first 5 proteins. It
 is also possible to access specific rows and columns by naming the
@@ -443,12 +444,12 @@ this by summing each rows for each replicate:
 `  `
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##       0       0       0       0       0       0
+    ##   0.997   0.999   1.000   1.000   1.001   1.003
 
 `  `
 
     ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-    ##       0       0       0       0       0       0
+    ##   0.997   0.999   1.000   1.000   1.001   1.003
 
 We see that some features do not add up exactly to 1 due to rounding
 errors after exporting to intermediate files. These small deviations do
@@ -588,9 +589,9 @@ removes features that contain more than a certain proportion (default is
     ## Annotation:  
     ## - - - Processing information - - -
     ## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-    ## Subset [6725,20][5032,20] Fri Oct  7 10:16:26 2016 
-    ## Removed features with more than 0 NAs: Fri Oct  7 10:16:26 2016 
-    ## Dropped featureData's levels Fri Oct  7 10:16:26 2016 
+    ## Subset [6725,20][5032,20] Tue Nov  1 11:26:17 2016 
+    ## Removed features with more than 0 NAs: Tue Nov  1 11:26:17 2016 
+    ## Dropped featureData's levels Tue Nov  1 11:26:17 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and/or too many proteins were
@@ -1075,9 +1076,9 @@ were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Fri Oct  7 10:16:28 2016 
-    ## Added markers from  'pdres' marker vector. Fri Oct  7 10:16:28 2016 
-    ##  MSnbase version: 1.99.2
+    ## Added markers from  'mrk' marker vector. Tue Nov  1 11:26:18 2016 
+    ## Added markers from  'pdres' marker vector. Tue Nov  1 11:26:19 2016 
+    ##  MSnbase version: 1.99.7
 
 `   `
 
@@ -1797,16 +1798,16 @@ failure and/or different results.
     ## [8] datasets  base     
     ## 
     ## other attached packages:
-    ##  [1] pRolocdata_1.11.9    pRoloc_1.13.15       MLInterfaces_1.53.1 
-    ##  [4] cluster_2.0.4        annotate_1.51.1      XML_3.98-1.4        
-    ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.18   
-    ## [10] MSnbase_1.99.2       ProtGenerics_1.5.1   BiocParallel_1.7.8  
-    ## [13] mzR_2.7.9            Rcpp_0.12.7          Biobase_2.33.4      
+    ##  [1] pRolocdata_1.11.9    pRoloc_1.13.17       MLInterfaces_1.53.1 
+    ##  [4] cluster_2.0.5        annotate_1.51.1      XML_3.98-1.4        
+    ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.19   
+    ## [10] MSnbase_1.99.7       ProtGenerics_1.5.1   BiocParallel_1.7.9  
+    ## [13] mzR_2.7.12           Rcpp_0.12.7          Biobase_2.33.4      
     ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.33    
     ## [19] knitr_1.14          
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] minqa_1.2.4           colorspace_1.2-6      hwriter_1.3.2        
+    ##  [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
     ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
     ##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
     ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
@@ -1814,7 +1815,7 @@ failure and/or different results.
     ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
     ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-71         
     ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
-    ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.14.1         
+    ## [25] vsn_3.41.5            sfsmisc_1.1-0         shiny_0.14.1         
     ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
     ## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
     ## [34] quantreg_5.29         tools_3.3.1           ggvis_0.4.3          
@@ -1825,17 +1826,17 @@ failure and/or different results.
     ## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
     ## [52] gtools_3.5.0          dendextend_1.3.0      DEoptimR_1.0-6       
     ## [55] zlibbioc_1.19.0       MASS_7.3-45           scales_0.4.0         
-    ## [58] BiocInstaller_1.23.9  pcaMethods_1.65.0     SparseM_1.72         
+    ## [58] BiocInstaller_1.24.0  pcaMethods_1.65.0     SparseM_1.72         
     ## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.29.2       
     ## [64] rpart_4.1-10          stringi_1.1.2         RSQLite_1.0.0        
     ## [67] highr_0.6             genefilter_1.55.2     randomForest_4.6-12  
     ## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
-    ## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.9         
+    ## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.10        
     ## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
     ## [79] plyr_1.8.4            magrittr_1.5          R6_2.2.0             
     ## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
     ## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
-    ## [88] tibble_1.2            msdata_0.12.3         car_2.1-3            
+    ## [88] tibble_1.2            msdata_0.14.0         car_2.1-3            
     ## [91] mlbench_2.1-1         grid_3.3.1            FNN_1.1              
     ## [94] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
     ## [97] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3

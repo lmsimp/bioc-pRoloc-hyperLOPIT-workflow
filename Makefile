@@ -1,16 +1,22 @@
+setvars:
+ifeq (${R_HOME},)
+R_HOME= $(shell R RHOME)
+endif
+
+
 all:
 	make bioc-workflow.tex
 	make bioc-workflow.md
 	make bioc-workflow.R
 
 %.tex: %.Rnw
-	/opt/Rpatched/lib/R/bin/Rscript -e 'require("knitr"); knit("$^")'
+	"$(R_HOME)/bin/Rscript" -e 'require("knitr"); knit("$^")'
 
 %.md: %.tex
 	pandoc $^ -o $@ 
 
 %.R: %.Rnw
-	/opt/Rpatched/lib/R/bin/Rscript -e 'require("knitr"); purl("$^")'
+	"$(R_HOME)/bin/Rscript" -e 'require("knitr"); purl("$^")'
 
 clean:
 	rm -f *~
