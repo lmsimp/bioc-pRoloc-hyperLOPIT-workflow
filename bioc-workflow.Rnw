@@ -6,7 +6,7 @@ suppressPackageStartupMessages(library("gridExtra"))
 suppressPackageStartupMessages(library("MSnbase"))
 suppressPackageStartupMessages(library("pRoloc"))
 suppressPackageStartupMessages(library("pRolocdata"))
-cache <- TRUE
+cache <- FALSE
 @ 
 
 \section*{Introduction}
@@ -485,11 +485,12 @@ summarising complex experimental information in one figure, to get an
 simplified overview of the data.
 
 In the code chunk below we produce a PCA plot of the mouse stem cell
-dataset. One point on the plot represents one protein. We can indeed
-see several distinct protein clusters. We specify \texttt{fcol = NULL}, which
-means not to consider any feature variable to annotate the features
-(proteins) with colours. We will see later how to use this to annotate
-the PCA plot with prior information about sub-cellular localisation. 
+dataset (Figure \ref{fig:pcahl}). One point on the plot represents one
+protein. We can indeed see several distinct protein clusters. We
+specify \texttt{fcol = NULL}, which means not to consider any feature
+variable to annotate the features (proteins) with colours. We will see
+later how to use this to annotate the PCA plot with prior information
+about sub-cellular localisation.
 
 \begin{figure}[!ht]
   \centering
@@ -509,12 +510,13 @@ demonstrating the successful separation of sub-cellular clusters.
 
 It is also useful to visualise the relative intensities along the
 gradient to identify channels displaying particularly low yield. This
-can be done using the \texttt{plotDist} and \texttt{boxplot} functions, that plot
-the protein profiles occupancy along the gradient (we also display the
-mean channel intensities) and a \texttt{boxplot} of the column intensities.
-In the two plots displayed below, we re-order the TMT channles to pair
-corresponding channels in the two replicates (rather than ordering
-the channels by replicate).
+can be done using the \texttt{plotDist} and \texttt{boxplot}
+functions, that plot the protein profiles occupancy along the gradient
+(we also display the mean channel intensities) and a \texttt{boxplot}
+of the column intensities.  In the two plots displayed on figure
+\ref{fig:qcbx}, we re-order the TMT channles to pair corresponding
+channels in the two replicates (rather than ordering the channels by
+replicate).
 
 \begin{figure}[!ht]
   \centering
@@ -534,21 +536,21 @@ boxplot(exprs(hl[, o]), las = 2)
 
 In the context of spatial proteomics, a marker protein is defined as a
 well-known resident of a specific sub-cellular niche in a species
-*and* condition of interest. Applying this to machine learning (ML),
-and specifically supervised learning, for the task of protein
-localisation prediction, these markers constitute the labelled training
-data to use as input to a classification analyses. Defining well-known
-residents, and obtaining labelled training data for ML analyses can be
-time consuming, but it is important to define markers that are
-representative of the multivariate data space and on which a
-classifier will be trained and generated. \Biocpkg{pRoloc}
-provides a convenience function, \texttt{addMarkers}, to directly add markers
-to a \texttt{MSnSet} object, as demonstrated in the code chunk below. These
-marker sets can be accessed using the \texttt{pRolocmarkers()}
-function. Marker sets are stored as a simple named vector in R, and
-originate from in-house user-defined sets of markers or from previous
-published studies \cite{Gatto:2014b}, which are continuosly updated and 
-integrated. 
+\textit{and} condition of interest. Applying this to machine learning
+(ML), and specifically supervised learning, for the task of protein
+localisation prediction, these markers constitute the labelled
+training data to use as input to a classification analyses. Defining
+well-known residents, and obtaining labelled training data for ML
+analyses can be time consuming, but it is important to define markers
+that are representative of the multivariate data space and on which a
+classifier will be trained and generated. \Biocpkg{pRoloc} provides a
+convenience function, \texttt{addMarkers}, to directly add markers to
+a \texttt{MSnSet} object, as demonstrated in the code chunk
+below. These marker sets can be accessed using the
+\texttt{pRolocmarkers()} function. Marker sets are stored as a simple
+named vector in R, and originate from in-house user-defined sets of
+markers or from previous published studies \cite{Gatto:2014b}, which
+are continuosly updated and integrated.
 
 <<markers>>=
 ## List available marker sets
@@ -564,7 +566,7 @@ it is straightforward to match names between the markers and
 the \texttt{MSnSet} instance using the \texttt{addMarkers} function.
 
 
-<<addmrkers>>=
+<<addmarkers>>=
 ## Use mouse markers
 mrk <- pRolocmarkers(species = "mmus")
 head(mrk)
@@ -584,26 +586,27 @@ performed using \Biocpkg{biomaRt}, the Bioconductor
   resouces} or any conversion softwares available online.
 
 We now visualise these annotations along the PCA plot using the
-\texttt{plot2D} function and then use the \texttt{addLegend} function to map the
-marker classes to the pre-defined colours. We also display the data
-along the first and seventh PCs using the \texttt{dims} argument. Note that
-in this second call to the \texttt{plot2D} function, we have omitted the
-\texttt{fcol} argument, as the \texttt{"markers"} feature variable name is the
-default value. We choose to display PCs 1 and 7 to illustrate that
-while upper principal components explain much less variability in the
-data (2.23\% for PC7, as opposed to 48.41\% for PC1), we see that the
-mitochondrial and peroxisome clusters can be differenciated, despite
-the apparent overlap in the two first PCs.
+\texttt{plot2D} function and then use the \texttt{addLegend} function
+to map the marker classes to the pre-defined colours. We also display
+the data along the first and seventh PCs using the \texttt{dims}
+argument. Note that in these calls to the \texttt{plot2D} function, we
+have omitted the \texttt{fcol} argument and use of the default
+\texttt{"markers"} feature variable to annotated the plot. We choose
+to display PCs 1 and 7 to illustrate that while upper principal
+components explain much less variability in the data (2.23\% for PC7,
+as opposed to 48.41\% for PC1), we see that the mitochondrial (purple)
+and peroxisome (dark blue) clusters can be differenciated, despite the
+apparent overlap in the two first PCs.
 
 \begin{figure}[!ht]
   \centering
-<<plotmarkers, fig.width=12, out.width="\\textwidth", fig.asp=1/2>>=
+<<plotmarkers, out.width="\\textwidth", fig.width=12, fig.asp=1/2>>=
 par(mfrow = c(1, 2))
 plot2D(hl, main = "pRolocmarkers for mouse")
-addLegend(hl, cex = .7)
+addLegend(hl, cex = .6)
 plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 @  
-  \caption{Annotated PCA plots of the \texttt{hl} data.}
+  \caption{Annotated PCA plots of the \texttt{hl} dataset.}
   \label{fig:plotmarkers}
 \end{figure}
 
@@ -617,13 +620,13 @@ can of course be changed, as described in the \texttt{setStockcol} manual
 page.
 
 As demonstrated in \cite{hyper} and illustrated in the PCA plot above,
-the Golgi apparatus proteins display a dynamic pattern, noting sets of
-Golgi marker proteins that are distributed amongst other subcellular
-structures, an observation supported by microscopy. As such, we are
-going to reset the annotation of Golgi markers to unknown using the
-\texttt{fDataTounknown} function. It is often used to replace empty
-strings ("") or missing values in the markers definition to a common
-definition of *unknown localisation*.
+the Golgi apparatus proteins (brown) display a dynamic pattern, noting
+sets of Golgi marker proteins that are distributed amongst other
+subcellular structures, an observation supported by microscopy. As
+such, we are going to reset the annotation of Golgi markers to unknown
+using the \texttt{fDataTounknown} function. It is often used to
+replace empty strings ("") or missing values in the markers definition
+to a common definition of \textit{unknown} localisation.
 
 <<removeGA>>=
 hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
@@ -637,7 +640,7 @@ note however that automatic retrieval of sub-cellular localisation
 information, from \Biocpkg{pRoloc} or elsewhere, is only the
 beginning in defining a marker set for downstream analyses. Expert
 curation is vital to check that any annotation added is in the correct
-context for the the biological question under investigation.
+context for the biological question under investigation.
 
 Another useful visualisation that relies on marker annotation is the
 representation of the protein profiles occupancy along the gradient
@@ -645,10 +648,11 @@ using the \texttt{plotDist} function. While the PCA plot enables to
 efficiently visualise the complete dataset and assess the relative
 separation of different sub-cellular niches, comparing profiles of a
 few marker clusters is useful to assess how exactly they differ (in
-terms of peak channels, for example). Below, we plot the profile of
-the mitochondrial and peroxisome markers to highlight the differences
-in profiles between these two sets of markers along the 6th and 7th
-channels, as represented above along the 7th PC on the PCA plot.
+terms of peak channels, for example). On figure \ref{fig:plotDist2},
+we plot the profile of the mitochondrial and peroxisome markers to
+highlight the differences in profiles between these two sets of
+markers along the 6th and 7th channels, as represented above along the
+7th PC on the PCA plot on figure \ref{plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -1478,7 +1482,6 @@ run on the University of Cambridge HPC using 256 workers).
 
 To remove the 4 classes and create a new column of markers in the
 feature data called \texttt{tlmarkers} to use for the analysis:
-
 
 <<loadgocc, include=FALSE>>=
 gofile <- dir(extdatadir, full.names = TRUE,

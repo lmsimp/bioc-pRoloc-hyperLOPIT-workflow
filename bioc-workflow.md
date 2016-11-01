@@ -537,11 +537,11 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  1 15:36:48 2016 
     ##  MSnbase version: 1.21.7
 
-More details above combining data are given in the dedicated \*Combining
-MSnSet instances\* section of the [tutorial
+More details above combining data are given in the dedicated *Combining
+MSnSet instances* section of the [tutorial
 vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
 
 ### Missing data {#missing-data .unnumbered}
@@ -554,7 +554,8 @@ their inappropriate handling leads to a reduction of sub-cellular
 resolution. Missing data can be imputated using ’s `impute` function.
 The method underlying the imputation method is then determined by a
 `methods` parameter. In our particular case, missing values are
-indicative of protein groups that were not profiles in both replicates.
+indicative of protein groups that were not acquired in both replicates
+(Figures [fig:namap]).
 
 `    `\
 `         `
@@ -565,10 +566,10 @@ values.](figure/namap-1)
 
 [fig:namap]
 
-We prefer to remove proteins that were not assayed in both of our two
-replicated experiments. This is done with the `filterNA` function that
-removes features that contain more than a certain proportion (default is
-0) missing values.
+We prefer to remove proteins that were not assayed in both replicated
+experiments. This is done with the `filterNA` function that removes
+features that contain more than a certain proportion (default is 0)
+missing values.
 
 `  `\
 
@@ -588,17 +589,17 @@ removes features that contain more than a certain proportion (default is
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-    ## Subset [6725,20][5032,20] Tue Nov  1 11:26:17 2016 
-    ## Removed features with more than 0 NAs: Tue Nov  1 11:26:17 2016 
-    ## Dropped featureData's levels Tue Nov  1 11:26:17 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  1 15:36:48 2016 
+    ## Subset [6725,20][5032,20] Tue Nov  1 15:36:49 2016 
+    ## Removed features with more than 0 NAs: Tue Nov  1 15:36:49 2016 
+    ## Dropped featureData's levels Tue Nov  1 15:36:49 2016 
     ##  MSnbase version: 1.21.7
 
-When more than 2 data are to be combined and/or too many proteins were
-not consistently assayed, leading to too many proteins being filtered
-out, we suggest to implement an ensemble of classifiers voting on
+When more than 2 data are to be combined and too many proteins were not
+consistently assayed, leading to too many proteins being filtered out,
+we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
-experiments (see section \*Supervised machine learning\* for the
+experiments (see section *Supervised machine learning* for the
 description of sub-cellular assignments).
 
 Quality Control {#quality-control .unnumbered}
@@ -626,11 +627,12 @@ of separation, it is extremely useful summarising complex experimental
 information in one figure, to get an simplified overview of the data.
 
 In the code chunk below we produce a PCA plot of the mouse stem cell
-dataset. One point on the plot represents one protein. We can indeed see
-several distinct protein clusters. We specify `fcol = NULL`, which means
-not to consider any feature variable to annotate the features (proteins)
-with colours. We will see later how to use this to annotate the PCA plot
-with prior information about sub-cellular localisation.
+dataset (Figure [fig:pcahl]). One point on the plot represents one
+protein. We can indeed see several distinct protein clusters. We specify
+`fcol = NULL`, which means not to consider any feature variable to
+annotate the features (proteins) with colours. We will see later how to
+use this to annotate the PCA plot with prior information about
+sub-cellular localisation.
 
 \
 `      `
@@ -650,9 +652,9 @@ gradient to identify channels displaying particularly low yield. This
 can be done using the `plotDist` and `boxplot` functions, that plot the
 protein profiles occupancy along the gradient (we also display the mean
 channel intensities) and a `boxplot` of the column intensities. In the
-two plots displayed below, we re-order the TMT channles to pair
-corresponding channels in the two replicates (rather than ordering the
-channels by replicate).
+two plots displayed on figure [fig:qcbx], we re-order the TMT channles
+to pair corresponding channels in the two replicates (rather than
+ordering the channels by replicate).
 
 `   `\
 `  `\
@@ -669,21 +671,21 @@ Markers {#markers .unnumbered}
 =======
 
 In the context of spatial proteomics, a marker protein is defined as a
-well-known resident of a specific sub-cellular niche in a species
-\*and\* condition of interest. Applying this to machine learning (ML),
-and specifically supervised learning, for the task of protein
-localisation prediction, these markers constitute the labelled training
-data to use as input to a classification analyses. Defining well-known
-residents, and obtaining labelled training data for ML analyses can be
-time consuming, but it is important to define markers that are
-representative of the multivariate data space and on which a classifier
-will be trained and generated. provides a convenience function,
-`addMarkers`, to directly add markers to a `MSnSet` object, as
-demonstrated in the code chunk below. These marker sets can be accessed
-using the `pRolocmarkers()` function. Marker sets are stored as a simple
-named vector in R, and originate from in-house user-defined sets of
-markers or from previous published studies @Gatto:2014b, which are
-continuosly updated and integrated.
+well-known resident of a specific sub-cellular niche in a species *and*
+condition of interest. Applying this to machine learning (ML), and
+specifically supervised learning, for the task of protein localisation
+prediction, these markers constitute the labelled training data to use
+as input to a classification analyses. Defining well-known residents,
+and obtaining labelled training data for ML analyses can be time
+consuming, but it is important to define markers that are representative
+of the multivariate data space and on which a classifier will be trained
+and generated. provides a convenience function, `addMarkers`, to
+directly add markers to a `MSnSet` object, as demonstrated in the code
+chunk below. These marker sets can be accessed using the
+`pRolocmarkers()` function. Marker sets are stored as a simple named
+vector in R, and originate from in-house user-defined sets of markers or
+from previous published studies @Gatto:2014b, which are continuosly
+updated and integrated.
 
 \
 
@@ -751,21 +753,21 @@ or any conversion softwares available online.
 We now visualise these annotations along the PCA plot using the `plot2D`
 function and then use the `addLegend` function to map the marker classes
 to the pre-defined colours. We also display the data along the first and
-seventh PCs using the `dims` argument. Note that in this second call to
-the `plot2D` function, we have omitted the `fcol` argument, as the
-`markers` feature variable name is the default value. We choose to
+seventh PCs using the `dims` argument. Note that in these calls to the
+`plot2D` function, we have omitted the `fcol` argument and use of the
+default `markers` feature variable to annotated the plot. We choose to
 display PCs 1 and 7 to illustrate that while upper principal components
 explain much less variability in the data (2.23% for PC7, as opposed to
-48.41% for PC1), we see that the mitochondrial and peroxisome clusters
-can be differenciated, despite the apparent overlap in the two first
-PCs.
+48.41% for PC1), we see that the mitochondrial (purple) and peroxisome
+(dark blue) clusters can be differenciated, despite the apparent overlap
+in the two first PCs.
 
 `   `\
 `   `\
 `   `\
 `       `
 
-![Annotated PCA plots of the `hl` data.](figure/plotmarkers-1)
+![Annotated PCA plots of the `hl` dataset.](figure/plotmarkers-1)
 
 [fig:plotmarkers]
 
@@ -783,7 +785,7 @@ structures, an observation supported by microscopy. As such, we are
 going to reset the annotation of Golgi markers to unknown using the
 `fDataTounknown` function. It is often used to replace empty strings
 (“”) or missing values in the markers definition to a common definition
-of \*unknown localisation\*.
+of *unknown localisation*.
 
 `        `\
 
@@ -1076,8 +1078,8 @@ were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Tue Nov  1 11:26:18 2016 
-    ## Added markers from  'pdres' marker vector. Tue Nov  1 11:26:19 2016 
+    ## Added markers from  'mrk' marker vector. Tue Nov  1 15:36:51 2016 
+    ## Added markers from  'pdres' marker vector. Tue Nov  1 15:36:52 2016 
     ##  MSnbase version: 1.99.7
 
 `   `
@@ -1372,15 +1374,15 @@ unknown.
 `                  `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4383808               0.3028615               0.3856431 
+    ##               0.4339744               0.3049617               0.3948761 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6859801               0.5995991               0.4350839 
+    ##               0.6791199               0.5991537               0.4215955 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4307964               0.5935764               0.9500433 
+    ##               0.4231925               0.5967188               0.9503089 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7953738               0.7087561               0.3155507 
+    ##               0.7958067               0.7090930               0.3159709 
     ##         Plasma membrane              Proteasome 
-    ##               0.7171990               0.4185577
+    ##               0.7127060               0.4145424
 
 `  `\
 `                       `\
@@ -1390,15 +1392,15 @@ unknown.
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      87                     169                      88 
+    ##                      84                     170                      89 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     298                     475                      98 
+    ##                     296                     480                      99 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      31                     123                     521 
+    ##                      27                     125                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     344                      38 
+    ##                     230                     342                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     319                     157                    2055
+    ##                     312                     159                    2058
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
