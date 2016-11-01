@@ -20,8 +20,9 @@ visualisation.
 In this workflow, we will describe how to prepare the spatial proteomics
 data starting from a spreadsheet containing quantitative mass
 spectrometry data. We will focus on a recent pluripotent mouse embryonic
-stem cells experiment @hyper. Additional annotated and pre-formatted
-datasets from various species are readily available in the package.
+stem cells experiment @hyper. These data, as well as additional
+annotated and pre-formatted datasets from various species are readily
+available in the package.
 
 Installation of Bioconductor package is documented in details on the
 [Bioconductor installation help
@@ -63,10 +64,10 @@ accuracy and precision. Three biological replicates were generated from
 the E14TG2a experiment, the first was to target low density fractions
 and the second and third were to emphasis separation of the denser
 organelles. The intersect of replicates 1 and 2 was treated as a 20-plex
-dataset for the analysis. As discussed in the manuscript @hyper as it
-has been shown that combining replicates across from different gradients
-can increase spatial resolution @Trotter:2010. The combination of
-replicates resulted in 5032 proteins common in both experiments.
+dataset for the analysis. As discussed in the manuscript @hyper, it has
+been shown that combining replicates across from different gradients can
+increase spatial resolution @Trotter:2010. The combination of replicates
+resulted in 5032 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
 structured and annotated computational object from the experiment
@@ -81,15 +82,16 @@ fractionation or quantitation (i.e. labelled or label-free) methods.
 The infrastructure: `pRoloc` and `MSnbase` packages {#the-infrastructure-proloc-and-msnbase-packages .unnumbered}
 ---------------------------------------------------
 
-To make use of the full functionality of the software one needs to
+To make use of the full functionality of the software, users need to
 import their data into R and prepare them as an `MSnSet`. The `MSnSet`
 is a dedicated data structure for the efficient manipulation and
 processing of mass spectrometry and proteomics data in R. Figure 1
 illustrates a simplified view of the `MSnSet` structure; there exists 3
 key sub-parts (termed slots) to such a data object: (1) the `exprs` slot
-for storing the quantitation data, (2) the `fData` slot for storing the
-feature meta-data, and finally (3) the `pData` slot for storing the
-sample meta-data.
+(short for *expression* data) for storing the quantitation data, (2) the
+`fData` slot (short for *feature*-metadata) for storing the feature
+meta-data, and finally (3) the `pData` slot (short for *pheno*-metadata,
+i.e. sample phenotypic data) for storing the sample meta-data.
 
 ![Simplified representation of the `MSnSet` data structure (reproduced
 with permission from the vignette)](./Figures/msnset.png)
@@ -103,8 +105,8 @@ There are a number of ways to import quantitation data and create an
 `MSnSet` instance. All methods are described in the [input/output
 capabilities
 vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf).
-One suggested simple method is to use the function `readMSnSet2` in .
-The function takes a single spreadsheet as input and extracts the
+One suggested simple method is to use the function `readMSnSet2`. The
+function takes a single spreadsheet filename as input and extracts the
 columns containing the quantitation data, as identified by the argument
 `ecol`, to create the expression data, while the other columns in the
 spreadsheet are appended to the feature meta-data slot. By example, in
@@ -113,7 +115,8 @@ quantitation data from the intersect of replicates 1 and 2 of the mouse
 map @hyper, using the `readMSnSet2` function. The data is as available
 online with the manuscript (see tab 2 of the `xlsx` supplementary data
 set 1 in @hyper, which should be exported as a text-based spreadsheet).
-It is also available as a `csv` in the Bioconductor data package.
+It is also available as a `csv` in the Bioconductor data package, which
+we make use of below.
 
 To use the `readMSnSet2` function, as a minimum one must specify the
 file path to the data and which columns of the spreadsheet contain
@@ -130,8 +133,7 @@ path, which will vary from computer to computer).
     ## [1] "hyperLOPIT-SIData-ms3-rep12-intersect.csv.gz"
 
 Note that the file is compressed (as indicated by the `gz`, for `gzip`,
-extension), and will be decompressed on-the-fly when read into R later
-on.
+extension), and will be decompressed on-the-fly when read into R.
 
 The spreadsheet that was deposited by the authors contains two headers,
 with the second header containing information about where the
@@ -556,7 +558,9 @@ indicative of protein groups that were not profiles in both replicates.
 `    `\
 `         `
 
-![Heatmap of missing values](figure/namap-1)
+![Heatmap of missing values. Note that the features are re-ordered to
+highlight cluster of proteins with similar numbers of missing
+values.](figure/namap-1)
 
 [fig:namap]
 
@@ -584,9 +588,9 @@ removes features that contain more than a certain proportion (default is
     ## Annotation:  
     ## - - - Processing information - - -
     ## Combined [6725,20] and [6268,10] MSnSets Thu Sep 29 20:32:05 2016 
-    ## Subset [6725,20][5032,20] Wed Oct  5 09:13:01 2016 
-    ## Removed features with more than 0 NAs: Wed Oct  5 09:13:01 2016 
-    ## Dropped featureData's levels Wed Oct  5 09:13:01 2016 
+    ## Subset [6725,20][5032,20] Fri Oct  7 10:16:26 2016 
+    ## Removed features with more than 0 NAs: Fri Oct  7 10:16:26 2016 
+    ## Dropped featureData's levels Fri Oct  7 10:16:26 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and/or too many proteins were
@@ -1071,8 +1075,8 @@ were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Wed Oct  5 09:13:02 2016 
-    ## Added markers from  'pdres' marker vector. Wed Oct  5 09:13:03 2016 
+    ## Added markers from  'mrk' marker vector. Fri Oct  7 10:16:28 2016 
+    ## Added markers from  'pdres' marker vector. Fri Oct  7 10:16:28 2016 
     ##  MSnbase version: 1.99.2
 
 `   `
@@ -1302,7 +1306,8 @@ non-assigned proteins are classified and with what confidence.
 **TODO** explain how choosing markers positively/negatively affects
 this, and relation with thresholding.
 
-### Thresholding {#sec:thresholding .unnumbered}
+Thresholding {#sec:thresholding .unnumbered}
+------------
 
 It is common when applying a supervised classification algorithm to set
 a specific score cutoff on which to define new assignments, below which
@@ -1445,7 +1450,7 @@ users to the tutorial
 [vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
 
 Transfer learning {#transfer-learning .unnumbered}
------------------
+=================
 
 In addition to high quality MS-based quantitative proteomics data there
 exist a number of other sources of information that are freely available
@@ -1706,7 +1711,7 @@ predictions obtained using `getPredictions` in the same way as
 demonstrated above for the SVM classifier.
 
 Unsupervised machine learning {#unsupervised-machine-learning .unnumbered}
------------------------------
+=============================
 
 In `pRoloc` there is functionality for unsupervsied machine learning
 methods. In unsupervised learning, the training data consists of a set
@@ -1794,10 +1799,10 @@ failure and/or different results.
     ## other attached packages:
     ##  [1] pRolocdata_1.11.9    pRoloc_1.13.15       MLInterfaces_1.53.1 
     ##  [4] cluster_2.0.4        annotate_1.51.1      XML_3.98-1.4        
-    ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.15       S4Vectors_0.11.17   
+    ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.18   
     ## [10] MSnbase_1.99.2       ProtGenerics_1.5.1   BiocParallel_1.7.8  
-    ## [13] mzR_2.7.6            Rcpp_0.12.7          Biobase_2.33.3      
-    ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.32    
+    ## [13] mzR_2.7.9            Rcpp_0.12.7          Biobase_2.33.4      
+    ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.33    
     ## [19] knitr_1.14          
     ## 
     ## loaded via a namespace (and not attached):
@@ -1805,11 +1810,11 @@ failure and/or different results.
     ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
     ##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
     ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
-    ## [13] mvtnorm_1.0-5         codetools_0.2-14      splines_3.3.1        
+    ## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.1        
     ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
     ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-71         
-    ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-24       
-    ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.14           
+    ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
+    ## [25] vsn_3.41.0            sfsmisc_1.1-0         shiny_0.14.1         
     ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
     ## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
     ## [34] quantreg_5.29         tools_3.3.1           ggvis_0.4.3          
@@ -1822,15 +1827,15 @@ failure and/or different results.
     ## [55] zlibbioc_1.19.0       MASS_7.3-45           scales_0.4.0         
     ## [58] BiocInstaller_1.23.9  pcaMethods_1.65.0     SparseM_1.72         
     ## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.29.2       
-    ## [64] rpart_4.1-10          stringi_1.1.1         RSQLite_1.0.0        
+    ## [64] rpart_4.1-10          stringi_1.1.2         RSQLite_1.0.0        
     ## [67] highr_0.6             genefilter_1.55.2     randomForest_4.6-12  
     ## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
     ## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.9         
     ## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
-    ## [79] plyr_1.8.4            magrittr_1.5          R6_2.1.3             
+    ## [79] plyr_1.8.4            magrittr_1.5          R6_2.2.0             
     ## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
     ## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
-    ## [88] tibble_1.2            msdata_0.12.2         car_2.1-3            
+    ## [88] tibble_1.2            msdata_0.12.3         car_2.1-3            
     ## [91] mlbench_2.1-1         grid_3.3.1            FNN_1.1              
     ## [94] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
     ## [97] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3

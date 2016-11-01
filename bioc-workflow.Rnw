@@ -53,7 +53,7 @@ following the
   guidelines}. Questions can be tagged with specific package names or
 keywords. For more general information about mass spectrometry and
 proteomics, the readers are invited to read the
-\Biocexptpkg{"RforProteomics"} package vignettes and associated
+\Biocexptpkg{RforProteomics} package vignettes and associated
 papers \cite{Gatto:2014,Gatto:2015}.
 
 
@@ -96,15 +96,18 @@ methods.
 
 \subsection*{The infrastructure: \texttt{pRoloc} and \texttt{MSnbase} packages}
 
-To make use of the full functionality of the \Biocpkg{pRoloc}
-software one needs to import their data into R and prepare them as an
-\texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for the efficient
-manipulation and processing of mass spectrometry and proteomics data
-in R. Figure 1 illustrates a simplified view of the \texttt{MSnSet}
-structure; there exists 3 key sub-parts (termed slots) to such a data
-object: (1) the \texttt{exprs} slot for storing the quantitation data, (2)
-the \texttt{fData} slot for storing the feature meta-data, and finally (3)
-the \texttt{pData} slot for storing the sample meta-data.
+To make use of the full functionality of the \Biocpkg{pRoloc} software
+one needs to import their data into R and prepare them as an
+\texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for
+the efficient manipulation and processing of mass spectrometry and
+proteomics data in R. Figure 1 illustrates a simplified view of the
+\texttt{MSnSet} structure; there exists 3 key sub-parts (termed slots)
+to such a data object: (1) the \texttt{exprs} (short for
+\textit{expression} data) slot for storing the quantitation data, (2)
+the \texttt{fData} slot (short for \textit{feature}-metadata) for
+storing the feature meta-data, and finally (3) the \texttt{pData} slot
+(short for \textit{pheno}-metadata, i.e. sample phenotypic data) for
+storing the sample meta-data.
 
 \begin{figure}[!ht]
   \centering
@@ -122,19 +125,19 @@ There are a number of ways to import quantitation data and create an
 \Biocpkg{MSnbase}
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf}{input/output
   capabilities vignette}. One suggested simple method is to use the
-function \texttt{readMSnSet2} in \Biocpkg{MSnbase}. The function
-takes a single spreadsheet as input and extracts the columns
-containing the quantitation data, as identified by the argument
-\texttt{ecol}, to create the expression data, while the other columns
-in the spreadsheet are appended to the feature meta-data slot.  By
-example, in the code chunk below we read in the \texttt{csv}
-spreadsheet containing the quantitation data from the intersect of
-replicates 1 and 2 of the mouse map \cite{hyper}, using the
-\texttt{readMSnSet2} function. The data is as available online with
-the manuscript (see tab 2 of the \texttt{xlsx} supplementary data set
-1 in \cite{hyper}, which should be exported as a text-based
-spreadsheet). It is also available as a \texttt{csv} in the
-Bioconductor \Biocexptpkg{pRolocdata} data package.
+function \texttt{readMSnSet2}. The function takes a single spreadsheet
+filename as input and extracts the columns containing the quantitation
+data, as identified by the argument \texttt{ecol}, to create the
+expression data, while the other columns in the spreadsheet are
+appended to the feature meta-data slot.  By example, in the code chunk
+below we read in the \texttt{csv} spreadsheet containing the
+quantitation data from the intersect of replicates 1 and 2 of the
+mouse map \cite{hyper}, using the \texttt{readMSnSet2} function. The
+data is as available online with the manuscript (see tab 2 of the
+\texttt{xlsx} supplementary data set 1 in \cite{hyper}, which should
+be exported as a text-based spreadsheet). It is also available as a
+\texttt{csv} in the Bioconductor \Biocexptpkg{pRolocdata} data
+package, which we make use of below.
 
 To use the \texttt{readMSnSet2} function, as a minimum one must specify the
 file path to the data and which columns of the spreadsheet contain
@@ -154,8 +157,8 @@ basename(csvfile)
 @
 
 Note that the file is compressed (as indicated by the \texttt{gz}, for
-\texttt{gzip}, extension), and will be decompressed on-the-fly when read into
-R later on.
+\texttt{gzip}, extension), and will be decompressed on-the-fly when
+read into R.
 
 The spreadsheet that was deposited by the authors contains two
 headers, with the second header containing information about where the
@@ -325,8 +328,8 @@ to 1) across the 10 channels for each replicate respectively. We can
 verify this by summing each rows for each replicate:
 
 <<normcheck>>=
-summary(rowSums(exprs(hl[, hl$replicate == 1])))
-summary(rowSums(exprs(hl[, hl$replicate == 2])))
+summary(rowSums(exprs(hl[, hl$Replicate == 1])))
+summary(rowSums(exprs(hl[, hl$Replicate == 2])))
 @
 
 We see that some features do not add up exactly to 1 due to rounding
