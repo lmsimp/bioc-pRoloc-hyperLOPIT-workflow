@@ -2,6 +2,7 @@
 <<env, echo=FALSE, warning=FALSE>>=
 library("BiocStyle")
 suppressPackageStartupMessages(library("knitr"))
+suppressPackageStartupMessages(library("xtable"))
 suppressPackageStartupMessages(library("gridExtra"))
 suppressPackageStartupMessages(library("MSnbase"))
 suppressPackageStartupMessages(library("pRoloc"))
@@ -652,7 +653,7 @@ terms of peak channels, for example). On figure \ref{fig:plotDist2},
 we plot the profile of the mitochondrial and peroxisome markers to
 highlight the differences in profiles between these two sets of
 markers along the 6th and 7th channels, as represented above along the
-7th PC on the PCA plot on figure \ref{plotmarkers}.
+7th PC on the PCA plot on figure \ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -685,67 +686,19 @@ particular when these resolve different subcellular niches.
 
 Direct comparisons of individual channels in replicated experiments
 does not provide an adequate, goal-driven assessment of different
-experiments. Indeed, due to the nature of the experiment and gradient fraction
-collection, the quantitative channels 
-do not correspond to identical selected fractions along the
-gradient. As can be seen in the table below (taken from the
-\texttt{hyperLOPIT}'s \texttt{pData}, focusing on channels 7 to 10), different sets
-of gradient fractions are pooled to obtain enough material and optimise
-acurate quantitation.
+experiments. Indeed, due to the nature of the experiment and gradient
+fraction collection, the quantitative channels do not correspond to
+identical selected fractions along the gradient. As can be seen in the
+table below (taken from the \texttt{hl}'s \texttt{pData}, focusing on
+channels 7 to 10), different sets of gradient fractions are pooled to
+obtain enough material and optimise acurate quantitation.
 
-<<pdtab, echo=FALSE, eval = FALSE>>=
+<<pdtab, echo=FALSE, eval = TRUE, results = 'asis'>>=
 i <- c(2, 3, 4, 13, 14)
-pData(hl)[i, ]
+xtable(pData(hl)[i, ], 
+       caption = "Differences in gradient fraction pooling.", 
+       label = "tab:pdtab")
 @
-
-% On the figure below, we compare the relative intensities of channels 7
-% to 10 on scatter plots, highlighting different marker sets. These
-% differences result from different peak fractions for these niches on
-% the mitochondrial and chromatin occupancy profiles for the two
-% replicates.
-
-
-% <<repl1, eval = TRUE, echo=FALSE, fig.width = 12>>=
-% sel0 <- fData(hyperLOPIT)$markers != "unknown"
-% cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)]
-% cls[!sel0] <- getUnknowncol()
-
-
-% par(mfrow = c(2, 4))
-% for (i in c(7, 8, 10, 9)) {
-%     plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls,
-%          main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"]))
-%     points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19)
-%     grid()
-%     abline(0, 1, col = "red")
-% }
-% plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "")
-% addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7)
-
-
-% i <- fData(hyperLOPIT)$markers == "Mitochondrion"
-% plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
-%          featureNames(hyperLOPIT)[i], type = "l",
-%          mcol = "orange")
-% title(main = "Mitochondrion")
-% ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
-% matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1)
-% legend("topleft", paste("Replicate", 1:2),
-%        col = c("#F781BF", "orange"),
-%        lty = 1, bty = "n")
-
-
-% i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin"
-% plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
-%          featureNames(hyperLOPIT)[i], type = "l")
-% ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
-% matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1)
-% title(main = "Chromatin")
-% legend("topleft", paste("Replicate", 1:2),
-%        col = c("#984EA3", "steelblue"),
-%        lty = 1, bty = "n")
-% @
-
 
 The more relevant comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised as
@@ -766,7 +719,6 @@ plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE)
   \caption{PCA plots of replicates 1 and 2}
   \label{fig:plot2Drep}
 \end{figure}
-
 
 \section*{Interactive visualisation}
 

@@ -1,3 +1,5 @@
+R_HOME=/opt/Rpatched/
+
 setvars:
 ifeq (${R_HOME},)
 R_HOME= $(shell R RHOME)
