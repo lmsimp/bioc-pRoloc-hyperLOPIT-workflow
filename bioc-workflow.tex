@@ -709,7 +709,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:23:51 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 16:12:22 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -780,10 +780,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:23:51 2016 
-## Subset [6725,20][5032,20] Wed Nov  2 15:23:52 2016 
-## Removed features with more than 0 NAs: Wed Nov  2 15:23:52 2016 
-## Dropped featureData's levels Wed Nov  2 15:23:52 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 16:12:22 2016 
+## Subset [6725,20][5032,20] Wed Nov  2 16:12:23 2016 
+## Removed features with more than 0 NAs: Wed Nov  2 16:12:23 2016 
+## Dropped featureData's levels Wed Nov  2 16:12:23 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1120,7 +1120,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Wed Nov  2 15:23:54 2016
+% Wed Nov  2 16:12:25 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1416,8 +1416,8 @@ clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Nov  2 15:23:53 2016 
-## Added markers from  'pdres' marker vector. Wed Nov  2 15:23:54 2016 
+## Added markers from  'mrk' marker vector. Wed Nov  2 16:12:24 2016 
+## Added markers from  'pdres' marker vector. Wed Nov  2 16:12:25 2016 
 ##  MSnbase version: 1.99.7
 \end{verbatim}
 \begin{alltt}
@@ -1534,35 +1534,35 @@ parameters for the algorithm of choice.
 
 \subsection*{Optimisation}
 
-In the code chunk below we employ the use of a Support Vector Machine
-(SVM) to learn a classifier on the labelled training data. As
-previously mentioned one first needs to train the classifiers
-parameters before an algorithm can be used to predict the class labels
-of the proteins with unknown location. One of the most common ways to
-optimise the parameters of a classifier is to partition the labelled
-data in to training and testing subsets. In this framework parameters
-are tested via a grid search using cross-validation on the training
+In the code chunk below we use a Support Vector Machine (SVM) to learn
+a classifier on the labelled training data. As previously mentioned,
+one first needs to train the classifiers parameters before an
+algorithm can be used to predict the class labels of the proteins with
+unknown location. One of the most common ways to optimise the
+parameters of a classifier is to partition the labelled data in to
+training and testing subsets. In this framework parameters are tested
+via a grid search using cross-validation on the training
 partition. The best parameters chosen from the cross-validation stage
 are then used to build a classifier to predict the class labels of the
 protein profiles on the test partition. Observed and expected
 classication results can be compared, and then used to assess how well
 a given model works by getting an estimate of the classiers ability to
 achieve a good generalisation i.e. that is given an unknown example
-predict its class label with high accuracy. In
-\Biocpkg{pRoloc}, algorithmic performance is estimated using
-stratified 80/20 partitioning for the training/testing subsets
-respectively, in conjuction with five-fold cross-validation in order
-to optimise the free parameters via a grid search. This procedure is
-usually repeated 100 times and then the best parameter(s) are selected
-upon investigation of classifier accuracy, here we use the harmonic
-mean of precision and recall; the macro F1 score. In the code chunk
-below we demonstrate how to optimise the free parameters; \texttt{sigma} and
-\texttt{cost}, of a classical SVM classifier with a Gaussian kernel using the
-function \texttt{svmOptimisation}. As the number of labelled instances per
-class varies from organelle to organelle, we can account for class
-imbalance by setting specific class weights when generating the SVM
-model. Below the weights, \texttt{w} are set to be inversely proportional to
-the class frequencies.
+predict its class label with high accuracy. In \Biocpkg{pRoloc},
+algorithmic performance is estimated using stratified 80/20
+partitioning for the training/testing subsets respectively, in
+conjuction with five-fold cross-validation in order to optimise the
+free parameters via a grid search. This procedure is usually repeated
+100 times and then the best parameter(s) are selected upon
+investigation of classifier accuracy. Here, we use the macro F1 score,
+i.e. the harmonic mean of precision and recall. In the code chunk below we
+demonstrate how to optimise the free parameters, \texttt{sigma} and
+\texttt{cost}, of a classical SVM classifier with a Gaussian kernel
+using the function \texttt{svmOptimisation}. As the number of labelled
+instances per class varies from organelle to organelle, we can account
+for class imbalance by setting specific class weights when generating
+the SVM model. Below the weights, \texttt{w} are set to be inversely
+proportional to the class frequencies.
 
 
 
@@ -1602,7 +1602,7 @@ the class frequencies.
 \end{kframe}
 \end{knitrout}
 
-As mentioned previously, we reply on the default feature variable
+As mentioned previously, we rely on the default feature variable
 \texttt{"markers"} to define the class labels and hence can ommit
 it. To use another feature variables, one need to explicitly specify
 its name using the \texttt{fcol} argument (for example \texttt{fcol =
@@ -1617,14 +1617,34 @@ in the test dataset are consistently and correctly assigned by the the
 algorithm. Often more than one parameter or set of parameters gives
 rise to the best generalisation accuracy. As such it is always
 important to investigate the model parameters and critically assess
-the best choice. The best choice may not be as simple as the parameter
-set that gives rise to the highest macro F1 score and one must be
-careful to avoid overfitting and to choose parameters wisely.
+the best choice. The \texttt{f1Count} function counts the number of
+parameter occurences above a certain F1 value. The best choice may not
+be as simple as the parameter set that gives rise to the highest macro
+F1 score and one must be careful to avoid overfitting and to choose
+parameters wisely.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{(best} \hlkwb{<-} \hlkwd{getParams}\hlstd{(params))}
+\hlkwd{f1Count}\hlstd{(params,} \hlnum{0.6}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+##     4  8 16
+## 0.1 1 10 89
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The parameter optimistion results can also be visualised as a boxplot
+or heatmap, as shown in figure \ref{fig:visualisOptHide}.  The
+\texttt{plot} method for \texttt{GenRegRes} object shows the
+respective distributions of the 100 macro F1 scores for the best
+cost/sigma parameter pairs, and \texttt{levelPlot} shows the averaged
+macro F1 scores, for the full range of parameter values. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
 \hlkwd{plot}\hlstd{(params)}
 \hlkwd{levelPlot}\hlstd{(params)}
 \end{alltt}
@@ -1642,16 +1662,27 @@ careful to avoid overfitting and to choose parameters wisely.
   \label{fig:visualisOptHide}
 \end{figure}
 
-By using the function \texttt{getParams} we can extract the best set of
-parameters. Currently, \texttt{getParams} retrieves the first best set is
-automatically but users are encouraged to critically assess whether
-this is the most wise choice by visualising the results using the
-methods \texttt{plot} and \texttt{levelPlot}. The \texttt{plot} method for \texttt{GenRegRes}
-object shows the respective distributions of the 100 macro F1 scores
-for the best cost/sigma parameter pairs, and \texttt{levelPlot} shows the
-averaged macro F1 scores, for the full range of parameter values. Once
-we have selected the best parameters we can then use them to build a
-classifier from the labelled marker proteins. 
+
+By using the function \texttt{getParams} we can extract the best set
+of parameters. Currently, \texttt{getParams} retrieves the first best
+set is automatically but users are encouraged to critically assess
+whether this is the most wise choice.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{(best} \hlkwb{<-} \hlkwd{getParams}\hlstd{(params))}
+\end{alltt}
+\begin{verbatim}
+## sigma  cost 
+##   0.1  16.0
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Once we have selected the best parameters we can then use them to
+build a classifier from the labelled marker proteins.
+
 
 \subsection*{Classification}
 
@@ -1798,15 +1829,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4360688               0.3016508               0.3807145 
+##               0.4391696               0.3042111               0.3869018 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6916080               0.6060887               0.4329083 
+##               0.6964096               0.6130827               0.4300618 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4140261               0.5960367               0.9497141 
+##               0.4186188               0.6092759               0.9497908 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7955514               0.7064597               0.3145894 
+##               0.7950972               0.7103401               0.3158138 
 ##         Plasma membrane              Proteasome 
-##               0.7030837               0.4154482
+##               0.7221735               0.4144763
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,}
@@ -1818,15 +1849,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     171                      84 
+##                      86                     170                      89 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     293                     475                     102 
+##                     296                     477                     105 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      26                     123                     524 
+##                      24                     120                     522 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      38 
+##                     230                     342                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     320                     160                    2058
+##                     315                     158                    2059
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
