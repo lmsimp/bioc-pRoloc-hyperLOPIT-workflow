@@ -537,7 +537,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  1 15:36:48 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:14:05 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -589,10 +589,10 @@ missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  1 15:36:48 2016 
-    ## Subset [6725,20][5032,20] Tue Nov  1 15:36:49 2016 
-    ## Removed features with more than 0 NAs: Tue Nov  1 15:36:49 2016 
-    ## Dropped featureData's levels Tue Nov  1 15:36:49 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:14:05 2016 
+    ## Subset [6725,20][5032,20] Wed Nov  2 15:14:06 2016 
+    ## Removed features with more than 0 NAs: Wed Nov  2 15:14:06 2016 
+    ## Dropped featureData's levels Wed Nov  2 15:14:06 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and too many proteins were not
@@ -779,13 +779,13 @@ circles for the features of unknown localisation) can of course be
 changed, as described in the `setStockcol` manual page.
 
 As demonstrated in @hyper and illustrated in the PCA plot above, the
-Golgi apparatus proteins display a dynamic pattern, noting sets of Golgi
-marker proteins that are distributed amongst other subcellular
+Golgi apparatus proteins (brown) display a dynamic pattern, noting sets
+of Golgi marker proteins that are distributed amongst other subcellular
 structures, an observation supported by microscopy. As such, we are
 going to reset the annotation of Golgi markers to unknown using the
 `fDataTounknown` function. It is often used to replace empty strings
 (“”) or missing values in the markers definition to a common definition
-of *unknown localisation*.
+of *unknown* localisation.
 
 `        `\
 
@@ -807,8 +807,8 @@ protein annotation and marker definition. It is important to note
 however that automatic retrieval of sub-cellular localisation
 information, from or elsewhere, is only the beginning in defining a
 marker set for downstream analyses. Expert curation is vital to check
-that any annotation added is in the correct context for the the
-biological question under investigation.
+that any annotation added is in the correct context for the biological
+question under investigation.
 
 Another useful visualisation that relies on marker annotation is the
 representation of the protein profiles occupancy along the gradient
@@ -816,10 +816,11 @@ using the `plotDist` function. While the PCA plot enables to efficiently
 visualise the complete dataset and assess the relative separation of
 different sub-cellular niches, comparing profiles of a few marker
 clusters is useful to assess how exactly they differ (in terms of peak
-channels, for example). Below, we plot the profile of the mitochondrial
-and peroxisome markers to highlight the differences in profiles between
-these two sets of markers along the 6th and 7th channels, as represented
-above along the 7th PC on the PCA plot.
+channels, for example). On figure [fig:plotDist2], we plot the profile
+of the mitochondrial and peroxisome markers to highlight the differences
+in profiles between these two sets of markers along the 6th and 7th
+channels, as represented above along the 7th PC on the PCA plot on
+figure [fig:plotmarkers].
 
 `   `\
 `  `\
@@ -853,9 +854,21 @@ not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
 identical selected fractions along the gradient. As can be seen in the
-table below (taken from the `hyperLOPIT`’s `pData`, focusing on channels
-7 to 10), different sets of gradient fractions are pooled to obtain
-enough material and optimise acurate quantitation.
+table below (taken from the `hl`’s `pData`, focusing on channels 7 to
+10), different sets of gradient fractions are pooled to obtain enough
+material and optimise acurate quantitation.
+
+              Replicate Tag    Gradient.Fraction     Iodixonal.Density
+  --------- ----------- ------ ------------------- -------------------
+      X127N           1 127N   1 to 6 (pooled)                    6.00
+      X127C           1 127C   8 to 9 (pooled)                   11.00
+      X128N           1 128N   10 to 11 (pooled)                 13.30
+    X127C.1           2 127C   7 to 9 (pooled)                   10.00
+    X128N.1           2 128N   10 to 11 (pooled)                 12.50
+
+  : Differences in gradient fraction pooling.
+
+[tab:pdtab]
 
 The more relevant comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised as
@@ -882,7 +895,7 @@ interest. Using the package we can interactively visualise, explore and
 interrogate quantitative spatial proteomics data. The package is
 currently under active development and it relies on the `shiny`
 framework for reactivity and interactivity. The package currently
-distributes 3 different GUI’s (“main” (default), “compare” or “compare”)
+distributes 3 different GUI’s (*main* (default), *compare* or *compare*)
 which are wrapped and launched by the `pRolocVis` function. In the below
 code chunk we lauch the main app (note, we do not need to specify the
 argument, `app = main` as it is the default).
@@ -894,7 +907,7 @@ app in the package.](./Figures/mainapp.png)
 
 [fig:app]
 
-As diplayed in the screenshot above, the “main” application is designed
+As diplayed in the screenshot above, the *main* application is designed
 for exploratory data analysis and is divied into 3 tabs: (1) PCA, (2)
 Profiles and (3) Table selection. The default view upon loading is the
 PCA tab, which features a clickable interface and zoomable PCA plot with
@@ -924,8 +937,8 @@ the hyperLOPIT data, this is then passed to `pRolocVis`.
 
 The comparison app loads the two PCA plots side-by-side. Only common
 proteins between the two data sets are displayed. As per the main
-application proteins can be searched, identified and highlighted on both
-PCA plots and in the dedicated profiles tab. One key feature of the
+application, proteins can be searched, identified and highlighted on
+both PCA plots and in the dedicated profiles tab. One key feature of the
 compare application is the ability to re-map the second dataset onto the
 PCA data space of the first (reference) data set (see `?pRolocVis` and
 the argument `remap = TRUE`). Using the first dataset as the reference
@@ -940,9 +953,9 @@ the right. The order of the first (the reference data for remapping) and
 second dataset can be changed through regeneration/re-ordering of the
 `MSnSetList` object.
 
-The final application “classify”, has been designed to view machine
+The final application *classify*, has been designed to view machine
 learning classification results according to user-specified thresholds
-for the assignment of proteins to its sub-cellular location, this is
+for the assignment of proteins to its sub-cellular location, as
 discussed later in the subsection *thresholding* in the *supervised
 machine learning section*.
 
@@ -960,7 +973,7 @@ markers are directly used in the training phase of the ML
 classification. We find that a lack of sub-cellular diversity in the
 labelled training data leads to prediction errors, as unlabelled
 instances can only be assigned to a class that exists in the training
-data @Breckels:2013. In such scenarios novelty detection can be useful
+data @Breckels:2013. In such scenarios, novelty detection can be useful
 to identify data-specific sub-cellular groupings such as organelles and
 protein complexes. The phenotype discovery (phenoDisco) algorithm
 @Breckels:2013 is one such method and is available in . It is an
@@ -1018,9 +1031,7 @@ the function, along with the `fcol` to tell the algorithm where the
 input training data is contained.
 
 \
-`     `\
-`                   `\
-`                   `
+`           `
 
 Note: We do not evaluate this code chunk in this document as the
 algorithm is computational intensive and best parallelised over multiple
@@ -1036,7 +1047,7 @@ defines the minimum number of proteins allowed per new data cluster and
 thus heavily influences what type of new clusters are extracted. For
 example, if a user is interesed in the detection of small complexes they
 may wish to use a small `GS = 10`, or `= 20` etc. If they wish to detect
-larger more abundant sub-cellular niches a much higher `GS` would be
+larger, more abundant sub-cellular niches a much higher `GS` would be
 preferable. Specifying a small `GS` can be more time consuming than
 using a larger `GS`, and there is a trade off between finding
 interesting small complexes and those that may not be of interest as we
@@ -1045,14 +1056,13 @@ compared to using a higher one.
 
 One may also consider increasing the search space for new data clusters
 by increasing the value of the parameter `G`. This defines the number of
-GMM components to test and fit; the default is `G = 1:9` (`mclust`’s
-default). One should note that the decreasing the `GS`, and increasing
-the values of the arguments `times`, `G` (among other function
-arguments, see `?phenoDisco`) will heavily influence (increase) the
-total time taken to run the algorithm. `phenoDisco` supports
-parallelisation and we strongly suggest you make use of a parallel
-processing to run these analyses (different backends can be set with
-argument `BPPARAM`).
+GMM components to test and fit; the default is `G = 1:9` (the default
+value in the package @mclust). One should note that the decreasing the
+`GS`, and increasing the values of the arguments `times`, `G` (among
+other function arguments, see `?phenoDisco`) will heavily influence
+(increase) the total time taken to run the algorithm. `phenoDisco`
+supports parallelisation and we strongly suggest you make use of a
+parallel processing to run these analyses.
 
 The ouput of running the `phenoDisco` algorithm is a `MSnSet` containing
 the new data clusters, appended to the `featureData` under the name
@@ -1078,8 +1088,8 @@ were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Tue Nov  1 15:36:51 2016 
-    ## Added markers from  'pdres' marker vector. Tue Nov  1 15:36:52 2016 
+    ## Added markers from  'mrk' marker vector. Wed Nov  2 15:14:07 2016 
+    ## Added markers from  'pdres' marker vector. Wed Nov  2 15:14:07 2016 
     ##  MSnbase version: 1.99.7
 
 `   `
@@ -1374,15 +1384,15 @@ unknown.
 `                  `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4339744               0.3049617               0.3948761 
+    ##               0.4345641               0.3020405               0.3828070 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6791199               0.5991537               0.4215955 
+    ##               0.6934017               0.5946395               0.4243395 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4231925               0.5967188               0.9503089 
+    ##               0.4137080               0.5900245               0.9496663 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7958067               0.7090930               0.3159709 
+    ##               0.7953737               0.7081208               0.3157994 
     ##         Plasma membrane              Proteasome 
-    ##               0.7127060               0.4145424
+    ##               0.7162812               0.4155780
 
 `  `\
 `                       `\
@@ -1392,15 +1402,15 @@ unknown.
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      84                     170                      89 
+    ##                      85                     170                      86 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     480                      99 
+    ##                     296                     476                      99 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
     ##                      27                     125                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     342                      39 
+    ##                     230                     344                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     312                     159                    2058
+    ##                     319                     157                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1783,7 +1793,7 @@ in a position to re-generate the original results using the adequate
 software versions and retrace changes in the software that lead to
 failure and/or different results.
 
-    ## R version 3.3.1 Patched (2016-08-02 r71022)
+    ## R version 3.3.2 Patched (2016-11-01 r71616)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
     ## Running under: Ubuntu 14.04.5 LTS
     ## 
@@ -1800,27 +1810,27 @@ failure and/or different results.
     ## [8] datasets  base     
     ## 
     ## other attached packages:
-    ##  [1] pRolocdata_1.11.9    pRoloc_1.13.17       MLInterfaces_1.53.1 
+    ##  [1] pRolocdata_1.11.9    pRoloc_1.15.1        MLInterfaces_1.53.1 
     ##  [4] cluster_2.0.5        annotate_1.51.1      XML_3.98-1.4        
     ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.19   
     ## [10] MSnbase_1.99.7       ProtGenerics_1.5.1   BiocParallel_1.7.9  
     ## [13] mzR_2.7.12           Rcpp_0.12.7          Biobase_2.33.4      
-    ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      BiocStyle_2.1.33    
-    ## [19] knitr_1.14          
+    ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      xtable_1.8-2        
+    ## [19] BiocStyle_2.1.33     knitr_1.14          
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
     ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
     ##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
     ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
-    ## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.1        
+    ## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.2        
     ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
-    ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-71         
+    ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-72         
     ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
     ## [25] vsn_3.41.5            sfsmisc_1.1-0         shiny_0.14.1         
     ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
     ## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
-    ## [34] quantreg_5.29         tools_3.3.1           ggvis_0.4.3          
+    ## [34] quantreg_5.29         tools_3.3.2           ggvis_0.4.3          
     ## [37] gtable_0.2.0          affy_1.51.1           reshape2_1.4.1       
     ## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
     ## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
@@ -1839,9 +1849,9 @@ failure and/or different results.
     ## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
     ## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
     ## [88] tibble_1.2            msdata_0.14.0         car_2.1-3            
-    ## [91] mlbench_2.1-1         grid_3.3.1            FNN_1.1              
-    ## [94] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
-    ## [97] xtable_1.8-2          httpuv_1.3.3          munsell_0.4.3
+    ## [91] mlbench_2.1-1         grid_3.3.2            FNN_1.1              
+    ## [94] ModelMetrics_1.1.0    threejs_0.2.2         digest_0.6.10        
+    ## [97] diptest_0.75-7        httpuv_1.3.3          munsell_0.4.3
 
 It is always important to include session information details along with
 a [short reproducible

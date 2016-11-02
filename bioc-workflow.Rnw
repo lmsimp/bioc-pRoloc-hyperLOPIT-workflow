@@ -822,7 +822,7 @@ niches as possible, as these markers are directly used in the training
 phase of the ML classification. We find that a lack of sub-cellular
 diversity in the labelled training data leads to prediction errors, as
 unlabelled instances can only be assigned to a class that exists in
-the training data \cite{Breckels:2013}. In such scenarios novelty
+the training data \cite{Breckels:2013}. In such scenarios, novelty
 detection can be useful to identify data-specific sub-cellular
 groupings such as organelles and protein complexes. The phenotype
 discovery (phenoDisco) algorithm \cite{Breckels:2013} is one such method
@@ -867,9 +867,7 @@ algorithm where the input training data is contained.
 
 <<runPD, eval = FALSE>>=
 ## As per Christoforou et al (2016), 
-hl <- phenoDisco(hl, fcol = "phenoDisco.Input", 
-                 times = 200, 
-                 GS = 60)
+hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
 @
 
 Note: We do not evaluate this code chunk in this document as the
@@ -877,32 +875,35 @@ algorithm is computational intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
 when parallelised over 40 workers.
 
-The argument \texttt{times} indicated the number of times we run unsupervied
-Gaussian Mixture Modelling before defining a new phenotype cluster.
-The recommended minimum and default value is 100. In the above code
-chunk we increase the value to \texttt{times = 200} as we have found for
-larger datasets (e.g. 5000+ proteins) a higher times is requried for
-convergence. \texttt{GS} defines the minimum number of proteins allowed per
-new data cluster and thus heavily influences what type of new clusters
-are extracted. For example, if a user is interesed in the detection of
-small complexes they may wish to use a small \texttt{GS = 10}, or \texttt{= 20} etc.
-If they wish to detect larger more abundant sub-cellular niches a much
-higher \texttt{GS} would be preferable. Specifying a small \texttt{GS} can be more
-time consuming than using a larger \texttt{GS}, and there is a trade off
+The argument \texttt{times} indicated the number of times we run
+unsupervied Gaussian Mixture Modelling before defining a new phenotype
+cluster.  The recommended minimum and default value is 100. In the
+above code chunk we increase the value to \texttt{times = 200} as we
+have found for larger datasets (e.g. 5000+ proteins) a higher times is
+requried for convergence. \texttt{GS} defines the minimum number of
+proteins allowed per new data cluster and thus heavily influences what
+type of new clusters are extracted. For example, if a user is
+interesed in the detection of small complexes they may wish to use a
+small \texttt{GS = 10}, or \texttt{= 20} etc.  If they wish to detect
+larger, more abundant sub-cellular niches a much higher \texttt{GS}
+would be preferable. Specifying a small \texttt{GS} can be more time
+consuming than using a larger \texttt{GS}, and there is a trade off
 between finding interesting small complexes and those that may not be
 of interest as we find there is a tendancy to find more noise when
 using a small \texttt{GS} compared to using a higher one.
 
 One may also consider increasing the search space for new data
-clusters by increasing the value of the parameter \texttt{G}. This defines
-the number of GMM components to test and fit; the default is \texttt{G = 1:9}
-(\texttt{mclust}'s default). One should note that the decreasing the \texttt{GS},
-and increasing the values of the arguments \texttt{times}, \texttt{G} (among other
-function arguments, see \texttt{?phenoDisco}) will heavily influence
-(increase) the total time taken to run the algorithm.  \texttt{phenoDisco}
-supports parallelisation and we strongly suggest you make use of a
-parallel processing to run these analyses (different backends can be
-set with argument \texttt{BPPARAM}). 
+clusters by increasing the value of the parameter \texttt{G}. This
+defines the number of GMM components to test and fit; the default is
+\texttt{G = 1:9} (the default value in the
+\href{https://cran.r-project.org/web/packages/mclust/index.html}{\textit{mclust}}
+package \cite{mclust}). One should note that the decreasing the
+\texttt{GS}, and increasing the values of the arguments
+\texttt{times}, \texttt{G} (among other function arguments, see
+\texttt{?phenoDisco}) will heavily influence (increase) the total time
+taken to run the algorithm.  \texttt{phenoDisco} supports
+parallelisation and we strongly suggest you make use of a parallel
+processing to run these analyses.
 
 <<loadPDres, echo=FALSE>>=
 f0 <- dir(extdatadir, full.names = TRUE,
@@ -913,21 +914,21 @@ setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 @
 
-The ouput of running the \texttt{phenoDisco} algorithm is a \texttt{MSnSet}
-containing the new data clusters, appended to the \texttt{featureData} under
-the name \texttt{pd}. We can see by typing \texttt{hl@processingData} directly into
-the console the processing information has been updated to the
-\texttt{MSnSet} recording the parameters that were used to run the analyses.
-This is handy for keeping track of data analyses. The results can be
-displayed by using the \texttt{getMarkers} function. We see that 5 new
-phenotype data clusters were found.
+The ouput of running the \texttt{phenoDisco} algorithm is an
+\texttt{MSnSet} containing the new data clusters, appended to the
+\texttt{featureData} under the name \texttt{pd}. We can see by typing
+\texttt{processingData(hl)} directly into the console the processing
+information has been updated to the \texttt{MSnSet} recording the
+parameters that were used to run the analyses.  This is handy for
+keeping track of data analyses. The results can be displayed by using
+the \texttt{getMarkers} function. We see that 5 new phenotype data
+clusters were found.
 
 <<showPDres>>=
 hl
 getMarkers(hl, fcol = "pd")
 @
 
-We can plot the results using the \texttt{plot2D} function.
 
 \begin{figure}[!ht]
   \centering
@@ -951,11 +952,11 @@ addLegend(hl, fcol = "pd", cex = .7, col = cols)
   \label{fig:plotPDres}
 \end{figure}
 
-
-The five new phenotype data clusters can be extracted and examined.
-In the code chunk below we write the results to a .csv file. We use
-the argument \texttt{fDataCols} to specify which columns of the
-\texttt{featureData} to write.
+We can plot the results using the \texttt{plot2D} function (Figure
+\ref{fig:plotPDres}). The five new phenotype data clusters can be
+extracted and examined.  In the code chunk below we write the results
+to a .csv file. We use the argument \texttt{fDataCols} to specify
+which columns of the \texttt{featureData} to write.
 
 <<writehl, eval=FALSE>>=
 fData(hl)$pd <- as.character(fData(hl)$pd)
@@ -969,9 +970,9 @@ enriched in nucleus associated proteins, phenotype 2 in chromatin
 associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
 in lysosomal and endosomal proteins.
 
-<<vishl, eval=FALSE>>=
-pRolocVis(hl, fcol = "pd")
-@
+% <<vishl, eval=FALSE>>=
+% pRolocVis(hl, fcol = "pd")
+% @
 
 \section*{Supervised machine learning}
 

@@ -709,7 +709,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 14:56:28 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:23:51 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -780,10 +780,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 14:56:28 2016 
-## Subset [6725,20][5032,20] Wed Nov  2 14:56:29 2016 
-## Removed features with more than 0 NAs: Wed Nov  2 14:56:29 2016 
-## Dropped featureData's levels Wed Nov  2 14:56:29 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:23:51 2016 
+## Subset [6725,20][5032,20] Wed Nov  2 15:23:52 2016 
+## Removed features with more than 0 NAs: Wed Nov  2 15:23:52 2016 
+## Dropped featureData's levels Wed Nov  2 15:23:52 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1120,7 +1120,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Wed Nov  2 14:56:30 2016
+% Wed Nov  2 15:23:54 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1258,9 +1258,8 @@ through regeneration/re-ordering of the \texttt{MSnSetList} object.
 The final application \textit{classify}, has been designed to view
 machine learning classification results according to user-specified
 thresholds for the assignment of proteins to its sub-cellular
-location, this is discussed later in the subsection
-\textit{thresholding} in the \textit{supervised machine learning
-  section}.
+location, as discussed later in the subsection \textit{thresholding}
+in the \textit{supervised machine learning section}.
 
 
 \section*{Novelty Detection}
@@ -1276,7 +1275,7 @@ niches as possible, as these markers are directly used in the training
 phase of the ML classification. We find that a lack of sub-cellular
 diversity in the labelled training data leads to prediction errors, as
 unlabelled instances can only be assigned to a class that exists in
-the training data \cite{Breckels:2013}. In such scenarios novelty
+the training data \cite{Breckels:2013}. In such scenarios, novelty
 detection can be useful to identify data-specific sub-cellular
 groupings such as organelles and protein complexes. The phenotype
 discovery (phenoDisco) algorithm \cite{Breckels:2013} is one such method
@@ -1344,9 +1343,7 @@ algorithm where the input training data is contained.
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlcom{## As per Christoforou et al (2016), }
-\hlstd{hl} \hlkwb{<-} \hlkwd{phenoDisco}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"phenoDisco.Input"}\hlstd{,}
-                 \hlkwc{times} \hlstd{=} \hlnum{200}\hlstd{,}
-                 \hlkwc{GS} \hlstd{=} \hlnum{60}\hlstd{)}
+\hlstd{hl} \hlkwb{<-} \hlkwd{phenoDisco}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"phenoDisco.Input"}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{200}\hlstd{,} \hlkwc{GS} \hlstd{=} \hlnum{60}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -1356,43 +1353,47 @@ algorithm is computational intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
 when parallelised over 40 workers.
 
-The argument \texttt{times} indicated the number of times we run unsupervied
-Gaussian Mixture Modelling before defining a new phenotype cluster.
-The recommended minimum and default value is 100. In the above code
-chunk we increase the value to \texttt{times = 200} as we have found for
-larger datasets (e.g. 5000+ proteins) a higher times is requried for
-convergence. \texttt{GS} defines the minimum number of proteins allowed per
-new data cluster and thus heavily influences what type of new clusters
-are extracted. For example, if a user is interesed in the detection of
-small complexes they may wish to use a small \texttt{GS = 10}, or \texttt{= 20} etc.
-If they wish to detect larger more abundant sub-cellular niches a much
-higher \texttt{GS} would be preferable. Specifying a small \texttt{GS} can be more
-time consuming than using a larger \texttt{GS}, and there is a trade off
+The argument \texttt{times} indicated the number of times we run
+unsupervied Gaussian Mixture Modelling before defining a new phenotype
+cluster.  The recommended minimum and default value is 100. In the
+above code chunk we increase the value to \texttt{times = 200} as we
+have found for larger datasets (e.g. 5000+ proteins) a higher times is
+requried for convergence. \texttt{GS} defines the minimum number of
+proteins allowed per new data cluster and thus heavily influences what
+type of new clusters are extracted. For example, if a user is
+interesed in the detection of small complexes they may wish to use a
+small \texttt{GS = 10}, or \texttt{= 20} etc.  If they wish to detect
+larger, more abundant sub-cellular niches a much higher \texttt{GS}
+would be preferable. Specifying a small \texttt{GS} can be more time
+consuming than using a larger \texttt{GS}, and there is a trade off
 between finding interesting small complexes and those that may not be
 of interest as we find there is a tendancy to find more noise when
 using a small \texttt{GS} compared to using a higher one.
 
 One may also consider increasing the search space for new data
-clusters by increasing the value of the parameter \texttt{G}. This defines
-the number of GMM components to test and fit; the default is \texttt{G = 1:9}
-(\texttt{mclust}'s default). One should note that the decreasing the \texttt{GS},
-and increasing the values of the arguments \texttt{times}, \texttt{G} (among other
-function arguments, see \texttt{?phenoDisco}) will heavily influence
-(increase) the total time taken to run the algorithm.  \texttt{phenoDisco}
-supports parallelisation and we strongly suggest you make use of a
-parallel processing to run these analyses (different backends can be
-set with argument \texttt{BPPARAM}). 
+clusters by increasing the value of the parameter \texttt{G}. This
+defines the number of GMM components to test and fit; the default is
+\texttt{G = 1:9} (the default value in the
+\href{https://cran.r-project.org/web/packages/mclust/index.html}{\textit{mclust}}
+package \cite{mclust}). One should note that the decreasing the
+\texttt{GS}, and increasing the values of the arguments
+\texttt{times}, \texttt{G} (among other function arguments, see
+\texttt{?phenoDisco}) will heavily influence (increase) the total time
+taken to run the algorithm.  \texttt{phenoDisco} supports
+parallelisation and we strongly suggest you make use of a parallel
+processing to run these analyses.
 
 
 
-The ouput of running the \texttt{phenoDisco} algorithm is a \texttt{MSnSet}
-containing the new data clusters, appended to the \texttt{featureData} under
-the name \texttt{pd}. We can see by typing \texttt{hl@processingData} directly into
-the console the processing information has been updated to the
-\texttt{MSnSet} recording the parameters that were used to run the analyses.
-This is handy for keeping track of data analyses. The results can be
-displayed by using the \texttt{getMarkers} function. We see that 5 new
-phenotype data clusters were found.
+The ouput of running the \texttt{phenoDisco} algorithm is an
+\texttt{MSnSet} containing the new data clusters, appended to the
+\texttt{featureData} under the name \texttt{pd}. We can see by typing
+\texttt{processingData(hl)} directly into the console the processing
+information has been updated to the \texttt{MSnSet} recording the
+parameters that were used to run the analyses.  This is handy for
+keeping track of data analyses. The results can be displayed by using
+the \texttt{getMarkers} function. We see that 5 new phenotype data
+clusters were found.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1415,8 +1416,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Nov  2 14:56:30 2016 
-## Added markers from  'pdres' marker vector. Wed Nov  2 14:56:31 2016 
+## Added markers from  'mrk' marker vector. Wed Nov  2 15:23:53 2016 
+## Added markers from  'pdres' marker vector. Wed Nov  2 15:23:54 2016 
 ##  MSnbase version: 1.99.7
 \end{verbatim}
 \begin{alltt}
@@ -1452,7 +1453,6 @@ phenotype data clusters were found.
 \end{kframe}
 \end{knitrout}
 
-We can plot the results using the \texttt{plot2D} function.
 
 \begin{figure}[!ht]
   \centering
@@ -1482,11 +1482,11 @@ We can plot the results using the \texttt{plot2D} function.
   \label{fig:plotPDres}
 \end{figure}
 
-
-The five new phenotype data clusters can be extracted and examined.
-In the code chunk below we write the results to a .csv file. We use
-the argument \texttt{fDataCols} to specify which columns of the
-\texttt{featureData} to write.
+We can plot the results using the \texttt{plot2D} function (Figure
+\ref{fig:plotPDres}). The five new phenotype data clusters can be
+extracted and examined.  In the code chunk below we write the results
+to a .csv file. We use the argument \texttt{fDataCols} to specify
+which columns of the \texttt{featureData} to write.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1504,13 +1504,9 @@ enriched in nucleus associated proteins, phenotype 2 in chromatin
 associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
 in lysosomal and endosomal proteins.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{pRolocVis}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+% <<vishl, eval=FALSE>>=
+% pRolocVis(hl, fcol = "pd")
+% @
 
 \section*{Supervised machine learning}
 
@@ -1802,15 +1798,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4332906               0.3032423               0.3840370 
+##               0.4360688               0.3016508               0.3807145 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6878996               0.5997368               0.4245347 
+##               0.6916080               0.6060887               0.4329083 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4291978               0.5892503               0.9494459 
+##               0.4140261               0.5960367               0.9497141 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7950790               0.7079212               0.3151288 
+##               0.7955514               0.7064597               0.3145894 
 ##         Plasma membrane              Proteasome 
-##               0.7086233               0.4158484
+##               0.7030837               0.4154482
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,}
@@ -1822,15 +1818,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      88 
+##                      85                     171                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     297                     476                      93 
+##                     293                     475                     102 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     125                     523 
+##                      26                     123                     524 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
 ##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     321                     157                    2059
+##                     320                     160                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
