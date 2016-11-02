@@ -709,7 +709,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 14:41:44 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 14:56:28 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -780,10 +780,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 14:41:44 2016 
-## Subset [6725,20][5032,20] Wed Nov  2 14:41:44 2016 
-## Removed features with more than 0 NAs: Wed Nov  2 14:41:44 2016 
-## Dropped featureData's levels Wed Nov  2 14:41:44 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 14:56:28 2016 
+## Subset [6725,20][5032,20] Wed Nov  2 14:56:29 2016 
+## Removed features with more than 0 NAs: Wed Nov  2 14:56:29 2016 
+## Dropped featureData's levels Wed Nov  2 14:56:29 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1090,7 +1090,7 @@ markers along the 6th and 7th channels, as represented above along the
        \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"purple"}\hlstd{,} \hlstr{"blue"}\hlstd{),} \hlkwc{bty} \hlstd{=} \hlstr{"n"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.65\textwidth]{figure/plotDist-1} 
+\includegraphics[width=.6\textwidth]{figure/plotDist-1} 
 
 \end{knitrout}
   \caption{Mitochondrion and peroxisome protein profiles.}
@@ -1120,7 +1120,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Wed Nov  2 14:41:46 2016
+% Wed Nov  2 14:56:30 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1137,55 +1137,6 @@ X127N &   1 & 127N & 1 to 6 (pooled) & 6.00 \\
 \caption{Differences in gradient fraction pooling.} 
 \label{tab:pdtab}
 \end{table}
-
-
-% On the figure below, we compare the relative intensities of channels 7
-% to 10 on scatter plots, highlighting different marker sets. These
-% differences result from different peak fractions for these niches on
-% the mitochondrial and chromatin occupancy profiles for the two
-% replicates.
-
-
-% <<repl1, eval = TRUE, echo=FALSE, fig.width = 12>>=
-% sel0 <- fData(hyperLOPIT)$markers != "unknown"
-% cls <- paste0(getStockcol(), 80)[factor(fData(hyperLOPIT)$markers)]
-% cls[!sel0] <- getUnknowncol()
-
-
-% par(mfrow = c(2, 4))
-% for (i in c(7, 8, 10, 9)) {
-%     plot(exprs(hyperLOPIT[, c(i, i+10)]), col = cls,
-%          main = paste("Channel", pData(hyperLOPIT)[i, "Fraction.No"]))
-%     points(exprs(hyperLOPIT[sel0, c(i, i+10)]), col = cls[sel0], pch = 19)
-%     grid()
-%     abline(0, 1, col = "red")
-% }
-% plot(1:100, type = "n", xaxt = "n", yaxt = "n", xlab = "", bty = "n", ylab = "")
-% addLegend(hyperLOPIT, fcol = "markers", where = "center", cex = .7)
-
-
-% i <- fData(hyperLOPIT)$markers == "Mitochondrion"
-% plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
-%          featureNames(hyperLOPIT)[i], type = "l",
-%          mcol = "orange")
-% title(main = "Mitochondrion")
-% ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
-% matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#F781BF30", lty = 1)
-% legend("topleft", paste("Replicate", 1:2),
-%        col = c("#F781BF", "orange"),
-%        lty = 1, bty = "n")
-
-
-% i <- fData(hyperLOPIT)$markers == "Nucleus - Chromatin"
-% plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2],
-%          featureNames(hyperLOPIT)[i], type = "l")
-% ## plotDist(hyperLOPIT[i, hyperLOPIT$Replicate == 2])
-% matlines(t(exprs(hyperLOPIT[i, hyperLOPIT$Replicate == 1])), col = "#984EA330", lty = 1)
-% title(main = "Chromatin")
-% legend("topleft", paste("Replicate", 1:2),
-%        col = c("#984EA3", "steelblue"),
-%        lty = 1, bty = "n")
-% @
 
 
 The more relevant comparison unit is not a single channel, but rather
@@ -1214,20 +1165,22 @@ two figures with the same orientation.
   \label{fig:plot2Drep}
 \end{figure}
 
+\clearpage
 
 \section*{Interactive visualisation}
 
 Visualisation and data exploration is an important aspect of data
 analyses allowing one to shed light on data structure and patterns of
-interest. Using the \Biocpkg{pRolocGUI} package we can
-interactively visualise, explore and interrogate quantitative spatial
-proteomics data. The \Biocpkg{pRolocGUI} package is currently
-under active development and it relies on the \texttt{shiny} framework for
+interest. Using the \Biocpkg{pRolocGUI} package we can interactively
+visualise, explore and interrogate quantitative spatial proteomics
+data. The \Biocpkg{pRolocGUI} package is currently under active
+development and it relies on the \texttt{shiny} framework for
 reactivity and interactivity. The package currently distributes 3
-different GUI's ("main" (default), "compare" or "compare") which are
-wrapped and launched by the \texttt{pRolocVis} function. In the below code
-chunk we lauch the main app (note, we do not need to specify the
-argument, \texttt{app = "main"} as it is the default).
+different GUI's (\textit{main} (default), \textit{compare} or
+\textit{compare}) which are wrapped and launched by the
+\texttt{pRolocVis} function. In the below code chunk we lauch the main
+app (note, we do not need to specify the argument, \texttt{app =
+  "main"} as it is the default).
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1245,7 +1198,7 @@ argument, \texttt{app = "main"} as it is the default).
   \label{fig:app}
 \end{figure}
 
-As diplayed in the screenshot above, the "main" application is
+As diplayed in the screenshot above, the \textit{main} application is
 designed for exploratory data analysis and is divied into 3 tabs: (1)
 PCA, (2) Profiles and (3) Table selection. The default view upon
 loading is the PCA tab, which features a clickable interface and
@@ -1255,7 +1208,7 @@ highlighted using the text search box. There is also an alternate
 profiles tab for visualisation of the protein profiles, which can be
 used to examine the patterns of proteins of interest. The Table
 selection tab provides an interface to control data table column
-selection. 
+selection.
 
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
@@ -1271,8 +1224,8 @@ is then passed to \texttt{pRolocVis}.
 \begin{alltt}
 \hlkwd{data}\hlstd{(hyperLOPIT2015ms3r1)}
 \hlkwd{data}\hlstd{(hyperLOPIT2015ms3r2)}
-\hlstd{mydata} \hlkwb{<-} \hlkwd{MSnSetList}\hlstd{(}\hlkwd{list}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))}
-\hlkwd{pRolocVis}\hlstd{(mydata,} \hlkwc{app} \hlstd{=} \hlstr{"compare"}\hlstd{)}
+\hlstd{hllst} \hlkwb{<-} \hlkwd{MSnSetList}\hlstd{(}\hlkwd{list}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))}
+\hlkwd{pRolocVis}\hlstd{(hllst,} \hlkwc{app} \hlstd{=} \hlstr{"compare"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -1286,7 +1239,7 @@ is then passed to \texttt{pRolocVis}.
 
 The comparison app loads the two PCA plots side-by-side. Only common
 proteins between the two data sets are displayed. As per the main
-application proteins can be searched, identified and highlighted on
+application, proteins can be searched, identified and highlighted on
 both PCA plots and in the dedicated profiles tab. One key feature of
 the compare application is the ability to re-map the second dataset
 onto the PCA data space of the first (reference) data set (see
@@ -1302,11 +1255,12 @@ the second re-mapped data appears on the right. The order of the first
 (the reference data for remapping) and second dataset can be changed
 through regeneration/re-ordering of the \texttt{MSnSetList} object.
 
-The final application "classify", has been designed to view machine
-learning classification results according to user-specified thresholds
-for the assignment of proteins to its sub-cellular location, this is
-discussed later in the subsection \textit{thresholding} in the
-\textit{supervised machine learning section}.
+The final application \textit{classify}, has been designed to view
+machine learning classification results according to user-specified
+thresholds for the assignment of proteins to its sub-cellular
+location, this is discussed later in the subsection
+\textit{thresholding} in the \textit{supervised machine learning
+  section}.
 
 
 \section*{Novelty Detection}
@@ -1461,8 +1415,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Nov  2 14:41:46 2016 
-## Added markers from  'pdres' marker vector. Wed Nov  2 14:41:46 2016 
+## Added markers from  'mrk' marker vector. Wed Nov  2 14:56:30 2016 
+## Added markers from  'pdres' marker vector. Wed Nov  2 14:56:31 2016 
 ##  MSnbase version: 1.99.7
 \end{verbatim}
 \begin{alltt}
@@ -1848,15 +1802,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4348738               0.3025063               0.3885913 
+##               0.4332906               0.3032423               0.3840370 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6911470               0.6332177               0.4388085 
+##               0.6878996               0.5997368               0.4245347 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4206513               0.5959339               0.9495535 
+##               0.4291978               0.5892503               0.9494459 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946359               0.7066474               0.3160929 
+##               0.7950790               0.7079212               0.3151288 
 ##         Plasma membrane              Proteasome 
-##               0.7169909               0.4203854
+##               0.7086233               0.4158484
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,}
@@ -1868,15 +1822,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      87 
+##                      85                     170                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     301                     465                      96 
+##                     297                     476                      93 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      26                     123                     523 
+##                      27                     125                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      39 
+##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     330                     156                    2056
+##                     321                     157                    2059
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

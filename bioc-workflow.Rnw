@@ -657,7 +657,7 @@ markers along the 6th and 7th channels, as represented above along the
 
 \begin{figure}[!ht]
   \centering
-<<plotDist, out.width=".65\\textwidth">>=
+<<plotDist, out.width=".6\\textwidth", fig.asp=1/3>>=
 hlo <- hl[, order(hl$Iodixonal.Density)]
 plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
          pcol = "purple", fractions = "Fraction.No")
@@ -720,19 +720,22 @@ plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE)
   \label{fig:plot2Drep}
 \end{figure}
 
+\clearpage
+
 \section*{Interactive visualisation}
 
 Visualisation and data exploration is an important aspect of data
 analyses allowing one to shed light on data structure and patterns of
-interest. Using the \Biocpkg{pRolocGUI} package we can
-interactively visualise, explore and interrogate quantitative spatial
-proteomics data. The \Biocpkg{pRolocGUI} package is currently
-under active development and it relies on the \texttt{shiny} framework for
+interest. Using the \Biocpkg{pRolocGUI} package we can interactively
+visualise, explore and interrogate quantitative spatial proteomics
+data. The \Biocpkg{pRolocGUI} package is currently under active
+development and it relies on the \texttt{shiny} framework for
 reactivity and interactivity. The package currently distributes 3
-different GUI's ("main" (default), "compare" or "compare") which are
-wrapped and launched by the \texttt{pRolocVis} function. In the below code
-chunk we lauch the main app (note, we do not need to specify the
-argument, \texttt{app = "main"} as it is the default).
+different GUI's (\textit{main} (default), \textit{compare} or
+\textit{compare}) which are wrapped and launched by the
+\texttt{pRolocVis} function. In the below code chunk we lauch the main
+app (note, we do not need to specify the argument, \texttt{app =
+  "main"} as it is the default).
 
 <<mainapp, eval = FALSE, echo = TRUE>>=
 library("pRolocGUI")
@@ -746,7 +749,7 @@ pRolocVis(hl)
   \label{fig:app}
 \end{figure}
 
-As diplayed in the screenshot above, the "main" application is
+As diplayed in the screenshot above, the \textit{main} application is
 designed for exploratory data analysis and is divied into 3 tabs: (1)
 PCA, (2) Profiles and (3) Table selection. The default view upon
 loading is the PCA tab, which features a clickable interface and
@@ -756,7 +759,7 @@ highlighted using the text search box. There is also an alternate
 profiles tab for visualisation of the protein profiles, which can be
 used to examine the patterns of proteins of interest. The Table
 selection tab provides an interface to control data table column
-selection. 
+selection.
 
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
@@ -770,8 +773,8 @@ is then passed to \texttt{pRolocVis}.
 <<compareapp, eval = FALSE, echo = TRUE>>=
 data(hyperLOPIT2015ms3r1)
 data(hyperLOPIT2015ms3r2)
-mydata <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
-pRolocVis(mydata, app = "compare")
+hllst <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+pRolocVis(hllst, app = "compare")
 @
 
 \begin{figure}[!ht]
@@ -783,7 +786,7 @@ pRolocVis(mydata, app = "compare")
 
 The comparison app loads the two PCA plots side-by-side. Only common
 proteins between the two data sets are displayed. As per the main
-application proteins can be searched, identified and highlighted on
+application, proteins can be searched, identified and highlighted on
 both PCA plots and in the dedicated profiles tab. One key feature of
 the compare application is the ability to re-map the second dataset
 onto the PCA data space of the first (reference) data set (see
@@ -799,11 +802,11 @@ the second re-mapped data appears on the right. The order of the first
 (the reference data for remapping) and second dataset can be changed
 through regeneration/re-ordering of the \texttt{MSnSetList} object.
 
-The final application "classify", has been designed to view machine
-learning classification results according to user-specified thresholds
-for the assignment of proteins to its sub-cellular location, this is
-discussed later in the subsection \textit{thresholding} in the
-\textit{supervised machine learning section}.
+The final application \textit{classify}, has been designed to view
+machine learning classification results according to user-specified
+thresholds for the assignment of proteins to its sub-cellular
+location, as discussed later in the subsection \textit{thresholding}
+in the \textit{supervised machine learning section}.
 
 
 \section*{Novelty Detection}
