@@ -1196,14 +1196,15 @@ how non-assigned proteins are classified and with what confidence.
 It is common when applying a supervised classification algorithm to
 set a specific score cutoff on which to define new assignments, below
 which classifications are kept unknown/unassigned. This is important
-as in a supervised learning setup, proteins can only be predicted to be
-localised to one of the sub-cellular niches that appear in the
-labelled training data. We can not guaranette (and do not expect) that
-the whole sub-cellular diversity to be represented in the labelled training
-data as (1) finding markers that represent the whole diversity of the
-cell is challenging (especially obtaining dual- and multiply-localised
-protein markers) and (2) many sub-cellular niches contain too few
-proteins to train on (see XXX)
+as in a supervised learning setup, proteins can only be predicted to
+be localised to one of the sub-cellular niches that appear in the
+labelled training data. We can not guarantee (and do not expect) that
+the whole sub-cellular diversity to be represented in the labelled
+training data as (1) finding markers that represent the whole
+diversity of the cell is challenging (especially obtaining dual- and
+multiply-localised protein markers) and (2) many sub-cellular niches
+contain too few proteins to train on (see above for a motivation of a
+minimum of 13 markers).
 
 Deciding on a threshold is not trivial as classifier scores are
 heavily dependent upon the classifier used and different sub-cellular
