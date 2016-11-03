@@ -709,7 +709,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 17:25:04 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 17:54:23 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -780,10 +780,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 17:25:04 2016 
-## Subset [6725,20][5032,20] Thu Nov  3 17:25:05 2016 
-## Removed features with more than 0 NAs: Thu Nov  3 17:25:05 2016 
-## Dropped featureData's levels Thu Nov  3 17:25:05 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 17:54:23 2016 
+## Subset [6725,20][5032,20] Thu Nov  3 17:54:24 2016 
+## Removed features with more than 0 NAs: Thu Nov  3 17:54:24 2016 
+## Dropped featureData's levels Thu Nov  3 17:54:24 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1139,7 +1139,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Thu Nov  3 17:25:06 2016
+% Thu Nov  3 17:54:25 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1435,8 +1435,8 @@ clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Nov  3 17:25:06 2016 
-## Added markers from  'pdres' marker vector. Thu Nov  3 17:25:07 2016 
+## Added markers from  'mrk' marker vector. Thu Nov  3 17:54:25 2016 
+## Added markers from  'pdres' marker vector. Thu Nov  3 17:54:26 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1839,15 +1839,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4362653               0.3034648               0.3816205 
+##               0.4358215               0.3027190               0.3838820 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6867997               0.6097258               0.4288042 
+##               0.6873138               0.5919056               0.4206391 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4156074               0.5909675               0.9497999 
+##               0.4163956               0.5946202               0.9493401 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7967810               0.7107021               0.3135143 
+##               0.7952464               0.7053250               0.3164791 
 ##         Plasma membrane              Proteasome 
-##               0.7125828               0.4223579
+##               0.7128863               0.4133411
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1855,15 +1855,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      86 
+##                      85                     171                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     298                     476                      97 
+##                     298                     470                     102 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     522 
+##                      27                     125                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     347                      39 
+##                     229                     344                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     320                     155                    2057
+##                     315                     158                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1941,7 +1941,7 @@ information we refer users to the \Biocpkg{pRolocGUI} tutorial
 
 \section*{Transfer learning}
 
-In addition to high quality MS-based quantitative proteomics data
+In addition to high quality MS-based quantitative proteomics data,
 there exist a number of other sources of information that are freely
 available in the public domain that may be useful to assign a protein
 to its sub-cellular niche. For example, imaging from
@@ -1953,13 +1953,13 @@ paradigm known as transfer learning (TL). The integration of data
 between different technologies is one of the biggest challenges in
 computational biology to date and the \Biocpkg{pRoloc} package
 provides functionality to do such analyses. We recently developed two
-transfer learning algorithms using a *k*-NN and SVM framework and
+transfer learning algorithms using a $k$-NN and SVM framework and
 applied them to the task of protein localisation prediction
 \cite{Breckels:2016}. In this section we will begin with explaining the
 concept of transfer learning and then show how to apply this in the
 frame of spatial proteomics and protein localisation prediction.
 
-In TL one typically has a primary task that they wish to solve, and
+In TL one typically has a primary task that one wishes to solve, and
 some complementary (often heterogeneous) auxiliary information that is
 related to the primary learning objective, that can be used to help
 solve the primary goal. For example, here our primary task is to
@@ -1974,26 +1974,25 @@ Using the functions \texttt{setAnnotationParams} and
 terms, from the primary data's features i.e. the protein accession
 numbers. All the GO terms associated to each accession number are
 retrieved and used to create a binary matrix where a 1 (0) at position
-(i; j) indicates that term j has (not) been used to annotate protein
-i. The GO terms are retrieved from an appropriate repository using the
-\Biocpkg{biomaRt} package. The specific Biomart repository and query
-will depend on the species under study and the type of
+$(i, j)$ indicates that term $j$ has (not) been used to annotate
+protein $i$. The GO terms are retrieved from an appropriate repository
+using the \Biocpkg{biomaRt} package. The specific Biomart repository
+and query will depend on the species under study and the type of
 identifiers. The first step is to construct the annotation parameters
-that will enable to perform the query, this is done using
+that will enable to perform the query, which is done using
 \texttt{setAnnotationParams}. Typing into the R console \texttt{par <-
   setAnnotationParams()} will present two menus, firstly asking you to
 identify the species of study, and then what type of identifier you
 have used to annotate the proteins in your \texttt{MSnSet}. It is also
 possible to pass patterns to match the species e.g. in the code chunk
-below we pass "Mus musculus", and the identifier type for our data
-(see \texttt{featureNames(hl)}) which is "Uniprot/Swissprot", for the
-Biomart query.
+below we pass \texttt{"Mus musculus"}, and the identifier type for our
+data (see \texttt{featureNames(hl)}) which is
+\texttt{"Uniprot/Swissprot"}, for the Biomart query.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{par} \hlkwb{<-} \hlkwd{setAnnotationParams}\hlstd{(}\hlkwc{inputs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Mus musculus"}\hlstd{,}
-                                      \hlstr{"UniProt/Swissprot"}\hlstd{))}
+\hlstd{par} \hlkwb{<-} \hlkwd{setAnnotationParams}\hlstd{(}\hlkwc{inputs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Mus musculus"}\hlstd{,} \hlstr{"UniProt/Swissprot"}\hlstd{))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -2009,9 +2008,7 @@ evidence codes as desired, see \texttt{?makeGoSet} for more details.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{gocc} \hlkwb{<-} \hlkwd{makeGoSet}\hlstd{(hl,} \hlkwc{params} \hlstd{= par,}
-                  \hlkwc{namespace} \hlstd{=} \hlstr{"cellular_component"}\hlstd{,}
-                  \hlkwc{evidence} \hlstd{=} \hlkwa{NULL}\hlstd{)}
+\hlstd{gocc} \hlkwb{<-} \hlkwd{makeGoSet}\hlstd{(hl,} \hlkwc{params} \hlstd{= par,} \hlkwc{namespace} \hlstd{=} \hlstr{"cellular_component"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -2021,11 +2018,10 @@ query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All
 GO terms that have been observed for the 5032 proteins in the
 hyperLOPIT dataset are retieved. Users should note that the number of
 GO terms retreived is also dependent on the database version queried
-and thus is always subject to change. We find it is common to see many
-GO terms with only one protein assigned to that term, these such terms
-generally do not bring and information generally for building the
-classifier and thus we can remove such GO terms by using the function
-\texttt{filterBinMSnSet}.
+and thus is always subject to change. We find it is common to see GO
+terms with only one protein assigned to that term. Such terms do not
+bring any information for building the classifier and are thus removes
+using the \texttt{filterBinMSnSet} function.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2035,47 +2031,47 @@ classifier and thus we can remove such GO terms by using the function
 \end{kframe}
 \end{knitrout}
 
-Now we have generated our auxiliary data we can use the \textit{k}-NN
-implementation of transfer learning available in \Biocpkg{pRoloc} to
-integrate this with our primary MS-based quantitative proteomics data
-using the functions \texttt{knntlOptimisation} to estimate the
-free-parameters for the integration, and \texttt{knntlClassification}
-to do the predictions. We have shown that using transfer learning in
-the context of spatial proteomics results in the assignment of
-proteins to sub-cellular niches with a higher generalisation accuracy
-than using standard supervised machine learning with a single source
-of information \cite{Breckels:2016}.
+Now that we have generated our auxiliary data, we can use the
+\textit{k}-NN implementation of transfer learning available in
+\Biocpkg{pRoloc} to integrate this with our primary MS-based
+quantitative proteomics data using the functions
+\texttt{knntlOptimisation} to estimate the free-parameters for the
+integration, and \texttt{knntlClassification} to do the
+predictions. We have shown that using transfer learning results in the
+assignment of proteins to sub-cellular niches with a higher
+generalisation accuracy than using standard supervised machine
+learning with a single source of information \cite{Breckels:2016}.
 
 The first step, as with any machine learning algorithm, is to optimise
-any free paramaters of the classifier. For the *k*-NN TL classifier
+any free paramaters of the classifier. For the $k$-NN TL classifier
 there are two sets of parameters that need optimising: the first set
 are the $k$'s for the primary and auxiliary data sources required for
 the nearest neighbour calculations for each data source. The second
-set of parameters (which is noted by a vector of $\theta$ weights)
-that require optimising are the class weights, one per subcellular
-niche, that control the proportion of primary and auxiliary data to
-use for learning. A weight can take any real value number between 0
-and 1. A weight of $\theta = 1$ indicates that all weight is given to
-the primary data (and this implicitly implies that a weight of
-$1 - \theta$ is given to the auxiliary data, similarly a weight of
-$\theta = 0$ implies that all weight is given to the auxiliary data
-(so 0 is given to the primary source). If we conduct a parameter seach
-and test weights $\theta = {0, 1/3, 2/3, 1}$ for each class, and if we
-have, for example 10 subcellular niches, this will result in
-\texttt{4$^{10}$} different combinations of parameters to test. The
-parameter optimisation is therefore time consuming and as such we
-recommend you make use of a computing cluster (code and submissing
-scripts are also available in the supporting information). The markers
-in the \texttt{hl} dataset contain 14 subcellular classes. If we
-examine these markers and classes on the PCA plot above we can see
-that in particular the two ribosomes and two nuclear compartments are
-highly separated along the first two components, this is also evident
-from the profiles plot which gives us a good indication that these
-subcellular niches are well-resolved in the hyperLOPIT
-dataset. Transfer learning is particularly useful for classes that are
-not as well separated, we find that subcellular niches that are
-well-separated under hyperLOPIT and LOPIT obtain a class score of 1
-(i.e. use only primary data from transfer learning
+set of parameters (noted by a vector of $\theta$ weights) that require
+optimising are the class weights, one per subcellular niche, that
+control the proportion of primary and auxiliary data to use for
+learning. A weight can take any real value number between 0 and 1. A
+weight of $\theta = 1$ indicates that all weight is given to the
+primary data (and this implicitly implies that a weight of
+$1 - \theta = 0$ is given to the auxiliary data), and similarly a
+weight of $\theta = 0$ implies that all weight is given to the
+auxiliary data (so 0 is given to the primary source). If we conduct a
+parameter seach and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
+class, and if we have, for example 10 subcellular niches, this will
+result in \texttt{4$^{10}$} different combinations of parameters to
+test. The parameter optimisation is therefore time consuming and as
+such we recommend making use of a computing cluster (code and
+submissing scripts are also available in the supporting
+information). The markers in the \texttt{hl} dataset contain 14
+subcellular classes. If we examine these markers and classes on the
+PCA plot above we can see that in particular the two ribosomes and two
+nuclear compartments are highly separated along the first two
+components, this is also evident from the profiles plot which gives us
+a good indication that these subcellular niches are well-resolved in
+the hyperLOPIT dataset. Transfer learning is particularly useful for
+classes that are not as well separated. We find that subcellular
+niches that are well-separated under hyperLOPIT and LOPIT obtain a
+class score of 1 (i.e. use only primary data from transfer learning
 \cite{Breckels:2016}). Therefore, for the optimisation stage of the
 analyses we can already infer a subcellular class weight of 1 for
 these niches and only optimise over the remaining organelles.  This
@@ -2088,8 +2084,8 @@ In the example below we remove these 4 classes from the marker set,
 re-run the \texttt{knnOptimisation} for each data source and then run
 the \texttt{knntlOptimisation} with the 10 remaining classes. (Note:
 this is not run live as this the \texttt{hl} dataset with 10 classes,
-707 markers and 4$^{10}$ combinations of parameters takes ~76 hours to
-run on the University of Cambridge HPC using 256 workers).
+707 markers and 4$^{10}$ combinations of parameters takes around 76
+hours to run on the University of Cambridge HPC using 256 workers).
 
 To remove the 4 classes and create a new column of markers in the
 feature data called \texttt{tlmarkers} to use for the analysis:
@@ -2133,8 +2129,8 @@ feature data called \texttt{tlmarkers} to use for the analysis:
 \end{kframe}
 \end{knitrout}
 
-Optimisation stage 1: run \texttt{knnOptimisation} to get the best
-$k$'s for each data source.
+\paragraph{TL optimisation stage 1} Run \texttt{knnOptimisation} to get
+the best $k$'s for each data source.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2142,17 +2138,16 @@ $k$'s for each data source.
 \hlcom{## get best k's}
 \hlstd{kpopt} \hlkwb{<-} \hlkwd{knnOptimisation}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
 \hlstd{kaopt} \hlkwb{<-} \hlkwd{knnOptimisation}\hlstd{(gocc,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{)}
-\hlkwd{plot}\hlstd{(kpopt)}
-\hlkwd{plot}\hlstd{(kaopt)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-From examining the parameter seach plots we find the best $k$'s for
-both the primary and auxiliary are 3.
+From examining the parameter seach plots as described in section
+\textit{Optimisation}, we find the best $k$'s for both the primary and
+auxiliary are 3.
 
-Optimisation stage 2: run \texttt{knntlOptimisation} to get the best
-transfer learning weights for each sub-cellular class.
+\paragraph{TL optimisation stage 2} Run \texttt{knntlOptimisation} to
+get the best transfer learning weights for each sub-cellular class.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2162,18 +2157,16 @@ transfer learning weights for each sub-cellular class.
 \hlstd{par} \hlkwb{<-} \hlkwd{SnowParam}\hlstd{(}\hlnum{255L}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"MPI"}\hlstd{)}
 
 \hlcom{## Now peform tl optimisation }
-\hlstd{tlopt} \hlkwb{<-} \hlkwd{knntlOptimisation}\hlstd{(hl, gocc,}
-                           \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{,}
-                           \hlkwc{length.out} \hlstd{=} \hlnum{4}\hlstd{,}
-                           \hlkwc{times} \hlstd{=} \hlnum{50}\hlstd{,}
+\hlstd{tlopt} \hlkwb{<-} \hlkwd{knntlOptimisation}\hlstd{(hl, gocc,} \hlkwc{fcol} \hlstd{=} \hlstr{"tlmarkers"}\hlstd{,}
+                           \hlkwc{length.out} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{times} \hlstd{=} \hlnum{50}\hlstd{,}
                            \hlkwc{xval} \hlstd{=} \hlnum{5}\hlstd{,} \hlkwc{k} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{),}
                            \hlkwc{BPPARAM} \hlstd{= par)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-The results of the optimisation can be visalised using the \texttt{plot}
-method for \texttt{"ThetaRegRes"} objects:
+The results of the optimisation can be visalised using the
+\texttt{plot} method for \texttt{tlopt} optimisation result:
 
 
 
@@ -2192,19 +2185,19 @@ method for \texttt{"ThetaRegRes"} objects:
   \label{fig:plottl}
 \end{figure}
 
-
-Looking at the bubble plot displaying the distribution of best weights
-over the 50 runs we find that for many of the subcellular niches a
-weight of 1 is most popular (i.e. use only primary hyperLOPIT data in
-classification), this is unsuprising as we already know the dataset is
-well resolved for these classes. We see that the most popular weights
-for the proteasome and lysosome tend to be towards 0, indicating that
-these niches are well-resolved in the Gene Ontology. This tells us
-that we would benefit from including auxiliary GO information in our
-classifier for these subcellular compartments. The plasma membrane
-weights are relatively equally spread between using hyperLOPIT and GO
-data. Using the \texttt{getParams} function we can return the best
-weights and then use this as input for the classification.
+\paragraph{TL classification} Looking at the bubble plot displaying
+the distribution of best weights over the 50 runs we find that for
+many of the subcellular niches a weight of 1 is most popular (i.e. use
+only primary hyperLOPIT data in classification), this is unsuprising
+as we already know the dataset is well resolved for these classes. We
+see that the most popular weights for the proteasome and lysosome tend
+to be towards 0, indicating that these niches are well-resolved in the
+Gene Ontology. This tells us that we would benefit from including
+auxiliary GO information in our classifier for these subcellular
+compartments. The plasma membrane weights are relatively equally
+spread between using hyperLOPIT and GO data. Using the
+\texttt{getParams} function we can return the best weights and then
+use this as input for the classification.
 
 One of the benefits of the algorithm is the ability to manually select
 weights for each class. In the optimisation above, for time
@@ -2259,8 +2252,7 @@ perform the classification using the function
 \hlstd{bestpar} \hlkwb{<-} \hlstd{bestpar[}\hlkwd{getMarkerClasses}\hlstd{(hl)]}
 
 \hlcom{## Do the classification}
-\hlstd{hl} \hlkwb{<-} \hlkwd{knntlClassification}\hlstd{(hl, gocc,} \hlkwc{bestTheta} \hlstd{= bestpar,}
-                          \hlkwc{k} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{))}
+\hlstd{hl} \hlkwb{<-} \hlkwd{knntlClassification}\hlstd{(hl, gocc,} \hlkwc{bestTheta} \hlstd{= bestpar,} \hlkwc{k} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,} \hlnum{3}\hlstd{))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -2307,7 +2299,7 @@ of the number of clusters that may appear in the data.
 A \texttt{MSnSet} can be exported from R using the
 \texttt{write.exprs} function.  This function writes the expression
 values to a tab (the defualt, or other type e.g.e.g. comma, as
-specified in \texttt{write,table}) separated file. There argument
+specified in \texttt{write.table}) separated file. There argument
 \texttt{fDataCols} can be used to specify which \texttt{featureData}
 columns (as column names, column number or \texttt{logical}) to append
 to the right of the expression matrix.

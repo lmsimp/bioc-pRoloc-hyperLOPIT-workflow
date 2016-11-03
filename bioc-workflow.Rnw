@@ -1316,7 +1316,7 @@ information we refer users to the \Biocpkg{pRolocGUI} tutorial
 
 \section*{Transfer learning}
 
-In addition to high quality MS-based quantitative proteomics data
+In addition to high quality MS-based quantitative proteomics data,
 there exist a number of other sources of information that are freely
 available in the public domain that may be useful to assign a protein
 to its sub-cellular niche. For example, imaging from
@@ -1328,13 +1328,13 @@ paradigm known as transfer learning (TL). The integration of data
 between different technologies is one of the biggest challenges in
 computational biology to date and the \Biocpkg{pRoloc} package
 provides functionality to do such analyses. We recently developed two
-transfer learning algorithms using a *k*-NN and SVM framework and
+transfer learning algorithms using a $k$-NN and SVM framework and
 applied them to the task of protein localisation prediction
 \cite{Breckels:2016}. In this section we will begin with explaining the
 concept of transfer learning and then show how to apply this in the
 frame of spatial proteomics and protein localisation prediction.
 
-In TL one typically has a primary task that they wish to solve, and
+In TL one typically has a primary task that one wishes to solve, and
 some complementary (often heterogeneous) auxiliary information that is
 related to the primary learning objective, that can be used to help
 solve the primary goal. For example, here our primary task is to
@@ -1349,24 +1349,23 @@ Using the functions \texttt{setAnnotationParams} and
 terms, from the primary data's features i.e. the protein accession
 numbers. All the GO terms associated to each accession number are
 retrieved and used to create a binary matrix where a 1 (0) at position
-(i; j) indicates that term j has (not) been used to annotate protein
-i. The GO terms are retrieved from an appropriate repository using the
-\Biocpkg{biomaRt} package. The specific Biomart repository and query
-will depend on the species under study and the type of
+$(i, j)$ indicates that term $j$ has (not) been used to annotate
+protein $i$. The GO terms are retrieved from an appropriate repository
+using the \Biocpkg{biomaRt} package. The specific Biomart repository
+and query will depend on the species under study and the type of
 identifiers. The first step is to construct the annotation parameters
-that will enable to perform the query, this is done using
+that will enable to perform the query, which is done using
 \texttt{setAnnotationParams}. Typing into the R console \texttt{par <-
   setAnnotationParams()} will present two menus, firstly asking you to
 identify the species of study, and then what type of identifier you
 have used to annotate the proteins in your \texttt{MSnSet}. It is also
 possible to pass patterns to match the species e.g. in the code chunk
-below we pass "Mus musculus", and the identifier type for our data
-(see \texttt{featureNames(hl)}) which is "Uniprot/Swissprot", for the
-Biomart query.
+below we pass \texttt{"Mus musculus"}, and the identifier type for our
+data (see \texttt{featureNames(hl)}) which is
+\texttt{"Uniprot/Swissprot"}, for the Biomart query.
 
 <<setap, eval=FALSE>>=
-par <- setAnnotationParams(inputs = c("Mus musculus", 
-                                      "UniProt/Swissprot"))
+par <- setAnnotationParams(inputs = c("Mus musculus", "UniProt/Swissprot"))
 
 @
 
@@ -1379,9 +1378,7 @@ biological process GO namespaces, and also apply filtering based on
 evidence codes as desired, see \texttt{?makeGoSet} for more details.
 
 <<makego, eval=FALSE>>=
-gocc <- makeGoSet(hl, params = par, 
-                  namespace = "cellular_component",
-                  evidence = NULL)
+gocc <- makeGoSet(hl, params = par, namespace = "cellular_component")
 @
 
 The function \texttt{makeGoSet} uses the \Biocpkg{biomaRt} package to
@@ -1389,57 +1386,56 @@ query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All
 GO terms that have been observed for the 5032 proteins in the
 hyperLOPIT dataset are retieved. Users should note that the number of
 GO terms retreived is also dependent on the database version queried
-and thus is always subject to change. We find it is common to see many
-GO terms with only one protein assigned to that term, these such terms
-generally do not bring and information generally for building the
-classifier and thus we can remove such GO terms by using the function
-\texttt{filterBinMSnSet}.
+and thus is always subject to change. We find it is common to see GO
+terms with only one protein assigned to that term. Such terms do not
+bring any information for building the classifier and are thus removes
+using the \texttt{filterBinMSnSet} function.
 
 <<filtergo, eval=FALSE>>=
 gocc <- filterBinMSnSet(hl)
 @
 
-Now we have generated our auxiliary data we can use the \textit{k}-NN
-implementation of transfer learning available in \Biocpkg{pRoloc} to
-integrate this with our primary MS-based quantitative proteomics data
-using the functions \texttt{knntlOptimisation} to estimate the
-free-parameters for the integration, and \texttt{knntlClassification}
-to do the predictions. We have shown that using transfer learning in
-the context of spatial proteomics results in the assignment of
-proteins to sub-cellular niches with a higher generalisation accuracy
-than using standard supervised machine learning with a single source
-of information \cite{Breckels:2016}.
+Now that we have generated our auxiliary data, we can use the
+\textit{k}-NN implementation of transfer learning available in
+\Biocpkg{pRoloc} to integrate this with our primary MS-based
+quantitative proteomics data using the functions
+\texttt{knntlOptimisation} to estimate the free-parameters for the
+integration, and \texttt{knntlClassification} to do the
+predictions. We have shown that using transfer learning results in the
+assignment of proteins to sub-cellular niches with a higher
+generalisation accuracy than using standard supervised machine
+learning with a single source of information \cite{Breckels:2016}.
 
 The first step, as with any machine learning algorithm, is to optimise
-any free paramaters of the classifier. For the *k*-NN TL classifier
+any free paramaters of the classifier. For the $k$-NN TL classifier
 there are two sets of parameters that need optimising: the first set
 are the $k$'s for the primary and auxiliary data sources required for
 the nearest neighbour calculations for each data source. The second
-set of parameters (which is noted by a vector of $\theta$ weights)
-that require optimising are the class weights, one per subcellular
-niche, that control the proportion of primary and auxiliary data to
-use for learning. A weight can take any real value number between 0
-and 1. A weight of $\theta = 1$ indicates that all weight is given to
-the primary data (and this implicitly implies that a weight of
-$1 - \theta$ is given to the auxiliary data, similarly a weight of
-$\theta = 0$ implies that all weight is given to the auxiliary data
-(so 0 is given to the primary source). If we conduct a parameter seach
-and test weights $\theta = {0, 1/3, 2/3, 1}$ for each class, and if we
-have, for example 10 subcellular niches, this will result in
-\texttt{4$^{10}$} different combinations of parameters to test. The
-parameter optimisation is therefore time consuming and as such we
-recommend you make use of a computing cluster (code and submissing
-scripts are also available in the supporting information). The markers
-in the \texttt{hl} dataset contain 14 subcellular classes. If we
-examine these markers and classes on the PCA plot above we can see
-that in particular the two ribosomes and two nuclear compartments are
-highly separated along the first two components, this is also evident
-from the profiles plot which gives us a good indication that these
-subcellular niches are well-resolved in the hyperLOPIT
-dataset. Transfer learning is particularly useful for classes that are
-not as well separated, we find that subcellular niches that are
-well-separated under hyperLOPIT and LOPIT obtain a class score of 1
-(i.e. use only primary data from transfer learning
+set of parameters (noted by a vector of $\theta$ weights) that require
+optimising are the class weights, one per subcellular niche, that
+control the proportion of primary and auxiliary data to use for
+learning. A weight can take any real value number between 0 and 1. A
+weight of $\theta = 1$ indicates that all weight is given to the
+primary data (and this implicitly implies that a weight of
+$1 - \theta = 0$ is given to the auxiliary data), and similarly a
+weight of $\theta = 0$ implies that all weight is given to the
+auxiliary data (so 0 is given to the primary source). If we conduct a
+parameter seach and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
+class, and if we have, for example 10 subcellular niches, this will
+result in \texttt{4$^{10}$} different combinations of parameters to
+test. The parameter optimisation is therefore time consuming and as
+such we recommend making use of a computing cluster (code and
+submissing scripts are also available in the supporting
+information). The markers in the \texttt{hl} dataset contain 14
+subcellular classes. If we examine these markers and classes on the
+PCA plot above we can see that in particular the two ribosomes and two
+nuclear compartments are highly separated along the first two
+components, this is also evident from the profiles plot which gives us
+a good indication that these subcellular niches are well-resolved in
+the hyperLOPIT dataset. Transfer learning is particularly useful for
+classes that are not as well separated. We find that subcellular
+niches that are well-separated under hyperLOPIT and LOPIT obtain a
+class score of 1 (i.e. use only primary data from transfer learning
 \cite{Breckels:2016}). Therefore, for the optimisation stage of the
 analyses we can already infer a subcellular class weight of 1 for
 these niches and only optimise over the remaining organelles.  This
@@ -1452,8 +1448,8 @@ In the example below we remove these 4 classes from the marker set,
 re-run the \texttt{knnOptimisation} for each data source and then run
 the \texttt{knntlOptimisation} with the 10 remaining classes. (Note:
 this is not run live as this the \texttt{hl} dataset with 10 classes,
-707 markers and 4$^{10}$ combinations of parameters takes ~76 hours to
-run on the University of Cambridge HPC using 256 workers).
+707 markers and 4$^{10}$ combinations of parameters takes around 76
+hours to run on the University of Cambridge HPC using 256 workers).
 
 To remove the 4 classes and create a new column of markers in the
 feature data called \texttt{tlmarkers} to use for the analysis:
@@ -1481,22 +1477,21 @@ getMarkerClasses(hl, fcol = "tlmarkers")
 getMarkerClasses(gocc, fcol = "tlmarkers")
 @
 
-Optimisation stage 1: run \texttt{knnOptimisation} to get the best
-$k$'s for each data source.
+\paragraph{TL optimisation stage 1} Run \texttt{knnOptimisation} to get
+the best $k$'s for each data source.
 
 <<knnoptfortl, eval=FALSE>>=
 ## get best k's
 kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
 kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
-plot(kpopt)
-plot(kaopt)
 @
 
-From examining the parameter seach plots we find the best $k$'s for
-both the primary and auxiliary are 3.
+From examining the parameter seach plots as described in section
+\textit{Optimisation}, we find the best $k$'s for both the primary and
+auxiliary are 3.
 
-Optimisation stage 2: run \texttt{knntlOptimisation} to get the best
-transfer learning weights for each sub-cellular class.
+\paragraph{TL optimisation stage 2} Run \texttt{knntlOptimisation} to
+get the best transfer learning weights for each sub-cellular class.
 
 <<runtlopts, eval=FALSE>>=
 ## Set appropriate parallelisation backend and  
@@ -1504,16 +1499,14 @@ transfer learning weights for each sub-cellular class.
 par <- SnowParam(255L, type = "MPI")
 
 ## Now peform tl optimisation 
-tlopt <- knntlOptimisation(hl, gocc,
-                           fcol = "tlmarkers",
-                           length.out = 4,
-                           times = 50,
+tlopt <- knntlOptimisation(hl, gocc, fcol = "tlmarkers",
+                           length.out = 4, times = 50,
                            xval = 5, k = c(3, 3),
                            BPPARAM = par)
 @
 
-The results of the optimisation can be visalised using the \texttt{plot}
-method for \texttt{"ThetaRegRes"} objects:
+The results of the optimisation can be visalised using the
+\texttt{plot} method for \texttt{tlopt} optimisation result:
 
 <<loadtlres, echo=FALSE>>=
 tlfile <- dir(extdatadir, full.names = TRUE,
@@ -1532,19 +1525,19 @@ plot(tlopt)
   \label{fig:plottl}
 \end{figure}
 
-
-Looking at the bubble plot displaying the distribution of best weights
-over the 50 runs we find that for many of the subcellular niches a
-weight of 1 is most popular (i.e. use only primary hyperLOPIT data in
-classification), this is unsuprising as we already know the dataset is
-well resolved for these classes. We see that the most popular weights
-for the proteasome and lysosome tend to be towards 0, indicating that
-these niches are well-resolved in the Gene Ontology. This tells us
-that we would benefit from including auxiliary GO information in our
-classifier for these subcellular compartments. The plasma membrane
-weights are relatively equally spread between using hyperLOPIT and GO
-data. Using the \texttt{getParams} function we can return the best
-weights and then use this as input for the classification.
+\paragraph{TL classification} Looking at the bubble plot displaying
+the distribution of best weights over the 50 runs we find that for
+many of the subcellular niches a weight of 1 is most popular (i.e. use
+only primary hyperLOPIT data in classification), this is unsuprising
+as we already know the dataset is well resolved for these classes. We
+see that the most popular weights for the proteasome and lysosome tend
+to be towards 0, indicating that these niches are well-resolved in the
+Gene Ontology. This tells us that we would benefit from including
+auxiliary GO information in our classifier for these subcellular
+compartments. The plasma membrane weights are relatively equally
+spread between using hyperLOPIT and GO data. Using the
+\texttt{getParams} function we can return the best weights and then
+use this as input for the classification.
 
 One of the benefits of the algorithm is the ability to manually select
 weights for each class. In the optimisation above, for time
@@ -1573,8 +1566,7 @@ names(otherweights) <- c("40S Ribosome", "60S Ribosome",
 bestpar <- bestpar[getMarkerClasses(hl)]
 
 ## Do the classification
-hl <- knntlClassification(hl, gocc, bestTheta = bestpar, 
-                          k = c(3, 3))
+hl <- knntlClassification(hl, gocc, bestTheta = bestpar, k = c(3, 3))
 @
 
 The results from the classification results and associated scores are
@@ -1619,7 +1611,7 @@ of the number of clusters that may appear in the data.
 A \texttt{MSnSet} can be exported from R using the
 \texttt{write.exprs} function.  This function writes the expression
 values to a tab (the defualt, or other type e.g.e.g. comma, as
-specified in \texttt{write,table}) separated file. There argument
+specified in \texttt{write.table}) separated file. There argument
 \texttt{fDataCols} can be used to specify which \texttt{featureData}
 columns (as column names, column number or \texttt{logical}) to append
 to the right of the expression matrix.
