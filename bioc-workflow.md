@@ -230,7 +230,7 @@ description, number of quantified peptides etc (see below).
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ##  MSnbase version: 1.99.7
+    ##  MSnbase version: 2.0.0
 
 Below, we examine the quantitative information for first 5 proteins. It
 is also possible to access specific rows and columns by naming the
@@ -537,7 +537,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 09:50:59 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 13:51:16 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -589,10 +589,10 @@ missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 09:50:59 2016 
-    ## Subset [6725,20][5032,20] Thu Nov  3 09:51:00 2016 
-    ## Removed features with more than 0 NAs: Thu Nov  3 09:51:00 2016 
-    ## Dropped featureData's levels Thu Nov  3 09:51:00 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 13:51:16 2016 
+    ## Subset [6725,20][5032,20] Thu Nov  3 13:51:16 2016 
+    ## Removed features with more than 0 NAs: Thu Nov  3 13:51:16 2016 
+    ## Dropped featureData's levels Thu Nov  3 13:51:16 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and too many proteins were not
@@ -711,9 +711,7 @@ mouse dataset used here has Uniprot IDs stored as the `featureNames`
 markers stored in (`mmus` markers) are also Uniprot IDs (see `head(mrk)`
 in the code chunk below), so it is straightforward to match names
 between the markers and the `MSnSet` instance using the `addMarkers`
-function. We recommend at least 13 markers per sub-cellular class (see
-the *Optimisation* section for details about the algorithmic motivation
-of this number).
+function.
 
 \
 `    `\
@@ -741,6 +739,22 @@ of this number).
     ##                      17                      51                      34 
     ##                 unknown 
     ##                    4095
+
+We recommend at least 13 markers per sub-cellular class (see the
+*Optimisation* section for details about the algorithmic motivation of
+this number). Markers should be chosen to confidently represent to
+distribution of genuine residents of a sub-cellular niche. We generally
+recommend such a conservative approach in defining markers to avoid
+false assignments when assigning sub-cellular localisation of proteins
+of unknown localisation. A more relaxed definition of markers, i.e. one
+that broadly or over-confidently defines markers, risks to erroneously
+assign proteins to a single location, when, in reality, they reside in
+more that a single location (including the assumed unique location). One
+can not expect to identify exact boundaries between sub-cellular classes
+through marker annotation alone; the definition of these boundaries is
+better handled algorithmically, i.e. after application of the supervised
+learning algorithm, using the prediction scores (as described in the
+*Classification* section, in particular Figure [fig:plotSVM]).
 
 If the naming between the marker sets and the `MSnSet` dataset are
 different, one will have to convert and match the proteins according to
@@ -1092,9 +1106,9 @@ clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Thu Nov  3 09:51:01 2016 
-    ## Added markers from  'pdres' marker vector. Thu Nov  3 09:51:01 2016 
-    ##  MSnbase version: 1.99.7
+    ## Added markers from  'mrk' marker vector. Thu Nov  3 13:51:18 2016 
+    ## Added markers from  'pdres' marker vector. Thu Nov  3 13:51:18 2016 
+    ##  MSnbase version: 2.0.0
 
 `   `
 
@@ -1206,7 +1220,7 @@ parameters via a grid search. This procedure is usually repeated 100
 times and then the best parameter(s) are selected upon investigation of
 classifier accuracy. We recommend a minimum of 13 markers per
 sub-cellular class for stratified 80/20 partitioning and 5-fold
-cross-validation - this allows a minimum of 10 examples for parameter
+cross-validation; this allows a minimum of 10 examples for parameter
 optimisation on the training partition i.e. 2 per fold for 5-fold
 cross-validation, and then 3 for testing the best parameters on the
 validation set.
@@ -1344,12 +1358,12 @@ a specific score cutoff on which to define new assignments, below which
 classifications are kept unknown/unassigned. This is important as in a
 supervised learning setup, proteins can only be predicted to be
 localised to one of the sub-cellular niches that appear in the labelled
-training data. We can not guaranette (and do not expect) that the whole
+training data. We can not guarantee (and do not expect) that the whole
 sub-cellular diversity to be represented in the labelled training data
 as (1) finding markers that represent the whole diversity of the cell is
 challenging (especially obtaining dual- and multiply-localised protein
 markers) and (2) many sub-cellular niches contain too few proteins to
-train on (see XXX)
+train on (see above for a motivation of a minimum of 13 markers).
 
 Deciding on a threshold is not trivial as classifier scores are heavily
 dependent upon the classifier used and different sub-cellular niches can
@@ -1391,29 +1405,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4367168               0.3047342               0.3922339 
+    ##               0.4370276               0.3037353               0.3894744 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6943983               0.5988529               0.4311726 
+    ##               0.6725203               0.6068444               0.4285221 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4284363               0.5810296               0.9492637 
+    ##               0.4158521               0.5893212               0.9492587 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7945645               0.7083659               0.3145980 
+    ##               0.7938912               0.7081272               0.3134475 
     ##         Plasma membrane              Proteasome 
-    ##               0.7183478               0.4133134
+    ##               0.7168648               0.4195643
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      86                     170                      89 
+    ##                      85                     170                      89 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     478                     100 
+    ##                     303                     476                      97 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      25                     123                     522 
+    ##                      28                     124                     525 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     344                      39 
+    ##                     229                     342                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     318                     158                    2055
+    ##                     317                     152                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1810,44 +1824,44 @@ failure and/or different results.
     ## [8] datasets  base     
     ## 
     ## other attached packages:
-    ##  [1] pRolocdata_1.11.9    pRoloc_1.15.1        MLInterfaces_1.53.1 
-    ##  [4] cluster_2.0.5        annotate_1.51.1      XML_3.98-1.4        
-    ##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.19   
-    ## [10] MSnbase_1.99.7       ProtGenerics_1.5.1   BiocParallel_1.7.9  
-    ## [13] mzR_2.7.12           Rcpp_0.12.7          Biobase_2.33.4      
-    ## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      xtable_1.8-2        
-    ## [19] BiocStyle_2.1.33     knitr_1.14          
+    ##  [1] pRolocdata_1.12.0    pRoloc_1.15.1        MLInterfaces_1.54.0 
+    ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
+    ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
+    ## [10] MSnbase_2.0.0        ProtGenerics_1.6.0   BiocParallel_1.8.1  
+    ## [13] mzR_2.8.0            Rcpp_0.12.7          Biobase_2.34.0      
+    ## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
+    ## [19] BiocStyle_2.2.0      knitr_1.14          
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
     ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
     ##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
-    ## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
+    ## [10] MatrixModels_0.4-1    affyio_1.44.0         flexmix_2.3-13       
     ## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.2        
-    ## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
+    ## [16] doParallel_1.0.10     impute_1.48.0         robustbase_0.92-6    
     ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-72         
     ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
-    ## [25] vsn_3.41.5            sfsmisc_1.1-0         shiny_0.14.1         
+    ## [25] vsn_3.42.3            sfsmisc_1.1-0         shiny_0.14.2         
     ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
-    ## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
+    ## [31] limma_3.30.2          formatR_1.4           htmltools_0.3.5      
     ## [34] quantreg_5.29         tools_3.3.2           ggvis_0.4.3          
-    ## [37] gtable_0.2.0          affy_1.51.1           reshape2_1.4.1       
+    ## [37] gtable_0.2.0          affy_1.52.0           reshape2_1.4.2       
     ## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
-    ## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
+    ## [43] gdata_2.17.0          preprocessCore_1.36.0 nlme_3.1-128         
     ## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.1.0        
     ## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
     ## [52] gtools_3.5.0          dendextend_1.3.0      DEoptimR_1.0-6       
-    ## [55] zlibbioc_1.19.0       MASS_7.3-45           scales_0.4.0         
-    ## [58] BiocInstaller_1.24.0  pcaMethods_1.65.0     SparseM_1.72         
-    ## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.29.2       
+    ## [55] zlibbioc_1.20.0       MASS_7.3-45           scales_0.4.0         
+    ## [58] BiocInstaller_1.24.0  pcaMethods_1.66.0     SparseM_1.72         
+    ## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.30.0       
     ## [64] rpart_4.1-10          stringi_1.1.2         RSQLite_1.0.0        
-    ## [67] highr_0.6             genefilter_1.55.2     randomForest_4.6-12  
+    ## [67] highr_0.6             genefilter_1.56.0     randomForest_4.6-12  
     ## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
-    ## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.10        
+    ## [73] bitops_1.0-6          mzID_1.12.0           evaluate_0.10        
     ## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
     ## [79] plyr_1.8.4            magrittr_1.5          R6_2.2.0             
     ## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
-    ## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
+    ## [85] survival_2.40-1       RCurl_1.95-4.8        nnet_7.3-12          
     ## [88] tibble_1.2            msdata_0.14.0         car_2.1-3            
     ## [91] mlbench_2.1-1         grid_3.3.2            FNN_1.1              
     ## [94] ModelMetrics_1.1.0    threejs_0.2.2         digest_0.6.10        

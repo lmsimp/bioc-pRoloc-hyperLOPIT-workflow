@@ -1211,7 +1211,7 @@ heavily dependent upon the classifier used and different sub-cellular
 niches can exhibit different score distributions, as highlighted in
 the boxplot below. We recommend users to set class-specific
 thresholds.  In the code chunk below we display a boxplot of the score
-distributions per organelle. 
+distributions per organelle (Figure \ref{fig:threshold}). 
 
 \begin{figure}[!ht]
   \centering
@@ -1255,7 +1255,7 @@ The output of \texttt{getPredictons} is the original \texttt{MSnSet}
 dataset with a new feature variable appended to the feature data
 called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
 containing the prediction results. The results can also be visualied
-using \texttt{plot2D} function.
+using \texttt{plot2D} function (Figure \ref{fig:plotres}).
 
 <<resetpar, echo=FALSE>>=
 invisible(dev.off())
@@ -1263,7 +1263,7 @@ invisible(dev.off())
 
 \begin{figure}[!ht]
     \centering
-<<plotres, out.width=".8\\textwidth">>=
+<<plotres, out.width=".7\\textwidth">>=
 plot2D(hl, fcol = "svm.pred")
 @  
   \caption{Results of the localisation preductions after thresholding.}
@@ -1272,48 +1272,47 @@ plot2D(hl, fcol = "svm.pred")
 
 
 There is also a dedicated interactive application to help users
-examine these distributions in the \Biocpkg{pRolocGUI} package.
-This app can be launched via the \texttt{pRolocVis} function and specifying
-the argument \texttt{app = "classify"} along with the relevent \texttt{fcol}, \texttt{scol}
-and \texttt{mcol} which refer to the columns in the feature data that contain
-the new assignments, assignment scores and markers respectively (see
-also \texttt{fvarLabels(svmres)}).
+examine these distributions in the \Biocpkg{pRolocGUI} package (Figure
+\ref{fig:classifyapp}).  This app can be launched via the
+\texttt{pRolocVis} function and specifying the argument \texttt{app =
+  "classify"} along with the relevent \texttt{fcol}, \texttt{scol} and
+\texttt{mcol} which refer to the columns in the feature data that
+contain the new assignments, assignment scores and markers
+respectively (see also \texttt{fvarLabels(svmres)}).
 
 <<classifyApp, eval=FALSE>>=
 library("pRolocGUI")
-pRolocVis(hl, 
-          app = "classify",
-          fcol = "svm",
-	        scol = "svm.scores",
-          mcol = "markers")
+pRolocVis(hl, app = "classify", fcol = "svm", scol = "svm.scores", mcol = "markers")
 @
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{./Figures/classify.png}
-  \caption{The classify application}
+  \includegraphics[width=0.7\textwidth]{./Figures/classify.png}
+  \caption{The classify application enable the interactive exploration
+    of classification score thresholding.}
   \label{fig:classifyapp}
 \end{figure}
 
 
 The data is loaded and displayed on a PCA plot and a boxplot is used
-to display the classifier scores by data class. On the left there is a
-sidebar panel with sliders to control the thresholds upon which
+to display the classifier scores by data class. On the left, there is
+a sidebar panel with sliders to control the thresholds upon which
 classifications are made. There are two types of cut-off that the user
-can choose from: (1) "Quantile" and (2) "User-defined". By default,
-when the application is launched quatile scoring is selected and set
-to 0.5, the median. The class-specific score thresholds that
-correspond to selecting the desired quantile are shown on as red dots
-on the boxplot. The assignments on the PCA plot are also updated
-according to the selected threshold. The quantile threshold can be set
-by moving the corresponding quantile slider. If one wished to set
-their own cut-offs the "User-defined" radio button must be selected
-and then the sliders for defining user-specified scores become active
-and the scores and highlighted on the boxplot by blue dots. For more
-information we refer users to the \Biocpkg{pRolocGUI}
-tutorial
+can choose from: (1) \textit{Quantile} and (2)
+\textit{User-defined}. By default, when the application is launched
+quatile scoring is selected and set to 0.5, the median. The
+class-specific score thresholds that correspond to selecting the
+desired quantile are shown on as red dots on the boxplot. The
+assignments on the PCA plot are also updated according to the selected
+threshold. The quantile threshold can be set by moving the
+corresponding quantile slider. If one wished to set their own cut-offs
+the \textit{User-defined} radio button must be selected and then the
+sliders for defining user-specified scores become active and the
+scores and highlighted on the boxplot by blue dots. For more
+information we refer users to the \Biocpkg{pRolocGUI} tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 
+\clearpage
 
 \section*{Transfer learning}
 

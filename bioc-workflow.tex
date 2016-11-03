@@ -279,7 +279,7 @@ etc (see below).
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 1.99.7
+##  MSnbase version: 2.0.0
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -709,7 +709,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 10:06:16 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 17:25:04 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -780,10 +780,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 10:06:16 2016 
-## Subset [6725,20][5032,20] Thu Nov  3 10:06:16 2016 
-## Removed features with more than 0 NAs: Thu Nov  3 10:06:16 2016 
-## Dropped featureData's levels Thu Nov  3 10:06:16 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 17:25:04 2016 
+## Subset [6725,20][5032,20] Thu Nov  3 17:25:05 2016 
+## Removed features with more than 0 NAs: Thu Nov  3 17:25:05 2016 
+## Dropped featureData's levels Thu Nov  3 17:25:05 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1139,7 +1139,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Thu Nov  3 10:06:18 2016
+% Thu Nov  3 17:25:06 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1435,9 +1435,9 @@ clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Nov  3 10:06:18 2016 
-## Added markers from  'pdres' marker vector. Thu Nov  3 10:06:18 2016 
-##  MSnbase version: 1.99.7
+## Added markers from  'mrk' marker vector. Thu Nov  3 17:25:06 2016 
+## Added markers from  'pdres' marker vector. Thu Nov  3 17:25:07 2016 
+##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
 \hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
@@ -1776,21 +1776,22 @@ how non-assigned proteins are classified and with what confidence.
 It is common when applying a supervised classification algorithm to
 set a specific score cutoff on which to define new assignments, below
 which classifications are kept unknown/unassigned. This is important
-as in a supervised learning setup, proteins can only be predicted to be
-localised to one of the sub-cellular niches that appear in the
-labelled training data. We can not guaranette (and do not expect) that
-the whole sub-cellular diversity to be represented in the labelled training
-data as (1) finding markers that represent the whole diversity of the
-cell is challenging (especially obtaining dual- and multiply-localised
-protein markers) and (2) many sub-cellular niches contain too few
-proteins to train on (see XXX)
+as in a supervised learning setup, proteins can only be predicted to
+be localised to one of the sub-cellular niches that appear in the
+labelled training data. We can not guarantee (and do not expect) that
+the whole sub-cellular diversity to be represented in the labelled
+training data as (1) finding markers that represent the whole
+diversity of the cell is challenging (especially obtaining dual- and
+multiply-localised protein markers) and (2) many sub-cellular niches
+contain too few proteins to train on (see above for a motivation of a
+minimum of 13 markers).
 
 Deciding on a threshold is not trivial as classifier scores are
 heavily dependent upon the classifier used and different sub-cellular
 niches can exhibit different score distributions, as highlighted in
 the boxplot below. We recommend users to set class-specific
 thresholds.  In the code chunk below we display a boxplot of the score
-distributions per organelle. 
+distributions per organelle (Figure \ref{fig:threshold}). 
 
 \begin{figure}[!ht]
   \centering
@@ -1838,15 +1839,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4341324               0.3058579               0.3830383 
+##               0.4362653               0.3034648               0.3816205 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.7027971               0.6112125               0.4319591 
+##               0.6867997               0.6097258               0.4288042 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4219879               0.5982771               0.9503209 
+##               0.4156074               0.5909675               0.9497999 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7950258               0.7086536               0.3168774 
+##               0.7967810               0.7107021               0.3135143 
 ##         Plasma membrane              Proteasome 
-##               0.7163298               0.4144068
+##               0.7125828               0.4223579
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1854,15 +1855,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      84 
+##                      85                     170                      86 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     297                     475                      98 
+##                     298                     476                      97 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     123                     522 
+##                      27                     124                     522 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     342                      39 
+##                     229                     347                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     323                     157                    2058
+##                     320                     155                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1871,7 +1872,7 @@ The output of \texttt{getPredictons} is the original \texttt{MSnSet}
 dataset with a new feature variable appended to the feature data
 called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
 containing the prediction results. The results can also be visualied
-using \texttt{plot2D} function.
+using \texttt{plot2D} function (Figure \ref{fig:plotres}).
 
 
 
@@ -1883,7 +1884,7 @@ using \texttt{plot2D} function.
 \hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm.pred"}\hlstd{)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.8\textwidth]{figure/plotres-1} 
+\includegraphics[width=.7\textwidth]{figure/plotres-1} 
 
 \end{knitrout}
   \caption{Results of the localisation preductions after thresholding.}
@@ -1892,52 +1893,51 @@ using \texttt{plot2D} function.
 
 
 There is also a dedicated interactive application to help users
-examine these distributions in the \Biocpkg{pRolocGUI} package.
-This app can be launched via the \texttt{pRolocVis} function and specifying
-the argument \texttt{app = "classify"} along with the relevent \texttt{fcol}, \texttt{scol}
-and \texttt{mcol} which refer to the columns in the feature data that contain
-the new assignments, assignment scores and markers respectively (see
-also \texttt{fvarLabels(svmres)}).
+examine these distributions in the \Biocpkg{pRolocGUI} package (Figure
+\ref{fig:classifyapp}).  This app can be launched via the
+\texttt{pRolocVis} function and specifying the argument \texttt{app =
+  "classify"} along with the relevent \texttt{fcol}, \texttt{scol} and
+\texttt{mcol} which refer to the columns in the feature data that
+contain the new assignments, assignment scores and markers
+respectively (see also \texttt{fvarLabels(svmres)}).
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{library}\hlstd{(}\hlstr{"pRolocGUI"}\hlstd{)}
-\hlkwd{pRolocVis}\hlstd{(hl,}
-          \hlkwc{app} \hlstd{=} \hlstr{"classify"}\hlstd{,}
-          \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,}
-                \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,}
-          \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
+\hlkwd{pRolocVis}\hlstd{(hl,} \hlkwc{app} \hlstd{=} \hlstr{"classify"}\hlstd{,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=\textwidth]{./Figures/classify.png}
-  \caption{The classify application}
+  \includegraphics[width=0.7\textwidth]{./Figures/classify.png}
+  \caption{The classify application enable the interactive exploration
+    of classification score thresholding.}
   \label{fig:classifyapp}
 \end{figure}
 
 
 The data is loaded and displayed on a PCA plot and a boxplot is used
-to display the classifier scores by data class. On the left there is a
-sidebar panel with sliders to control the thresholds upon which
+to display the classifier scores by data class. On the left, there is
+a sidebar panel with sliders to control the thresholds upon which
 classifications are made. There are two types of cut-off that the user
-can choose from: (1) "Quantile" and (2) "User-defined". By default,
-when the application is launched quatile scoring is selected and set
-to 0.5, the median. The class-specific score thresholds that
-correspond to selecting the desired quantile are shown on as red dots
-on the boxplot. The assignments on the PCA plot are also updated
-according to the selected threshold. The quantile threshold can be set
-by moving the corresponding quantile slider. If one wished to set
-their own cut-offs the "User-defined" radio button must be selected
-and then the sliders for defining user-specified scores become active
-and the scores and highlighted on the boxplot by blue dots. For more
-information we refer users to the \Biocpkg{pRolocGUI}
-tutorial
+can choose from: (1) \textit{Quantile} and (2)
+\textit{User-defined}. By default, when the application is launched
+quatile scoring is selected and set to 0.5, the median. The
+class-specific score thresholds that correspond to selecting the
+desired quantile are shown on as red dots on the boxplot. The
+assignments on the PCA plot are also updated according to the selected
+threshold. The quantile threshold can be set by moving the
+corresponding quantile slider. If one wished to set their own cut-offs
+the \textit{User-defined} radio button must be selected and then the
+sliders for defining user-specified scores become active and the
+scores and highlighted on the boxplot by blue dots. For more
+information we refer users to the \Biocpkg{pRolocGUI} tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 
+\clearpage
 
 \section*{Transfer learning}
 
@@ -2379,44 +2379,44 @@ the software that lead to failure and/or different results.
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.11.9    pRoloc_1.15.1        MLInterfaces_1.53.1 
-##  [4] cluster_2.0.5        annotate_1.51.1      XML_3.98-1.4        
-##  [7] AnnotationDbi_1.35.4 IRanges_2.7.17       S4Vectors_0.11.19   
-## [10] MSnbase_1.99.7       ProtGenerics_1.5.1   BiocParallel_1.7.9  
-## [13] mzR_2.7.12           Rcpp_0.12.7          Biobase_2.33.4      
-## [16] BiocGenerics_0.19.2  gridExtra_2.2.1      xtable_1.8-2        
-## [19] BiocStyle_2.1.33     knitr_1.14          
+##  [1] pRolocdata_1.12.0    pRoloc_1.15.1        MLInterfaces_1.54.0 
+##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
+##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
+## [10] MSnbase_2.0.0        ProtGenerics_1.6.0   BiocParallel_1.8.1  
+## [13] mzR_2.8.0            Rcpp_0.12.7          Biobase_2.34.0      
+## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
+## [19] BiocStyle_2.2.0      knitr_1.14          
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
 ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
 ##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
-## [10] MatrixModels_0.4-1    affyio_1.43.0         flexmix_2.3-13       
+## [10] MatrixModels_0.4-1    affyio_1.44.0         flexmix_2.3-13       
 ## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.2        
-## [16] doParallel_1.0.10     impute_1.47.0         robustbase_0.92-6    
+## [16] doParallel_1.0.10     impute_1.48.0         robustbase_0.92-6    
 ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-72         
 ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
-## [25] vsn_3.41.5            sfsmisc_1.1-0         shiny_0.14.1         
+## [25] vsn_3.42.3            sfsmisc_1.1-0         shiny_0.14.2         
 ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
-## [31] limma_3.29.21         formatR_1.4           htmltools_0.3.5      
+## [31] limma_3.30.2          formatR_1.4           htmltools_0.3.5      
 ## [34] quantreg_5.29         tools_3.3.2           ggvis_0.4.3          
-## [37] gtable_0.2.0          affy_1.51.1           reshape2_1.4.1       
+## [37] gtable_0.2.0          affy_1.52.0           reshape2_1.4.2       
 ## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
-## [43] gdata_2.17.0          preprocessCore_1.35.0 nlme_3.1-128         
+## [43] gdata_2.17.0          preprocessCore_1.36.0 nlme_3.1-128         
 ## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.1.0        
 ## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
 ## [52] gtools_3.5.0          dendextend_1.3.0      DEoptimR_1.0-6       
-## [55] zlibbioc_1.19.0       MASS_7.3-45           scales_0.4.0         
-## [58] BiocInstaller_1.24.0  pcaMethods_1.65.0     SparseM_1.72         
-## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.29.2       
+## [55] zlibbioc_1.20.0       MASS_7.3-45           scales_0.4.0         
+## [58] BiocInstaller_1.24.0  pcaMethods_1.66.0     SparseM_1.72         
+## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.30.0       
 ## [64] rpart_4.1-10          stringi_1.1.2         RSQLite_1.0.0        
-## [67] highr_0.6             genefilter_1.55.2     randomForest_4.6-12  
+## [67] highr_0.6             genefilter_1.56.0     randomForest_4.6-12  
 ## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
-## [73] bitops_1.0-6          mzID_1.11.2           evaluate_0.10        
+## [73] bitops_1.0-6          mzID_1.12.0           evaluate_0.10        
 ## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
 ## [79] plyr_1.8.4            magrittr_1.5          R6_2.2.0             
 ## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
-## [85] survival_2.39-5       RCurl_1.95-4.8        nnet_7.3-12          
+## [85] survival_2.40-1       RCurl_1.95-4.8        nnet_7.3-12          
 ## [88] tibble_1.2            msdata_0.14.0         car_2.1-3            
 ## [91] mlbench_2.1-1         grid_3.3.2            FNN_1.1              
 ## [94] ModelMetrics_1.1.0    threejs_0.2.2         digest_0.6.10        
