@@ -537,7 +537,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:14:05 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 09:50:59 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -589,10 +589,10 @@ missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov  2 15:14:05 2016 
-    ## Subset [6725,20][5032,20] Wed Nov  2 15:14:06 2016 
-    ## Removed features with more than 0 NAs: Wed Nov  2 15:14:06 2016 
-    ## Dropped featureData's levels Wed Nov  2 15:14:06 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 09:50:59 2016 
+    ## Subset [6725,20][5032,20] Thu Nov  3 09:51:00 2016 
+    ## Removed features with more than 0 NAs: Thu Nov  3 09:51:00 2016 
+    ## Dropped featureData's levels Thu Nov  3 09:51:00 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and too many proteins were not
@@ -711,7 +711,9 @@ mouse dataset used here has Uniprot IDs stored as the `featureNames`
 markers stored in (`mmus` markers) are also Uniprot IDs (see `head(mrk)`
 in the code chunk below), so it is straightforward to match names
 between the markers and the `MSnSet` instance using the `addMarkers`
-function.
+function. We recommend at least 13 markers per sub-cellular class (see
+the *Optimisation* section for details about the algorithmic motivation
+of this number).
 
 \
 `    `\
@@ -1057,21 +1059,23 @@ compared to using a higher one.
 One may also consider increasing the search space for new data clusters
 by increasing the value of the parameter `G`. This defines the number of
 GMM components to test and fit; the default is `G = 1:9` (the default
-value in the package @mclust). One should note that the decreasing the
-`GS`, and increasing the values of the arguments `times`, `G` (among
-other function arguments, see `?phenoDisco`) will heavily influence
-(increase) the total time taken to run the algorithm. `phenoDisco`
-supports parallelisation and we strongly suggest you make use of a
-parallel processing to run these analyses.
+value in the
+[*mclust*](https://cran.r-project.org/web/packages/mclust/index.html)
+package @mclust). One should note that the decreasing the `GS`, and
+increasing the values of the arguments `times`, `G` (among other
+function arguments, see `?phenoDisco`) will heavily influence (increase)
+the total time taken to run the algorithm. `phenoDisco` supports
+parallelisation and we strongly suggest you make use of a parallel
+processing to run these analyses.
 
-The ouput of running the `phenoDisco` algorithm is a `MSnSet` containing
-the new data clusters, appended to the `featureData` under the name
-`pd`. We can see by typing `hl@processingData` directly into the console
-the processing information has been updated to the `MSnSet` recording
-the parameters that were used to run the analyses. This is handy for
-keeping track of data analyses. The results can be displayed by using
-the `getMarkers` function. We see that 5 new phenotype data clusters
-were found.
+The ouput of running the `phenoDisco` algorithm is an `MSnSet`
+containing the new data clusters, appended to the `featureData` under
+the name `pd`. We can see by typing `processingData(hl)` directly into
+the console the processing information has been updated to the `MSnSet`
+recording the parameters that were used to run the analyses. This is
+handy for keeping track of data analyses. The results can be displayed
+by using the `getMarkers` function. We see that 5 new phenotype data
+clusters were found.
 
     ## MSnSet (storageMode: lockedEnvironment)
     ## assayData: 5032 features, 20 samples 
@@ -1088,8 +1092,8 @@ were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Wed Nov  2 15:14:07 2016 
-    ## Added markers from  'pdres' marker vector. Wed Nov  2 15:14:07 2016 
+    ## Added markers from  'mrk' marker vector. Thu Nov  3 09:51:01 2016 
+    ## Added markers from  'pdres' marker vector. Thu Nov  3 09:51:01 2016 
     ##  MSnbase version: 1.99.7
 
 `   `
@@ -1120,8 +1124,6 @@ were found.
     ##                               unknown 
     ##                                  2479
 
-We can plot the results using the `plot2D` function.
-
 \
 `   `\
 `  `\
@@ -1141,10 +1143,11 @@ We can plot the results using the `plot2D` function.
 
 [fig:plotPDres]
 
-The five new phenotype data clusters can be extracted and examined. In
-the code chunk below we write the results to a .csv file. We use the
-argument `fDataCols` to specify which columns of the `featureData` to
-write.
+We can plot the results using the `plot2D` function (Figure
+[fig:plotPDres]). The five new phenotype data clusters can be extracted
+and examined. In the code chunk below we write the results to a .csv
+file. We use the argument `fDataCols` to specify which columns of the
+`featureData` to write.
 
 `  `\
 `         `
@@ -1154,8 +1157,6 @@ protein profiles by using the `pRolocVis` function in the package. We
 found that phenotype 1 was enriched in nucleus associated proteins,
 phenotype 2 in chromatin associated proteins, phenotype 3 in cytosolic
 and phenotypes 4 and 5 in lysosomal and endosomal proteins.
-
-`   `
 
 Supervised machine learning {#supervised-machine-learning .unnumbered}
 ===========================
@@ -1184,28 +1185,35 @@ find the optimal parameters for the algorithm of choice.
 Optimisation {#optimisation .unnumbered}
 ------------
 
-In the code chunk below we employ the use of a Support Vector Machine
-(SVM) to learn a classifier on the labelled training data. As previously
-mentioned one first needs to train the classifiers parameters before an
-algorithm can be used to predict the class labels of the proteins with
-unknown location. One of the most common ways to optimise the parameters
-of a classifier is to partition the labelled data in to training and
-testing subsets. In this framework parameters are tested via a grid
-search using cross-validation on the training partition. The best
-parameters chosen from the cross-validation stage are then used to build
-a classifier to predict the class labels of the protein profiles on the
-test partition. Observed and expected classication results can be
-compared, and then used to assess how well a given model works by
-getting an estimate of the classiers ability to achieve a good
-generalisation i.e. that is given an unknown example predict its class
-label with high accuracy. In , algorithmic performance is estimated
-using stratified 80/20 partitioning for the training/testing subsets
-respectively, in conjuction with five-fold cross-validation in order to
-optimise the free parameters via a grid search. This procedure is
-usually repeated 100 times and then the best parameter(s) are selected
-upon investigation of classifier accuracy, here we use the harmonic mean
-of precision and recall; the macro F1 score. In the code chunk below we
-demonstrate how to optimise the free parameters; `sigma` and `cost`, of
+In the code chunk below we use a Support Vector Machine (SVM) to learn a
+classifier on the labelled training data. As previously mentioned, one
+first needs to train the classifiers parameters before an algorithm can
+be used to predict the class labels of the proteins with unknown
+location. One of the most common ways to optimise the parameters of a
+classifier is to partition the labelled data in to training and testing
+subsets. In this framework parameters are tested via a grid search using
+cross-validation on the training partition. The best parameters chosen
+from the cross-validation stage are then used to build a classifier to
+predict the class labels of the protein profiles on the test partition.
+Observed and expected classication results can be compared, and then
+used to assess how well a given model works by getting an estimate of
+the classiers ability to achieve a good generalisation i.e. that is
+given an unknown example predict its class label with high accuracy. In
+, algorithmic performance is estimated using stratified 80/20
+partitioning for the training/testing subsets respectively, in
+conjuction with five-fold cross-validation in order to optimise the free
+parameters via a grid search. This procedure is usually repeated 100
+times and then the best parameter(s) are selected upon investigation of
+classifier accuracy. We recommend a minimum of 13 markers per
+sub-cellular class for stratified 80/20 partitioning and 5-fold
+cross-validation - this allows a minimum of 10 examples for parameter
+optimisation on the training partition i.e. 2 per fold for 5-fold
+cross-validation, and then 3 for testing the best parameters on the
+validation set.
+
+Classifier accuracy is estimated using the macro F1 score, i.e. the
+harmonic mean of precision and recall. In the code chunk below we
+demonstrate how to optimise the free parameters, `sigma` and `cost`, of
 a classical SVM classifier with a Gaussian kernel using the function
 `svmOptimisation`. As the number of labelled instances per class varies
 from organelle to organelle, we can account for class imbalance by
@@ -1234,7 +1242,7 @@ frequencies.
 `                               `\
 `                           `
 
-As mentioned previously, we reply on the default feature variable
+As mentioned previously, we rely on the default feature variable
 `markers` to define the class labels and hence can ommit it. To use
 another feature variables, one need to explicitly specify its name using
 the `fcol` argument (for example `fcol = markers2`).
@@ -1247,12 +1255,23 @@ macro F1 score indicates that the marker proteins in the test dataset
 are consistently and correctly assigned by the the algorithm. Often more
 than one parameter or set of parameters gives rise to the best
 generalisation accuracy. As such it is always important to investigate
-the model parameters and critically assess the best choice. The best
-choice may not be as simple as the parameter set that gives rise to the
-highest macro F1 score and one must be careful to avoid overfitting and
-to choose parameters wisely.
+the model parameters and critically assess the best choice. The
+`f1Count` function counts the number of parameter occurences above a
+certain F1 value. The best choice may not be as simple as the parameter
+set that gives rise to the highest macro F1 score and one must be
+careful to avoid overfitting and to choose parameters wisely.
 
-`  `\
+` `
+
+    ##     4  8 16
+    ## 0.1 1 10 89
+
+The parameter optimistion results can also be visualised as a boxplot or
+heatmap, as shown in figure [fig:visualisOptHide]. The `plot` method for
+`GenRegRes` object shows the respective distributions of the 100 macro
+F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows
+the averaged macro F1 scores, for the full range of parameter values.
+
 \
 
 ![Assessment of the classification model parameter
@@ -1263,13 +1282,15 @@ optimisation.](figure/visualiseOptHide-1)
 By using the function `getParams` we can extract the best set of
 parameters. Currently, `getParams` retrieves the first best set is
 automatically but users are encouraged to critically assess whether this
-is the most wise choice by visualising the results using the methods
-`plot` and `levelPlot`. The `plot` method for `GenRegRes` object shows
-the respective distributions of the 100 macro F1 scores for the best
-cost/sigma parameter pairs, and `levelPlot` shows the averaged macro F1
-scores, for the full range of parameter values. Once we have selected
-the best parameters we can then use them to build a classifier from the
-labelled marker proteins.
+is the most wise choice.
+
+`  `
+
+    ## sigma  cost 
+    ##   0.1  16.0
+
+Once we have selected the best parameters we can then use them to build
+a classifier from the labelled marker proteins.
 
 Classification {#classification .unnumbered}
 --------------
@@ -1281,11 +1302,9 @@ passed to the function, along with the class weights. As above, `fcol`
 can be ignored as we use the labels defined in the default `markers`
 feature variable.
 
-`  `\
-`                         `\
-`                          `
+`       `
 
-Automatically, the output of the above classification; the organelle
+Automatically, the output of the above classification, the organelle
 predictions and assignment scores, are stored in the `featureData` slot
 of the `MSnSet`. In this case, they are given the labels `svm` and
 `svm.scores` for the predictions and scores respectively. The resultant
@@ -1294,10 +1313,9 @@ predictions can be visualised using `plot2D`. In the code chunk below
 to specify where the new assignments are located e.g. `fcol = svm`.
 
 Additionally, when calling `plot2D` we can use the `cex` argument to
-change the size of each point on the plot (where one point represents
-one protein) to be inversely proportional to the SVM score. This gives
-an initial overview of the high scoring localisations from the SVM
-predictions.
+change the size of each point on the plot to be inversely proportional
+to the SVM score. This gives an initial overview of the high scoring
+localisations from the SVM predictions.
 
 \
 `    `\
@@ -1305,7 +1323,9 @@ predictions.
 `     `\
 `            `
 
-![Classification results.](figure/plotSVM-1)
+![Classification results. Colours indicate class membership and point
+size are representative or the classification
+confidence.](figure/plotSVM-1)
 
 [fig:plotSVM]
 
@@ -1316,29 +1336,20 @@ is also valid of other classifiers) defines boundaries based on the
 labelled marker proteins. These class/organelle boundaries define how
 non-assigned proteins are classified and with what confidence.
 
-**TODO** explain how choosing markers positively/negatively affects
-this, and relation with thresholding.
-
 Thresholding {#sec:thresholding .unnumbered}
 ------------
 
 It is common when applying a supervised classification algorithm to set
 a specific score cutoff on which to define new assignments, below which
-classifications are set to unknown/unassigned. This is important as in a
-supervised learning setup proteins can only be predicted to be localised
-to one of the sub-cellular niches that appear in the labelled training
-data. We can not guaranette (and do not expect) that the whole class
-diversity to be represented in the labelled training data as (1) finding
-markers that represent the whole diversity of the cell is challenging
-(especially obtaining dual- and multiply-localised protein markers) and
-(2) many sub-cellular niches contain too few proteins to train on (we
-recommend a minimum of 13 markers per sub-cellular class for stratified
-80/20 partitioning and 5-fold cross-validation - this allows a minimum
-of  10 examples for parameter optimisation on the training partition
-i.e. 2 per fold for 5-fold cross-validation, and then  3 for testing the
-best parameters on the validation set). \<!–Conversely, when defining
-markers one must also be careful to not label too many markers, as this
-can lead to overfitting and mis-assignment.–\>
+classifications are kept unknown/unassigned. This is important as in a
+supervised learning setup, proteins can only be predicted to be
+localised to one of the sub-cellular niches that appear in the labelled
+training data. We can not guaranette (and do not expect) that the whole
+sub-cellular diversity to be represented in the labelled training data
+as (1) finding markers that represent the whole diversity of the cell is
+challenging (especially obtaining dual- and multiply-localised protein
+markers) and (2) many sub-cellular niches contain too few proteins to
+train on (see XXX)
 
 Deciding on a threshold is not trivial as classifier scores are heavily
 dependent upon the classifier used and different sub-cellular niches can
@@ -1377,48 +1388,37 @@ the new localisations that meet this scoring criteria. Any sub-cellular
 predictions that fall below the specified thresholds are labelled as
 unknown.
 
-`  `\
-`                  `\
-`                  `\
-`                  `\
-`                  `
+`              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4345641               0.3020405               0.3828070 
+    ##               0.4367168               0.3047342               0.3922339 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6934017               0.5946395               0.4243395 
+    ##               0.6943983               0.5988529               0.4311726 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4137080               0.5900245               0.9496663 
+    ##               0.4284363               0.5810296               0.9492637 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7953737               0.7081208               0.3157994 
+    ##               0.7945645               0.7083659               0.3145980 
     ##         Plasma membrane              Proteasome 
-    ##               0.7162812               0.4155780
+    ##               0.7183478               0.4133134
 
-`  `\
-`                       `\
-`                       `\
-`                       `\
-`                      `
+`             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     170                      86 
+    ##                      86                     170                      89 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     476                      99 
+    ##                     296                     478                     100 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     125                     522 
+    ##                      25                     123                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     344                      39 
+    ##                     229                     344                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     319                     157                    2057
+    ##                     318                     158                    2055
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
 (i.e. in our case `svm.pred`) containing the prediction results. The
 results can also be visualied using `plot2D` function.
-
-    ## null device 
-    ##           1
 
 `   `
 

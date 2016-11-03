@@ -558,14 +558,14 @@ are continuosly updated and integrated.
 pRolocmarkers()
 @
 
-These markers can then be mapped to a \texttt{MSnSet}'s \texttt{featureNames}. The
-mouse dataset used here has Uniprot IDs stored as the \texttt{featureNames}
-(see \texttt{head(featureNames(hl))}) and the names of the vector of
-the mouse markers stored in \Biocpkg{pRoloc} (\texttt{mmus} markers) 
-are also Uniprot IDs (see \texttt{head(mrk)} in the code chunk below), so 
-it is straightforward to match names between the markers and 
-the \texttt{MSnSet} instance using the \texttt{addMarkers} function.
-
+These markers can then be mapped to a \texttt{MSnSet}'s
+\texttt{featureNames}. The mouse dataset used here has Uniprot IDs
+stored as the \texttt{featureNames} (see
+\texttt{head(featureNames(hl))}) and the names of the vector of the
+mouse markers stored in \Biocpkg{pRoloc} (\texttt{mmus} markers) are
+also Uniprot IDs (see \texttt{head(mrk)} in the code chunk below), so
+it is straightforward to match names between the markers and the
+\texttt{MSnSet} instance using the \texttt{addMarkers} function. 
 
 <<addmarkers>>=
 ## Use mouse markers
@@ -575,6 +575,25 @@ head(mrk)
 ## Add mouse markers
 hl <- addMarkers(hl, mrk)
 @
+
+We recommend at least 13 markers per sub-cellular class (see the
+\textit{Optimisation} section for details about the algorithmic
+motivation of this number). Markers should be chosen to confidently
+represent to distribution of genuine residents of a sub-cellular
+niche. We generally recommend such a conservative approach in defining
+markers to avoid false assignments when assigning sub-cellular
+localisation of proteins of unknown localisation. A more relaxed
+definition of markers, i.e. one that broadly or over-confidently
+defines markers, risks to erroneously assign proteins to a single
+location, when, in reality, they reside in more that a single location
+(including the assumed unique location). One can not expect to
+identify exact boundaries between sub-cellular classes through marker
+annotation alone; the definition of these boundaries is better handled
+algorithmically, i.e. after application of the supervised learning
+algorithm, using the prediction scores (as described in the
+\textit{Classification} section, in particular Figure
+\ref{fig:plotSVM}).
+
 
 If the naming between the marker sets and the \texttt{MSnSet} dataset
 are different, one will have to convert and match the proteins
@@ -657,7 +676,7 @@ markers along the 6th and 7th channels, as represented above along the
 
 \begin{figure}[!ht]
   \centering
-<<plotDist, out.width=".6\\textwidth", fig.asp=1/3>>=
+<<plotDist, out.width=".6\\textwidth", fig.asp=3/5>>=
 hlo <- hl[, order(hl$Iodixonal.Density)]
 plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
          pcol = "purple", fractions = "Fraction.No")
@@ -1020,8 +1039,15 @@ partitioning for the training/testing subsets respectively, in
 conjuction with five-fold cross-validation in order to optimise the
 free parameters via a grid search. This procedure is usually repeated
 100 times and then the best parameter(s) are selected upon
-investigation of classifier accuracy. Here, we use the macro F1 score,
-i.e. the harmonic mean of precision and recall. In the code chunk below we
+investigation of classifier accuracy. We recommend a minimum of 13
+markers per sub-cellular class for stratified 80/20 partitioning and
+5-fold cross-validation; this allows a minimum of 10 examples for
+parameter optimisation on the training partition i.e. 2 per fold for
+5-fold cross-validation, and then 3 for testing the best parameters on
+the validation set.
+
+Classifier accuracy is estimated using the macro F1 score, i.e. the
+harmonic mean of precision and recall. In the code chunk below we
 demonstrate how to optimise the free parameters, \texttt{sigma} and
 \texttt{cost}, of a classical SVM classifier with a Gaussian kernel
 using the function \texttt{svmOptimisation}. As the number of labelled
@@ -1029,7 +1055,6 @@ instances per class varies from organelle to organelle, we can account
 for class imbalance by setting specific class weights when generating
 the SVM model. Below the weights, \texttt{w} are set to be inversely
 proportional to the class frequencies.
-
 
 <<loadpdRes, echo=FALSE>>=
 svmf <- dir(extdatadir, full.names = TRUE,
@@ -1120,12 +1145,10 @@ can be ignored as we use the labels defined in the default \texttt{"markers"}
 feature variable.
 
 <<classify>>=
-hl <- svmClassification(hl, params,
-                        class.weights = w,
-                        fcol = "markers")
+hl <- svmClassification(hl, params, class.weights = w, fcol = "markers")
 @
 
-Automatically, the output of the above classification; the organelle
+Automatically, the output of the above classification, the organelle
 predictions and assignment scores, are stored in the
 \texttt{featureData} slot of the \texttt{MSnSet}. In this case, they
 are given the labels \texttt{svm} and \texttt{svm.scores} for the
@@ -1136,10 +1159,9 @@ visualised using \texttt{plot2D}. In the code chunk below
 e.g.  \texttt{fcol = "svm"}.
 
 Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
-argument to change the size of each point on the plot (where one point
-represents one protein) to be inversely proportional to the SVM
-score. This gives an initial overview of the high scoring
-localisations from the SVM predictions.
+argument to change the size of each point on the plot to be inversely
+proportional to the SVM score. This gives an initial overview of the
+high scoring localisations from the SVM predictions.
 
 <<setColors, include=FALSE>>=
 setStockcol(NULL)
@@ -1156,7 +1178,8 @@ ptsze <- exp(fData(hl)$svm.scores) - 1
 plot2D(hl, fcol = "svm", cex = ptsze)
 addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 @  
-  \caption{Classification results.}
+\caption{Classification results. Colours indicate class membership and
+  point size are representative or the classification confidence.}
   \label{fig:plotSVM}
 \end{figure}
 
@@ -1168,29 +1191,19 @@ this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
 how non-assigned proteins are classified and with what confidence.
 
-\textbf{TODO} explain how choosing markers positively/negatively
-affects this, and relation with thresholding.
-
 \subsection*{Thresholding}\label{sec:thresholding}
 
 It is common when applying a supervised classification algorithm to
 set a specific score cutoff on which to define new assignments, below
-which classifications are set to unknown/unassigned. This is important
-as in a supervised learning setup proteins can only be predicted to be
+which classifications are kept unknown/unassigned. This is important
+as in a supervised learning setup, proteins can only be predicted to be
 localised to one of the sub-cellular niches that appear in the
 labelled training data. We can not guaranette (and do not expect) that
-the whole class diversity to be represented in the labelled training
+the whole sub-cellular diversity to be represented in the labelled training
 data as (1) finding markers that represent the whole diversity of the
 cell is challenging (especially obtaining dual- and multiply-localised
 protein markers) and (2) many sub-cellular niches contain too few
-proteins to train on (we recommend a minimum of 13 markers per
-sub-cellular class for stratified 80/20 partitioning and 5-fold
-cross-validation - this allows a minimum of ~10 examples for parameter
-optimisation on the training partition i.e. 2 per fold for 5-fold
-cross-validation, and then ~3 for testing the best parameters on the
-validation set). <!--Conversely, when defining markers one must also
-be careful to not label too many markers, as this can lead to
-overfitting and mis-assignment.-->
+proteins to train on (see XXX)
 
 Deciding on a threshold is not trivial as classifier scores are
 heavily dependent upon the classifier used and different sub-cellular
@@ -1233,17 +1246,8 @@ sub-cellular predictions that fall below the specified thresholds are
 labelled as unknown.
 
 <<orgquants>>=
-ts <- orgQuants(hl, 
-                fcol = "svm", 
-                scol = "svm.scores",
-                mcol = "markers", 
-                t = .5)
-
-hl <- getPredictions(hl,
-                     fcol = "svm",
-                     scol = "svm.scores", 
-                     mcol = "markers",
-                     t = ts)                        
+ts <- orgQuants(hl, fcol = "svm", scol = "svm.scores", mcol = "markers", t = .5)
+hl <- getPredictions(hl, fcol = "svm", scol = "svm.scores", mcol = "markers", t = ts)
 @
 
 The output of \texttt{getPredictons} is the original \texttt{MSnSet}
@@ -1252,8 +1256,8 @@ called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
 containing the prediction results. The results can also be visualied
 using \texttt{plot2D} function.
 
-<<resetpar>>=
-dev.off()
+<<resetpar, echo=FALSE>>=
+invisible(dev.off())
 @
 
 \begin{figure}[!ht]
