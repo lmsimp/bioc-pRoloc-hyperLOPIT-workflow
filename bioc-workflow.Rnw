@@ -119,6 +119,12 @@ storing the sample meta-data.
   \label{fig:msnset}
 \end{figure}
 
+Another slot of interest is \texttt{processingData}, that logs the
+processing \texttt{MSnSet} objects undergo. The processing log can be
+accessed with the \texttt{processingData} function and is displayed
+under \textit{Processing information} in the textual object summary
+when an \texttt{MSnSet}'s name it typed in the R console.
+
 \subsection*{Importing data}
 
 There are a number of ways to import quantitation data and create an
@@ -935,13 +941,9 @@ setStockcol(paste0(getStockcol(), 70))
 
 The ouput of running the \texttt{phenoDisco} algorithm is an
 \texttt{MSnSet} containing the new data clusters, appended to the
-\texttt{featureData} under the name \texttt{pd}. We can see by typing
-\texttt{processingData(hl)} directly into the console the processing
-information has been updated to the \texttt{MSnSet} recording the
-parameters that were used to run the analyses.  This is handy for
-keeping track of data analyses. The results can be displayed by using
-the \texttt{getMarkers} function. We see that 5 new phenotype data
-clusters were found.
+\texttt{featureData} under the name \texttt{pd}. The results can be
+displayed by using the \texttt{getMarkers} function. We see that 5 new
+phenotype data clusters were found.
 
 <<showPDres>>=
 hl
