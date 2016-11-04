@@ -1416,6 +1416,8 @@ assignment of proteins to sub-cellular niches with a higher
 generalisation accuracy than using standard supervised machine
 learning with a single source of information \cite{Breckels:2016}.
 
+\subsection*{TL optimisation}
+
 The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the $k$-NN TL classifier
 there are two sets of parameters that need optimising: the first set
@@ -1538,19 +1540,21 @@ plot(tlopt)
   \label{fig:plottl}
 \end{figure}
 
-\paragraph{TL classification} Looking at the bubble plot displaying
-the distribution of best weights over the 50 runs we find that for
-many of the subcellular niches a weight of 1 is most popular (i.e. use
-only primary hyperLOPIT data in classification), this is unsuprising
-as we already know the dataset is well resolved for these classes. We
-see that the most popular weights for the proteasome and lysosome tend
-to be towards 0, indicating that these niches are well-resolved in the
-Gene Ontology. This tells us that we would benefit from including
-auxiliary GO information in our classifier for these subcellular
-compartments. The plasma membrane weights are relatively equally
-spread between using hyperLOPIT and GO data. Using the
-\texttt{getParams} function we can return the best weights and then
-use this as input for the classification.
+
+\subsection*{TL classification} 
+
+Looking at the bubble plot displaying the distribution of best weights
+over the 50 runs we find that for many of the subcellular niches a
+weight of 1 is most popular (i.e. use only primary hyperLOPIT data in
+classification), this is unsuprising as we already know the dataset is
+well resolved for these classes. We see that the most popular weights
+for the proteasome and lysosome tend to be towards 0, indicating that
+these niches are well-resolved in the Gene Ontology. This tells us
+that we would benefit from including auxiliary GO information in our
+classifier for these subcellular compartments. The plasma membrane
+weights are relatively equally spread between using hyperLOPIT and GO
+data. Using the \texttt{getParams} function we can return the best
+weights and then use this as input for the classification.
 
 One of the benefits of the algorithm is the ability to manually select
 weights for each class. In the optimisation above, for time
@@ -1558,8 +1562,8 @@ constraints, we removed the two ribosomal subunits and the two nulcear
 compartments, and therefore in the code chunk below when we extract
 the best parameters, these subcellular niches are not included. To
 include these 4 subcellular niches in the next classification step we
-must include them in the parameters so we infer a weight of 1 for each
-of these niches as we know they are well resolved in hyperLOPIT. We
+must include them in the parameters. We define a weight of 1 for each
+of these niches, as we know they are well resolved in hyperLOPIT. We
 then re-order the weights according to \texttt{getMarkerClasses} and
 perform the classification using the function
 \texttt{knntlClassification}.
@@ -1590,27 +1594,38 @@ appended to the \texttt{fData} slot and named \texttt{knntl} and
 using \texttt{getPredictions} in the same way as demonstrated above
 for the SVM classifier.
 
-
 \section*{Unsupervised machine learning}
 
 In \texttt{pRoloc} there is functionality for unsupervsied machine
 learning methods. In unsupervised learning, the training data consists
-of a set of input vectors e.g. protein profiles, for which we do not
-have information about the class label e.g. localisation. The main
-goal in unsupervised learning is to uncover groups of similar examples
-within the data, this is termed clustering. Ordinance methods such as
-principal components analysis (PCA) also fall into the category of
-unsupervised learning methods, where the data can be projected from a
-high-dimensional spcae down to two or three dimensions for the purpose
-of visualisation.
+of a set of input vectors e.g. protein profiles, ignoring the
+information about the class label e.g. localisation, other than for
+annotation purposes. The main goal in unsupervised learning is to
+uncover groups of similar features within the data, termed
+clustering. Ordination methods such as principal components analysis
+(PCA) also fall into the category of unsupervised learning methods,
+where the data can be projected from a high-dimensional spcae down to
+two or three dimensions for the purpose of visualisation.
 
 As described and demonstrated already above, PCA is a valuable and
-powerful method for data visualisation and quality control. We do not
-do any unsupervised clustering in the frame of the above spatial
-proteomics workflow as although clustering can be useful for grouping
-labelled data into categories e.g. see the \texttt{mrkHClust}
-function, we do not find it adaquete for spatial proteomics data
-analysis. We find supervised learning more suited to the task of
+powerful method for data visualisation and quality control. Another
+application uses hierarchical clustering to summarise the relation
+between marker proteins using he \texttt{mrkHClust} function, where
+the euclidean distance bewteen average class-specific profiles is used
+to produce a dendrogramme describing a simple relationship between the
+sub-cellular classes (Figure~\ref{fig:mrkHclust}).
+
+\begin{figure}[!ht]
+  \centering
+<<hclust, out.width=".6\\textwidth", fig.asp = 1.5, out.extra='angle=-90'>>=
+par(mar = c(15, 4, 1, 0))
+mrkHClust(hl)
+@  
+  \caption{Hierarchical clustering of the average marker profiles summarising the relation between organelles profiles.}
+  \label{fig:mrkHclust}
+\end{figure}
+
+We generally find supervised learning more suited to the task of
 protein localisation prediction in which we use high-quality curated
 marker proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for

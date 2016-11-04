@@ -543,7 +543,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 11:36:17 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:44:55 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -595,10 +595,10 @@ missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 11:36:17 2016 
-    ## Subset [6725,20][5032,20] Fri Nov  4 11:36:18 2016 
-    ## Removed features with more than 0 NAs: Fri Nov  4 11:36:18 2016 
-    ## Dropped featureData's levels Fri Nov  4 11:36:18 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:44:55 2016 
+    ## Subset [6725,20][5032,20] Fri Nov  4 13:44:55 2016 
+    ## Removed features with more than 0 NAs: Fri Nov  4 13:44:55 2016 
+    ## Dropped featureData's levels Fri Nov  4 13:44:55 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and too many proteins were not
@@ -934,7 +934,7 @@ argument, `app = main` as it is the default).
 \
 
 ![A screen shot of clickable interface and zoomable PCA plot of the main
-app in the package.](./Figures/mainapp.png)
+app in the package. ](./Figures/mainapp.png)
 
 [fig:app]
 
@@ -947,7 +947,8 @@ Particular proteins of interest can be highlighted using the text search
 box. There is also an alternate profiles tab for visualisation of the
 protein profiles, which can be used to examine the patterns of proteins
 of interest. The Table selection tab provides an interface to control
-data table column selection.
+data table column selection. A short animation[^1] illustrating the
+interface is available in the manuscript repository @ghrepo.
 
 The *compare* application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
@@ -1117,8 +1118,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Fri Nov  4 11:36:19 2016 
-    ## Added markers from  'pdres' marker vector. Fri Nov  4 11:36:20 2016 
+    ## Added markers from  'mrk' marker vector. Fri Nov  4 13:44:57 2016 
+    ## Added markers from  'pdres' marker vector. Fri Nov  4 13:44:58 2016 
     ##  MSnbase version: 2.0.0
 
 `   `
@@ -1416,29 +1417,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4344085               0.3070891               0.3823223 
+    ##               0.4362981               0.3032213               0.3744072 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6928348               0.6017963               0.4249301 
+    ##               0.6867512               0.6037990               0.4241051 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4226011               0.5911111               0.9498226 
+    ##               0.4195881               0.5944806               0.9494939 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7957737               0.7096282               0.3152061 
+    ##               0.7936020               0.7104491               0.3163419 
     ##         Plasma membrane              Proteasome 
-    ##               0.7053008               0.4133848
+    ##               0.7096885               0.4172735
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      84                     170                      84 
+    ##                      86                     170                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     301                     479                      94 
+    ##                     300                     475                     101 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     123                     523 
+    ##                      26                     124                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     341                      38 
+    ##                     230                     342                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     326                     154                    2058
+    ##                     320                     155                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1568,6 +1569,9 @@ sub-cellular niches with a higher generalisation accuracy than using
 standard supervised machine learning with a single source of information
 @Breckels:2016.
 
+TL optimisation {#tl-optimisation .unnumbered}
+---------------
+
 The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the $k$-NN TL classifier
 there are two sets of parameters that need optimising: the first set are
@@ -1679,7 +1683,8 @@ representing higher observation frequencies.](figure/plottl-1)
 
 [fig:plottl]
 
-#### TL classification
+TL classification {#tl-classification .unnumbered}
+-----------------
 
 Looking at the bubble plot displaying the distribution of best weights
 over the 50 runs we find that for many of the subcellular niches a
@@ -1700,9 +1705,9 @@ we removed the two ribosomal subunits and the two nulcear compartments,
 and therefore in the code chunk below when we extract the best
 parameters, these subcellular niches are not included. To include these
 4 subcellular niches in the next classification step we must include
-them in the parameters so we infer a weight of 1 for each of these
-niches as we know they are well resolved in hyperLOPIT. We then re-order
-the weights according to `getMarkerClasses` and perform the
+them in the parameters. We define a weight of 1 for each of these
+niches, as we know they are well resolved in hyperLOPIT. We then
+re-order the weights according to `getMarkerClasses` and perform the
 classification using the function `knntlClassification`.
 
 \
@@ -1753,28 +1758,36 @@ Unsupervised machine learning {#unsupervised-machine-learning .unnumbered}
 
 In `pRoloc` there is functionality for unsupervsied machine learning
 methods. In unsupervised learning, the training data consists of a set
-of input vectors e.g. protein profiles, for which we do not have
-information about the class label e.g. localisation. The main goal in
-unsupervised learning is to uncover groups of similar examples within
-the data, this is termed clustering. Ordinance methods such as principal
-components analysis (PCA) also fall into the category of unsupervised
-learning methods, where the data can be projected from a
+of input vectors e.g. protein profiles, ignoring the information about
+the class label e.g. localisation, other than for annotation purposes.
+The main goal in unsupervised learning is to uncover groups of similar
+features within the data, termed clustering. Ordination methods such as
+principal components analysis (PCA) also fall into the category of
+unsupervised learning methods, where the data can be projected from a
 high-dimensional spcae down to two or three dimensions for the purpose
 of visualisation.
 
 As described and demonstrated already above, PCA is a valuable and
-powerful method for data visualisation and quality control. We do not do
-any unsupervised clustering in the frame of the above spatial proteomics
-workflow as although clustering can be useful for grouping labelled data
-into categories e.g. see the `mrkHClust` function, we do not find it
-adaquete for spatial proteomics data analysis. We find supervised
-learning more suited to the task of protein localisation prediction in
-which we use high-quality curated marker proteins to build a classifier,
-instead of using an entirely unsupervised approach to look for clusters
-and then look for enrichment of organelles and complexes. In the latter
-we do not make good use of valuable prior knowledge, and in our
-experience unsupervised clustering can be extremely difficult due poor
-estimates of the number of clusters that may appear in the data.
+powerful method for data visualisation and quality control. Another
+application uses hierarchical clustering to summarise the relation
+between marker proteins using he `mrkHClust` function, where the
+euclidean distance bewteen average class-specific profiles is used to
+produce a dendrogramme describing a simple relationship between the
+sub-cellular classes.
+
+![Hierarchical clustering of the average marker profiles summarising the
+relation between organelles profiles.](figure/hclust-1)
+
+[fig:mrkHclust]
+
+We find supervised learning more suited to the task of protein
+localisation prediction in which we use high-quality curated marker
+proteins to build a classifier, instead of using an entirely
+unsupervised approach to look for clusters and then look for enrichment
+of organelles and complexes. In the latter we do not make good use of
+valuable prior knowledge, and in our experience unsupervised clustering
+can be extremely difficult due poor estimates of the number of clusters
+that may appear in the data.
 
 Writing and exporting data {#writing-and-exporting-data .unnumbered}
 ==========================
@@ -1920,4 +1933,6 @@ High Performance Computing Service, provided by Dell Inc. using
 Strategic Research Infrastructure Funding from the Higher Education
 Funding Council for England and funding from the Science and Technology
 Facilities Council.
+
+[^1]: <https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis_pca.gif>
 

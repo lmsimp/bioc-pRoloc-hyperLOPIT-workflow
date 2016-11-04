@@ -715,7 +715,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 12:03:40 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:47:41 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -786,10 +786,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 12:03:40 2016 
-## Subset [6725,20][5032,20] Fri Nov  4 12:03:41 2016 
-## Removed features with more than 0 NAs: Fri Nov  4 12:03:41 2016 
-## Dropped featureData's levels Fri Nov  4 12:03:41 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:47:41 2016 
+## Subset [6725,20][5032,20] Fri Nov  4 13:47:41 2016 
+## Removed features with more than 0 NAs: Fri Nov  4 13:47:41 2016 
+## Dropped featureData's levels Fri Nov  4 13:47:41 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1151,7 +1151,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Nov  4 12:03:43 2016
+% Fri Nov  4 13:47:44 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1446,8 +1446,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Nov  4 12:03:43 2016 
-## Added markers from  'pdres' marker vector. Fri Nov  4 12:03:43 2016 
+## Added markers from  'mrk' marker vector. Fri Nov  4 13:47:43 2016 
+## Added markers from  'pdres' marker vector. Fri Nov  4 13:47:44 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1850,15 +1850,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4369956               0.3026572               0.3845674 
+##               0.4336259               0.3016425               0.3822712 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6735594               0.6449643               0.4375399 
+##               0.6765106               0.6083550               0.4291844 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4123260               0.6045583               0.9494543 
+##               0.4223252               0.5894097               0.9493407 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7957342               0.7090410               0.3143893 
+##               0.7950836               0.7082548               0.3133443 
 ##         Plasma membrane              Proteasome 
-##               0.7176337               0.4177169
+##               0.7083989               0.4215825
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1866,15 +1866,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      83                     174                      84 
+##                      86                     168                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     300                     460                     106 
+##                     302                     477                      98 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     121                     524 
+##                      27                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     343                      38 
+##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     328                     157                    2058
+##                     322                     153                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2053,6 +2053,8 @@ assignment of proteins to sub-cellular niches with a higher
 generalisation accuracy than using standard supervised machine
 learning with a single source of information \cite{Breckels:2016}.
 
+\subsection*{TL optimisation}
+
 The first step, as with any machine learning algorithm, is to optimise
 any free paramaters of the classifier. For the $k$-NN TL classifier
 there are two sets of parameters that need optimising: the first set
@@ -2199,19 +2201,21 @@ The results of the optimisation can be visalised using the
   \label{fig:plottl}
 \end{figure}
 
-\paragraph{TL classification} Looking at the bubble plot displaying
-the distribution of best weights over the 50 runs we find that for
-many of the subcellular niches a weight of 1 is most popular (i.e. use
-only primary hyperLOPIT data in classification), this is unsuprising
-as we already know the dataset is well resolved for these classes. We
-see that the most popular weights for the proteasome and lysosome tend
-to be towards 0, indicating that these niches are well-resolved in the
-Gene Ontology. This tells us that we would benefit from including
-auxiliary GO information in our classifier for these subcellular
-compartments. The plasma membrane weights are relatively equally
-spread between using hyperLOPIT and GO data. Using the
-\texttt{getParams} function we can return the best weights and then
-use this as input for the classification.
+
+\subsection*{TL classification} 
+
+Looking at the bubble plot displaying the distribution of best weights
+over the 50 runs we find that for many of the subcellular niches a
+weight of 1 is most popular (i.e. use only primary hyperLOPIT data in
+classification), this is unsuprising as we already know the dataset is
+well resolved for these classes. We see that the most popular weights
+for the proteasome and lysosome tend to be towards 0, indicating that
+these niches are well-resolved in the Gene Ontology. This tells us
+that we would benefit from including auxiliary GO information in our
+classifier for these subcellular compartments. The plasma membrane
+weights are relatively equally spread between using hyperLOPIT and GO
+data. Using the \texttt{getParams} function we can return the best
+weights and then use this as input for the classification.
 
 One of the benefits of the algorithm is the ability to manually select
 weights for each class. In the optimisation above, for time
@@ -2219,8 +2223,8 @@ constraints, we removed the two ribosomal subunits and the two nulcear
 compartments, and therefore in the code chunk below when we extract
 the best parameters, these subcellular niches are not included. To
 include these 4 subcellular niches in the next classification step we
-must include them in the parameters so we infer a weight of 1 for each
-of these niches as we know they are well resolved in hyperLOPIT. We
+must include them in the parameters. We define a weight of 1 for each
+of these niches, as we know they are well resolved in hyperLOPIT. We
 then re-order the weights according to \texttt{getMarkerClasses} and
 perform the classification using the function
 \texttt{knntlClassification}.
@@ -2279,29 +2283,47 @@ appended to the \texttt{fData} slot and named \texttt{knntl} and
 using \texttt{getPredictions} in the same way as demonstrated above
 for the SVM classifier.
 
-
 \section*{Unsupervised machine learning}
 
 In \texttt{pRoloc} there is functionality for unsupervsied machine
 learning methods. In unsupervised learning, the training data consists
-of a set of input vectors e.g. protein profiles, for which we do not
-have information about the class label e.g. localisation. The main
-goal in unsupervised learning is to uncover groups of similar examples
-within the data, this is termed clustering. Ordinance methods such as
-principal components analysis (PCA) also fall into the category of
-unsupervised learning methods, where the data can be projected from a
-high-dimensional spcae down to two or three dimensions for the purpose
-of visualisation.
+of a set of input vectors e.g. protein profiles, ignoring the
+information about the class label e.g. localisation, other than for
+annotation purposes. The main goal in unsupervised learning is to
+uncover groups of similar features within the data, termed
+clustering. Ordination methods such as principal components analysis
+(PCA) also fall into the category of unsupervised learning methods,
+where the data can be projected from a high-dimensional spcae down to
+two or three dimensions for the purpose of visualisation.
 
 As described and demonstrated already above, PCA is a valuable and
-powerful method for data visualisation and quality control. We do not
-do any unsupervised clustering in the frame of the above spatial
-proteomics workflow as although clustering can be useful for grouping
-labelled data into categories e.g. see the \texttt{mrkHClust}
-function, we do not find it adaquete for spatial proteomics data
-analysis. We find supervised learning more suited to the task of
-protein localisation prediction in which we use high-quality curated
-marker proteins to build a classifier, instead of using an entirely
+powerful method for data visualisation and quality control. Another
+application uses hierarchical clustering to summarise the relation
+between marker proteins using he \texttt{mrkHClust} function, where
+the euclidean distance bewteen average class-specific profiles is used
+to produce a dendrogramme describing a simple relationship between the
+sub-cellular classes.
+
+\begin{figure}[!ht]
+  \centering
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{15}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{))}
+\hlkwd{mrkHClust}\hlstd{(hl)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=.6\textwidth,angle=-90]{figure/hclust-1} 
+
+\end{knitrout}
+  \caption{Hierarchical clustering of the average marker profiles summarising the relation between organelles profiles.}
+  \label{fig:mrkHclust}
+\end{figure}
+
+
+We find supervised learning more suited to the task of protein
+localisation prediction in which we use high-quality curated marker
+proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for
 enrichment of organelles and complexes. In the latter we do not make
 good use of valuable prior knowledge, and in our experience
