@@ -110,6 +110,16 @@ storing the sample meta-data.
   \label{fig:msnset}
 \end{figure}
 
+Feature metadata typically contains general annotation about the
+proteins (accession numbers, description, \ldots), information related
+to the identification search (confidence scores, number of peptides,
+\ldots) as well as annotation about know sub-cellular location (see in
+particular the \textit{Markers} section) and results from data
+analysis. The sample metadata would, for example, record what
+labelling ions were used for the respective fraction (when labelled
+quantitation is used), replicate number, fraction number along the
+gradient and pooling information.
+
 Another slot of interest is \texttt{processingData}, that logs the
 processing \texttt{MSnSet} objects undergo. The processing log can be
 accessed with the \texttt{processingData} function and is displayed
@@ -715,7 +725,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:53:42 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 14:46:45 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -736,8 +746,19 @@ data and their inappropriate handling leads to a reduction of
 sub-cellular resolution. Missing data can be imputated using
 \Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
 the imputation method is then determined by a \texttt{methods}
-parameter. In our particular case, missing values are indicative of
-protein groups that were not acquired in both replicates (Figures
+parameter. To impute missing values using nearest neighbour
+imputation, one would
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{hl} \hlkwb{<-} \hlkwd{impute}\hlstd{(hl,} \hlkwc{method} \hlstd{=} \hlstr{"knn"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+In our particular case, missing values are indicative of protein
+groups that were not acquired in both replicates (Figures
 \ref{fig:namap}).
 
 \begin{figure}[!ht]
@@ -786,10 +807,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:53:42 2016 
-## Subset [6725,20][5032,20] Fri Nov  4 13:53:43 2016 
-## Removed features with more than 0 NAs: Fri Nov  4 13:53:43 2016 
-## Dropped featureData's levels Fri Nov  4 13:53:43 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 14:46:45 2016 
+## Subset [6725,20][5032,20] Fri Nov  4 14:46:45 2016 
+## Removed features with more than 0 NAs: Fri Nov  4 14:46:45 2016 
+## Dropped featureData's levels Fri Nov  4 14:46:45 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1003,7 +1024,6 @@ algorithm, using the prediction scores (as described in the
 \textit{Classification} section, in particular Figure
 \ref{fig:plotSVM}).
 
-
 If the naming between the marker sets and the \texttt{MSnSet} dataset
 are different, one will have to convert and match the proteins
 according to the appropriate identifier. Sometimes, we find the
@@ -1013,6 +1033,11 @@ straightforward. If this is not the case however, conversion can be
 performed using \Biocpkg{biomaRt}, the Bioconductor
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
+
+It is also possible to use one's own marker list with the
+\texttt{addMarkers} function. The user needs to create a named vector
+of marker localisation, where the names match some (not necessarily
+all) of the \texttt{MSnSet}'s feature names.
 
 We now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
@@ -1151,7 +1176,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Nov  4 13:53:45 2016
+% Fri Nov  4 14:46:48 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1446,8 +1471,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Nov  4 13:53:45 2016 
-## Added markers from  'pdres' marker vector. Fri Nov  4 13:53:45 2016 
+## Added markers from  'mrk' marker vector. Fri Nov  4 14:46:47 2016 
+## Added markers from  'pdres' marker vector. Fri Nov  4 14:46:48 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1656,8 +1681,11 @@ important to investigate the model parameters and critically assess
 the best choice. The \texttt{f1Count} function counts the number of
 parameter occurences above a certain F1 value. The best choice may not
 be as simple as the parameter set that gives rise to the highest macro
-F1 score and one must be careful to avoid overfitting and to choose
-parameters wisely.
+F1 score. One must be careful to avoid overfitting, and choose
+parameters that frequently provide high classification
+accuracy. Below, we see that only a sigma of 0.1 produces macro F1
+scores above 0.6, but that a cost of 16 is much more frequently chosen
+than lower values.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1676,7 +1704,9 @@ or heatmap, as shown in figure \ref{fig:visualisOptHide}.  The
 \texttt{plot} method for \texttt{GenRegRes} object shows the
 respective distributions of the 100 macro F1 scores for the best
 cost/sigma parameter pairs, and \texttt{levelPlot} shows the averaged
-macro F1 scores, for the full range of parameter values. 
+macro F1 scores, for the full range of parameter values. These figures
+also indicate that values of 0.1 and 16 for sigma and cost
+consistently deliver better classification scores. 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1702,7 +1732,8 @@ macro F1 scores, for the full range of parameter values.
 By using the function \texttt{getParams} we can extract the best set
 of parameters. Currently, \texttt{getParams} retrieves the first best
 set is automatically but users are encouraged to critically assess
-whether this is the most wise choice.
+whether this is the most wise choice (which it is, as demonstrated
+above).
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1850,15 +1881,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4344841               0.3054605               0.3801168 
+##               0.4344078               0.3022144               0.3779558 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6958931               0.5977237               0.4161283 
+##               0.6798372               0.5931386               0.4103045 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4300573               0.5962921               0.9500664 
+##               0.4226277               0.6020915               0.9489050 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946555               0.7105355               0.3145718 
+##               0.7946252               0.7055619               0.3165817 
 ##         Plasma membrane              Proteasome 
-##               0.7112584               0.4155859
+##               0.7079566               0.4183278
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1866,15 +1897,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     172                      84 
+##                      85                     172                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     301                     475                      99 
+##                     295                     473                     101 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      29                     125                     521 
+##                      27                     126                     522 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     342                      39 
+##                     230                     343                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     319                     155                    2057
+##                     320                     159                    2056
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1883,7 +1914,9 @@ The output of \texttt{getPredictons} is the original \texttt{MSnSet}
 dataset with a new feature variable appended to the feature data
 called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
 containing the prediction results. The results can also be visualied
-using \texttt{plot2D} function (Figure \ref{fig:plotres}).
+using \texttt{plot2D} function (Figure \ref{fig:plotres}) and
+extracted by retrieving that specific column from the feature metadata
+using, for example, \texttt{fData(hl)\$svm.pred}.
 
 
 
@@ -2335,35 +2368,37 @@ of the number of clusters that may appear in the data.
 
 \section*{Writing and exporting data}
 
-A \texttt{MSnSet} can be exported from R using the
+An \texttt{MSnSet} can be exported from R using the
 \texttt{write.exprs} function.  This function writes the expression
-values to a tab (the defualt, or other type e.g.e.g. comma, as
-specified in \texttt{write.table}) separated file. There argument
-\texttt{fDataCols} can be used to specify which \texttt{featureData}
-columns (as column names, column number or \texttt{logical}) to append
-to the right of the expression matrix.
+values to a text-based spreadsheet. The \texttt{fcol} argument can be
+used to specify which \texttt{featureData} columns (as column names,
+column number or \texttt{logical}) to append to the right of the
+expression matrix.
 
 In the below code chunk we write the \texttt{hl} object to a csv
 file. The \texttt{file} argument is used to specify the file path, the
 \texttt{sep} argument specifies the field separator string, here we
 use a comma, finally as we want to write all the information in the
 \texttt{featureData} to the file, as well as the expression data, we
-specify \texttt{fDataCols = 1:ncol(hl)} i.e. write everything in the
-\texttt{featureData} to the file \texttt{"hl.csv"}.
+specify \texttt{fvarLabels(hl)}, that returns all feature variable
+names, and write the resulting data to the file \texttt{"hl.csv"}.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{write.exprs}\hlstd{(hl,} \hlkwc{file} \hlstd{=} \hlstr{"hl.csv"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{,}
-            \hlkwc{fDataCols} \hlstd{=} \hlnum{1}\hlopt{:}\hlkwd{ncol}\hlstd{(hl))}
+\hlkwd{write.exprs}\hlstd{(hl,} \hlkwc{file} \hlstd{=} \hlstr{"hl.csv"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{,} \hlkwc{fcol} \hlstd{=} \hlkwd{fvarLabels}\hlstd{(hl))}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-Individual R objects, such a parameters from the machine learning
-optimisations, can be save using the standard \texttt{save} function
-in R.  For example, to save and then re-load the parameters from the
-SVM optimisation,
+Exporting to a spreadsheet however looses a lot of important
+information, such as the processing data, and the sample metadata in
+the \textit{phenoData} slot. Other objects, such a parameters from the
+machine learning optimisation, cannot be represented as tabular
+data. To directly serialise R objects to disk, on can use the standard
+\texttt{save} function, and later reload the object using
+\texttt{save}. For example, to save and then re-load the parameters
+from the SVM optimisation,
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2381,11 +2416,11 @@ SVM optimisation,
 
 The function \texttt{sessionInfo} provides a summary of all packages
 and versions used to generate this document. This enables us to record
-the exact state of our session that lead to these exact
-results. Conversely, if the script stops working of if it returns
-different results, we are in a position to re-generate the original
-results using the adequate software versions and retrace changes in
-the software that lead to failure and/or different results.
+the exact state of our session that lead to these results. Conversely,
+if the script stops working or if it returns different results, we are
+in a position to re-generate the original results using the adequate
+software versions and retrace changes in the software that lead to
+failure and/or different results.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2410,7 +2445,7 @@ the software that lead to failure and/or different results.
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.12.0    pRoloc_1.15.3        MLInterfaces_1.54.0 
+##  [1] pRolocdata_1.12.0    pRoloc_1.14.3        MLInterfaces_1.54.0 
 ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
 ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
 ## [10] MSnbase_2.0.0        ProtGenerics_1.6.0   BiocParallel_1.8.1  
@@ -2460,17 +2495,17 @@ the software that lead to failure and/or different results.
 It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
-\href{https://support.bioconductor.org/}{question} at hand.
+\href{https://support.bioconductor.org/}{question} at hand. 
 
 The source of this document, including the code necessary to reproduce
-the analyses and figures is available in the public manuscript
-repository \cite{ghrepo}.
+the analyses and figures is available in a public manuscript
+repository on GitHub~\cite{ghrepo}.
 
 \bigskip
 
 \subsection*{Author contributions}
 
-All authors developed the software presented in this workflow and
+All authors developed the software presented in this workflow, and
 wrote and approved the manuscript.
 
 \subsection*{Competing interests}
@@ -2486,14 +2521,12 @@ Longer and Larger grant (Award BB/L002817/1).
 
 \subsection*{Acknowledgements}
 
-The authors would like to thank the Cambridge Computational Biology
-Institute and the Centre for Mathematical Sciences for hosting them
-when writing this article. The authors would like to thank Dr Claire
-M. Mulvey for helpful comments on early versions of this
-manuscript. The authors would also like to thank Dr. Stuart Rankin
-from the High Performance Computing Service for his support. Part of
-this work was performed using the Darwin Supercomputer of the
-University of Cambridge High Performance Computing Service, provided
-by Dell Inc. using Strategic Research Infrastructure Funding from the
-Higher Education Funding Council for England and funding from the
-Science and Technology Facilities Council.
+The authors would like to thank Dr Claire M. Mulvey for helpful
+comments on early versions of this manuscript. The authors would also
+like to thank Dr. Stuart Rankin from the High Performance Computing
+Service for his support. Part of this work was performed using the
+Darwin Supercomputer of the University of Cambridge High Performance
+Computing Service, provided by Dell Inc. using Strategic Research
+Infrastructure Funding from the Higher Education Funding Council for
+England and funding from the Science and Technology Facilities
+Council.

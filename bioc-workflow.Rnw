@@ -119,6 +119,16 @@ storing the sample meta-data.
   \label{fig:msnset}
 \end{figure}
 
+Feature metadata typically contains general annotation about the
+proteins (accession numbers, description, \ldots), information related
+to the identification search (confidence scores, number of peptides,
+\ldots) as well as annotation about know sub-cellular location (see in
+particular the \textit{Markers} section) and results from data
+analysis. The sample metadata would, for example, record what
+labelling ions were used for the respective fraction (when labelled
+quantitation is used), replicate number, fraction number along the
+gradient and pooling information.
+
 Another slot of interest is \texttt{processingData}, that logs the
 processing \texttt{MSnSet} objects undergo. The processing log can be
 accessed with the \texttt{processingData} function and is displayed
@@ -433,8 +443,15 @@ data and their inappropriate handling leads to a reduction of
 sub-cellular resolution. Missing data can be imputated using
 \Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
 the imputation method is then determined by a \texttt{methods}
-parameter. In our particular case, missing values are indicative of
-protein groups that were not acquired in both replicates (Figures
+parameter. To impute missing values using nearest neighbour
+imputation, one would
+
+<<impute, eval=FALSE>>=
+hl <- impute(hl, method = "knn")
+@
+
+In our particular case, missing values are indicative of protein
+groups that were not acquired in both replicates (Figures
 \ref{fig:namap}).
 
 \begin{figure}[!ht]
@@ -605,7 +622,6 @@ algorithm, using the prediction scores (as described in the
 \textit{Classification} section, in particular Figure
 \ref{fig:plotSVM}).
 
-
 If the naming between the marker sets and the \texttt{MSnSet} dataset
 are different, one will have to convert and match the proteins
 according to the appropriate identifier. Sometimes, we find the
@@ -615,6 +631,11 @@ straightforward. If this is not the case however, conversion can be
 performed using \Biocpkg{biomaRt}, the Bioconductor
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
+
+It is also possible to use one's own marker list with the
+\texttt{addMarkers} function. The user needs to create a named vector
+of marker localisation, where the names match some (not necessarily
+all) of the \texttt{MSnSet}'s feature names.
 
 We now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
@@ -1102,8 +1123,11 @@ important to investigate the model parameters and critically assess
 the best choice. The \texttt{f1Count} function counts the number of
 parameter occurences above a certain F1 value. The best choice may not
 be as simple as the parameter set that gives rise to the highest macro
-F1 score and one must be careful to avoid overfitting and to choose
-parameters wisely.
+F1 score. One must be careful to avoid overfitting, and choose
+parameters that frequently provide high classification
+accuracy. Below, we see that only a sigma of 0.1 produces macro F1
+scores above 0.6, but that a cost of 16 is much more frequently chosen
+than lower values.
 
 <<f1count>>=
 f1Count(params, 0.6)
@@ -1114,7 +1138,9 @@ or heatmap, as shown in figure \ref{fig:visualisOptHide}.  The
 \texttt{plot} method for \texttt{GenRegRes} object shows the
 respective distributions of the 100 macro F1 scores for the best
 cost/sigma parameter pairs, and \texttt{levelPlot} shows the averaged
-macro F1 scores, for the full range of parameter values. 
+macro F1 scores, for the full range of parameter values. These figures
+also indicate that values of 0.1 and 16 for sigma and cost
+consistently deliver better classification scores. 
 
 <<visualiseOpt, eval=FALSE>>=
 plot(params)
@@ -1135,7 +1161,8 @@ grid.arrange(plot(params), levelPlot(params), ncol = 2)
 By using the function \texttt{getParams} we can extract the best set
 of parameters. Currently, \texttt{getParams} retrieves the first best
 set is automatically but users are encouraged to critically assess
-whether this is the most wise choice.
+whether this is the most wise choice (which it is, as demonstrated
+above).
 
 <<getbestpars>>=
 (best <- getParams(params))
@@ -1265,7 +1292,9 @@ The output of \texttt{getPredictons} is the original \texttt{MSnSet}
 dataset with a new feature variable appended to the feature data
 called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
 containing the prediction results. The results can also be visualied
-using \texttt{plot2D} function (Figure \ref{fig:plotres}).
+using \texttt{plot2D} function (Figure \ref{fig:plotres}) and
+extracted by retrieving that specific column from the feature metadata
+using, for example, \texttt{fData(hl)\$svm.pred}.
 
 <<resetpar, echo=FALSE>>=
 invisible(dev.off())
@@ -1640,31 +1669,33 @@ of the number of clusters that may appear in the data.
 
 \section*{Writing and exporting data}
 
-A \texttt{MSnSet} can be exported from R using the
+An \texttt{MSnSet} can be exported from R using the
 \texttt{write.exprs} function.  This function writes the expression
-values to a tab (the defualt, or other type e.g.e.g. comma, as
-specified in \texttt{write.table}) separated file. There argument
-\texttt{fDataCols} can be used to specify which \texttt{featureData}
-columns (as column names, column number or \texttt{logical}) to append
-to the right of the expression matrix.
+values to a text-based spreadsheet. The \texttt{fcol} argument can be
+used to specify which \texttt{featureData} columns (as column names,
+column number or \texttt{logical}) to append to the right of the
+expression matrix.
 
 In the below code chunk we write the \texttt{hl} object to a csv
 file. The \texttt{file} argument is used to specify the file path, the
 \texttt{sep} argument specifies the field separator string, here we
 use a comma, finally as we want to write all the information in the
 \texttt{featureData} to the file, as well as the expression data, we
-specify \texttt{fDataCols = 1:ncol(hl)} i.e. write everything in the
-\texttt{featureData} to the file \texttt{"hl.csv"}.
+specify \texttt{fvarLabels(hl)}, that returns all feature variable
+names, and write the resulting data to the file \texttt{"hl.csv"}.
 
 <<writeData, eval = FALSE>>=
-write.exprs(hl, file = "hl.csv", sep = ",", 
-            fDataCols = 1:ncol(hl))
+write.exprs(hl, file = "hl.csv", sep = ",", fcol = fvarLabels(hl))
 @
 
-Individual R objects, such a parameters from the machine learning
-optimisations, can be save using the standard \texttt{save} function
-in R.  For example, to save and then re-load the parameters from the
-SVM optimisation,
+Exporting to a spreadsheet however looses a lot of important
+information, such as the processing data, and the sample metadata in
+the \textit{phenoData} slot. Other objects, such a parameters from the
+machine learning optimisation, cannot be represented as tabular
+data. To directly serialise R objects to disk, on can use the standard
+\texttt{save} function, and later reload the object using
+\texttt{save}. For example, to save and then re-load the parameters
+from the SVM optimisation,
 
 <<saveData, eval = FALSE>>=
 ## To save the parameters as an R object
@@ -1678,11 +1709,11 @@ load(file = "svmparams.rda")
 
 The function \texttt{sessionInfo} provides a summary of all packages
 and versions used to generate this document. This enables us to record
-the exact state of our session that lead to these exact
-results. Conversely, if the script stops working of if it returns
-different results, we are in a position to re-generate the original
-results using the adequate software versions and retrace changes in
-the software that lead to failure and/or different results.
+the exact state of our session that lead to these results. Conversely,
+if the script stops working or if it returns different results, we are
+in a position to re-generate the original results using the adequate
+software versions and retrace changes in the software that lead to
+failure and/or different results.
 
 <<si>>=
 sessionInfo()
@@ -1691,17 +1722,17 @@ sessionInfo()
 It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
-\href{https://support.bioconductor.org/}{question} at hand.
+\href{https://support.bioconductor.org/}{question} at hand. 
 
 The source of this document, including the code necessary to reproduce
-the analyses and figures is available in the public manuscript
-repository \cite{ghrepo}.
+the analyses and figures is available in a public manuscript
+repository on GitHub~\cite{ghrepo}.
 
 \bigskip
 
 \subsection*{Author contributions}
 
-All authors developed the software presented in this workflow and
+All authors developed the software presented in this workflow, and
 wrote and approved the manuscript.
 
 \subsection*{Competing interests}
@@ -1717,14 +1748,12 @@ Longer and Larger grant (Award BB/L002817/1).
 
 \subsection*{Acknowledgements}
 
-The authors would like to thank the Cambridge Computational Biology
-Institute and the Centre for Mathematical Sciences for hosting them
-when writing this article. The authors would like to thank Dr Claire
-M. Mulvey for helpful comments on early versions of this
-manuscript. The authors would also like to thank Dr. Stuart Rankin
-from the High Performance Computing Service for his support. Part of
-this work was performed using the Darwin Supercomputer of the
-University of Cambridge High Performance Computing Service, provided
-by Dell Inc. using Strategic Research Infrastructure Funding from the
-Higher Education Funding Council for England and funding from the
-Science and Technology Facilities Council.
+The authors would like to thank Dr Claire M. Mulvey for helpful
+comments on early versions of this manuscript. The authors would also
+like to thank Dr. Stuart Rankin from the High Performance Computing
+Service for his support. Part of this work was performed using the
+Darwin Supercomputer of the University of Cambridge High Performance
+Computing Service, provided by Dell Inc. using Strategic Research
+Infrastructure Funding from the Higher Education Funding Council for
+England and funding from the Science and Technology Facilities
+Council.
