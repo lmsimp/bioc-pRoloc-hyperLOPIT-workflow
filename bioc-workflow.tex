@@ -715,7 +715,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:47:41 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:53:42 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -786,10 +786,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:47:41 2016 
-## Subset [6725,20][5032,20] Fri Nov  4 13:47:41 2016 
-## Removed features with more than 0 NAs: Fri Nov  4 13:47:41 2016 
-## Dropped featureData's levels Fri Nov  4 13:47:41 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:53:42 2016 
+## Subset [6725,20][5032,20] Fri Nov  4 13:53:43 2016 
+## Removed features with more than 0 NAs: Fri Nov  4 13:53:43 2016 
+## Dropped featureData's levels Fri Nov  4 13:53:43 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1151,7 +1151,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Nov  4 13:47:44 2016
+% Fri Nov  4 13:53:45 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1446,8 +1446,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Nov  4 13:47:43 2016 
-## Added markers from  'pdres' marker vector. Fri Nov  4 13:47:44 2016 
+## Added markers from  'mrk' marker vector. Fri Nov  4 13:53:45 2016 
+## Added markers from  'pdres' marker vector. Fri Nov  4 13:53:45 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1850,15 +1850,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4336259               0.3016425               0.3822712 
+##               0.4344841               0.3054605               0.3801168 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6765106               0.6083550               0.4291844 
+##               0.6958931               0.5977237               0.4161283 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4223252               0.5894097               0.9493407 
+##               0.4300573               0.5962921               0.9500664 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7950836               0.7082548               0.3133443 
+##               0.7946555               0.7105355               0.3145718 
 ##         Plasma membrane              Proteasome 
-##               0.7083989               0.4215825
+##               0.7112584               0.4155859
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1866,15 +1866,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      86                     168                      84 
+##                      84                     172                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     302                     477                      98 
+##                     301                     475                      99 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     523 
+##                      29                     125                     521 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      38 
+##                     230                     342                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     322                     153                    2057
+##                     319                     155                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2302,7 +2302,11 @@ application uses hierarchical clustering to summarise the relation
 between marker proteins using he \texttt{mrkHClust} function, where
 the euclidean distance bewteen average class-specific profiles is used
 to produce a dendrogramme describing a simple relationship between the
-sub-cellular classes.
+sub-cellular classes (Figure~\ref{fig:mrkHclust}). The
+\texttt{mrkHClust} uses the same defaults as all other function, using
+the \texttt{markers} feature variable to define marker proteins. In
+the code chunk, we adapt the figure margins to fully display the class
+names.
 
 \begin{figure}[!ht]
   \centering
@@ -2313,17 +2317,16 @@ sub-cellular classes.
 \hlkwd{mrkHClust}\hlstd{(hl)}
 \end{alltt}
 \end{kframe}
-\includegraphics[width=.6\textwidth,angle=-90]{figure/hclust-1} 
+\includegraphics[width=.5\textwidth,angle=-90]{figure/hclust-1} 
 
 \end{knitrout}
   \caption{Hierarchical clustering of the average marker profiles summarising the relation between organelles profiles.}
   \label{fig:mrkHclust}
 \end{figure}
 
-
-We find supervised learning more suited to the task of protein
-localisation prediction in which we use high-quality curated marker
-proteins to build a classifier, instead of using an entirely
+We generally find supervised learning more suited to the task of
+protein localisation prediction in which we use high-quality curated
+marker proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for
 enrichment of organelles and complexes. In the latter we do not make
 good use of valuable prior knowledge, and in our experience

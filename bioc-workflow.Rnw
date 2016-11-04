@@ -1613,11 +1613,15 @@ application uses hierarchical clustering to summarise the relation
 between marker proteins using he \texttt{mrkHClust} function, where
 the euclidean distance bewteen average class-specific profiles is used
 to produce a dendrogramme describing a simple relationship between the
-sub-cellular classes (Figure~\ref{fig:mrkHclust}).
+sub-cellular classes (Figure~\ref{fig:mrkHclust}). The
+\texttt{mrkHClust} uses the same defaults as all other function, using
+the \texttt{markers} feature variable to define marker proteins. In
+the code chunk, we adapt the figure margins to fully display the class
+names.
 
 \begin{figure}[!ht]
   \centering
-<<hclust, out.width=".6\\textwidth", fig.asp = 1.5, out.extra='angle=-90'>>=
+<<hclust, out.width=".5\\textwidth", fig.asp = 1.5, out.extra='angle=-90'>>=
 par(mar = c(15, 4, 1, 0))
 mrkHClust(hl)
 @  
