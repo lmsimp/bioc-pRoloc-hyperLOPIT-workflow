@@ -715,7 +715,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 11:36:17 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 12:03:40 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -786,10 +786,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 11:36:17 2016 
-## Subset [6725,20][5032,20] Fri Nov  4 11:36:18 2016 
-## Removed features with more than 0 NAs: Fri Nov  4 11:36:18 2016 
-## Dropped featureData's levels Fri Nov  4 11:36:18 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 12:03:40 2016 
+## Subset [6725,20][5032,20] Fri Nov  4 12:03:41 2016 
+## Removed features with more than 0 NAs: Fri Nov  4 12:03:41 2016 
+## Dropped featureData's levels Fri Nov  4 12:03:41 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1151,7 +1151,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Nov  4 11:36:20 2016
+% Fri Nov  4 12:03:43 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1225,7 +1225,8 @@ app (note, we do not need to specify the argument, \texttt{app =
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=\textwidth]{./Figures/mainapp.png}
-  \caption{A screen shot of clickable interface and zoomable PCA plot of the main app in the \Biocpkg{pRolocGUI} package.}
+  \caption{A screen shot of clickable interface and zoomable PCA plot
+    of the main app in the \Biocpkg{pRolocGUI} package. }
   \label{fig:app}
 \end{figure}
 
@@ -1239,7 +1240,9 @@ highlighted using the text search box. There is also an alternate
 profiles tab for visualisation of the protein profiles, which can be
 used to examine the patterns of proteins of interest. The Table
 selection tab provides an interface to control data table column
-selection.
+selection. A short
+animation\footnote{\url{https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis\_pca.gif}}
+illustrating the interface is available in the manuscript repository~\cite{ghrepo}.
 
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
@@ -1443,8 +1446,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Nov  4 11:36:19 2016 
-## Added markers from  'pdres' marker vector. Fri Nov  4 11:36:20 2016 
+## Added markers from  'mrk' marker vector. Fri Nov  4 12:03:43 2016 
+## Added markers from  'pdres' marker vector. Fri Nov  4 12:03:43 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1847,15 +1850,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4344085               0.3070891               0.3823223 
+##               0.4369956               0.3026572               0.3845674 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6928348               0.6017963               0.4249301 
+##               0.6735594               0.6449643               0.4375399 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4226011               0.5911111               0.9498226 
+##               0.4123260               0.6045583               0.9494543 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7957737               0.7096282               0.3152061 
+##               0.7957342               0.7090410               0.3143893 
 ##         Plasma membrane              Proteasome 
-##               0.7053008               0.4133848
+##               0.7176337               0.4177169
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1863,15 +1866,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     170                      84 
+##                      83                     174                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     301                     479                      94 
+##                     300                     460                     106 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     123                     523 
+##                      27                     121                     524 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     341                      38 
+##                     229                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     326                     154                    2058
+##                     328                     157                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
