@@ -501,11 +501,16 @@ about sub-cellular localisation.
 
 \begin{figure}[!ht]
   \centering
-<<qcplot, message=FALSE, warning=FALSE, out.width=".65\\textwidth">>=
+<<qcplot, fig.show = "hold", message=FALSE, warning=FALSE, out.width=".45\\textwidth">>=
 library("pRoloc")
 plot2D(hl, fcol = NULL, col = "black")
+plot2D(hl, method = "hexbin")
 @  
-  \caption{PCA plot of the mouse stem cell data \texttt{hl}.}
+\caption{PCA plot of the mouse stem cell data \texttt{hl}. Each dot
+  represent a single protein, and cluster of proteins represent
+  proteins residing in the same sub-cellular niche. The figure on the
+  right bins proteins and represent the bins density to highlight the
+  presence of protein clusters. }
   \label{fig:pcahl}
 \end{figure}
 
@@ -651,7 +656,7 @@ sets of Golgi marker proteins that are distributed amongst other
 subcellular structures, an observation supported by microscopy. As
 such, we are going to reset the annotation of Golgi markers to unknown
 using the \texttt{fDataTounknown} function. It is often used to
-replace empty strings ("") or missing values in the markers definition
+replace empty strings (\texttt{""}) or missing values in the markers definition
 to a common definition of \textit{unknown} localisation.
 
 <<removeGA>>=
@@ -1523,7 +1528,10 @@ setStockcol(NULL)
 <<plottl, out.width=".6\\textwidth">>=
 plot(tlopt)
 @  
-  \caption{Visualisation of the transfer learning parameter optimisation procedure.}
+\caption{Visualisation of the transfer learning parameter optimisation
+  procedure. Each row displays the frequency of observed weights
+  (along the columns) for a specific sub-cellular class, with large
+  dots representing higher observation frequencies.}
   \label{fig:plottl}
 \end{figure}
 
@@ -1662,6 +1670,10 @@ It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
 \href{https://support.bioconductor.org/}{question} at hand.
+
+The source of this document, including the code necessary to reproduce
+the analyses and figures is available in the public manuscript
+repository \cite{ghrepo}.
 
 \bigskip
 

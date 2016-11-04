@@ -99,6 +99,12 @@ with permission from the vignette)](./Figures/msnset.png)
 
 [fig:msnset]
 
+Another slot of interest is `processingData`, that logs the processing
+`MSnSet` objects undergo. The processing log can be accessed with the
+`processingData` function and is displayed under *Processing
+information* in the textual object summary when an `MSnSet`’s name it
+typed in the R console.
+
 Importing data {#importing-data .unnumbered}
 --------------
 
@@ -537,7 +543,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 13:51:16 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 11:36:17 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -589,10 +595,10 @@ missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Nov  3 13:51:16 2016 
-    ## Subset [6725,20][5032,20] Thu Nov  3 13:51:16 2016 
-    ## Removed features with more than 0 NAs: Thu Nov  3 13:51:16 2016 
-    ## Dropped featureData's levels Thu Nov  3 13:51:16 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 11:36:17 2016 
+    ## Subset [6725,20][5032,20] Fri Nov  4 11:36:18 2016 
+    ## Removed features with more than 0 NAs: Fri Nov  4 11:36:18 2016 
+    ## Dropped featureData's levels Fri Nov  4 11:36:18 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 data are to be combined and too many proteins were not
@@ -635,9 +641,18 @@ use this to annotate the PCA plot with prior information about
 sub-cellular localisation.
 
 \
-`      `
+`      `\
+`   `
 
-![PCA plot of the mouse stem cell data `hl`.](figure/qcplot-1)
+![PCA plot of the mouse stem cell data `hl`. Each dot represent a single
+protein, and cluster of proteins represent proteins residing in the same
+sub-cellular niche. The figure on the right bins proteins and represent
+the bins density to highlight the presence of protein clusters.
+](figure/qcplot-1 "fig:") ![PCA plot of the mouse stem cell data `hl`.
+Each dot represent a single protein, and cluster of proteins represent
+proteins residing in the same sub-cellular niche. The figure on the
+right bins proteins and represent the bins density to highlight the
+presence of protein clusters. ](figure/qcplot-2 "fig:")
 
 [fig:pcahl]
 
@@ -800,7 +815,7 @@ of Golgi marker proteins that are distributed amongst other subcellular
 structures, an observation supported by microscopy. As such, we are
 going to reset the annotation of Golgi markers to unknown using the
 `fDataTounknown` function. It is often used to replace empty strings
-(“”) or missing values in the markers definition to a common definition
+(``) or missing values in the markers definition to a common definition
 of *unknown* localisation.
 
 `        `\
@@ -1084,12 +1099,8 @@ processing to run these analyses.
 
 The ouput of running the `phenoDisco` algorithm is an `MSnSet`
 containing the new data clusters, appended to the `featureData` under
-the name `pd`. We can see by typing `processingData(hl)` directly into
-the console the processing information has been updated to the `MSnSet`
-recording the parameters that were used to run the analyses. This is
-handy for keeping track of data analyses. The results can be displayed
-by using the `getMarkers` function. We see that 5 new phenotype data
-clusters were found.
+the name `pd`. The results can be displayed by using the `getMarkers`
+function. We see that 5 new phenotype data clusters were found.
 
     ## MSnSet (storageMode: lockedEnvironment)
     ## assayData: 5032 features, 20 samples 
@@ -1106,8 +1117,8 @@ clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Thu Nov  3 13:51:18 2016 
-    ## Added markers from  'pdres' marker vector. Thu Nov  3 13:51:18 2016 
+    ## Added markers from  'mrk' marker vector. Fri Nov  4 11:36:19 2016 
+    ## Added markers from  'pdres' marker vector. Fri Nov  4 11:36:20 2016 
     ##  MSnbase version: 2.0.0
 
 `   `
@@ -1370,7 +1381,7 @@ dependent upon the classifier used and different sub-cellular niches can
 exhibit different score distributions, as highlighted in the boxplot
 below. We recommend users to set class-specific thresholds. In the code
 chunk below we display a boxplot of the score distributions per
-organelle.
+organelle (Figure [fig:threshold]).
 
 \
 `  `\
@@ -1405,34 +1416,35 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4370276               0.3037353               0.3894744 
+    ##               0.4344085               0.3070891               0.3823223 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6725203               0.6068444               0.4285221 
+    ##               0.6928348               0.6017963               0.4249301 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4158521               0.5893212               0.9492587 
+    ##               0.4226011               0.5911111               0.9498226 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7938912               0.7081272               0.3134475 
+    ##               0.7957737               0.7096282               0.3152061 
     ##         Plasma membrane              Proteasome 
-    ##               0.7168648               0.4195643
+    ##               0.7053008               0.4133848
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     170                      89 
+    ##                      84                     170                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     303                     476                      97 
+    ##                     301                     479                      94 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      28                     124                     525 
+    ##                      27                     123                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     342                      38 
+    ##                     230                     341                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     317                     152                    2057
+    ##                     326                     154                    2058
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
 (i.e. in our case `svm.pred`) containing the prediction results. The
-results can also be visualied using `plot2D` function.
+results can also be visualied using `plot2D` function (Figure
+[fig:plotres]).
 
 `   `
 
@@ -1442,35 +1454,33 @@ thresholding.](figure/plotres-1)
 [fig:plotres]
 
 There is also a dedicated interactive application to help users examine
-these distributions in the package. This app can be launched via the
-`pRolocVis` function and specifying the argument `app = classify` along
-with the relevent `fcol`, `scol` and `mcol` which refer to the columns
-in the feature data that contain the new assignments, assignment scores
-and markers respectively (see also `fvarLabels(svmres)`).
+these distributions in the package (Figure [fig:classifyapp]). This app
+can be launched via the `pRolocVis` function and specifying the argument
+`app = classify` along with the relevent `fcol`, `scol` and `mcol` which
+refer to the columns in the feature data that contain the new
+assignments, assignment scores and markers respectively (see also
+`fvarLabels(svmres)`).
 
 \
-\
-`            `\
-`            `\
-`                  `\
 `            `
 
-![The classify application](./Figures/classify.png)
+![The classify application enable the interactive exploration of
+classification score thresholding.](./Figures/classify.png)
 
 [fig:classifyapp]
 
 The data is loaded and displayed on a PCA plot and a boxplot is used to
-display the classifier scores by data class. On the left there is a
+display the classifier scores by data class. On the left, there is a
 sidebar panel with sliders to control the thresholds upon which
 classifications are made. There are two types of cut-off that the user
-can choose from: (1) “Quantile” and (2) “User-defined”. By default, when
+can choose from: (1) *Quantile* and (2) *User-defined*. By default, when
 the application is launched quatile scoring is selected and set to 0.5,
 the median. The class-specific score thresholds that correspond to
 selecting the desired quantile are shown on as red dots on the boxplot.
 The assignments on the PCA plot are also updated according to the
 selected threshold. The quantile threshold can be set by moving the
 corresponding quantile slider. If one wished to set their own cut-offs
-the “User-defined” radio button must be selected and then the sliders
+the *User-defined* radio button must be selected and then the sliders
 for defining user-specified scores become active and the scores and
 highlighted on the boxplot by blue dots. For more information we refer
 users to the tutorial
@@ -1479,7 +1489,7 @@ users to the tutorial
 Transfer learning {#transfer-learning .unnumbered}
 =================
 
-In addition to high quality MS-based quantitative proteomics data there
+In addition to high quality MS-based quantitative proteomics data, there
 exist a number of other sources of information that are freely available
 in the public domain that may be useful to assign a protein to its
 sub-cellular niche. For example, imaging from immunofluorescence
@@ -1490,14 +1500,14 @@ with our primary MS-based quantitative data using a paradigm known as
 transfer learning (TL). The integration of data between different
 technologies is one of the biggest challenges in computational biology
 to date and the package provides functionality to do such analyses. We
-recently developed two transfer learning algorithms using a \*k\*-NN and
+recently developed two transfer learning algorithms using a $k$-NN and
 SVM framework and applied them to the task of protein localisation
 prediction @Breckels:2016. In this section we will begin with explaining
 the concept of transfer learning and then show how to apply this in the
 frame of spatial proteomics and protein localisation prediction.
 
-In TL one typically has a primary task that they wish to solve, and some
-complementary (often heterogeneous) auxiliary information that is
+In TL one typically has a primary task that one wishes to solve, and
+some complementary (often heterogeneous) auxiliary information that is
 related to the primary learning objective, that can be used to help
 solve the primary goal. For example, here our primary task is to assign
 proteins to their sub-cellular niche with high generalisation accuracy
@@ -1510,22 +1520,21 @@ Using the functions `setAnnotationParams` and `makeGoSet` we can
 contruct an auxiliary `MSnSet` of GO terms, from the primary data’s
 features i.e. the protein accession numbers. All the GO terms associated
 to each accession number are retrieved and used to create a binary
-matrix where a 1 (0) at position (i; j) indicates that term j has (not)
-been used to annotate protein i. The GO terms are retrieved from an
-appropriate repository using the package. The specific Biomart
+matrix where a 1 (0) at position $(i, j)$ indicates that term $j$ has
+(not) been used to annotate protein $i$. The GO terms are retrieved from
+an appropriate repository using the package. The specific Biomart
 repository and query will depend on the species under study and the type
 of identifiers. The first step is to construct the annotation parameters
-that will enable to perform the query, this is done using
+that will enable to perform the query, which is done using
 `setAnnotationParams`. Typing into the R console
 `par <- setAnnotationParams()` will present two menus, firstly asking
 you to identify the species of study, and then what type of identifier
 you have used to annotate the proteins in your `MSnSet`. It is also
 possible to pass patterns to match the species e.g. in the code chunk
-below we pass “Mus musculus”, and the identifier type for our data (see
-`featureNames(hl)`) which is “Uniprot/Swissprot”, for the Biomart query.
+below we pass `Mus musculus`, and the identifier type for our data (see
+`featureNames(hl)`) which is `Uniprot/Swissprot`, for the Biomart query.
 
-`    `\
-`                                      `
+`     `
 
 Now we have contructed the query parameters we can use the `makeGoSet`
 function to retrieve and build an auxiliary GO `MSnSet` as described
@@ -1535,50 +1544,48 @@ from the molecular function and biological process GO namespaces, and
 also apply filtering based on evidence codes as desired, see
 `?makeGoSet` for more details.
 
-`    `\
-`                    `\
-`                    `
+`       `
 
 The function `makeGoSet` uses the package to query the relevent database
 (e.g. Ensembl, Uniprot) for GO terms. All GO terms that have been
 observed for the 5032 proteins in the hyperLOPIT dataset are retieved.
 Users should note that the number of GO terms retreived is also
 dependent on the database version queried and thus is always subject to
-change. We find it is common to see many GO terms with only one protein
-assigned to that term, these such terms generally do not bring and
-information generally for building the classifier and thus we can remove
-such GO terms by using the function `filterBinMSnSet`.
+change. We find it is common to see GO terms with only one protein
+assigned to that term. Such terms do not bring any information for
+building the classifier and are thus removes using the `filterBinMSnSet`
+function.
 
 `  `
 
-Now we have generated our auxiliary data we can use the *k*-NN
+Now that we have generated our auxiliary data, we can use the *k*-NN
 implementation of transfer learning available in to integrate this with
 our primary MS-based quantitative proteomics data using the functions
 `knntlOptimisation` to estimate the free-parameters for the integration,
 and `knntlClassification` to do the predictions. We have shown that
-using transfer learning in the context of spatial proteomics results in
-the assignment of proteins to sub-cellular niches with a higher
-generalisation accuracy than using standard supervised machine learning
-with a single source of information @Breckels:2016.
+using transfer learning results in the assignment of proteins to
+sub-cellular niches with a higher generalisation accuracy than using
+standard supervised machine learning with a single source of information
+@Breckels:2016.
 
 The first step, as with any machine learning algorithm, is to optimise
-any free paramaters of the classifier. For the \*k\*-NN TL classifier
+any free paramaters of the classifier. For the $k$-NN TL classifier
 there are two sets of parameters that need optimising: the first set are
 the $k$’s for the primary and auxiliary data sources required for the
 nearest neighbour calculations for each data source. The second set of
-parameters (which is noted by a vector of $\theta$ weights) that require
+parameters (noted by a vector of $\theta$ weights) that require
 optimising are the class weights, one per subcellular niche, that
 control the proportion of primary and auxiliary data to use for
 learning. A weight can take any real value number between 0 and 1. A
 weight of $\theta = 1$ indicates that all weight is given to the primary
-data (and this implicitly implies that a weight of $1 - \theta$ is given
-to the auxiliary data, similarly a weight of $\theta = 0$ implies that
-all weight is given to the auxiliary data (so 0 is given to the primary
-source). If we conduct a parameter seach and test weights
+data (and this implicitly implies that a weight of $1 - \theta = 0$ is
+given to the auxiliary data), and similarly a weight of $\theta = 0$
+implies that all weight is given to the auxiliary data (so 0 is given to
+the primary source). If we conduct a parameter seach and test weights
 $\theta = {0, 1/3, 2/3, 1}$ for each class, and if we have, for example
 10 subcellular niches, this will result in `4^{10}` different
 combinations of parameters to test. The parameter optimisation is
-therefore time consuming and as such we recommend you make use of a
+therefore time consuming and as such we recommend making use of a
 computing cluster (code and submissing scripts are also available in the
 supporting information). The markers in the `hl` dataset contain 14
 subcellular classes. If we examine these markers and classes on the PCA
@@ -1587,7 +1594,7 @@ nuclear compartments are highly separated along the first two
 components, this is also evident from the profiles plot which gives us a
 good indication that these subcellular niches are well-resolved in the
 hyperLOPIT dataset. Transfer learning is particularly useful for classes
-that are not as well separated, we find that subcellular niches that are
+that are not as well separated. We find that subcellular niches that are
 well-separated under hyperLOPIT and LOPIT obtain a class score of 1
 (i.e. use only primary data from transfer learning @Breckels:2016).
 Therefore, for the optimisation stage of the analyses we can already
@@ -1601,7 +1608,7 @@ In the example below we remove these 4 classes from the marker set,
 re-run the `knnOptimisation` for each data source and then run the
 `knntlOptimisation` with the 10 remaining classes. (Note: this is not
 run live as this the `hl` dataset with 10 classes, 707 markers and
-4$^{10}$ combinations of parameters takes  76 hours to run on the
+4$^{10}$ combinations of parameters takes around 76 hours to run on the
 University of Cambridge HPC using 256 workers).
 
 To remove the 4 classes and create a new column of markers in the
@@ -1635,39 +1642,44 @@ feature data called `tlmarkers` to use for the analysis:
     ##  [7] "Mitochondrion"         "Peroxisome"           
     ##  [9] "Plasma membrane"       "Proteasome"
 
-Optimisation stage 1: run `knnOptimisation` to get the best $k$’s for
-each data source.
+#### TL optimisation stage 1
+
+Run `knnOptimisation` to get the best $k$’s for each data source.
 
 \
 `     `\
+`     `
+
+From examining the parameter seach plots as described in section
+*Optimisation*, we find the best $k$’s for both the primary and
+auxiliary are 3.
+
+#### TL optimisation stage 2
+
+Run `knntlOptimisation` to get the best transfer learning weights for
+each sub-cellular class.
+
+\
+\
 `     `\
 \
-
-From examining the parameter seach plots we find the best $k$’s for both
-the primary and auxiliary are 3.
-
-Optimisation stage 2: run `knntlOptimisation` to get the best transfer
-learning weights for each sub-cellular class.
-
-\
 \
 `     `\
-\
-\
-`  `\
-`                             `\
-`                             `\
-`                             `\
+`                                `\
 `                                 `\
 `                            `
 
 The results of the optimisation can be visalised using the `plot` method
-for `ThetaRegRes` objects:
+for `tlopt` optimisation result:
 
 ![Visualisation of the transfer learning parameter optimisation
-procedure.](figure/plottl-1)
+procedure. Each row displays the frequency of observed weights (along
+the columns) for a specific sub-cellular class, with large dots
+representing higher observation frequencies.](figure/plottl-1)
 
 [fig:plottl]
+
+#### TL classification
 
 Looking at the bubble plot displaying the distribution of best weights
 over the 50 runs we find that for many of the subcellular niches a
@@ -1727,8 +1739,7 @@ classification using the function `knntlClassification`.
 `  `\
 \
 \
-`    `\
-`                             `
+`        `
 
 The results from the classification results and associated scores are
 appended to the `fData` slot and named `knntl` and `knntl.scores`
@@ -1770,7 +1781,7 @@ Writing and exporting data {#writing-and-exporting-data .unnumbered}
 
 A `MSnSet` can be exported from R using the `write.exprs` function. This
 function writes the expression values to a tab (the defualt, or other
-type e.g.e.g. comma, as specified in `write,table`) separated file.
+type e.g.e.g. comma, as specified in `write.table`) separated file.
 There argument `fDataCols` can be used to specify which `featureData`
 columns (as column names, column number or `logical`) to append to the
 right of the expression matrix.
@@ -1824,7 +1835,7 @@ failure and/or different results.
     ## [8] datasets  base     
     ## 
     ## other attached packages:
-    ##  [1] pRolocdata_1.12.0    pRoloc_1.15.1        MLInterfaces_1.54.0 
+    ##  [1] pRolocdata_1.12.0    pRoloc_1.15.3        MLInterfaces_1.54.0 
     ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
     ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
     ## [10] MSnbase_2.0.0        ProtGenerics_1.6.0   BiocParallel_1.8.1  
@@ -1833,44 +1844,49 @@ failure and/or different results.
     ## [19] BiocStyle_2.2.0      knitr_1.14          
     ## 
     ## loaded via a namespace (and not attached):
-    ##  [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
-    ##  [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
-    ##  [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
-    ## [10] MatrixModels_0.4-1    affyio_1.44.0         flexmix_2.3-13       
-    ## [13] mvtnorm_1.0-5         codetools_0.2-15      splines_3.3.2        
-    ## [16] doParallel_1.0.10     impute_1.48.0         robustbase_0.92-6    
-    ## [19] jsonlite_1.1          nloptr_1.0.4          caret_6.0-72         
-    ## [22] pbkrtest_0.4-6        rda_1.0.2-2           kernlab_0.9-25       
-    ## [25] vsn_3.42.3            sfsmisc_1.1-0         shiny_0.14.2         
-    ## [28] sampling_2.7          assertthat_0.1        Matrix_1.2-7.1       
-    ## [31] limma_3.30.2          formatR_1.4           htmltools_0.3.5      
-    ## [34] quantreg_5.29         tools_3.3.2           ggvis_0.4.3          
-    ## [37] gtable_0.2.0          affy_1.52.0           reshape2_1.4.2       
-    ## [40] dplyr_0.5.0           MALDIquant_1.15       trimcluster_0.1-2    
-    ## [43] gdata_2.17.0          preprocessCore_1.36.0 nlme_3.1-128         
-    ## [46] iterators_1.0.8       fpc_2.1-10            stringr_1.1.0        
-    ## [49] lme4_1.1-12           lpSolve_5.6.13        mime_0.5             
-    ## [52] gtools_3.5.0          dendextend_1.3.0      DEoptimR_1.0-6       
-    ## [55] zlibbioc_1.20.0       MASS_7.3-45           scales_0.4.0         
-    ## [58] BiocInstaller_1.24.0  pcaMethods_1.66.0     SparseM_1.72         
-    ## [61] RColorBrewer_1.1-2    ggplot2_2.1.0         biomaRt_2.30.0       
-    ## [64] rpart_4.1-10          stringi_1.1.2         RSQLite_1.0.0        
-    ## [67] highr_0.6             genefilter_1.56.0     randomForest_4.6-12  
-    ## [70] foreach_1.4.3         e1071_1.6-7           prabclus_2.2-6       
-    ## [73] bitops_1.0-6          mzID_1.12.0           evaluate_0.10        
-    ## [76] lattice_0.20-34       htmlwidgets_0.7       gbm_2.1.1            
-    ## [79] plyr_1.8.4            magrittr_1.5          R6_2.2.0             
-    ## [82] DBI_0.5-1             whisker_0.3-2         mgcv_1.8-15          
-    ## [85] survival_2.40-1       RCurl_1.95-4.8        nnet_7.3-12          
-    ## [88] tibble_1.2            msdata_0.14.0         car_2.1-3            
-    ## [91] mlbench_2.1-1         grid_3.3.2            FNN_1.1              
-    ## [94] ModelMetrics_1.1.0    threejs_0.2.2         digest_0.6.10        
-    ## [97] diptest_0.75-7        httpuv_1.3.3          munsell_0.4.3
+    ##   [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
+    ##   [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
+    ##   [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
+    ##  [10] hexbin_1.27.1         MatrixModels_0.4-1    affyio_1.44.0        
+    ##  [13] flexmix_2.3-13        mvtnorm_1.0-5         codetools_0.2-15     
+    ##  [16] splines_3.3.2         doParallel_1.0.10     impute_1.48.0        
+    ##  [19] robustbase_0.92-6     jsonlite_1.1          nloptr_1.0.4         
+    ##  [22] caret_6.0-72          pbkrtest_0.4-6        rda_1.0.2-2          
+    ##  [25] kernlab_0.9-25        vsn_3.42.3            sfsmisc_1.1-0        
+    ##  [28] shiny_0.14.2          sampling_2.7          assertthat_0.1       
+    ##  [31] Matrix_1.2-7.1        limma_3.30.2          formatR_1.4          
+    ##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.2          
+    ##  [37] ggvis_0.4.3           gtable_0.2.0          affy_1.52.0          
+    ##  [40] reshape2_1.4.2        dplyr_0.5.0           MALDIquant_1.15      
+    ##  [43] trimcluster_0.1-2     gdata_2.17.0          preprocessCore_1.36.0
+    ##  [46] nlme_3.1-128          iterators_1.0.8       fpc_2.1-10           
+    ##  [49] stringr_1.1.0         lme4_1.1-12           lpSolve_5.6.13       
+    ##  [52] mime_0.5              gtools_3.5.0          dendextend_1.3.0     
+    ##  [55] DEoptimR_1.0-6        zlibbioc_1.20.0       MASS_7.3-45          
+    ##  [58] scales_0.4.0          BiocInstaller_1.24.0  pcaMethods_1.66.0    
+    ##  [61] SparseM_1.72          RColorBrewer_1.1-2    ggplot2_2.1.0        
+    ##  [64] biomaRt_2.30.0        rpart_4.1-10          stringi_1.1.2        
+    ##  [67] RSQLite_1.0.0         highr_0.6             genefilter_1.56.0    
+    ##  [70] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
+    ##  [73] prabclus_2.2-6        bitops_1.0-6          mzID_1.12.0          
+    ##  [76] evaluate_0.10         lattice_0.20-34       htmlwidgets_0.7      
+    ##  [79] gbm_2.1.1             plyr_1.8.4            magrittr_1.5         
+    ##  [82] R6_2.2.0              DBI_0.5-1             whisker_0.3-2        
+    ##  [85] mgcv_1.8-15           survival_2.40-1       RCurl_1.95-4.8       
+    ##  [88] nnet_7.3-12           tibble_1.2            msdata_0.14.0        
+    ##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.2           
+    ##  [94] FNN_1.1               ModelMetrics_1.1.0    threejs_0.2.2        
+    ##  [97] digest_0.6.10         diptest_0.75-7        httpuv_1.3.3         
+    ## [100] munsell_0.4.3
 
 It is always important to include session information details along with
 a [short reproducible
 example](http://adv-r.had.co.nz/Reproducibility.html) highlighting the
 problem or [question](https://support.bioconductor.org/) at hand.
+
+The source of this document, including the code necessary to reproduce
+the analyses and figures is available in the public manuscript
+repository @ghrepo.
 
 Author contributions {#author-contributions .unnumbered}
 --------------------
