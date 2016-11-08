@@ -472,12 +472,12 @@ not bear any consequences here.
 
 ### Combining acquisitions {#combining-acquisitions .unnumbered}
 
-The spreadsheet that was used to create the `hl` MSnSet included the two
-replicates within one .csv file. We also provide individual replicates
-in the package. Below, we show how to combine `MSnSet` objects and,
-subsequently, how to filter and handle missing values. We start by
-loading the package and the equivalent replicates using the `data`
-function.
+The spreadsheet that was used to create the `hl` `MSnSet` included the
+two replicates within one .csv file. We also provide individual
+replicates in the package. Below, we show how to combine `MSnSet`
+objects and, subsequently, how to filter and handle missing values. We
+start by loading the package and the equivalent replicates using the
+`data` function.
 
 \
 \
@@ -552,7 +552,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:46:40 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:55:51 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -608,10 +608,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:46:40 2016 
-    ## Subset [6725,20][5032,20] Tue Nov  8 19:46:41 2016 
-    ## Removed features with more than 0 NAs: Tue Nov  8 19:46:41 2016 
-    ## Dropped featureData's levels Tue Nov  8 19:46:41 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:55:51 2016 
+    ## Subset [6725,20][5032,20] Tue Nov  8 19:55:51 2016 
+    ## Removed features with more than 0 NAs: Tue Nov  8 19:55:51 2016 
+    ## Dropped featureData's levels Tue Nov  8 19:55:51 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -708,7 +708,7 @@ and obtaining labelled training data for ML analyses can be time
 consuming, but it is important to define markers that are representative
 of the multivariate data space and on which a classifier will be trained
 and generated. provides a convenience function, `addMarkers`, to
-directly add markers to a `MSnSet` object, as demonstrated in the code
+directly add markers to an `MSnSet` object, as demonstrated in the code
 chunk below. These marker sets can be accessed using the
 `pRolocmarkers()` function. Marker sets are stored as a simple named
 vector in R, and originate from in-house user-defined sets of markers or
@@ -733,7 +733,7 @@ updated and integrated.
     ## Saccharomyces cerevisiae [scer_uniprot]:
     ##  Ids: Uniprot Accession, 259 markers
 
-These markers can then be mapped to a `MSnSet`’s `featureNames`. The
+These markers can then be mapped to an `MSnSet`’s `featureNames`. The
 mouse dataset used here has Uniprot IDs stored as the `featureNames`
 (see `head(featureNames(hl))`) and the names of the vector of the mouse
 markers stored in (`mmus` markers) are also Uniprot IDs (see `head(mrk)`
@@ -977,10 +977,10 @@ in the manuscript repository @ghrepo.
 The *compare* application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
 etc. The compare application is called by default if the input object to
-`pRolocVis` is a `MSnSetList` of 2 `MSnSets`, but it can also be
+`pRolocVis` is an `MSnSetList` of 2 `MSnSets`, but it can also be
 specified by calling the argument `app = compare`. For example, in the
-code chunk below we first create a `MSnSetList` of replicates 1 and 2 of
-the hyperLOPIT data, this is then passed to `pRolocVis`.
+code chunk below we first create an `MSnSetList` of replicates 1 and 2
+of the hyperLOPIT data, this is then passed to `pRolocVis`.
 
 \
 \
@@ -1142,8 +1142,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Tue Nov  8 19:46:42 2016 
-    ## Added markers from  'pdres' marker vector. Tue Nov  8 19:46:43 2016 
+    ## Added markers from  'mrk' marker vector. Tue Nov  8 19:55:53 2016 
+    ## Added markers from  'pdres' marker vector. Tue Nov  8 19:55:54 2016 
     ##  MSnbase version: 2.0.0
 
 `   `
@@ -1447,29 +1447,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4325847               0.3029421               0.3817418 
+    ##               0.4357194               0.3041525               0.3811012 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6933699               0.6027103               0.4145111 
+    ##               0.6836987               0.6053745               0.4209542 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4276585               0.5845256               0.9490812 
+    ##               0.4212970               0.5861141               0.9494434 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7947588               0.7079465               0.3161762 
+    ##               0.7966054               0.7108833               0.3132191 
     ##         Plasma membrane              Proteasome 
-    ##               0.7101150               0.4125186
+    ##               0.7131673               0.4134914
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     172                      84 
+    ##                      85                     171                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     297                     475                      98 
+    ##                     292                     476                      99 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      28                     125                     523 
+    ##                      25                     124                     524 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     228                     343                      38 
+    ##                     229                     343                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     321                     158                    2057
+    ##                     322                     162                    2058
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`

@@ -356,13 +356,13 @@ do not bear any consequences here.
 
 \subsubsection*{Combining acquisitions}
 
-The spreadsheet that was used to create the \texttt{hl} MSnSet
-included the two replicates within one .csv file.  We also provide
-individual replicates in the \Biocexptpkg{pRolocdata}
+The spreadsheet that was used to create the \texttt{hl}
+\texttt{MSnSet} included the two replicates within one .csv file.  We
+also provide individual replicates in the \Biocexptpkg{pRolocdata}
 package. Below, we show how to combine \texttt{MSnSet} objects and,
 subsequently, how to filter and handle missing values. We start by
-loading the \Biocexptpkg{pRolocdata} package and the
-equivalent replicates using the \texttt{data} function.
+loading the \Biocexptpkg{pRolocdata} package and the equivalent
+replicates using the \texttt{data} function.
 
 <<reps4combine>>=
 library("pRolocdata")
@@ -574,7 +574,7 @@ analyses can be time consuming, but it is important to define markers
 that are representative of the multivariate data space and on which a
 classifier will be trained and generated. \Biocpkg{pRoloc} provides a
 convenience function, \texttt{addMarkers}, to directly add markers to
-a \texttt{MSnSet} object, as demonstrated in the code chunk
+an \texttt{MSnSet} object, as demonstrated in the code chunk
 below. These marker sets can be accessed using the
 \texttt{pRolocmarkers()} function. Marker sets are stored as a simple
 named vector in R, and originate from in-house user-defined sets of
@@ -586,7 +586,7 @@ are continuosly updated and integrated.
 pRolocmarkers()
 @
 
-These markers can then be mapped to a \texttt{MSnSet}'s
+These markers can then be mapped to an \texttt{MSnSet}'s
 \texttt{featureNames}. The mouse dataset used here has Uniprot IDs
 stored as the \texttt{featureNames} (see
 \texttt{head(featureNames(hl))}) and the names of the vector of the
@@ -829,9 +829,9 @@ illustrating the interface is available in the manuscript repository~\cite{ghrep
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
 etc. The compare application is called by default if the input object
-to \texttt{pRolocVis} is a \texttt{MSnSetList} of 2 \texttt{MSnSets},
+to \texttt{pRolocVis} is an \texttt{MSnSetList} of 2 \texttt{MSnSets},
 but it can also be specified by calling the argument \texttt{app =
-  "compare"}. For example, in the code chunk below we first create a
+  "compare"}. For example, in the code chunk below we first create an
 \texttt{MSnSetList} of replicates 1 and 2 of the hyperLOPIT data, this
 is then passed to \texttt{pRolocVis}.
 

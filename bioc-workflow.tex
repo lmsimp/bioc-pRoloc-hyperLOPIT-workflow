@@ -581,13 +581,13 @@ do not bear any consequences here.
 
 \subsubsection*{Combining acquisitions}
 
-The spreadsheet that was used to create the \texttt{hl} MSnSet
-included the two replicates within one .csv file.  We also provide
-individual replicates in the \Biocexptpkg{pRolocdata}
+The spreadsheet that was used to create the \texttt{hl}
+\texttt{MSnSet} included the two replicates within one .csv file.  We
+also provide individual replicates in the \Biocexptpkg{pRolocdata}
 package. Below, we show how to combine \texttt{MSnSet} objects and,
 subsequently, how to filter and handle missing values. We start by
-loading the \Biocexptpkg{pRolocdata} package and the
-equivalent replicates using the \texttt{data} function.
+loading the \Biocexptpkg{pRolocdata} package and the equivalent
+replicates using the \texttt{data} function.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -725,7 +725,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:46:40 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:55:51 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -807,10 +807,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:46:40 2016 
-## Subset [6725,20][5032,20] Tue Nov  8 19:46:41 2016 
-## Removed features with more than 0 NAs: Tue Nov  8 19:46:41 2016 
-## Dropped featureData's levels Tue Nov  8 19:46:41 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:55:51 2016 
+## Subset [6725,20][5032,20] Tue Nov  8 19:55:51 2016 
+## Removed features with more than 0 NAs: Tue Nov  8 19:55:51 2016 
+## Dropped featureData's levels Tue Nov  8 19:55:51 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -927,7 +927,7 @@ analyses can be time consuming, but it is important to define markers
 that are representative of the multivariate data space and on which a
 classifier will be trained and generated. \Biocpkg{pRoloc} provides a
 convenience function, \texttt{addMarkers}, to directly add markers to
-a \texttt{MSnSet} object, as demonstrated in the code chunk
+an \texttt{MSnSet} object, as demonstrated in the code chunk
 below. These marker sets can be accessed using the
 \texttt{pRolocmarkers()} function. Marker sets are stored as a simple
 named vector in R, and originate from in-house user-defined sets of
@@ -960,7 +960,7 @@ are continuosly updated and integrated.
 \end{kframe}
 \end{knitrout}
 
-These markers can then be mapped to a \texttt{MSnSet}'s
+These markers can then be mapped to an \texttt{MSnSet}'s
 \texttt{featureNames}. The mouse dataset used here has Uniprot IDs
 stored as the \texttt{featureNames} (see
 \texttt{head(featureNames(hl))}) and the names of the vector of the
@@ -1187,7 +1187,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Tue Nov  8 19:46:43 2016
+% Tue Nov  8 19:55:53 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1280,9 +1280,9 @@ illustrating the interface is available in the manuscript repository~\cite{ghrep
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
 etc. The compare application is called by default if the input object
-to \texttt{pRolocVis} is a \texttt{MSnSetList} of 2 \texttt{MSnSets},
+to \texttt{pRolocVis} is an \texttt{MSnSetList} of 2 \texttt{MSnSets},
 but it can also be specified by calling the argument \texttt{app =
-  "compare"}. For example, in the code chunk below we first create a
+  "compare"}. For example, in the code chunk below we first create an
 \texttt{MSnSetList} of replicates 1 and 2 of the hyperLOPIT data, this
 is then passed to \texttt{pRolocVis}.
 
@@ -1480,8 +1480,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Nov  8 19:46:42 2016 
-## Added markers from  'pdres' marker vector. Tue Nov  8 19:46:43 2016 
+## Added markers from  'mrk' marker vector. Tue Nov  8 19:55:53 2016 
+## Added markers from  'pdres' marker vector. Tue Nov  8 19:55:54 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1892,15 +1892,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4325847               0.3029421               0.3817418 
+##               0.4357194               0.3041525               0.3811012 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6933699               0.6027103               0.4145111 
+##               0.6836987               0.6053745               0.4209542 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4276585               0.5845256               0.9490812 
+##               0.4212970               0.5861141               0.9494434 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7947588               0.7079465               0.3161762 
+##               0.7966054               0.7108833               0.3132191 
 ##         Plasma membrane              Proteasome 
-##               0.7101150               0.4125186
+##               0.7131673               0.4134914
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1908,15 +1908,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      84 
+##                      85                     171                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     297                     475                      98 
+##                     292                     476                      99 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      28                     125                     523 
+##                      25                     124                     524 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     228                     343                      38 
+##                     229                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     321                     158                    2057
+##                     322                     162                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
