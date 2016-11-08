@@ -634,10 +634,14 @@ this is not the case however, conversion can be performed using
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
 
-It is also possible to use one's own marker list with the
+It is also possible for users to use their own marker list with the
 \texttt{addMarkers} function. The user needs to create a named vector
-of marker localisation, where the names match some (not necessarily
-all) of the \texttt{MSnSet}'s feature names.
+of marker localisation, or a create a csv file with two columns (one
+for the protein names, one for the corresponding sub-cellular marker
+annotation) and pass the vector or filename respectively to the
+function. As previously mentioned, the protein names of these markers
+must match some (but not necessarily all) of the \texttt{MSnSet}'s
+feature names. See `?addMarkers` for more details.
 
 We now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
@@ -645,12 +649,13 @@ to map the marker classes to the pre-defined colours. We also display
 the data along the first and seventh PCs using the \texttt{dims}
 argument. Note that in these calls to the \texttt{plot2D} function, we
 have omitted the \texttt{fcol} argument and use of the default
-\texttt{"markers"} feature variable to annotated the plot. We choose
+\texttt{"markers"} feature variable to annotate the plot. We choose
 to display PCs 1 and 7 to illustrate that while upper principal
 components explain much less variability in the data (2.23\% for PC7,
 as opposed to 48.41\% for PC1), we see that the mitochondrial (purple)
 and peroxisome (dark blue) clusters can be differenciated, despite the
-apparent overlap in the two first PCs.
+apparent overlap in the visualisation of the two first PCs
+(Figure \ref{fig:plotmarkers}).
 
 \begin{figure}[!ht]
   \centering
@@ -665,22 +670,23 @@ plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 \end{figure}
 
 
-The colours have been defined so as to enable to differenciate up to
-30 classes. If more are provided, different character symbols
-(circles, squares, ... and empty and solid symbols) are used. The
-colours and the default plotting characters (solid dots for the
-markers and empty circles for the features of unknown localisation)
-can of course be changed, as described in the \texttt{setStockcol} manual
-page.
+The defualt colours for plotting have been defined so as to enable to
+differenciate up to 30 classes. If more are provided, different
+character symbols (circles, squares, ... and empty and solid symbols)
+are used. The colours and the default plotting characters (solid dots
+for the markers and empty circles for the features of unknown
+localisation) can of course be changed, as described in the
+\texttt{setStockcol} manual page.
 
 As demonstrated in \cite{hyper} and illustrated in the PCA plot above,
-the Golgi apparatus proteins (brown) display a dynamic pattern, noting
-sets of Golgi marker proteins that are distributed amongst other
-subcellular structures, an observation supported by microscopy. As
-such, we are going to reset the annotation of Golgi markers to unknown
-using the \texttt{fDataTounknown} function. It is often used to
-replace empty strings (\texttt{""}) or missing values in the markers definition
-to a common definition of \textit{unknown} localisation.
+the Golgi apparatus proteins (dark brown) display a dynamic pattern,
+noting sets of Golgi marker proteins that are distributed amongst
+other subcellular structures, an observation supported by microscopy.
+As such, we are going to reset the annotation of Golgi markers to
+unknown using the \texttt{fDataTounknown} function. It is often used
+to replace empty strings (\texttt{""}) or missing values in the
+markers definition to a common definition of \textit{unknown}
+localisation.
 
 <<removeGA>>=
 hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
@@ -705,15 +711,15 @@ few marker clusters is useful to assess how exactly they differ (in
 terms of peak channels, for example). On figure \ref{fig:plotDist2},
 we plot the profile of the mitochondrial and peroxisome markers to
 highlight the differences in profiles between these two sets of
-markers along the 6th and 7th channels, as represented above along the
-7th PC on the PCA plot on figure \ref{fig:plotmarkers}.
+markers in the channels labelled with tag 129C, as represented above
+along the 7th PC on the PCA plot on figure \ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
 <<plotDist, out.width=".6\\textwidth", fig.asp=3/5>>=
 hlo <- hl[, order(hl$Iodixonal.Density)]
 plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
-         pcol = "purple", fractions = "Fraction.No")
+         pcol = "purple", fractions = "Tag")
 title(main = "Marker occupancy profiles along the gradient")
 matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
          lty = 1, col = "darkblue", type = "l")
@@ -741,20 +747,23 @@ Direct comparisons of individual channels in replicated experiments
 does not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
-identical selected fractions along the gradient. As can be seen in the
-table below (taken from the \texttt{hl}'s \texttt{pData}, focusing on
-channels 7 to 10), different sets of gradient fractions are pooled to
-obtain enough material and optimise acurate quantitation.
+identical selected fractions along the gradient. For example, in the
+table below (taken from \texttt{hl}'s \texttt{pData}) TMT channels
+127C (among others) in both replicates originate from different sets
+of gradient fractions (gradient fractions 7 - 9 and 8 - 9 for each
+replicate, respectively). Different sets of gradient fractions are
+often pooled to obtain enough material and optimise acurate
+quantitation.
 
 <<pdtab, echo=FALSE, eval = TRUE, results = 'asis'>>=
-i <- c(2, 3, 4, 13, 14)
+i <- c(3, 13)
 xtable(pData(hl)[i, ], 
        caption = "Differences in gradient fraction pooling.", 
        label = "tab:pdtab")
 @
 
 The more relevant comparison unit is not a single channel, but rather
-the complete protein occupancy profiles, which are best visualised as
+the complete protein occupancy profiles, which are best visualised 
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
@@ -803,17 +812,17 @@ pRolocVis(hl)
   \label{fig:app}
 \end{figure}
 
-As diplayed in the screenshot above, the \textit{main} application is
-designed for exploratory data analysis and is divied into 3 tabs: (1)
-PCA, (2) Profiles and (3) Table selection. The default view upon
-loading is the PCA tab, which features a clickable interface and
-zoomable PCA plot with an interactive data table for displaying the
-quantitation information. Particular proteins of interest can be
-highlighted using the text search box. There is also an alternate
-profiles tab for visualisation of the protein profiles, which can be
-used to examine the patterns of proteins of interest. The Table
-selection tab provides an interface to control data table column
-selection. A short
+As diplayed in the screenshot in figure \ref{fig:app}, the
+\textit{main} application is designed for exploratory data analysis
+and is divied into 3 tabs: (1) PCA, (2) Profiles and (3) Table
+selection. The default view upon loading is the PCA tab, which
+features a clickable interface and zoomable PCA plot with an
+interactive data table for displaying the quantitation information.
+Particular proteins of interest can be highlighted using the text
+search box. There is also an alternate profiles tab for visualisation
+of the protein profiles, which can be used to examine the patterns of
+proteins of interest. The Table selection tab provides an interface to
+control data table column selection. A short
 animation\footnote{\url{https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis\_pca.gif}}
 illustrating the interface is available in the manuscript repository~\cite{ghrepo}.
 
@@ -927,26 +936,27 @@ hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
 @
 
 Note: We do not evaluate this code chunk in this document as the
-algorithm is computational intensive and best parallelised over
+algorithm is computationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
 when parallelised over 40 workers.
 
-The argument \texttt{times} indicated the number of times we run
+The argument \texttt{times} indicates the number of times we run
 unsupervied Gaussian Mixture Modelling before defining a new phenotype
 cluster.  The recommended minimum and default value is 100. In the
 above code chunk we increase the value to \texttt{times = 200} as we
-have found for larger datasets (e.g. 5000+ proteins) a higher times is
-requried for convergence. \texttt{GS} defines the minimum number of
-proteins allowed per new data cluster and thus heavily influences what
-type of new clusters are extracted. For example, if a user is
-interesed in the detection of small complexes they may wish to use a
-small \texttt{GS = 10}, or \texttt{= 20} etc.  If they wish to detect
-larger, more abundant sub-cellular niches a much higher \texttt{GS}
-would be preferable. Specifying a small \texttt{GS} can be more time
-consuming than using a larger \texttt{GS}, and there is a trade off
-between finding interesting small complexes and those that may not be
-of interest as we find there is a tendancy to find more noise when
-using a small \texttt{GS} compared to using a higher one.
+have found for larger datasets (e.g. 5000+ proteins) a higher
+\texttt{times} is requried for convergence. \texttt{GS} defines the
+minimum number of proteins allowed per new data cluster and thus
+heavily influences what type of new clusters are extracted. For
+example, if a user is interesed in the detection of small complexes
+they may wish to use a small \texttt{GS = 10}, or \texttt{= 20} etc.
+If they wish to detect larger, more abundant sub-cellular niches a
+much higher \texttt{GS} would be preferable. Specifying a small
+\texttt{GS} can be more time consuming than using a larger
+\texttt{GS}, and there is a trade off between finding interesting
+small complexes and those that may not be of interest as we find there
+is a tendancy to find more noise when using a small \texttt{GS}
+compared to using a higher one.
 
 One may also consider increasing the search space for new data
 clusters by increasing the value of the parameter \texttt{G}. This
@@ -1007,15 +1017,16 @@ addLegend(hl, fcol = "pd", cex = .7, col = cols)
 We can plot the results using the \texttt{plot2D} function (Figure
 \ref{fig:plotPDres}). The five new phenotype data clusters can be
 extracted and examined.  In the code chunk below we write the results
-to a .csv file. We use the argument \texttt{fDataCols} to specify
-which columns of the \texttt{featureData} to write.
+to a .csv file using the \texttt{write.exprs} function. We use the
+argument \texttt{fDataCols} to specify which columns of the
+\texttt{featureData} to write.
 
 <<writehl, eval=FALSE>>=
 fData(hl)$pd <- as.character(fData(hl)$pd)
 write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
 @
 
-We can also examine the each phenotype intercatively and visualise
+We can also examine each phenotype interactively and visualise
 their protein profiles by using the \texttt{pRolocVis} function in the
 \Biocpkg{pRolocGUI} package. We found that phenotype 1 was
 enriched in nucleus associated proteins, phenotype 2 in chromatin
@@ -1035,7 +1046,7 @@ train a machine learning classifier to learn a mapping between the
 data i.e. the quantitative protein profiles, and a known localisation.
 The trained classifier can then be used to predict the localisation of
 a protein of unknown localisation, based on its observed protein
-profile. To date, this method has been extensively used in spatial
+profiles. To date, this method has been extensively used in spatial
 quantitative proteomics to assign thousands of proteins to distinct
 sub-cellular niches
 \cite{hyper,Groen:2014,Trotter:2010,Hall:2009,Dunkley:2006,Tan:2009}.
@@ -1057,7 +1068,7 @@ a classifier on the labelled training data. As previously mentioned,
 one first needs to train the classifiers parameters before an
 algorithm can be used to predict the class labels of the proteins with
 unknown location. One of the most common ways to optimise the
-parameters of a classifier is to partition the labelled data in to
+parameters of a classifier is to partition the labelled data into
 training and testing subsets. In this framework parameters are tested
 via a grid search using cross-validation on the training
 partition. The best parameters chosen from the cross-validation stage
@@ -1108,10 +1119,10 @@ params <- svmOptimisation(hl, fcol = "markers",
 @
 
 As mentioned previously, we rely on the default feature variable
-\texttt{"markers"} to define the class labels and hence can ommit
-it. To use another feature variables, one need to explicitly specify
-its name using the \texttt{fcol} argument (for example \texttt{fcol =
-  "markers2"}).
+\texttt{"markers"} to define the class labels and hence do not need to
+specify it in the above code chunk.  To use another feature variables,
+one need to explicitly specify its name using the \texttt{fcol}
+argument (for example \texttt{fcol = "markers2"}).
 
 The output \texttt{params} is an object of class \texttt{GenRegRes}; a
 dedicated container for the storage of the design and results from a
@@ -1162,7 +1173,7 @@ grid.arrange(plot(params), levelPlot(params), ncol = 2)
 
 By using the function \texttt{getParams} we can extract the best set
 of parameters. Currently, \texttt{getParams} retrieves the first best
-set is automatically but users are encouraged to critically assess
+set automatically, but users are encouraged to critically assess
 whether this is the most wise choice (which it is, as demonstrated
 above).
 
@@ -1176,12 +1187,13 @@ build a classifier from the labelled marker proteins.
 
 \subsection*{Classification}
 
-We can use the function \texttt{svmClassification} to return a classification
-result for all unlabelled instances in the dataset corresponding to
-their most likely sub-cellular location. The algorithm parameters are
-passed to the function, along with the class weights. As above, \texttt{fcol}
-can be ignored as we use the labels defined in the default \texttt{"markers"}
-feature variable.
+We can use the function \texttt{svmClassification} to return a
+classification result for all unlabelled instances in the dataset
+corresponding to their most likely sub-cellular location. The
+algorithm parameters are passed to the function, along with the class
+weights. As above, the \texttt{fcol} argument does not need to be
+specified as we use the labels defined in the default
+\texttt{"markers"} feature variable.
 
 <<classify>>=
 hl <- svmClassification(hl, params, class.weights = w, fcol = "markers")
@@ -1195,7 +1207,7 @@ predictions and scores respectively. The resultant predictions can be
 visualised using \texttt{plot2D}. In the code chunk below
 \texttt{plot2D} is called to generate a PCA plot of the data and
 \texttt{fcol} is used to specify where the new assignments are located
-e.g.  \texttt{fcol = "svm"}.
+e.g. \texttt{fcol = "svm"}.
 
 Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
 argument to change the size of each point on the plot to be inversely
@@ -1224,8 +1236,8 @@ addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 
 
 The adjustment of the point size intuitively confers important
-information that is more difficult to defined formally, but that we
-will address in the next section. The classifier (SVM in our case, but
+information that is more difficult to define formally (we
+will address in the next section). The classifier (SVM in our case, but
 this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
 how non-assigned proteins are classified and with what confidence.
@@ -1280,7 +1292,7 @@ information is not available, one crude method is to set a threshold
 per organelle by extracting the median or 3rd quantile score per
 organelle.  For example, in the code chunk below, we use the
 \texttt{orgQuants} function to extract the median organelle scores and
-then pass these scores to the \texttt{getPrediction} function to
+then pass these scores to the \texttt{getPredictions} function to
 extract the new localisations that meet this scoring criteria. Any
 sub-cellular predictions that fall below the specified thresholds are
 labelled as unknown.
@@ -1635,7 +1647,7 @@ annotation purposes. The main goal in unsupervised learning is to
 uncover groups of similar features within the data, termed
 clustering. Ordination methods such as principal components analysis
 (PCA) also fall into the category of unsupervised learning methods,
-where the data can be projected from a high-dimensional spcae down to
+where the data can be projected from a high-dimensional space down to
 two or three dimensions for the purpose of visualisation.
 
 As described and demonstrated already above, PCA is a valuable and
