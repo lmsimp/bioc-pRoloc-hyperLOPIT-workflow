@@ -552,7 +552,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 14:13:46 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 16:12:13 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -608,10 +608,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 14:13:46 2016 
-    ## Subset [6725,20][5032,20] Tue Nov  8 14:13:47 2016 
-    ## Removed features with more than 0 NAs: Tue Nov  8 14:13:47 2016 
-    ## Dropped featureData's levels Tue Nov  8 14:13:47 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 16:12:13 2016 
+    ## Subset [6725,20][5032,20] Tue Nov  8 16:12:14 2016 
+    ## Removed features with more than 0 NAs: Tue Nov  8 16:12:14 2016 
+    ## Dropped featureData's levels Tue Nov  8 16:12:14 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -1137,8 +1137,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Tue Nov  8 14:13:49 2016 
-    ## Added markers from  'pdres' marker vector. Tue Nov  8 14:13:50 2016 
+    ## Added markers from  'mrk' marker vector. Tue Nov  8 16:12:16 2016 
+    ## Added markers from  'pdres' marker vector. Tue Nov  8 16:12:16 2016 
     ##  MSnbase version: 2.0.0
 
 `   `
@@ -1441,29 +1441,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4359409               0.3031417               0.3896552 
+    ##               0.4365906               0.3054928               0.3796591 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6869014               0.6046754               0.4336399 
+    ##               0.6956146               0.5986152               0.4308889 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4165647               0.5910830               0.9498244 
+    ##               0.4270518               0.5894672               0.9501479 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7955788               0.7079722               0.3121358 
+    ##               0.7954126               0.7078652               0.3176106 
     ##         Plasma membrane              Proteasome 
-    ##               0.7187306               0.4168615
+    ##               0.7149800               0.4148348
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      86                     171                      89 
+    ##                      84                     173                      86 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     294                     477                      99 
+    ##                     296                     476                     100 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     123                     522 
+    ##                      27                     124                     521 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     342                      38 
+    ##                     229                     343                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     316                     160                    2058
+    ##                     319                     158                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1954,14 +1954,13 @@ Larger grant (Award BB/L002817/1).
 Acknowledgements {#acknowledgements .unnumbered}
 ----------------
 
-The authors would like to thank Dr Claire M. Mulvey for helpful comments
-on early versions of this manuscript. The authors would also like to
-thank Dr. Stuart Rankin from the High Performance Computing Service for
-his support. Part of this work was performed using the Darwin
-Supercomputer of the University of Cambridge High Performance Computing
-Service, provided by Dell Inc. using Strategic Research Infrastructure
-Funding from the Higher Education Funding Council for England and
-funding from the Science and Technology Facilities Council.
+The authors would like to thank Dr. Stuart Rankin from the High
+Performance Computing Service for his support. Part of this work was
+performed using the Darwin Supercomputer of the University of Cambridge
+High Performance Computing Service, provided by Dell Inc. using
+Strategic Research Infrastructure Funding from the Higher Education
+Funding Council for England and funding from the Science and Technology
+Facilities Council.
 
 [^1]: <https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis_pca.gif>
 
