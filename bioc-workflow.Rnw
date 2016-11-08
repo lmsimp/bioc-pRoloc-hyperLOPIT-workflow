@@ -1,0 +1,1730 @@
+
+<<env, echo=FALSE, warning=FALSE>>=
+library("BiocStyle")
+suppressPackageStartupMessages(library("knitr"))
+suppressPackageStartupMessages(library("xtable"))
+suppressPackageStartupMessages(library("gridExtra"))
+suppressPackageStartupMessages(library("MSnbase"))
+suppressPackageStartupMessages(library("pRoloc"))
+suppressPackageStartupMessages(library("pRolocdata"))
+cache <- FALSE
+@ 
+
+\section*{Introduction}
+
+Quantitative mass spectrometry based spatial proteomics involves
+elaborate, expensive and time consuming experimental procedures and
+considerable effort is invested in the generation of such data.
+Multiple research groups have described a variety of approaches to
+establish high quality proteome-wide datasets. However, data analysis
+is as critical as data production for reliable and insightful
+biological interpretation. Here, we walk the reader through a typical
+pipeline for the analysis of such data using several Bioconductor
+packages for the R statistical programming environment.
+
+The main package to analyse protein localisation data is
+\Biocpkg{pRoloc}, which offers a set of dedicated functions for the
+analysis of such data. \Biocpkg{pRoloc} itself relies on
+\Biocpkg{MSnbase} to manipulate and process quantitative
+proteomics data. Many other packages are used by \Biocpkg{pRoloc}
+for clustering, classification and visualisation.
+
+In this workflow, we will describe how to prepare the spatial
+proteomics data starting from a spreadsheet containing quantitative
+mass spectrometry data. We will focus on a recent pluripotent mouse
+embryonic stem cells experiment \cite{hyper}. These data, as well as
+additional annotated and pre-formatted datasets from various species
+are readily available in the \Biocexptpkg{pRolocdata} package.
+
+Installation of Bioconductor package is documented in details on the
+\href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
+  installation help page}. This procedure is also applicable to any
+packages, from \href{https://cran.r-project.org/}{CRAN} as well as
+GitHub. Once a package has been installed, it needs to be loaded for
+its functionality to become available in the R session; this is done
+with the \texttt{library} function e.g.  to load the
+\Biocpkg{pRoloc} one would type \texttt{library("pRoloc")}
+after installation.
+
+If you have questions about this workflow in particular, or about
+other Bioconductor packages in general, they are best asked on the
+\href{https://support.bioconductor.org/}{Bioconductor support site}
+following the
+\href{http://www.bioconductor.org/help/support/posting-guide/}{posting
+  guidelines}. Questions can be tagged with specific package names or
+keywords. For more general information about mass spectrometry and
+proteomics, the readers are invited to read the
+\Biocexptpkg{RforProteomics} package vignettes and associated
+papers \cite{Gatto:2014,Gatto:2015}.
+
+
+\section*{Reading and processing spatial proteomics data}
+
+\subsection*{The use-case: predicting sub-cellular localisation in pluripotent embryonic mouse stem cells}
+
+As a use-case, we analyse a recent high-throughput spatial proteomics
+dataset from pluripotent mouse embryonic stem cells (E14TG2a)
+\cite{hyper}. The data was generated using hyperplexed LOPIT
+(hyperLOPIT), a state-of-the-art method relying on improved
+sub-cellular fractionation and more accurate quantitation, leading to
+more reliable classification of protein localisation across the whole
+sub-cellular space. The method uses an elaborate sub-cellular
+fractionation scheme, enabled by the use of Tandem Mass Tag (TMT)
+\cite{Thompson:2003} 10-plex and application of the MS data
+acquisition technique named synchronous precursor selection MS$^3$
+(SPS-MS$^3$) \cite{McAlister:2014}, for TMT quantification with high
+accuracy and precision. Three biological replicates were generated
+from the E14TG2a experiment, the first was to target low density
+fractions and the second and third were to emphasis separation of the
+denser organelles.  The intersect of replicates 1 and 2 was treated as
+a 20-plex dataset for the analysis.  As discussed in the manuscript
+\cite{hyper}, it has been shown that combining replicates across from
+different gradients can increase spatial resolution
+\cite{Trotter:2010}. The combination of replicates resulted in 5032
+proteins common in both experiments.
+
+These, as well as many other data are directly available as properly
+structured and annotated computational object from the 
+\Biocexptpkg{pRolocdata} experiment package. In this workflow, we
+will start with a description of how to generate these ad hoc objects
+starting from an arbitrary spreadsheets, as produced by many popular
+third-party applications. 
+
+While we focus here on a LOPIT-type dataset, these analyses are
+relevant for any quantitative spatial proteomics data, irrespective of
+the fractionation or quantitation (i.e. labelled or label-free)
+methods.
+
+\subsection*{The infrastructure: \texttt{pRoloc} and \texttt{MSnbase} packages}
+
+To make use of the full functionality of the \Biocpkg{pRoloc} software
+one needs to import their data into R and prepare them as an
+\texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for
+the efficient manipulation and processing of mass spectrometry and
+proteomics data in R. Figure 1 illustrates a simplified view of the
+\texttt{MSnSet} structure; there exists 3 key sub-parts (termed slots)
+to such a data object: (1) the \texttt{exprs} (short for
+\textit{expression} data) slot for storing the quantitation data, (2)
+the \texttt{fData} slot (short for \textit{feature}-metadata) for
+storing the feature meta-data, and finally (3) the \texttt{pData} slot
+(short for \textit{pheno}-metadata, i.e. sample phenotypic data) for
+storing the sample meta-data.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{./Figures/msnset.png}
+  \caption{Simplified representation of the \texttt{MSnSet} data
+    structure (reproduced with permission from the \Biocpkg{MSnbase}
+    vignette)}
+  \label{fig:msnset}
+\end{figure}
+
+Another slot of interest is \texttt{processingData}, that logs the
+processing \texttt{MSnSet} objects undergo. The processing log can be
+accessed with the \texttt{processingData} function and is displayed
+under \textit{Processing information} in the textual object summary
+when an \texttt{MSnSet}'s name it typed in the R console.
+
+\subsection*{Importing data}
+
+There are a number of ways to import quantitation data and create an
+\texttt{MSnSet} instance. All methods are described in the
+\Biocpkg{MSnbase}
+\href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf}{input/output
+  capabilities vignette}. One suggested simple method is to use the
+function \texttt{readMSnSet2}. The function takes a single spreadsheet
+filename as input and extracts the columns containing the quantitation
+data, as identified by the argument \texttt{ecol}, to create the
+expression data, while the other columns in the spreadsheet are
+appended to the feature meta-data slot.  By example, in the code chunk
+below we read in the \texttt{csv} spreadsheet containing the
+quantitation data from the intersect of replicates 1 and 2 of the
+mouse map \cite{hyper}, using the \texttt{readMSnSet2} function. The
+data is as available online with the manuscript (see tab 2 of the
+\texttt{xlsx} supplementary data set 1 in \cite{hyper}, which should
+be exported as a text-based spreadsheet). It is also available as a
+\texttt{csv} in the Bioconductor \Biocexptpkg{pRolocdata} data
+package, which we make use of below.
+
+To use the \texttt{readMSnSet2} function, as a minimum one must specify the
+file path to the data and which columns of the spreadsheet contain
+quantitation data. The \texttt{getEcols} function exists to help users
+identify which columns of the spreadsheet contain the
+quantitation data. In the last line of the code chunk below, we print
+the file name (not the full path, which will vary from computer to
+computer). 
+
+
+<<getFilename, cache = cache>>=
+library("MSnbase")
+extdatadir <- system.file("extdata", package = "pRolocdata")
+csvfile <- dir(extdatadir, full.names = TRUE,
+          pattern = "hyperLOPIT-SIData-ms3-rep12-intersect.csv")
+basename(csvfile)
+@
+
+Note that the file is compressed (as indicated by the \texttt{gz}, for
+\texttt{gzip}, extension), and will be decompressed on-the-fly when
+read into R.
+
+The spreadsheet that was deposited by the authors contains two
+headers, with the second header containing information about where the
+quantitation data is stored. 
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.65\textwidth]{./Figures/spreadsheet-screenshot.png}
+  \caption{A screenshot of the data in the spreadsheet.}
+  \label{fig:spreadsheet}
+\end{figure}
+
+
+We can display the names of the second header by calling the
+\texttt{getEcols} function with the argument \texttt{n = 2} (the default value is \texttt{n
+= 1}), to specify that we wish to display the column names of the
+second line.
+
+
+<<getEcols>>=
+getEcols(csvfile, split = ",", n = 2)
+@
+
+It is now easy for one to identify that the quantitation data,
+corresponding to the 10 TMT isobaric tags, is located in columns 8
+to 27. We now have the two mandatory arguments to \texttt{readMSnSet2},
+namely the file name (stored in the \texttt{csvfile} variable) and the
+quantitation column indices. In addition to these, it is also possible
+to pass the optional argument \texttt{fnames} to indicate which column to use
+as the labels by which to identify each protein in the sample. Here,
+we use \texttt{fnames = 1} to use the UniProt identifiers contained in the
+first (unnamed) column of the spreadsheet. We also need to specify to
+skip the first line of the file (for the same reason that we used 
+\texttt{n = 2} in \texttt{getEcols} above) to read the \texttt{csv} data and convert it to an
+\texttt{MSnSet} object, named \texttt{hl} (for hyperLOPIT).
+
+<<readMSnSet2>>=
+hl <- readMSnSet2(csvfile, ecol = 8:27, fnames = 1, skip = 1)
+@
+
+Below, we display a short summary of the data. The data contains 
+\Sexpr{nrow(hl)} proteins/features common across the 2 biological replicates
+for the respective 2 x 10-plex reporter tags (\Sexpr{ncol(hl)}
+columns/samples), along with associated feature meta-data such as
+protein markers, protein description, number of quantified peptides
+etc (see below).
+
+
+<<showhl>>=
+hl
+@
+
+Below, we examine the quantitative information for first 5 proteins.
+It is also possible to access specific rows and columns by naming the
+proteins and TMT tag channels of interest. 
+
+<<assesshl>>=
+exprs(hl)[1:5, ]
+exprs(hl)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
+@
+
+The feature meta-data is stored in the \texttt{fData} slot and can be
+accessed by \texttt{fData(hl)}. When using \texttt{readMSnSet2}, automatically,
+everything that is not defined as quantitation data by \texttt{ecol} or the
+feature names by \texttt{fnames} is deposited to the \texttt{fData} slot. 
+
+We see the \texttt{fData} contains 25 columns describing information such as
+the number of peptides, associated markers, machine learning results
+etc. To identify the feature variable names we can use the function
+\texttt{fvarLabels}. We see that the first 6 feature variable names contain
+non-discriminatory label names, so we relabel them to help us identify
+what feature data information is stored in the associated columns.
+
+<<removefData>>=
+fvarLabels(hl)
+fvarLabels(hl)[1:3] <- c("uniprot.accession", "uniprot.id", "description")
+fvarLabels(hl)[4:6] <- paste0("peptides.expt", 1:3)
+fData(hl)[1:4, 1:6]
+@
+
+Note that when using the simple \texttt{readMSnSet2} procedure, the \texttt{pData}
+slot which is used to store information about the samples/channels
+is kept empty. It is advised to annotate the channels as
+well. Below, we annotate the replicate from which the profiles
+originate and the TMT tag (extracted from the sample/channel names).
+
+<<pdata>>=
+pData(hl)$Replicate <- rep(1:2, each = 10)
+pData(hl)$Tag <- sub("\\.1$", "", sub("^X", "", sampleNames(hl)))
+pData(hl)
+@
+
+Throughout this workflow we refer to the different columns that
+are found in the \texttt{exprs} (expression data) slot as channels (short for TMT channels).
+In the frame of LOPIT and hyperLOPIT these channels consititue the
+relative abundance of each protein (along the rows) in the channel of
+interest. Each TMT channel originates from fractions collected from
+the density gradient, or a set of pooled fractions or may be a sample
+originating from an alternative preparation e.g. such as from the
+chromatin enrichment performed in Christoforou et al \cite{hyper}.
+Information about which gradient fractions were used for which tag
+should also be stored in the sample meta-data \texttt{pData} slot.
+
+The sample meta-data that is distributed with the
+\Biocexptpkg{pRolocdata} package for Christoforou's
+hyperLOPIT experiment and (as above) the quantitation data file, are
+located in the \texttt{extdata} in the \Biocexptpkg{pRolocdata}
+package on the hard drive.
+
+In the code chunk below we again use the
+\texttt{dir} function to locate the filepath to the meta-data \texttt{csv} file and
+then read it into R using \texttt{read.csv}. We then append the meta-data to
+the \texttt{pData} slot.  Information about the gradient fractions used and
+the associated subcellular fraction densities in % w/v Iodixanol for
+each replicate are stored here.
+
+<<morepdata>>=
+expinfo <- dir(extdatadir, full.names = TRUE,
+               pattern = "hyperLOPIT-SIData-fraction-info.csv")
+
+fracinfo <- read.csv(expinfo, row.names=1, skip = 2, 
+                     header = FALSE, stringsAsFactors = FALSE)
+
+pData(hl)$Gradient.Fraction <- c(fracinfo[, 1], fracinfo[, 2])
+pData(hl)$Iodixonal.Density <- c(fracinfo[, 4], fracinfo[, 5])
+pData(hl)
+@
+
+\subsection*{Data processing}
+
+\subsubsection*{Normalisation}
+
+There are two aspects related to data normalisation that are relevant
+to spatial proteomics data processing. The first one focuses on
+reducing purely technical variation between channels without
+affecting biological variability (i.e. the shape of the quantitative
+profiles). This normalisation will depend on the underlying
+quantitative technology and the experimental design, and will not be
+addressed in this workflow. The second aspect, and more specific to
+spatial proteomics data, is scaling all the organelle-specific
+profiles into a same intensity interval (typically 0 and 1) by, for
+example, diving each intensity by the sum of the intensities for that
+quantitative feature. This is not necessary in this example as the
+intensities for each replicate have already been re-scaled to 1 in
+Proteome Discoverer. However, if one wanted to do this they would
+execute the \texttt{normalise} function as demonstrated in the below code
+chunk.
+
+<<normsum, eval = FALSE>>= 
+hl <- normalise(hl, method = "sum") 
+@
+
+This transformation of the data assures to cancel the effect of the
+absolute intensities of the quantitative features along the rows, to
+focus subsequent analyses on the relative profiles along the
+sub-cellular channels.
+
+The same \texttt{normalise} function (or \texttt{normalize}, both spellings are
+supported) can also be applied in the first case described above.
+Different normalisation methods such as mean or median scaling,
+variance stabilisation or quantile normalisation, to cite a few, can
+be applied to accomodation different needs.
+
+As previously mentioned, before combination, the two replicates in the
+\texttt{hl} data that we read into R were separately normalised by sum (i.e.
+to 1) across the 10 channels for each replicate respectively. We can
+verify this by summing each rows for each replicate:
+
+<<normcheck>>=
+summary(rowSums(exprs(hl[, hl$Replicate == 1])))
+summary(rowSums(exprs(hl[, hl$Replicate == 2])))
+@
+
+We see that some features do not add up exactly to 1 due to rounding
+errors after exporting to intermediate files. These small deviations
+do not bear any consequences here.
+
+
+\subsubsection*{Combining acquisitions}
+
+The spreadsheet that was used to create the \texttt{hl} MSnSet
+included the two replicates within one .csv file.  We also provide
+individual replicates in the \Biocexptpkg{pRolocdata}
+package. Below, we show how to combine \texttt{MSnSet} objects and,
+subsequently, how to filter and handle missing values. We start by
+loading the \Biocexptpkg{pRolocdata} package and the
+equivalent replicates using the \texttt{data} function.
+
+<<reps4combine>>=
+library("pRolocdata")
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+@
+
+At the R prompt, typing
+
+<<pkgdata, eval=FALSE>>=
+pRolocdata()
+@
+
+will list the \Sexpr{nrow(pRolocdata()$results)} datasets that are
+available in \Biocexptpkg{pRolocdata}.
+
+%% $
+
+Combining data is performed with the \texttt{combine} function. This
+function will inspect the feature and sample names to identify how to
+combine the data. As we want our replicates to be combined along the
+columns (same proteins, different sets of channels), we need to assure
+that the respective sample names differ so they can be identified from
+one another. The function \texttt{updateSampleNames} can be used do
+this.
+
+<<samplenames>>=
+identical(sampleNames(hyperLOPIT2015ms3r1), sampleNames(hyperLOPIT2015ms3r2))
+hyperLOPIT2015ms3r1 <- updateSampleNames(hyperLOPIT2015ms3r1, 1)
+hyperLOPIT2015ms3r2 <- updateSampleNames(hyperLOPIT2015ms3r2, 2)
+sampleNames(hyperLOPIT2015ms3r1)
+sampleNames(hyperLOPIT2015ms3r2)
+@
+
+In addition, to matching names, the content of the feature metadata
+for identical feature annotations must match exactly across the data
+to be combined. In particular for these data, we expect the same
+proteins in each replicates to be annotated with the same UniProt
+entry names and descriptions, but not with the same coverage of number
+of peptides or peptide-spectrum matches (PSMs).
+
+<<fvarnames>>=
+fvarLabels(hyperLOPIT2015ms3r1)
+fvarLabels(hyperLOPIT2015ms3r2)
+@
+
+Below, we update the replicate specific feature variable names and
+remove the shared annotation.
+
+<<fvarnames2>>=
+fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
+fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
+fData(hyperLOPIT2015ms3r1) <- fData(hyperLOPIT2015ms3r1)[1:5] 
+fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
+fvarLabels(hyperLOPIT2015ms3r1)
+fvarLabels(hyperLOPIT2015ms3r2)
+@
+
+We can now combine the two experiments into a single \texttt{MSnSet}:
+
+<<combine, cache = cache>>=
+combined <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+combined
+@
+
+More details above combining data are given in the dedicated
+\textit{Combining MSnSet instances} section of the \Biocpkg{MSnbase}
+\href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf}{tutorial
+  vignette}.
+
+\subsubsection*{Missing data}
+
+Missing data are a recurrent issue in mass spectrometry applications,
+and should be addressed independently of this workflow
+\cite{Webb-Robertson:2015,Lazar:2016}. In \cite{Gatto:2014b}, we have
+described how a high content in missing values in spatial proteomics
+data and their inappropriate handling leads to a reduction of
+sub-cellular resolution. Missing data can be imputated using
+\Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
+the imputation method is then determined by a \texttt{methods}
+parameter. In our particular case, missing values are indicative of
+protein groups that were not acquired in both replicates (Figures
+\ref{fig:namap}).
+
+\begin{figure}[!ht]
+  \centering
+<<namap, out.width=".65\\textwidth">>=
+image2(is.na(combined), col = c("black", "white"),
+       main = "Missing values (white cells) after combining replicates")
+@  
+\caption{Heatmap of missing values. Note that the features are
+  re-ordered to highlight cluster of proteins with similar numbers of
+  missing values.}
+  \label{fig:namap}
+\end{figure}
+
+We prefer to remove proteins that were not assayed in both replicated
+experiments. This is done with the \texttt{filterNA} function that
+removes features that contain more than a certain proportion (default
+is 0) missing values.
+
+<<filterNA>>=
+combined <- filterNA(combined)
+combined
+@
+
+When more than 2 data are to be combined and too many proteins were
+not consistently assayed, leading to too many proteins being filtered
+out, we suggest to implement an ensemble of classifiers voting on
+protein-sub-cellular niche membership over the output of several
+experiments (see section \textit{Supervised machine learning} for the
+description of sub-cellular assignments).
+
+\section*{Quality Control}
+
+Data quality is routinely examined through visualisation to verify
+that sub-cellular niches have been separated along the gradient. Based
+on De Duve's principle \cite{DeDuve:1981} proteins that co-localise
+exhibit similar quantitation profiles across the gradient fractions
+employed. One approach that has been widely used to visualise and
+inspect high throughput mass spectrometry-based proteomics data is
+principal components analysis (PCA). PCA is one of many dimensionality
+reduction methods, that allow one to effectively summarise
+multi-dimensional data in to 2 or 3 dimensions to enable
+visualisation. Very generally, the original continuous
+multi-dimensional data is transformed into a set of orthogonal
+components ordered according to the amount of variability that they
+describe. The \texttt{plot2D} method in \Biocpkg{pRoloc} allows one to
+plot the principal components (PCs) of a dataset against one another,
+by default the first two components are plotted on the x- and y-axis,
+respectively (the \texttt{dims} argument can be used to plot other PCs). If
+distinct clusters are observed, we assume that there is organellar
+separation present in the data. Although, representing the
+multi-dimensional data along a limited set of PCs does not give us a
+hard quantitative measure of separation, it is extremely useful
+summarising complex experimental information in one figure, to get an
+simplified overview of the data.
+
+In the code chunk below we produce a PCA plot of the mouse stem cell
+dataset (Figure \ref{fig:pcahl}). One point on the plot represents one
+protein. We can indeed see several distinct protein clusters. We
+specify \texttt{fcol = NULL}, which means not to consider any feature
+variable to annotate the features (proteins) with colours. We will see
+later how to use this to annotate the PCA plot with prior information
+about sub-cellular localisation.
+
+\begin{figure}[!ht]
+  \centering
+<<qcplot, fig.show = "hold", message=FALSE, warning=FALSE, out.width=".45\\textwidth">>=
+library("pRoloc")
+plot2D(hl, fcol = NULL, col = "black")
+plot2D(hl, method = "hexbin")
+@  
+\caption{PCA plot of the mouse stem cell data \texttt{hl}. Each dot
+  represent a single protein, and cluster of proteins represent
+  proteins residing in the same sub-cellular niche. The figure on the
+  right bins proteins and represent the bins density to highlight the
+  presence of protein clusters. }
+  \label{fig:pcahl}
+\end{figure}
+
+In the first instance we advise one to visualise their data without
+any annotation (i.e. with \texttt{fcol = NULL}), before proceeding with data
+annotation. The identification of well resolved clusters in the data,
+constitutes an unbiased assessment of the data structure,
+demonstrating the successful separation of sub-cellular clusters.
+
+It is also useful to visualise the relative intensities along the
+gradient to identify channels displaying particularly low yield. This
+can be done using the \texttt{plotDist} and \texttt{boxplot}
+functions, that plot the protein profiles occupancy along the gradient
+(we also display the mean channel intensities) and a \texttt{boxplot}
+of the column intensities.  In the two plots displayed on figure
+\ref{fig:qcbx}, we re-order the TMT channles to pair corresponding
+channels in the two replicates (rather than ordering the channels by
+replicate).
+
+\begin{figure}[!ht]
+  \centering
+<<qcbx, out.width="\\textwidth", fig.asp=1/2>>=
+par(mfrow = c(1, 2))
+o <- order(hl$Iodixonal.Density)
+plotDist(hl[, o], pcol = "#00000010")
+lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
+boxplot(exprs(hl[, o]), las = 2)
+@  
+  \caption{Protein profiles and distribution of channel intensities.}
+  \label{fig:qcbx}
+\end{figure}
+
+
+\section*{Markers}
+
+In the context of spatial proteomics, a marker protein is defined as a
+well-known resident of a specific sub-cellular niche in a species
+\textit{and} condition of interest. Applying this to machine learning
+(ML), and specifically supervised learning, for the task of protein
+localisation prediction, these markers constitute the labelled
+training data to use as input to a classification analyses. Defining
+well-known residents, and obtaining labelled training data for ML
+analyses can be time consuming, but it is important to define markers
+that are representative of the multivariate data space and on which a
+classifier will be trained and generated. \Biocpkg{pRoloc} provides a
+convenience function, \texttt{addMarkers}, to directly add markers to
+a \texttt{MSnSet} object, as demonstrated in the code chunk
+below. These marker sets can be accessed using the
+\texttt{pRolocmarkers()} function. Marker sets are stored as a simple
+named vector in R, and originate from in-house user-defined sets of
+markers or from previous published studies \cite{Gatto:2014b}, which
+are continuosly updated and integrated.
+
+<<markers>>=
+## List available marker sets
+pRolocmarkers()
+@
+
+These markers can then be mapped to a \texttt{MSnSet}'s
+\texttt{featureNames}. The mouse dataset used here has Uniprot IDs
+stored as the \texttt{featureNames} (see
+\texttt{head(featureNames(hl))}) and the names of the vector of the
+mouse markers stored in \Biocpkg{pRoloc} (\texttt{mmus} markers) are
+also Uniprot IDs (see \texttt{head(mrk)} in the code chunk below), so
+it is straightforward to match names between the markers and the
+\texttt{MSnSet} instance using the \texttt{addMarkers} function. 
+
+<<addmarkers>>=
+## Use mouse markers
+mrk <- pRolocmarkers(species = "mmus")
+head(mrk)
+
+## Add mouse markers
+hl <- addMarkers(hl, mrk)
+@
+
+We recommend at least 13 markers per sub-cellular class (see the
+\textit{Optimisation} section for details about the algorithmic
+motivation of this number). Markers should be chosen to confidently
+represent to distribution of genuine residents of a sub-cellular
+niche. We generally recommend such a conservative approach in defining
+markers to avoid false assignments when assigning sub-cellular
+localisation of proteins of unknown localisation. A more relaxed
+definition of markers, i.e. one that broadly or over-confidently
+defines markers, risks to erroneously assign proteins to a single
+location, when, in reality, they reside in more that a single location
+(including the assumed unique location). One can not expect to
+identify exact boundaries between sub-cellular classes through marker
+annotation alone; the definition of these boundaries is better handled
+algorithmically, i.e. after application of the supervised learning
+algorithm, using the prediction scores (as described in the
+\textit{Classification} section, in particular Figure
+\ref{fig:plotSVM}).
+
+
+If the naming between the marker sets and the \texttt{MSnSet} dataset
+are different, one will have to convert and match the proteins
+according to the appropriate identifier. Sometimes, we find the
+equivalent entry name, Uniprot ID or accession number is stored with
+the data, which makes conversion between identifers relatively
+straightforward. If this is not the case however, conversion can be
+performed using \Biocpkg{biomaRt}, the Bioconductor
+\href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
+  resouces} or any conversion softwares available online.
+
+We now visualise these annotations along the PCA plot using the
+\texttt{plot2D} function and then use the \texttt{addLegend} function
+to map the marker classes to the pre-defined colours. We also display
+the data along the first and seventh PCs using the \texttt{dims}
+argument. Note that in these calls to the \texttt{plot2D} function, we
+have omitted the \texttt{fcol} argument and use of the default
+\texttt{"markers"} feature variable to annotated the plot. We choose
+to display PCs 1 and 7 to illustrate that while upper principal
+components explain much less variability in the data (2.23\% for PC7,
+as opposed to 48.41\% for PC1), we see that the mitochondrial (purple)
+and peroxisome (dark blue) clusters can be differenciated, despite the
+apparent overlap in the two first PCs.
+
+\begin{figure}[!ht]
+  \centering
+<<plotmarkers, out.width="\\textwidth", fig.width=12, fig.asp=1/2>>=
+par(mfrow = c(1, 2))
+plot2D(hl, main = "pRolocmarkers for mouse")
+addLegend(hl, cex = .6)
+plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
+@  
+  \caption{Annotated PCA plots of the \texttt{hl} dataset.}
+  \label{fig:plotmarkers}
+\end{figure}
+
+
+The colours have been defined so as to enable to differenciate up to
+30 classes. If more are provided, different character symbols
+(circles, squares, ... and empty and solid symbols) are used. The
+colours and the default plotting characters (solid dots for the
+markers and empty circles for the features of unknown localisation)
+can of course be changed, as described in the \texttt{setStockcol} manual
+page.
+
+As demonstrated in \cite{hyper} and illustrated in the PCA plot above,
+the Golgi apparatus proteins (brown) display a dynamic pattern, noting
+sets of Golgi marker proteins that are distributed amongst other
+subcellular structures, an observation supported by microscopy. As
+such, we are going to reset the annotation of Golgi markers to unknown
+using the \texttt{fDataTounknown} function. It is often used to
+replace empty strings (\texttt{""}) or missing values in the markers definition
+to a common definition of \textit{unknown} localisation.
+
+<<removeGA>>=
+hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
+getMarkers(hl)
+@
+
+In general, the Gene Ontology (GO) \cite{Ashburner:2000}, and in
+particular the cellular compartment (CC) namespace are a good starting
+point for protein annotation and marker definition. It is important to
+note however that automatic retrieval of sub-cellular localisation
+information, from \Biocpkg{pRoloc} or elsewhere, is only the
+beginning in defining a marker set for downstream analyses. Expert
+curation is vital to check that any annotation added is in the correct
+context for the biological question under investigation.
+
+Another useful visualisation that relies on marker annotation is the
+representation of the protein profiles occupancy along the gradient
+using the \texttt{plotDist} function. While the PCA plot enables to
+efficiently visualise the complete dataset and assess the relative
+separation of different sub-cellular niches, comparing profiles of a
+few marker clusters is useful to assess how exactly they differ (in
+terms of peak channels, for example). On figure \ref{fig:plotDist2},
+we plot the profile of the mitochondrial and peroxisome markers to
+highlight the differences in profiles between these two sets of
+markers along the 6th and 7th channels, as represented above along the
+7th PC on the PCA plot on figure \ref{fig:plotmarkers}.
+
+\begin{figure}[!ht]
+  \centering
+<<plotDist, out.width=".6\\textwidth", fig.asp=3/5>>=
+hlo <- hl[, order(hl$Iodixonal.Density)]
+plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
+         pcol = "purple", fractions = "Fraction.No")
+title(main = "Marker occupancy profiles along the gradient")
+matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
+         lty = 1, col = "darkblue", type = "l")
+legend("topleft", c("Mitochondrion", "Peroxisome"),
+       lty = 1, col = c("purple", "blue"), bty = "n")
+@  
+  \caption{Mitochondrion and peroxisome protein profiles.}
+  \label{fig:plotDist2}
+\end{figure}
+
+Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
+allows to interactively explore a 3-dimensional plot of the data.
+
+\section*{Replication}
+
+With the aim of maximising the sub-cellular resolution and,
+consequently, the reliability in protein sub-cellular assignments, we
+follow the advice in \cite{Trotter:2010} and combine replicated spatial
+proteomics experiments as described above. Indeed, Trotter et
+al. have shown a significant improvement in protein–organelle
+association upon direct combination of single experiments, in
+particular when these resolve different subcellular niches.
+
+Direct comparisons of individual channels in replicated experiments
+does not provide an adequate, goal-driven assessment of different
+experiments. Indeed, due to the nature of the experiment and gradient
+fraction collection, the quantitative channels do not correspond to
+identical selected fractions along the gradient. As can be seen in the
+table below (taken from the \texttt{hl}'s \texttt{pData}, focusing on
+channels 7 to 10), different sets of gradient fractions are pooled to
+obtain enough material and optimise acurate quantitation.
+
+<<pdtab, echo=FALSE, eval = TRUE, results = 'asis'>>=
+i <- c(2, 3, 4, 13, 14)
+xtable(pData(hl)[i, ], 
+       caption = "Differences in gradient fraction pooling.", 
+       label = "tab:pdtab")
+@
+
+The more relevant comparison unit is not a single channel, but rather
+the complete protein occupancy profiles, which are best visualised as
+experiment-wide on a PCA plot. As such, we prefer to focus on the
+direct, qualitative comparison of individual replicate PCA plots,
+assuring that each displays acceptable sub-cellular resolution. Note
+that in the code chunk below, we mirror the x-axis to represent the
+two figures with the same orientation.
+
+
+\begin{figure}[!ht]
+  \centering
+<<plot2Drep, fig.width=12, out.width="\\textwidth", fig.asp=1/2>>= 
+par(mfrow = c(1, 2)) 
+plot2D(hl[, hl$Replicate == 1], main = "Replicate 1")
+plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE)
+@  
+  \caption{PCA plots of replicates 1 and 2}
+  \label{fig:plot2Drep}
+\end{figure}
+
+\clearpage
+
+\section*{Interactive visualisation}
+
+Visualisation and data exploration is an important aspect of data
+analyses allowing one to shed light on data structure and patterns of
+interest. Using the \Biocpkg{pRolocGUI} package we can interactively
+visualise, explore and interrogate quantitative spatial proteomics
+data. The \Biocpkg{pRolocGUI} package is currently under active
+development and it relies on the \texttt{shiny} framework for
+reactivity and interactivity. The package currently distributes 3
+different GUI's (\textit{main} (default), \textit{compare} or
+\textit{compare}) which are wrapped and launched by the
+\texttt{pRolocVis} function. In the below code chunk we lauch the main
+app (note, we do not need to specify the argument, \texttt{app =
+  "main"} as it is the default).
+
+<<mainapp, eval = FALSE, echo = TRUE>>=
+library("pRolocGUI")
+pRolocVis(hl)
+@
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{./Figures/mainapp.png}
+  \caption{A screen shot of clickable interface and zoomable PCA plot
+    of the main app in the \Biocpkg{pRolocGUI} package. }
+  \label{fig:app}
+\end{figure}
+
+As diplayed in the screenshot above, the \textit{main} application is
+designed for exploratory data analysis and is divied into 3 tabs: (1)
+PCA, (2) Profiles and (3) Table selection. The default view upon
+loading is the PCA tab, which features a clickable interface and
+zoomable PCA plot with an interactive data table for displaying the
+quantitation information. Particular proteins of interest can be
+highlighted using the text search box. There is also an alternate
+profiles tab for visualisation of the protein profiles, which can be
+used to examine the patterns of proteins of interest. The Table
+selection tab provides an interface to control data table column
+selection. A short
+animation\footnote{\url{https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis\_pca.gif}}
+illustrating the interface is available in the manuscript repository~\cite{ghrepo}.
+
+The \textit{compare} application is useful for examining two replicate
+experiments, or two experiments from different conditions, treatments
+etc. The compare application is called by default if the input object
+to \texttt{pRolocVis} is a \texttt{MSnSetList} of 2 \texttt{MSnSets},
+but it can also be specified by calling the argument \texttt{app =
+  "compare"}. For example, in the code chunk below we first create a
+\texttt{MSnSetList} of replicates 1 and 2 of the hyperLOPIT data, this
+is then passed to \texttt{pRolocVis}.
+
+<<compareapp, eval = FALSE, echo = TRUE>>=
+data(hyperLOPIT2015ms3r1)
+data(hyperLOPIT2015ms3r2)
+hllst <- MSnSetList(list(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2))
+pRolocVis(hllst, app = "compare")
+@
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{./Figures/SS_Compare1.jpg}
+  \caption{The compare application, main panel}
+  \label{fig:compare}
+\end{figure}
+
+The comparison app loads the two PCA plots side-by-side. Only common
+proteins between the two data sets are displayed. As per the main
+application, proteins can be searched, identified and highlighted on
+both PCA plots and in the dedicated profiles tab. One key feature of
+the compare application is the ability to re-map the second dataset
+onto the PCA data space of the first (reference) data set (see
+\texttt{?pRolocVis} and the argument \texttt{remap = TRUE}). Using the first dataset
+as the reference set, PCA is carried out on the first dataset and the
+standard deviations of the principal components (i.e. the square roots
+of the eigenvalues of the covariance/correlation matrix) and the
+matrix of variable loadings (i.e. a matrix whose columns contain the
+eigenvectors) are stored and then used to calculate the principal
+components of the second dataset. Both datasets are scaled and
+centered in the usual way. The first dataset appears on the left, and
+the second re-mapped data appears on the right. The order of the first
+(the reference data for remapping) and second dataset can be changed
+through regeneration/re-ordering of the \texttt{MSnSetList} object.
+
+The final application \textit{classify}, has been designed to view
+machine learning classification results according to user-specified
+thresholds for the assignment of proteins to its sub-cellular
+location, as discussed later in the subsection \textit{thresholding}
+in the \textit{supervised machine learning section}.
+
+
+\section*{Novelty Detection}
+
+The extraction of sub-cellular protein clusters can be difficult owing
+to the limited number of marker proteins that exist in databases and
+elsewhere. Furthermore, given the vast complexity of the cell,
+automatic annotation retrieval does not always give a full
+representation of the true sub-cellular diversity in the data. For
+downstream analyses, such as supervised machine learning, it is
+desirable to obtain reliable markers that cover as many sub-cellular
+niches as possible, as these markers are directly used in the training
+phase of the ML classification. We find that a lack of sub-cellular
+diversity in the labelled training data leads to prediction errors, as
+unlabelled instances can only be assigned to a class that exists in
+the training data \cite{Breckels:2013}. In such scenarios, novelty
+detection can be useful to identify data-specific sub-cellular
+groupings such as organelles and protein complexes. The phenotype
+discovery (phenoDisco) algorithm \cite{Breckels:2013} is one such method
+and is available in \Biocpkg{pRoloc}. It is an iterative
+semi-supervised learning method that combines the classification of
+proteins on existing labelled data with the detection of new clusters.
+
+In addition to extracting new phenotypes, novelty detection methods
+are also useful for confirming the presence of known or postulated
+clusters in an unbiased fashion. For example, in \cite{hyper} the
+\texttt{phenoDisco} algorithm was used to confirm the data-specific presence
+of the nucleus and nucleus sub-compartments. In the code chunk below,
+we demonstrate how to do this analysis, highlighting some of the
+optional arguments and parameters available for phenotype extraction
+and give some advice on how to interpret the output.
+
+As the \texttt{phenoDisco} algorithm is semi-supervised it uses both labelled
+(markers) and unlabelled data to explore the data structure and find
+new sub-cellular data clusters. Thus the first step is to define some
+input labelled data i.e. markers, that the algorithm will use as input
+for the supervised learning aspect of the algorithm. As described in
+\cite{hyper} we define a set of markers to use as input for the analyses
+that cover well-known residents from three distinct organelle
+structures; the mitochondria, plasma membrane and ER, and from three
+well-known and abundant protein complexes; the proteasome and two
+ribosomal subunits, 40S and 60S.  These input markers are stored in
+the \texttt{featureData} column of \texttt{hl} where \texttt{fcol = "phenoDisco.Input"}. We
+can use the convenience accessor function \texttt{getMarkers} to print out a
+table of the markers contained in this marker set. These initial
+markers were manually curated using information from the UniProt
+database, the Gene Ontology and the literature. 
+
+<<displayPDmarkers>>=
+getMarkers(hl, fcol = "phenoDisco.Input")
+@
+
+In the code chunk below we show how to run the \texttt{phenoDisco}
+function and return a novelty detection result, according to the
+specified parameters. The algorithm parameters \texttt{times}, \texttt{GS} and \texttt{p}
+are passed to the function, along with the \texttt{fcol} to tell the
+algorithm where the input training data is contained. 
+
+<<runPD, eval = FALSE>>=
+## As per Christoforou et al (2016), 
+hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
+@
+
+Note: We do not evaluate this code chunk in this document as the
+algorithm is computational intensive and best parallelised over
+multiple workers. This phenoDisco analysis took ~24 hours to complete
+when parallelised over 40 workers.
+
+The argument \texttt{times} indicated the number of times we run
+unsupervied Gaussian Mixture Modelling before defining a new phenotype
+cluster.  The recommended minimum and default value is 100. In the
+above code chunk we increase the value to \texttt{times = 200} as we
+have found for larger datasets (e.g. 5000+ proteins) a higher times is
+requried for convergence. \texttt{GS} defines the minimum number of
+proteins allowed per new data cluster and thus heavily influences what
+type of new clusters are extracted. For example, if a user is
+interesed in the detection of small complexes they may wish to use a
+small \texttt{GS = 10}, or \texttt{= 20} etc.  If they wish to detect
+larger, more abundant sub-cellular niches a much higher \texttt{GS}
+would be preferable. Specifying a small \texttt{GS} can be more time
+consuming than using a larger \texttt{GS}, and there is a trade off
+between finding interesting small complexes and those that may not be
+of interest as we find there is a tendancy to find more noise when
+using a small \texttt{GS} compared to using a higher one.
+
+One may also consider increasing the search space for new data
+clusters by increasing the value of the parameter \texttt{G}. This
+defines the number of GMM components to test and fit; the default is
+\texttt{G = 1:9} (the default value in the
+\href{https://cran.r-project.org/web/packages/mclust/index.html}{\textit{mclust}}
+package \cite{mclust}). One should note that the decreasing the
+\texttt{GS}, and increasing the values of the arguments
+\texttt{times}, \texttt{G} (among other function arguments, see
+\texttt{?phenoDisco}) will heavily influence (increase) the total time
+taken to run the algorithm.  \texttt{phenoDisco} supports
+parallelisation and we strongly suggest you make use of a parallel
+processing to run these analyses.
+
+<<loadPDres, echo=FALSE>>=
+f0 <- dir(extdatadir, full.names = TRUE,
+          pattern = "bpw-pdres.rds")
+pdres <- readRDS(f0)
+hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE)
+setStockcol(NULL)
+setStockcol(paste0(getStockcol(), 70))
+@
+
+The ouput of running the \texttt{phenoDisco} algorithm is an
+\texttt{MSnSet} containing the new data clusters, appended to the
+\texttt{featureData} under the name \texttt{pd}. The results can be
+displayed by using the \texttt{getMarkers} function. We see that 5 new
+phenotype data clusters were found.
+
+<<showPDres>>=
+hl
+getMarkers(hl, fcol = "pd")
+@
+
+
+\begin{figure}[!ht]
+  \centering
+<<plotPDres, fig.width=12, out.width="\\textwidth", fig.asp=1/2>>=
+## Re-order the colours for the phenoDisco output
+cl <- getMarkerClasses(hl, "pd")
+cols <- getStockcol()[seq(cl)]
+ind <- grep("Pheno", cl, invert = TRUE)
+cols[ind] <- getStockcol()[seq(cl)][1:length(ind)]
+cols[-ind] <- getStockcol()[seq(cl)][(length(ind) + 1):length(cl)]
+
+## Plot the input and output
+par(mfrow = c(1, 2))
+plot2D(hl, fcol = "phenoDisco.Input", 
+       main = "phenoDisco input markers", col = getStockcol()[1:6])
+addLegend(hl, fcol = "phenoDisco.Input", cex = .7)
+plot2D(hl, fcol = "pd", main = "phenoDisco output", col = cols)
+addLegend(hl, fcol = "pd", cex = .7, col = cols)
+@
+  \caption{Results of the novelty detection algorithm.}
+  \label{fig:plotPDres}
+\end{figure}
+
+We can plot the results using the \texttt{plot2D} function (Figure
+\ref{fig:plotPDres}). The five new phenotype data clusters can be
+extracted and examined.  In the code chunk below we write the results
+to a .csv file. We use the argument \texttt{fDataCols} to specify
+which columns of the \texttt{featureData} to write.
+
+<<writehl, eval=FALSE>>=
+fData(hl)$pd <- as.character(fData(hl)$pd)
+write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
+@
+
+We can also examine the each phenotype intercatively and visualise
+their protein profiles by using the \texttt{pRolocVis} function in the
+\Biocpkg{pRolocGUI} package. We found that phenotype 1 was
+enriched in nucleus associated proteins, phenotype 2 in chromatin
+associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
+in lysosomal and endosomal proteins.
+
+% <<vishl, eval=FALSE>>=
+% pRolocVis(hl, fcol = "pd")
+% @
+
+\section*{Supervised machine learning}
+
+Supervised machine learning, also known as classification, is an
+essential tool for the assignment of proteins to distinct sub-cellular
+niches. Using a set of labelled training examples i.e. markers, we can
+train a machine learning classifier to learn a mapping between the
+data i.e. the quantitative protein profiles, and a known localisation.
+The trained classifier can then be used to predict the localisation of
+a protein of unknown localisation, based on its observed protein
+profile. To date, this method has been extensively used in spatial
+quantitative proteomics to assign thousands of proteins to distinct
+sub-cellular niches
+\cite{hyper,Groen:2014,Trotter:2010,Hall:2009,Dunkley:2006,Tan:2009}.
+
+There are several classification algorithms readily available in
+\Biocpkg{pRoloc}, which are documented in the dedicated
+\href{http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf}{\Biocpkg{pRoloc}
+  machine learning techniques vignette}.  We find the general tendancy
+to be that it is not the choice of classifier, but the improper
+optimisation of the algorithmic parameters, that limits classification
+accuracy. Before employing any classification algorithm and generating
+a model on the training data, one must first find the optimal
+parameters for the algorithm of choice.
+
+\subsection*{Optimisation}
+
+In the code chunk below we use a Support Vector Machine (SVM) to learn
+a classifier on the labelled training data. As previously mentioned,
+one first needs to train the classifiers parameters before an
+algorithm can be used to predict the class labels of the proteins with
+unknown location. One of the most common ways to optimise the
+parameters of a classifier is to partition the labelled data in to
+training and testing subsets. In this framework parameters are tested
+via a grid search using cross-validation on the training
+partition. The best parameters chosen from the cross-validation stage
+are then used to build a classifier to predict the class labels of the
+protein profiles on the test partition. Observed and expected
+classication results can be compared, and then used to assess how well
+a given model works by getting an estimate of the classiers ability to
+achieve a good generalisation i.e. that is given an unknown example
+predict its class label with high accuracy. In \Biocpkg{pRoloc},
+algorithmic performance is estimated using stratified 80/20
+partitioning for the training/testing subsets respectively, in
+conjuction with five-fold cross-validation in order to optimise the
+free parameters via a grid search. This procedure is usually repeated
+100 times and then the best parameter(s) are selected upon
+investigation of classifier accuracy. We recommend a minimum of 13
+markers per sub-cellular class for stratified 80/20 partitioning and
+5-fold cross-validation; this allows a minimum of 10 examples for
+parameter optimisation on the training partition i.e. 2 per fold for
+5-fold cross-validation, and then 3 for testing the best parameters on
+the validation set.
+
+Classifier accuracy is estimated using the macro F1 score, i.e. the
+harmonic mean of precision and recall. In the code chunk below we
+demonstrate how to optimise the free parameters, \texttt{sigma} and
+\texttt{cost}, of a classical SVM classifier with a Gaussian kernel
+using the function \texttt{svmOptimisation}. As the number of labelled
+instances per class varies from organelle to organelle, we can account
+for class imbalance by setting specific class weights when generating
+the SVM model. Below the weights, \texttt{w} are set to be inversely
+proportional to the class frequencies.
+
+<<loadpdRes, echo=FALSE>>=
+svmf <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-svmopt.rds") 
+params <- readRDS(svmf)
+@
+
+<<getsvmweight>>=
+w <- table(getMarkers(hl, verbose = TRUE))
+w <- 1/w[names(w) != "unknown"]
+@
+
+<<dosvmopt, eval=FALSE>>=
+## 100 rounds of optimisation with five-fold cross-validation
+params <- svmOptimisation(hl, fcol = "markers",
+                          times = 100, xval = 5,
+                          class.weights = w)
+@
+
+As mentioned previously, we rely on the default feature variable
+\texttt{"markers"} to define the class labels and hence can ommit
+it. To use another feature variables, one need to explicitly specify
+its name using the \texttt{fcol} argument (for example \texttt{fcol =
+  "markers2"}).
+
+The output \texttt{params} is an object of class \texttt{GenRegRes}; a
+dedicated container for the storage of the design and results from a
+machine learning optimisation. To assess classifier performance we can
+examine the macro F1 scores and the most frequently chosen
+parameters. A high macro F1 score indicates that the marker proteins
+in the test dataset are consistently and correctly assigned by the the
+algorithm. Often more than one parameter or set of parameters gives
+rise to the best generalisation accuracy. As such it is always
+important to investigate the model parameters and critically assess
+the best choice. The \texttt{f1Count} function counts the number of
+parameter occurences above a certain F1 value. The best choice may not
+be as simple as the parameter set that gives rise to the highest macro
+F1 score and one must be careful to avoid overfitting and to choose
+parameters wisely.
+
+<<f1count>>=
+f1Count(params, 0.6)
+@
+
+The parameter optimistion results can also be visualised as a boxplot
+or heatmap, as shown in figure \ref{fig:visualisOptHide}.  The
+\texttt{plot} method for \texttt{GenRegRes} object shows the
+respective distributions of the 100 macro F1 scores for the best
+cost/sigma parameter pairs, and \texttt{levelPlot} shows the averaged
+macro F1 scores, for the full range of parameter values. 
+
+<<visualiseOpt, eval=FALSE>>=
+plot(params)
+levelPlot(params)
+@
+
+\begin{figure}[!ht]
+  \centering
+<<visualiseOptHide, echo=FALSE, out.width=".65\\textwidth">>=
+library('gridExtra')
+grid.arrange(plot(params), levelPlot(params), ncol = 2)
+@  
+  \caption{Assessment of the classification model parameter optimisation.}
+  \label{fig:visualisOptHide}
+\end{figure}
+
+
+By using the function \texttt{getParams} we can extract the best set
+of parameters. Currently, \texttt{getParams} retrieves the first best
+set is automatically but users are encouraged to critically assess
+whether this is the most wise choice.
+
+<<getbestpars>>=
+(best <- getParams(params))
+@
+
+Once we have selected the best parameters we can then use them to
+build a classifier from the labelled marker proteins.
+
+
+\subsection*{Classification}
+
+We can use the function \texttt{svmClassification} to return a classification
+result for all unlabelled instances in the dataset corresponding to
+their most likely sub-cellular location. The algorithm parameters are
+passed to the function, along with the class weights. As above, \texttt{fcol}
+can be ignored as we use the labels defined in the default \texttt{"markers"}
+feature variable.
+
+<<classify>>=
+hl <- svmClassification(hl, params, class.weights = w, fcol = "markers")
+@
+
+Automatically, the output of the above classification, the organelle
+predictions and assignment scores, are stored in the
+\texttt{featureData} slot of the \texttt{MSnSet}. In this case, they
+are given the labels \texttt{svm} and \texttt{svm.scores} for the
+predictions and scores respectively. The resultant predictions can be
+visualised using \texttt{plot2D}. In the code chunk below
+\texttt{plot2D} is called to generate a PCA plot of the data and
+\texttt{fcol} is used to specify where the new assignments are located
+e.g.  \texttt{fcol = "svm"}.
+
+Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
+argument to change the size of each point on the plot to be inversely
+proportional to the SVM score. This gives an initial overview of the
+high scoring localisations from the SVM predictions.
+
+<<setColors, include=FALSE>>=
+setStockcol(NULL)
+setStockcol(paste0(getStockcol(), 70))
+par(mfrow = c(1, 1))
+@
+
+\begin{figure}[!ht]
+  \centering
+<<plotSVM, out.width=".8\\textwidth">>=
+## set point size of each protein to be inversely proportional to the
+ptsze <- exp(fData(hl)$svm.scores) - 1
+## plot new predictions
+plot2D(hl, fcol = "svm", cex = ptsze)
+addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
+@  
+\caption{Classification results. Colours indicate class membership and
+  point size are representative or the classification confidence.}
+  \label{fig:plotSVM}
+\end{figure}
+
+
+The adjustment of the point size intuitively confers important
+information that is more difficult to defined formally, but that we
+will address in the next section. The classifier (SVM in our case, but
+this is also valid of other classifiers) defines boundaries based on
+the labelled marker proteins. These class/organelle boundaries define
+how non-assigned proteins are classified and with what confidence.
+
+\subsection*{Thresholding}\label{sec:thresholding}
+
+It is common when applying a supervised classification algorithm to
+set a specific score cutoff on which to define new assignments, below
+which classifications are kept unknown/unassigned. This is important
+as in a supervised learning setup, proteins can only be predicted to
+be localised to one of the sub-cellular niches that appear in the
+labelled training data. We can not guarantee (and do not expect) that
+the whole sub-cellular diversity to be represented in the labelled
+training data as (1) finding markers that represent the whole
+diversity of the cell is challenging (especially obtaining dual- and
+multiply-localised protein markers) and (2) many sub-cellular niches
+contain too few proteins to train on (see above for a motivation of a
+minimum of 13 markers).
+
+Deciding on a threshold is not trivial as classifier scores are
+heavily dependent upon the classifier used and different sub-cellular
+niches can exhibit different score distributions, as highlighted in
+the boxplot below. We recommend users to set class-specific
+thresholds.  In the code chunk below we display a boxplot of the score
+distributions per organelle (Figure \ref{fig:threshold}). 
+
+\begin{figure}[!ht]
+  \centering
+<<thresholds, out.width=".8\\textwidth">>=
+## First remove the markers
+preds <- unknownMSnSet(hl)
+## Plot a boxplot of the scores of each organelle
+par(oma = c(10.5, 0, 0, 0))
+boxplot(svm.scores ~ svm, data = fData(preds), 
+        ylab = "SVM scores", las = 2)
+@
+  \caption{Visualistion of class-specific classification score distribution.}
+  \label{fig:threshold}
+\end{figure}
+
+There are many ways to set thresholds and the choice of method will
+depend on the biological question and experimental design at hand. One
+viable approach in the frame of the above experimetal design would be
+to manually set a FDR, say 5\%, per organelle. To do this the user
+would examine the top scoring predictions for each organelle, and then
+set a threshold at the score at which they achieve 5\% of false
+assignments per organelle.  The definintion of a false assignment
+would depend on the information available, for example, validity or
+lack of validity for the localisation from another experiment as
+reported in the literature or a reliable database.  If such
+information is not available, one crude method is to set a threshold
+per organelle by extracting the median or 3rd quantile score per
+organelle.  For example, in the code chunk below, we use the
+\texttt{orgQuants} function to extract the median organelle scores and
+then pass these scores to the \texttt{getPrediction} function to
+extract the new localisations that meet this scoring criteria. Any
+sub-cellular predictions that fall below the specified thresholds are
+labelled as unknown.
+
+<<orgquants>>=
+ts <- orgQuants(hl, fcol = "svm", scol = "svm.scores", mcol = "markers", t = .5)
+hl <- getPredictions(hl, fcol = "svm", scol = "svm.scores", mcol = "markers", t = ts)
+@
+
+The output of \texttt{getPredictons} is the original \texttt{MSnSet}
+dataset with a new feature variable appended to the feature data
+called \texttt{fcol.pred} (i.e. in our case \texttt{svm.pred})
+containing the prediction results. The results can also be visualied
+using \texttt{plot2D} function (Figure \ref{fig:plotres}).
+
+<<resetpar, echo=FALSE>>=
+invisible(dev.off())
+@
+
+\begin{figure}[!ht]
+    \centering
+<<plotres, out.width=".7\\textwidth">>=
+plot2D(hl, fcol = "svm.pred")
+@  
+  \caption{Results of the localisation preductions after thresholding.}
+  \label{fig:plotres}
+\end{figure}
+
+
+There is also a dedicated interactive application to help users
+examine these distributions in the \Biocpkg{pRolocGUI} package (Figure
+\ref{fig:classifyapp}).  This app can be launched via the
+\texttt{pRolocVis} function and specifying the argument \texttt{app =
+  "classify"} along with the relevent \texttt{fcol}, \texttt{scol} and
+\texttt{mcol} which refer to the columns in the feature data that
+contain the new assignments, assignment scores and markers
+respectively (see also \texttt{fvarLabels(svmres)}).
+
+<<classifyApp, eval=FALSE>>=
+library("pRolocGUI")
+pRolocVis(hl, app = "classify", fcol = "svm", scol = "svm.scores", mcol = "markers")
+@
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{./Figures/classify.png}
+  \caption{The classify application enable the interactive exploration
+    of classification score thresholding.}
+  \label{fig:classifyapp}
+\end{figure}
+
+
+The data is loaded and displayed on a PCA plot and a boxplot is used
+to display the classifier scores by data class. On the left, there is
+a sidebar panel with sliders to control the thresholds upon which
+classifications are made. There are two types of cut-off that the user
+can choose from: (1) \textit{Quantile} and (2)
+\textit{User-defined}. By default, when the application is launched
+quatile scoring is selected and set to 0.5, the median. The
+class-specific score thresholds that correspond to selecting the
+desired quantile are shown on as red dots on the boxplot. The
+assignments on the PCA plot are also updated according to the selected
+threshold. The quantile threshold can be set by moving the
+corresponding quantile slider. If one wished to set their own cut-offs
+the \textit{User-defined} radio button must be selected and then the
+sliders for defining user-specified scores become active and the
+scores and highlighted on the boxplot by blue dots. For more
+information we refer users to the \Biocpkg{pRolocGUI} tutorial
+\href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
+
+\clearpage
+
+\section*{Transfer learning}
+
+In addition to high quality MS-based quantitative proteomics data,
+there exist a number of other sources of information that are freely
+available in the public domain that may be useful to assign a protein
+to its sub-cellular niche. For example, imaging from
+immunofluorescence microscopy, protein annotations and sequences, and
+protein-protein interactions among others, represent a rich and vast
+source of complementary information. We can integrate this auxiliary
+information with our primary MS-based quantitative data using a
+paradigm known as transfer learning (TL). The integration of data
+between different technologies is one of the biggest challenges in
+computational biology to date and the \Biocpkg{pRoloc} package
+provides functionality to do such analyses. We recently developed two
+transfer learning algorithms using a $k$-NN and SVM framework and
+applied them to the task of protein localisation prediction
+\cite{Breckels:2016}. In this section we will begin with explaining the
+concept of transfer learning and then show how to apply this in the
+frame of spatial proteomics and protein localisation prediction.
+
+In TL one typically has a primary task that one wishes to solve, and
+some complementary (often heterogeneous) auxiliary information that is
+related to the primary learning objective, that can be used to help
+solve the primary goal. For example, here our primary task is to
+assign proteins to their sub-cellular niche with high generalisation
+accuracy from data collected from quantitative MS-based experiments.
+In the example below we extract Gene Ontology (GO) information to use
+as an auxiliary data source to help solve our task of protein
+localisation prediction.
+
+Using the functions \texttt{setAnnotationParams} and
+\texttt{makeGoSet} we can contruct an auxiliary \texttt{MSnSet} of GO
+terms, from the primary data's features i.e. the protein accession
+numbers. All the GO terms associated to each accession number are
+retrieved and used to create a binary matrix where a 1 (0) at position
+$(i, j)$ indicates that term $j$ has (not) been used to annotate
+protein $i$. The GO terms are retrieved from an appropriate repository
+using the \Biocpkg{biomaRt} package. The specific Biomart repository
+and query will depend on the species under study and the type of
+identifiers. The first step is to construct the annotation parameters
+that will enable to perform the query, which is done using
+\texttt{setAnnotationParams}. Typing into the R console \texttt{par <-
+  setAnnotationParams()} will present two menus, firstly asking you to
+identify the species of study, and then what type of identifier you
+have used to annotate the proteins in your \texttt{MSnSet}. It is also
+possible to pass patterns to match the species e.g. in the code chunk
+below we pass \texttt{"Mus musculus"}, and the identifier type for our
+data (see \texttt{featureNames(hl)}) which is
+\texttt{"Uniprot/Swissprot"}, for the Biomart query.
+
+<<setap, eval=FALSE>>=
+par <- setAnnotationParams(inputs = c("Mus musculus", "UniProt/Swissprot"))
+
+@
+
+Now we have contructed the query parameters we can use the
+\texttt{makeGoSet} function to retrieve and build an auxiliary GO
+\texttt{MSnSet} as described above. By default, the cellular component
+terms are downloaded, without any filtering on evidence codes. It is
+also possible to download terms from the molecular function and
+biological process GO namespaces, and also apply filtering based on
+evidence codes as desired, see \texttt{?makeGoSet} for more details.
+
+<<makego, eval=FALSE>>=
+gocc <- makeGoSet(hl, params = par, namespace = "cellular_component")
+@
+
+The function \texttt{makeGoSet} uses the \Biocpkg{biomaRt} package to
+query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All
+GO terms that have been observed for the 5032 proteins in the
+hyperLOPIT dataset are retieved. Users should note that the number of
+GO terms retreived is also dependent on the database version queried
+and thus is always subject to change. We find it is common to see GO
+terms with only one protein assigned to that term. Such terms do not
+bring any information for building the classifier and are thus removes
+using the \texttt{filterBinMSnSet} function.
+
+<<filtergo, eval=FALSE>>=
+gocc <- filterBinMSnSet(hl)
+@
+
+Now that we have generated our auxiliary data, we can use the
+\textit{k}-NN implementation of transfer learning available in
+\Biocpkg{pRoloc} to integrate this with our primary MS-based
+quantitative proteomics data using the functions
+\texttt{knntlOptimisation} to estimate the free-parameters for the
+integration, and \texttt{knntlClassification} to do the
+predictions. We have shown that using transfer learning results in the
+assignment of proteins to sub-cellular niches with a higher
+generalisation accuracy than using standard supervised machine
+learning with a single source of information \cite{Breckels:2016}.
+
+\subsection*{TL optimisation}
+
+The first step, as with any machine learning algorithm, is to optimise
+any free paramaters of the classifier. For the $k$-NN TL classifier
+there are two sets of parameters that need optimising: the first set
+are the $k$'s for the primary and auxiliary data sources required for
+the nearest neighbour calculations for each data source. The second
+set of parameters (noted by a vector of $\theta$ weights) that require
+optimising are the class weights, one per subcellular niche, that
+control the proportion of primary and auxiliary data to use for
+learning. A weight can take any real value number between 0 and 1. A
+weight of $\theta = 1$ indicates that all weight is given to the
+primary data (and this implicitly implies that a weight of
+$1 - \theta = 0$ is given to the auxiliary data), and similarly a
+weight of $\theta = 0$ implies that all weight is given to the
+auxiliary data (so 0 is given to the primary source). If we conduct a
+parameter seach and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
+class, and if we have, for example 10 subcellular niches, this will
+result in \texttt{4$^{10}$} different combinations of parameters to
+test. The parameter optimisation is therefore time consuming and as
+such we recommend making use of a computing cluster (code and
+submissing scripts are also available in the supporting
+information). The markers in the \texttt{hl} dataset contain 14
+subcellular classes. If we examine these markers and classes on the
+PCA plot above we can see that in particular the two ribosomes and two
+nuclear compartments are highly separated along the first two
+components, this is also evident from the profiles plot which gives us
+a good indication that these subcellular niches are well-resolved in
+the hyperLOPIT dataset. Transfer learning is particularly useful for
+classes that are not as well separated. We find that subcellular
+niches that are well-separated under hyperLOPIT and LOPIT obtain a
+class score of 1 (i.e. use only primary data from transfer learning
+\cite{Breckels:2016}). Therefore, for the optimisation stage of the
+analyses we can already infer a subcellular class weight of 1 for
+these niches and only optimise over the remaining organelles.  This
+can signifciantly cut down optimisation time as by removing these 4
+classes from the optimisation (and not the classification) we only
+have \texttt{4$^{10}$} class weight combinations to consider instead
+of \texttt{4$^{14}$} combinations.
+
+In the example below we remove these 4 classes from the marker set,
+re-run the \texttt{knnOptimisation} for each data source and then run
+the \texttt{knntlOptimisation} with the 10 remaining classes. (Note:
+this is not run live as this the \texttt{hl} dataset with 10 classes,
+707 markers and 4$^{10}$ combinations of parameters takes around 76
+hours to run on the University of Cambridge HPC using 256 workers).
+
+To remove the 4 classes and create a new column of markers in the
+feature data called \texttt{tlmarkers} to use for the analysis:
+
+<<loadgocc, include=FALSE>>=
+gofile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-gocc.rds")
+gocc <- readRDS(gofile)
+@
+
+<<setuptlopt>>=
+## create new markers column for tl markers
+fData(hl)$tlmarkers <- fData(hl)$markers
+fData(gocc)$tlmarkers <- fData(gocc)$markers
+
+## Remove 4 classes
+torm  <- c("40S Ribosome", "60S Ribosome",
+           "Nucleus - Chromatin", 
+           "Nucleus - Non-chromatin")
+for (i in seq(torm)) {
+  hl <- fDataToUnknown(hl, from = torm[i], fcol = "tlmarkers")
+  gocc <- fDataToUnknown(gocc, from = torm[i], fcol = "tlmarkers")
+}
+getMarkerClasses(hl, fcol = "tlmarkers")
+getMarkerClasses(gocc, fcol = "tlmarkers")
+@
+
+\paragraph{TL optimisation stage 1} Run \texttt{knnOptimisation} to get
+the best $k$'s for each data source.
+
+<<knnoptfortl, eval=FALSE>>=
+## get best k's
+kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
+kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
+@
+
+From examining the parameter seach plots as described in section
+\textit{Optimisation}, we find the best $k$'s for both the primary and
+auxiliary are 3.
+
+\paragraph{TL optimisation stage 2} Run \texttt{knntlOptimisation} to
+get the best transfer learning weights for each sub-cellular class.
+
+<<runtlopts, eval=FALSE>>=
+## Set appropriate parallelisation backend and  
+## number of workers for the tl
+par <- SnowParam(255L, type = "MPI")
+
+## Now peform tl optimisation 
+tlopt <- knntlOptimisation(hl, gocc, fcol = "tlmarkers",
+                           length.out = 4, times = 50,
+                           xval = 5, k = c(3, 3),
+                           BPPARAM = par)
+@
+
+The results of the optimisation can be visalised using the
+\texttt{plot} method for \texttt{tlopt} optimisation result:
+
+<<loadtlres, echo=FALSE>>=
+tlfile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-tlopt.rds")
+tlopt <- readRDS(tlfile)
+colnames(tlopt@results)[4] <- "Endoplasmic reticulum"
+setStockcol(NULL)
+@
+
+\begin{figure}[!ht]
+  \centering
+<<plottl, out.width=".6\\textwidth">>=
+plot(tlopt)
+@  
+\caption{Visualisation of the transfer learning parameter optimisation
+  procedure. Each row displays the frequency of observed weights
+  (along the columns) for a specific sub-cellular class, with large
+  dots representing higher observation frequencies.}
+  \label{fig:plottl}
+\end{figure}
+
+
+\subsection*{TL classification} 
+
+Looking at the bubble plot displaying the distribution of best weights
+over the 50 runs we find that for many of the subcellular niches a
+weight of 1 is most popular (i.e. use only primary hyperLOPIT data in
+classification), this is unsuprising as we already know the dataset is
+well resolved for these classes. We see that the most popular weights
+for the proteasome and lysosome tend to be towards 0, indicating that
+these niches are well-resolved in the Gene Ontology. This tells us
+that we would benefit from including auxiliary GO information in our
+classifier for these subcellular compartments. The plasma membrane
+weights are relatively equally spread between using hyperLOPIT and GO
+data. Using the \texttt{getParams} function we can return the best
+weights and then use this as input for the classification.
+
+One of the benefits of the algorithm is the ability to manually select
+weights for each class. In the optimisation above, for time
+constraints, we removed the two ribosomal subunits and the two nulcear
+compartments, and therefore in the code chunk below when we extract
+the best parameters, these subcellular niches are not included. To
+include these 4 subcellular niches in the next classification step we
+must include them in the parameters. We define a weight of 1 for each
+of these niches, as we know they are well resolved in hyperLOPIT. We
+then re-order the weights according to \texttt{getMarkerClasses} and
+perform the classification using the function
+\texttt{knntlClassification}.
+
+<<tlclassify, cache = cache>>=
+## best parameters for the 10 classes
+(bestpar <- getParams(tlopt))
+
+## add weights for classes not included in the optimisation
+otherweights <- rep(1, 4)
+names(otherweights) <- c("40S Ribosome", "60S Ribosome", 
+                         "Nucleus - Chromatin", 
+                         "Nucleus - Non-chromatin")
+(bestpar <- c(bestpar, otherweights))
+
+## re-order classes 
+bestpar <- bestpar[getMarkerClasses(hl)]
+
+## Do the classification
+hl <- knntlClassification(hl, gocc, bestTheta = bestpar, k = c(3, 3))
+@
+
+The results from the classification results and associated scores are
+appended to the \texttt{fData} slot and named \texttt{knntl} and
+\texttt{knntl.scores} respectively. Results can be visualised using
+\texttt{plot2D}, scores assessed and cutoffs calculated using the
+\texttt{classify} app in \texttt{pRolocVis}, predictions obtained
+using \texttt{getPredictions} in the same way as demonstrated above
+for the SVM classifier.
+
+\section*{Unsupervised machine learning}
+
+In \texttt{pRoloc} there is functionality for unsupervsied machine
+learning methods. In unsupervised learning, the training data consists
+of a set of input vectors e.g. protein profiles, ignoring the
+information about the class label e.g. localisation, other than for
+annotation purposes. The main goal in unsupervised learning is to
+uncover groups of similar features within the data, termed
+clustering. Ordination methods such as principal components analysis
+(PCA) also fall into the category of unsupervised learning methods,
+where the data can be projected from a high-dimensional spcae down to
+two or three dimensions for the purpose of visualisation.
+
+As described and demonstrated already above, PCA is a valuable and
+powerful method for data visualisation and quality control. Another
+application uses hierarchical clustering to summarise the relation
+between marker proteins using he \texttt{mrkHClust} function, where
+the euclidean distance bewteen average class-specific profiles is used
+to produce a dendrogramme describing a simple relationship between the
+sub-cellular classes (Figure~\ref{fig:mrkHclust}). The
+\texttt{mrkHClust} uses the same defaults as all other function, using
+the \texttt{markers} feature variable to define marker proteins. In
+the code chunk, we adapt the figure margins to fully display the class
+names.
+
+\begin{figure}[!ht]
+  \centering
+<<hclust, out.width=".5\\textwidth", fig.asp = 1.5, out.extra='angle=-90'>>=
+par(mar = c(15, 4, 1, 0))
+mrkHClust(hl)
+@  
+  \caption{Hierarchical clustering of the average marker profiles summarising the relation between organelles profiles.}
+  \label{fig:mrkHclust}
+\end{figure}
+
+We generally find supervised learning more suited to the task of
+protein localisation prediction in which we use high-quality curated
+marker proteins to build a classifier, instead of using an entirely
+unsupervised approach to look for clusters and then look for
+enrichment of organelles and complexes. In the latter we do not make
+good use of valuable prior knowledge, and in our experience
+unsupervised clustering can be extremely difficult due poor estimates
+of the number of clusters that may appear in the data.
+
+\section*{Writing and exporting data}
+
+A \texttt{MSnSet} can be exported from R using the
+\texttt{write.exprs} function.  This function writes the expression
+values to a tab (the defualt, or other type e.g.e.g. comma, as
+specified in \texttt{write.table}) separated file. There argument
+\texttt{fDataCols} can be used to specify which \texttt{featureData}
+columns (as column names, column number or \texttt{logical}) to append
+to the right of the expression matrix.
+
+In the below code chunk we write the \texttt{hl} object to a csv
+file. The \texttt{file} argument is used to specify the file path, the
+\texttt{sep} argument specifies the field separator string, here we
+use a comma, finally as we want to write all the information in the
+\texttt{featureData} to the file, as well as the expression data, we
+specify \texttt{fDataCols = 1:ncol(hl)} i.e. write everything in the
+\texttt{featureData} to the file \texttt{"hl.csv"}.
+
+<<writeData, eval = FALSE>>=
+write.exprs(hl, file = "hl.csv", sep = ",", 
+            fDataCols = 1:ncol(hl))
+@
+
+Individual R objects, such a parameters from the machine learning
+optimisations, can be save using the standard \texttt{save} function
+in R.  For example, to save and then re-load the parameters from the
+SVM optimisation,
+
+<<saveData, eval = FALSE>>=
+## To save the parameters as an R object
+save(params, file = "svmparams.rda")
+
+## To re-load after saving
+load(file = "svmparams.rda")
+@
+
+\section*{Session information}
+
+The function \texttt{sessionInfo} provides a summary of all packages
+and versions used to generate this document. This enables us to record
+the exact state of our session that lead to these exact
+results. Conversely, if the script stops working of if it returns
+different results, we are in a position to re-generate the original
+results using the adequate software versions and retrace changes in
+the software that lead to failure and/or different results.
+
+<<si>>=
+sessionInfo()
+@
+
+It is always important to include session information details along
+with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
+  reproducible example} highlighting the problem or
+\href{https://support.bioconductor.org/}{question} at hand.
+
+The source of this document, including the code necessary to reproduce
+the analyses and figures is available in the public manuscript
+repository \cite{ghrepo}.
+
+\bigskip
+
+\subsection*{Author contributions}
+
+All authors developed the software presented in this workflow and
+wrote and approved the manuscript.
+
+\subsection*{Competing interests}
+
+The authors declare that they have no competing interest. 
+
+\subsection*{Grant information}
+
+LMB is supported by a Wellcome Trust Technology Development Grant
+(grant number 108467/Z/15/Z). LG is supported by the BBSRC Strategic
+Longer and Larger grant (Award BB/L002817/1).
+
+
+\subsection*{Acknowledgements}
+
+The authors would like to thank the Cambridge Computational Biology
+Institute and the Centre for Mathematical Sciences for hosting them
+when writing this article. The authors would like to thank Dr Claire
+M. Mulvey for helpful comments on early versions of this
+manuscript. The authors would also like to thank Dr. Stuart Rankin
+from the High Performance Computing Service for his support. Part of
+this work was performed using the Darwin Supercomputer of the
+University of Cambridge High Performance Computing Service, provided
+by Dell Inc. using Strategic Research Infrastructure Funding from the
+Higher Education Funding Council for England and funding from the
+Science and Technology Facilities Council.
