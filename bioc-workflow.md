@@ -24,7 +24,7 @@ stem cells experiment @hyper. These data, as well as additional
 annotated and pre-formatted datasets from various species are readily
 available in the package.
 
-Installation of Bioconductor package is documented in details on the
+Installation of Bioconductor package is documented in detail on the
 [Bioconductor installation help
 page](http://bioconductor.org/install/#install-bioconductor-packages).
 This procedure is also applicable to any packages, from
@@ -98,6 +98,15 @@ meta-data.
 with permission from the vignette)](./Figures/msnset.png)
 
 [fig:msnset]
+
+Feature metadata typically contains general annotation about the
+proteins (accession numbers, description, …), information related to the
+identification search (confidence scores, number of peptides, …) as well
+as annotation about know sub-cellular location (see in particular the
+*Markers* section) and results from data analysis. The sample metadata
+would, for example, record what labelling ions were used for the
+respective fraction (when labelled quantitation is used), replicate
+number, fraction number along the gradient and pooling information.
 
 Another slot of interest is `processingData`, that logs the processing
 `MSnSet` objects undergo. The processing log can be accessed with the
@@ -440,7 +449,7 @@ The same `normalise` function (or `normalize`, both spellings are
 supported) can also be applied in the first case described above.
 Different normalisation methods such as mean or median scaling, variance
 stabilisation or quantile normalisation, to cite a few, can be applied
-to accomodation different needs.
+to accomodate different needs.
 
 As previously mentioned, before combination, the two replicates in the
 `hl` data that we read into R were separately normalised by sum (i.e. to
@@ -543,7 +552,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:44:55 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 14:13:46 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -559,9 +568,13 @@ how a high content in missing values in spatial proteomics data and
 their inappropriate handling leads to a reduction of sub-cellular
 resolution. Missing data can be imputated using ’s `impute` function.
 The method underlying the imputation method is then determined by a
-`methods` parameter. In our particular case, missing values are
-indicative of protein groups that were not acquired in both replicates
-(Figures [fig:namap]).
+`methods` parameter. To impute missing values using nearest neighbour
+imputation, one would
+
+`     `
+
+In our particular case, missing values are indicative of protein groups
+that were not acquired in both replicates (Figure [fig:namap]).
 
 `    `\
 `         `
@@ -574,8 +587,8 @@ values.](figure/namap-1)
 
 We prefer to remove proteins that were not assayed in both replicated
 experiments. This is done with the `filterNA` function that removes
-features that contain more than a certain proportion (default is 0)
-missing values.
+features (proteins) that contain more than a certain proportion (default
+is 0) missing values.
 
 `  `\
 
@@ -595,15 +608,15 @@ missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 13:44:55 2016 
-    ## Subset [6725,20][5032,20] Fri Nov  4 13:44:55 2016 
-    ## Removed features with more than 0 NAs: Fri Nov  4 13:44:55 2016 
-    ## Dropped featureData's levels Fri Nov  4 13:44:55 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 14:13:46 2016 
+    ## Subset [6725,20][5032,20] Tue Nov  8 14:13:47 2016 
+    ## Removed features with more than 0 NAs: Tue Nov  8 14:13:47 2016 
+    ## Dropped featureData's levels Tue Nov  8 14:13:47 2016 
     ##  MSnbase version: 1.21.7
 
-When more than 2 data are to be combined and too many proteins were not
-consistently assayed, leading to too many proteins being filtered out,
-we suggest to implement an ensemble of classifiers voting on
+When more than 2 datasets are to be combined and too many proteins were
+not consistently assayed, leading to too many proteins being filtered
+out, we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
 experiments (see section *Supervised machine learning* for the
 description of sub-cellular assignments).
@@ -618,7 +631,7 @@ quantitation profiles across the gradient fractions employed. One
 approach that has been widely used to visualise and inspect high
 throughput mass spectrometry-based proteomics data is principal
 components analysis (PCA). PCA is one of many dimensionality reduction
-methods, that allow one to effectively summarise multi-dimensional data
+methods, that allows one to effectively summarise multi-dimensional data
 in to 2 or 3 dimensions to enable visualisation. Very generally, the
 original continuous multi-dimensional data is transformed into a set of
 orthogonal components ordered according to the amount of variability
@@ -630,14 +643,14 @@ clusters are observed, we assume that there is organellar separation
 present in the data. Although, representing the multi-dimensional data
 along a limited set of PCs does not give us a hard quantitative measure
 of separation, it is extremely useful summarising complex experimental
-information in one figure, to get an simplified overview of the data.
+information in one figure, to get a simplified overview of the data.
 
 In the code chunk below we produce a PCA plot of the mouse stem cell
 dataset (Figure [fig:pcahl]). One point on the plot represents one
 protein. We can indeed see several distinct protein clusters. We specify
 `fcol = NULL`, which means not to consider any feature variable to
 annotate the features (proteins) with colours. We will see later how to
-use this to annotate the PCA plot with prior information about
+use this argument to annotate the PCA plot with prior information about
 sub-cellular localisation.
 
 \
@@ -757,29 +770,35 @@ function.
 
 We recommend at least 13 markers per sub-cellular class (see the
 *Optimisation* section for details about the algorithmic motivation of
-this number). Markers should be chosen to confidently represent to
+this number). Markers should be chosen to confidently represent the
 distribution of genuine residents of a sub-cellular niche. We generally
-recommend such a conservative approach in defining markers to avoid
-false assignments when assigning sub-cellular localisation of proteins
-of unknown localisation. A more relaxed definition of markers, i.e. one
+recommend a conservative approach in defining markers to avoid false
+assignments when assigning sub-cellular localisation of proteins of
+unknown localisation. A more relaxed definition of markers, i.e. one
 that broadly or over-confidently defines markers, risks to erroneously
 assign proteins to a single location, when, in reality, they reside in
-more that a single location (including the assumed unique location). One
-can not expect to identify exact boundaries between sub-cellular classes
-through marker annotation alone; the definition of these boundaries is
-better handled algorithmically, i.e. after application of the supervised
+multiple locations (including the assumed unique location). One can not
+expect to identify exact boundaries between sub-cellular classes through
+marker annotation alone; the definition of these boundaries is better
+handled algorithmically, i.e. after application of the supervised
 learning algorithm, using the prediction scores (as described in the
 *Classification* section, in particular Figure [fig:plotSVM]).
 
-If the naming between the marker sets and the `MSnSet` dataset are
-different, one will have to convert and match the proteins according to
-the appropriate identifier. Sometimes, we find the equivalent entry
-name, Uniprot ID or accession number is stored with the data, which
-makes conversion between identifers relatively straightforward. If this
-is not the case however, conversion can be performed using , the
-Bioconductor [annotation
+If the protein naming between the marker sets and the `MSnSet` dataset
+are different e.g. the markers are labelled by Uniprot accession numbers
+and the dataset entries are labelled by Uniprot entry names, one will
+have to convert and match the proteins according to the appropriate
+identifier. Sometimes, we find the equivalent entry name, Uniprot ID or
+accession number is stored with the data, which makes conversion between
+identifers relatively straightforward. If this is not the case however,
+conversion can be performed using , the Bioconductor [annotation
 resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
 or any conversion softwares available online.
+
+It is also possible to use one’s own marker list with the `addMarkers`
+function. The user needs to create a named vector of marker
+localisation, where the names match some (not necessarily all) of the
+`MSnSet`’s feature names.
 
 We now visualise these annotations along the PCA plot using the `plot2D`
 function and then use the `addLegend` function to map the marker classes
@@ -1118,8 +1137,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Fri Nov  4 13:44:57 2016 
-    ## Added markers from  'pdres' marker vector. Fri Nov  4 13:44:58 2016 
+    ## Added markers from  'mrk' marker vector. Tue Nov  8 14:13:49 2016 
+    ## Added markers from  'pdres' marker vector. Tue Nov  8 14:13:50 2016 
     ##  MSnbase version: 2.0.0
 
 `   `
@@ -1284,8 +1303,11 @@ generalisation accuracy. As such it is always important to investigate
 the model parameters and critically assess the best choice. The
 `f1Count` function counts the number of parameter occurences above a
 certain F1 value. The best choice may not be as simple as the parameter
-set that gives rise to the highest macro F1 score and one must be
-careful to avoid overfitting and to choose parameters wisely.
+set that gives rise to the highest macro F1 score. One must be careful
+to avoid overfitting, and choose parameters that frequently provide high
+classification accuracy. Below, we see that only a sigma of 0.1 produces
+macro F1 scores above 0.6, but that a cost of 16 is much more frequently
+chosen than lower values.
 
 ` `
 
@@ -1297,6 +1319,8 @@ heatmap, as shown in figure [fig:visualisOptHide]. The `plot` method for
 `GenRegRes` object shows the respective distributions of the 100 macro
 F1 scores for the best cost/sigma parameter pairs, and `levelPlot` shows
 the averaged macro F1 scores, for the full range of parameter values.
+These figures also indicate that values of 0.1 and 16 for sigma and cost
+consistently deliver better classification scores.
 
 \
 
@@ -1308,7 +1332,7 @@ optimisation.](figure/visualiseOptHide-1)
 By using the function `getParams` we can extract the best set of
 parameters. Currently, `getParams` retrieves the first best set is
 automatically but users are encouraged to critically assess whether this
-is the most wise choice.
+is the most wise choice (which it is, as demonstrated above).
 
 `  `
 
@@ -1417,35 +1441,36 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4362981               0.3032213               0.3744072 
+    ##               0.4359409               0.3031417               0.3896552 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6867512               0.6037990               0.4241051 
+    ##               0.6869014               0.6046754               0.4336399 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4195881               0.5944806               0.9494939 
+    ##               0.4165647               0.5910830               0.9498244 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7936020               0.7104491               0.3163419 
+    ##               0.7955788               0.7079722               0.3121358 
     ##         Plasma membrane              Proteasome 
-    ##               0.7096885               0.4172735
+    ##               0.7187306               0.4168615
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      86                     170                      84 
+    ##                      86                     171                      89 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     300                     475                     101 
+    ##                     294                     477                      99 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      26                     124                     523 
+    ##                      27                     123                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     342                      39 
+    ##                     230                     342                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     320                     155                    2057
+    ##                     316                     160                    2058
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
 (i.e. in our case `svm.pred`) containing the prediction results. The
 results can also be visualied using `plot2D` function (Figure
-[fig:plotres]).
+[fig:plotres]) and extracted by retrieving that specific column from the
+feature metadata using, for example, `fData(hl)$svm.pred`.
 
 `   `
 
@@ -1773,14 +1798,19 @@ application uses hierarchical clustering to summarise the relation
 between marker proteins using he `mrkHClust` function, where the
 euclidean distance bewteen average class-specific profiles is used to
 produce a dendrogramme describing a simple relationship between the
-sub-cellular classes.
+sub-cellular classes (Figure [fig:mrkHclust]). The `mrkHClust` uses the
+same defaults as all other function, using the `markers` feature
+variable to define marker proteins. In the code chunk, we adapt the
+figure margins to fully display the class names.
+
+`     `\
 
 ![Hierarchical clustering of the average marker profiles summarising the
 relation between organelles profiles.](figure/hclust-1)
 
 [fig:mrkHclust]
 
-We find supervised learning more suited to the task of protein
+We generally find supervised learning more suited to the task of protein
 localisation prediction in which we use high-quality curated marker
 proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for enrichment
@@ -1792,27 +1822,29 @@ that may appear in the data.
 Writing and exporting data {#writing-and-exporting-data .unnumbered}
 ==========================
 
-A `MSnSet` can be exported from R using the `write.exprs` function. This
-function writes the expression values to a tab (the defualt, or other
-type e.g.e.g. comma, as specified in `write.table`) separated file.
-There argument `fDataCols` can be used to specify which `featureData`
-columns (as column names, column number or `logical`) to append to the
-right of the expression matrix.
+An `MSnSet` can be exported from R using the `write.exprs` function.
+This function writes the expression values to a text-based spreadsheet.
+The `fcol` argument can be used to specify which `featureData` columns
+(as column names, column number or `logical`) to append to the right of
+the expression matrix.
 
 In the below code chunk we write the `hl` object to a csv file. The
 `file` argument is used to specify the file path, the `sep` argument
 specifies the field separator string, here we use a comma, finally as we
 want to write all the information in the `featureData` to the file, as
-well as the expression data, we specify `fDataCols = 1:ncol(hl)` i.e.
-write everything in the `featureData` to the file `hl.csv`.
+well as the expression data, we specify `fvarLabels(hl)`, that returns
+all feature variable names, and write the resulting data to the file
+`hl.csv`.
 
-`      `\
-`              `
+`         `
 
-Individual R objects, such a parameters from the machine learning
-optimisations, can be save using the standard `save` function in R. For
-example, to save and then re-load the parameters from the SVM
-optimisation,
+Exporting to a spreadsheet however looses a lot of important
+information, such as the processing data, and the sample metadata in the
+*phenoData* slot. Other objects, such a parameters from the machine
+learning optimisation, cannot be represented as tabular data. To
+directly serialise R objects to disk, on can use the standard `save`
+function, and later reload the object using `save`. For example, to save
+and then re-load the parameters from the SVM optimisation,
 
 \
 `   `\
@@ -1825,11 +1857,11 @@ Session information {#session-information .unnumbered}
 
 The function `sessionInfo` provides a summary of all packages and
 versions used to generate this document. This enables us to record the
-exact state of our session that lead to these exact results. Conversely,
-if the script stops working of if it returns different results, we are
-in a position to re-generate the original results using the adequate
-software versions and retrace changes in the software that lead to
-failure and/or different results.
+exact state of our session that lead to these results. Conversely, if
+the script stops working or if it returns different results, we are in a
+position to re-generate the original results using the adequate software
+versions and retrace changes in the software that lead to failure and/or
+different results.
 
     ## R version 3.3.2 Patched (2016-11-01 r71616)
     ## Platform: x86_64-pc-linux-gnu (64-bit)
@@ -1848,7 +1880,7 @@ failure and/or different results.
     ## [8] datasets  base     
     ## 
     ## other attached packages:
-    ##  [1] pRolocdata_1.12.0    pRoloc_1.15.3        MLInterfaces_1.54.0 
+    ##  [1] pRolocdata_1.12.0    pRoloc_1.14.3        MLInterfaces_1.54.0 
     ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
     ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
     ## [10] MSnbase_2.0.0        ProtGenerics_1.6.0   BiocParallel_1.8.1  
@@ -1898,13 +1930,13 @@ example](http://adv-r.had.co.nz/Reproducibility.html) highlighting the
 problem or [question](https://support.bioconductor.org/) at hand.
 
 The source of this document, including the code necessary to reproduce
-the analyses and figures is available in the public manuscript
-repository @ghrepo.
+the analyses and figures is available in a public manuscript repository
+on GitHub @ghrepo.
 
 Author contributions {#author-contributions .unnumbered}
 --------------------
 
-All authors developed the software presented in this workflow and wrote
+All authors developed the software presented in this workflow, and wrote
 and approved the manuscript.
 
 Competing interests {#competing-interests .unnumbered}
@@ -1922,17 +1954,14 @@ Larger grant (Award BB/L002817/1).
 Acknowledgements {#acknowledgements .unnumbered}
 ----------------
 
-The authors would like to thank the Cambridge Computational Biology
-Institute and the Centre for Mathematical Sciences for hosting them when
-writing this article. The authors would like to thank Dr Claire M.
-Mulvey for helpful comments on early versions of this manuscript. The
-authors would also like to thank Dr. Stuart Rankin from the High
-Performance Computing Service for his support. Part of this work was
-performed using the Darwin Supercomputer of the University of Cambridge
-High Performance Computing Service, provided by Dell Inc. using
-Strategic Research Infrastructure Funding from the Higher Education
-Funding Council for England and funding from the Science and Technology
-Facilities Council.
+The authors would like to thank Dr Claire M. Mulvey for helpful comments
+on early versions of this manuscript. The authors would also like to
+thank Dr. Stuart Rankin from the High Performance Computing Service for
+his support. Part of this work was performed using the Darwin
+Supercomputer of the University of Cambridge High Performance Computing
+Service, provided by Dell Inc. using Strategic Research Infrastructure
+Funding from the Higher Education Funding Council for England and
+funding from the Science and Technology Facilities Council.
 
 [^1]: <https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis_pca.gif>
 

@@ -27,7 +27,7 @@ embryonic stem cells experiment \cite{hyper}. These data, as well as
 additional annotated and pre-formatted datasets from various species
 are readily available in the \Biocexptpkg{pRolocdata} package.
 
-Installation of Bioconductor package is documented in details on the
+Installation of Bioconductor package is documented in detail on the
 \href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
   installation help page}. This procedure is also applicable to any
 packages, from \href{https://cran.r-project.org/}{CRAN} as well as
@@ -548,7 +548,7 @@ The same \texttt{normalise} function (or \texttt{normalize}, both spellings are
 supported) can also be applied in the first case described above.
 Different normalisation methods such as mean or median scaling,
 variance stabilisation or quantile normalisation, to cite a few, can
-be applied to accomodation different needs.
+be applied to accomodate different needs.
 
 As previously mentioned, before combination, the two replicates in the
 \texttt{hl} data that we read into R were separately normalised by sum (i.e.
@@ -725,7 +725,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 14:46:45 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 14:13:46 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -758,7 +758,7 @@ imputation, one would
 \end{knitrout}
 
 In our particular case, missing values are indicative of protein
-groups that were not acquired in both replicates (Figures
+groups that were not acquired in both replicates (Figure
 \ref{fig:namap}).
 
 \begin{figure}[!ht]
@@ -781,7 +781,7 @@ groups that were not acquired in both replicates (Figures
 
 We prefer to remove proteins that were not assayed in both replicated
 experiments. This is done with the \texttt{filterNA} function that
-removes features that contain more than a certain proportion (default
+removes features (proteins) that contain more than a certain proportion (default
 is 0) missing values.
 
 \begin{knitrout}
@@ -807,16 +807,16 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Nov  4 14:46:45 2016 
-## Subset [6725,20][5032,20] Fri Nov  4 14:46:45 2016 
-## Removed features with more than 0 NAs: Fri Nov  4 14:46:45 2016 
-## Dropped featureData's levels Fri Nov  4 14:46:45 2016 
+## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 14:13:46 2016 
+## Subset [6725,20][5032,20] Tue Nov  8 14:13:47 2016 
+## Removed features with more than 0 NAs: Tue Nov  8 14:13:47 2016 
+## Dropped featureData's levels Tue Nov  8 14:13:47 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
-When more than 2 data are to be combined and too many proteins were
+When more than 2 datasets are to be combined and too many proteins were
 not consistently assayed, leading to too many proteins being filtered
 out, we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
@@ -832,7 +832,7 @@ exhibit similar quantitation profiles across the gradient fractions
 employed. One approach that has been widely used to visualise and
 inspect high throughput mass spectrometry-based proteomics data is
 principal components analysis (PCA). PCA is one of many dimensionality
-reduction methods, that allow one to effectively summarise
+reduction methods, that allows one to effectively summarise
 multi-dimensional data in to 2 or 3 dimensions to enable
 visualisation. Very generally, the original continuous
 multi-dimensional data is transformed into a set of orthogonal
@@ -845,7 +845,7 @@ distinct clusters are observed, we assume that there is organellar
 separation present in the data. Although, representing the
 multi-dimensional data along a limited set of PCs does not give us a
 hard quantitative measure of separation, it is extremely useful
-summarising complex experimental information in one figure, to get an
+summarising complex experimental information in one figure, to get a
 simplified overview of the data.
 
 In the code chunk below we produce a PCA plot of the mouse stem cell
@@ -853,7 +853,7 @@ dataset (Figure \ref{fig:pcahl}). One point on the plot represents one
 protein. We can indeed see several distinct protein clusters. We
 specify \texttt{fcol = NULL}, which means not to consider any feature
 variable to annotate the features (proteins) with colours. We will see
-later how to use this to annotate the PCA plot with prior information
+later how to use this argument to annotate the PCA plot with prior information
 about sub-cellular localisation.
 
 \begin{figure}[!ht]
@@ -1009,13 +1009,13 @@ it is straightforward to match names between the markers and the
 We recommend at least 13 markers per sub-cellular class (see the
 \textit{Optimisation} section for details about the algorithmic
 motivation of this number). Markers should be chosen to confidently
-represent to distribution of genuine residents of a sub-cellular
-niche. We generally recommend such a conservative approach in defining
+represent the distribution of genuine residents of a sub-cellular
+niche. We generally recommend a conservative approach in defining
 markers to avoid false assignments when assigning sub-cellular
 localisation of proteins of unknown localisation. A more relaxed
 definition of markers, i.e. one that broadly or over-confidently
 defines markers, risks to erroneously assign proteins to a single
-location, when, in reality, they reside in more that a single location
+location, when, in reality, they reside in multiple locations
 (including the assumed unique location). One can not expect to
 identify exact boundaries between sub-cellular classes through marker
 annotation alone; the definition of these boundaries is better handled
@@ -1024,13 +1024,15 @@ algorithm, using the prediction scores (as described in the
 \textit{Classification} section, in particular Figure
 \ref{fig:plotSVM}).
 
-If the naming between the marker sets and the \texttt{MSnSet} dataset
-are different, one will have to convert and match the proteins
-according to the appropriate identifier. Sometimes, we find the
-equivalent entry name, Uniprot ID or accession number is stored with
-the data, which makes conversion between identifers relatively
-straightforward. If this is not the case however, conversion can be
-performed using \Biocpkg{biomaRt}, the Bioconductor
+If the protein naming between the marker sets and the \texttt{MSnSet}
+dataset are different e.g. the markers are labelled by Uniprot
+accession numbers and the dataset entries are labelled by Uniprot
+entry names, one will have to convert and match the proteins according
+to the appropriate identifier. Sometimes, we find the equivalent entry
+name, Uniprot ID or accession number is stored with the data, which
+makes conversion between identifers relatively straightforward. If
+this is not the case however, conversion can be performed using
+\Biocpkg{biomaRt}, the Bioconductor
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
 
@@ -1176,7 +1178,7 @@ channels 7 to 10), different sets of gradient fractions are pooled to
 obtain enough material and optimise acurate quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Nov  4 14:46:48 2016
+% Tue Nov  8 14:13:50 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1471,8 +1473,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Nov  4 14:46:47 2016 
-## Added markers from  'pdres' marker vector. Fri Nov  4 14:46:48 2016 
+## Added markers from  'mrk' marker vector. Tue Nov  8 14:13:49 2016 
+## Added markers from  'pdres' marker vector. Tue Nov  8 14:13:50 2016 
 ##  MSnbase version: 2.0.0
 \end{verbatim}
 \begin{alltt}
@@ -1881,15 +1883,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4344078               0.3022144               0.3779558 
+##               0.4359409               0.3031417               0.3896552 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6798372               0.5931386               0.4103045 
+##               0.6869014               0.6046754               0.4336399 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4226277               0.6020915               0.9489050 
+##               0.4165647               0.5910830               0.9498244 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946252               0.7055619               0.3165817 
+##               0.7955788               0.7079722               0.3121358 
 ##         Plasma membrane              Proteasome 
-##               0.7079566               0.4183278
+##               0.7187306               0.4168615
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1897,15 +1899,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      84 
+##                      86                     171                      89 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     295                     473                     101 
+##                     294                     477                      99 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     126                     522 
+##                      27                     123                     522 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      39 
+##                     230                     342                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     320                     159                    2056
+##                     316                     160                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
