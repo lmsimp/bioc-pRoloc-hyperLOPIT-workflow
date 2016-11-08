@@ -552,7 +552,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 16:12:13 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:46:40 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -608,10 +608,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 16:12:13 2016 
-    ## Subset [6725,20][5032,20] Tue Nov  8 16:12:14 2016 
-    ## Removed features with more than 0 NAs: Tue Nov  8 16:12:14 2016 
-    ## Dropped featureData's levels Tue Nov  8 16:12:14 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:46:40 2016 
+    ## Subset [6725,20][5032,20] Tue Nov  8 19:46:41 2016 
+    ## Removed features with more than 0 NAs: Tue Nov  8 19:46:41 2016 
+    ## Dropped featureData's levels Tue Nov  8 19:46:41 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -795,22 +795,26 @@ conversion can be performed using , the Bioconductor [annotation
 resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
 or any conversion softwares available online.
 
-It is also possible to use one’s own marker list with the `addMarkers`
-function. The user needs to create a named vector of marker
-localisation, where the names match some (not necessarily all) of the
-`MSnSet`’s feature names.
+It is also possible for users to use their own marker list with the
+`addMarkers` function. The user needs to create a named vector of marker
+localisation, or a create a csv file with two columns (one for the
+protein names, one for the corresponding sub-cellular marker annotation)
+and pass the vector or filename respectively to the function. As
+previously mentioned, the protein names of these markers must match some
+(but not necessarily all) of the `MSnSet`’s feature names. See
+\`?addMarkers\` for more details.
 
 We now visualise these annotations along the PCA plot using the `plot2D`
 function and then use the `addLegend` function to map the marker classes
 to the pre-defined colours. We also display the data along the first and
 seventh PCs using the `dims` argument. Note that in these calls to the
 `plot2D` function, we have omitted the `fcol` argument and use of the
-default `markers` feature variable to annotated the plot. We choose to
+default `markers` feature variable to annotate the plot. We choose to
 display PCs 1 and 7 to illustrate that while upper principal components
 explain much less variability in the data (2.23% for PC7, as opposed to
 48.41% for PC1), we see that the mitochondrial (purple) and peroxisome
 (dark blue) clusters can be differenciated, despite the apparent overlap
-in the two first PCs.
+in the visualisation of the two first PCs (Figure [fig:plotmarkers]).
 
 `   `\
 `   `\
@@ -821,19 +825,20 @@ in the two first PCs.
 
 [fig:plotmarkers]
 
-The colours have been defined so as to enable to differenciate up to 30
-classes. If more are provided, different character symbols (circles,
-squares, ... and empty and solid symbols) are used. The colours and the
-default plotting characters (solid dots for the markers and empty
-circles for the features of unknown localisation) can of course be
-changed, as described in the `setStockcol` manual page.
+The defualt colours for plotting have been defined so as to enable to
+differenciate up to 30 classes. If more are provided, different
+character symbols (circles, squares, ... and empty and solid symbols)
+are used. The colours and the default plotting characters (solid dots
+for the markers and empty circles for the features of unknown
+localisation) can of course be changed, as described in the
+`setStockcol` manual page.
 
 As demonstrated in @hyper and illustrated in the PCA plot above, the
-Golgi apparatus proteins (brown) display a dynamic pattern, noting sets
-of Golgi marker proteins that are distributed amongst other subcellular
-structures, an observation supported by microscopy. As such, we are
-going to reset the annotation of Golgi markers to unknown using the
-`fDataTounknown` function. It is often used to replace empty strings
+Golgi apparatus proteins (dark brown) display a dynamic pattern, noting
+sets of Golgi marker proteins that are distributed amongst other
+subcellular structures, an observation supported by microscopy. As such,
+we are going to reset the annotation of Golgi markers to unknown using
+the `fDataTounknown` function. It is often used to replace empty strings
 (``) or missing values in the markers definition to a common definition
 of *unknown* localisation.
 
@@ -868,8 +873,8 @@ different sub-cellular niches, comparing profiles of a few marker
 clusters is useful to assess how exactly they differ (in terms of peak
 channels, for example). On figure [fig:plotDist2], we plot the profile
 of the mitochondrial and peroxisome markers to highlight the differences
-in profiles between these two sets of markers along the 6th and 7th
-channels, as represented above along the 7th PC on the PCA plot on
+in profiles between these two sets of markers in the channels labelled
+with tag 129C, as represented above along the 7th PC on the PCA plot on
 figure [fig:plotmarkers].
 
 `   `\
@@ -903,25 +908,24 @@ Direct comparisons of individual channels in replicated experiments does
 not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
-identical selected fractions along the gradient. As can be seen in the
-table below (taken from the `hl`’s `pData`, focusing on channels 7 to
-10), different sets of gradient fractions are pooled to obtain enough
+identical selected fractions along the gradient. For example, in the
+table below (taken from `hl`’s `pData`) TMT channels 127C (among others)
+in both replicates originate from different sets of gradient fractions
+(gradient fractions 7 - 9 and 8 - 9 for each replicate, respectively).
+Different sets of gradient fractions are often pooled to obtain enough
 material and optimise acurate quantitation.
 
               Replicate Tag    Gradient.Fraction     Iodixonal.Density
   --------- ----------- ------ ------------------- -------------------
-      X127N           1 127N   1 to 6 (pooled)                    6.00
       X127C           1 127C   8 to 9 (pooled)                   11.00
-      X128N           1 128N   10 to 11 (pooled)                 13.30
     X127C.1           2 127C   7 to 9 (pooled)                   10.00
-    X128N.1           2 128N   10 to 11 (pooled)                 12.50
 
   : Differences in gradient fraction pooling.
 
 [tab:pdtab]
 
 The more relevant comparison unit is not a single channel, but rather
-the complete protein occupancy profiles, which are best visualised as
+the complete protein occupancy profiles, which are best visualised
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
@@ -957,17 +961,18 @@ app in the package. ](./Figures/mainapp.png)
 
 [fig:app]
 
-As diplayed in the screenshot above, the *main* application is designed
-for exploratory data analysis and is divied into 3 tabs: (1) PCA, (2)
-Profiles and (3) Table selection. The default view upon loading is the
-PCA tab, which features a clickable interface and zoomable PCA plot with
-an interactive data table for displaying the quantitation information.
-Particular proteins of interest can be highlighted using the text search
-box. There is also an alternate profiles tab for visualisation of the
-protein profiles, which can be used to examine the patterns of proteins
-of interest. The Table selection tab provides an interface to control
-data table column selection. A short animation[^1] illustrating the
-interface is available in the manuscript repository @ghrepo.
+As diplayed in the screenshot in figure [fig:app], the *main*
+application is designed for exploratory data analysis and is divied into
+3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default view
+upon loading is the PCA tab, which features a clickable interface and
+zoomable PCA plot with an interactive data table for displaying the
+quantitation information. Particular proteins of interest can be
+highlighted using the text search box. There is also an alternate
+profiles tab for visualisation of the protein profiles, which can be
+used to examine the patterns of proteins of interest. The Table
+selection tab provides an interface to control data table column
+selection. A short animation[^1] illustrating the interface is available
+in the manuscript repository @ghrepo.
 
 The *compare* application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
@@ -1085,15 +1090,15 @@ input training data is contained.
 `           `
 
 Note: We do not evaluate this code chunk in this document as the
-algorithm is computational intensive and best parallelised over multiple
-workers. This phenoDisco analysis took  24 hours to complete when
-parallelised over 40 workers.
+algorithm is computationally intensive and best parallelised over
+multiple workers. This phenoDisco analysis took  24 hours to complete
+when parallelised over 40 workers.
 
-The argument `times` indicated the number of times we run unsupervied
+The argument `times` indicates the number of times we run unsupervied
 Gaussian Mixture Modelling before defining a new phenotype cluster. The
 recommended minimum and default value is 100. In the above code chunk we
 increase the value to `times = 200` as we have found for larger datasets
-(e.g. 5000+ proteins) a higher times is requried for convergence. `GS`
+(e.g. 5000+ proteins) a higher `times` is requried for convergence. `GS`
 defines the minimum number of proteins allowed per new data cluster and
 thus heavily influences what type of new clusters are extracted. For
 example, if a user is interesed in the detection of small complexes they
@@ -1137,8 +1142,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Tue Nov  8 16:12:16 2016 
-    ## Added markers from  'pdres' marker vector. Tue Nov  8 16:12:16 2016 
+    ## Added markers from  'mrk' marker vector. Tue Nov  8 19:46:42 2016 
+    ## Added markers from  'pdres' marker vector. Tue Nov  8 19:46:43 2016 
     ##  MSnbase version: 2.0.0
 
 `   `
@@ -1191,13 +1196,13 @@ function. We see that 5 new phenotype data clusters were found.
 We can plot the results using the `plot2D` function (Figure
 [fig:plotPDres]). The five new phenotype data clusters can be extracted
 and examined. In the code chunk below we write the results to a .csv
-file. We use the argument `fDataCols` to specify which columns of the
-`featureData` to write.
+file using the `write.exprs` function. We use the argument `fDataCols`
+to specify which columns of the `featureData` to write.
 
 `  `\
 `         `
 
-We can also examine the each phenotype intercatively and visualise their
+We can also examine each phenotype interactively and visualise their
 protein profiles by using the `pRolocVis` function in the package. We
 found that phenotype 1 was enriched in nucleus associated proteins,
 phenotype 2 in chromatin associated proteins, phenotype 3 in cytosolic
@@ -1212,7 +1217,7 @@ niches. Using a set of labelled training examples i.e. markers, we can
 train a machine learning classifier to learn a mapping between the data
 i.e. the quantitative protein profiles, and a known localisation. The
 trained classifier can then be used to predict the localisation of a
-protein of unknown localisation, based on its observed protein profile.
+protein of unknown localisation, based on its observed protein profiles.
 To date, this method has been extensively used in spatial quantitative
 proteomics to assign thousands of proteins to distinct sub-cellular
 niches @hyper
@@ -1235,7 +1240,7 @@ classifier on the labelled training data. As previously mentioned, one
 first needs to train the classifiers parameters before an algorithm can
 be used to predict the class labels of the proteins with unknown
 location. One of the most common ways to optimise the parameters of a
-classifier is to partition the labelled data in to training and testing
+classifier is to partition the labelled data into training and testing
 subsets. In this framework parameters are tested via a grid search using
 cross-validation on the training partition. The best parameters chosen
 from the cross-validation stage are then used to build a classifier to
@@ -1288,9 +1293,10 @@ frequencies.
 `                           `
 
 As mentioned previously, we rely on the default feature variable
-`markers` to define the class labels and hence can ommit it. To use
-another feature variables, one need to explicitly specify its name using
-the `fcol` argument (for example `fcol = markers2`).
+`markers` to define the class labels and hence do not need to specify it
+in the above code chunk. To use another feature variables, one need to
+explicitly specify its name using the `fcol` argument (for example
+`fcol = markers2`).
 
 The output `params` is an object of class `GenRegRes`; a dedicated
 container for the storage of the design and results from a machine
@@ -1330,9 +1336,9 @@ optimisation.](figure/visualiseOptHide-1)
 [fig:visualisOptHide]
 
 By using the function `getParams` we can extract the best set of
-parameters. Currently, `getParams` retrieves the first best set is
-automatically but users are encouraged to critically assess whether this
-is the most wise choice (which it is, as demonstrated above).
+parameters. Currently, `getParams` retrieves the first best set
+automatically, but users are encouraged to critically assess whether
+this is the most wise choice (which it is, as demonstrated above).
 
 `  `
 
@@ -1348,9 +1354,9 @@ Classification {#classification .unnumbered}
 We can use the function `svmClassification` to return a classification
 result for all unlabelled instances in the dataset corresponding to
 their most likely sub-cellular location. The algorithm parameters are
-passed to the function, along with the class weights. As above, `fcol`
-can be ignored as we use the labels defined in the default `markers`
-feature variable.
+passed to the function, along with the class weights. As above, the
+`fcol` argument does not need to be specified as we use the labels
+defined in the default `markers` feature variable.
 
 `       `
 
@@ -1380,10 +1386,10 @@ confidence.](figure/plotSVM-1)
 [fig:plotSVM]
 
 The adjustment of the point size intuitively confers important
-information that is more difficult to defined formally, but that we will
-address in the next section. The classifier (SVM in our case, but this
-is also valid of other classifiers) defines boundaries based on the
-labelled marker proteins. These class/organelle boundaries define how
+information that is more difficult to define formally (we will address
+in the next section). The classifier (SVM in our case, but this is also
+valid of other classifiers) defines boundaries based on the labelled
+marker proteins. These class/organelle boundaries define how
 non-assigned proteins are classified and with what confidence.
 
 Thresholding {#sec:thresholding .unnumbered}
@@ -1433,7 +1439,7 @@ reliable database. If such information is not available, one crude
 method is to set a threshold per organelle by extracting the median or
 3rd quantile score per organelle. For example, in the code chunk below,
 we use the `orgQuants` function to extract the median organelle scores
-and then pass these scores to the `getPrediction` function to extract
+and then pass these scores to the `getPredictions` function to extract
 the new localisations that meet this scoring criteria. Any sub-cellular
 predictions that fall below the specified thresholds are labelled as
 unknown.
@@ -1441,29 +1447,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4365906               0.3054928               0.3796591 
+    ##               0.4325847               0.3029421               0.3817418 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6956146               0.5986152               0.4308889 
+    ##               0.6933699               0.6027103               0.4145111 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4270518               0.5894672               0.9501479 
+    ##               0.4276585               0.5845256               0.9490812 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7954126               0.7078652               0.3176106 
+    ##               0.7947588               0.7079465               0.3161762 
     ##         Plasma membrane              Proteasome 
-    ##               0.7149800               0.4148348
+    ##               0.7101150               0.4125186
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      84                     173                      86 
+    ##                      85                     172                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     476                     100 
+    ##                     297                     475                      98 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     124                     521 
+    ##                      28                     125                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     343                      39 
+    ##                     228                     343                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     319                     158                    2057
+    ##                     321                     158                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1789,7 +1795,7 @@ The main goal in unsupervised learning is to uncover groups of similar
 features within the data, termed clustering. Ordination methods such as
 principal components analysis (PCA) also fall into the category of
 unsupervised learning methods, where the data can be projected from a
-high-dimensional spcae down to two or three dimensions for the purpose
+high-dimensional space down to two or three dimensions for the purpose
 of visualisation.
 
 As described and demonstrated already above, PCA is a valuable and
