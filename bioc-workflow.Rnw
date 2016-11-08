@@ -36,7 +36,7 @@ embryonic stem cells experiment \cite{hyper}. These data, as well as
 additional annotated and pre-formatted datasets from various species
 are readily available in the \Biocexptpkg{pRolocdata} package.
 
-Installation of Bioconductor package is documented in details on the
+Installation of Bioconductor package is documented in detail on the
 \href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
   installation help page}. This procedure is also applicable to any
 packages, from \href{https://cran.r-project.org/}{CRAN} as well as
@@ -327,7 +327,7 @@ The same \texttt{normalise} function (or \texttt{normalize}, both spellings are
 supported) can also be applied in the first case described above.
 Different normalisation methods such as mean or median scaling,
 variance stabilisation or quantile normalisation, to cite a few, can
-be applied to accomodation different needs.
+be applied to accomodate different needs.
 
 As previously mentioned, before combination, the two replicates in the
 \texttt{hl} data that we read into R were separately normalised by sum (i.e.
@@ -434,7 +434,7 @@ sub-cellular resolution. Missing data can be imputated using
 \Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
 the imputation method is then determined by a \texttt{methods}
 parameter. In our particular case, missing values are indicative of
-protein groups that were not acquired in both replicates (Figures
+protein groups that were not acquired in both replicates (Figure
 \ref{fig:namap}).
 
 \begin{figure}[!ht]
@@ -451,7 +451,7 @@ image2(is.na(combined), col = c("black", "white"),
 
 We prefer to remove proteins that were not assayed in both replicated
 experiments. This is done with the \texttt{filterNA} function that
-removes features that contain more than a certain proportion (default
+removes features (proteins) that contain more than a certain proportion (default
 is 0) missing values.
 
 <<filterNA>>=
@@ -459,7 +459,7 @@ combined <- filterNA(combined)
 combined
 @
 
-When more than 2 data are to be combined and too many proteins were
+When more than 2 datasets are to be combined and too many proteins were
 not consistently assayed, leading to too many proteins being filtered
 out, we suggest to implement an ensemble of classifiers voting on
 protein-sub-cellular niche membership over the output of several
@@ -475,7 +475,7 @@ exhibit similar quantitation profiles across the gradient fractions
 employed. One approach that has been widely used to visualise and
 inspect high throughput mass spectrometry-based proteomics data is
 principal components analysis (PCA). PCA is one of many dimensionality
-reduction methods, that allow one to effectively summarise
+reduction methods, that allows one to effectively summarise
 multi-dimensional data in to 2 or 3 dimensions to enable
 visualisation. Very generally, the original continuous
 multi-dimensional data is transformed into a set of orthogonal
@@ -488,7 +488,7 @@ distinct clusters are observed, we assume that there is organellar
 separation present in the data. Although, representing the
 multi-dimensional data along a limited set of PCs does not give us a
 hard quantitative measure of separation, it is extremely useful
-summarising complex experimental information in one figure, to get an
+summarising complex experimental information in one figure, to get a
 simplified overview of the data.
 
 In the code chunk below we produce a PCA plot of the mouse stem cell
@@ -496,7 +496,7 @@ dataset (Figure \ref{fig:pcahl}). One point on the plot represents one
 protein. We can indeed see several distinct protein clusters. We
 specify \texttt{fcol = NULL}, which means not to consider any feature
 variable to annotate the features (proteins) with colours. We will see
-later how to use this to annotate the PCA plot with prior information
+later how to use this argument to annotate the PCA plot with prior information
 about sub-cellular localisation.
 
 \begin{figure}[!ht]
@@ -590,13 +590,13 @@ hl <- addMarkers(hl, mrk)
 We recommend at least 13 markers per sub-cellular class (see the
 \textit{Optimisation} section for details about the algorithmic
 motivation of this number). Markers should be chosen to confidently
-represent to distribution of genuine residents of a sub-cellular
-niche. We generally recommend such a conservative approach in defining
+represent the distribution of genuine residents of a sub-cellular
+niche. We generally recommend a conservative approach in defining
 markers to avoid false assignments when assigning sub-cellular
 localisation of proteins of unknown localisation. A more relaxed
 definition of markers, i.e. one that broadly or over-confidently
 defines markers, risks to erroneously assign proteins to a single
-location, when, in reality, they reside in more that a single location
+location, when, in reality, they reside in multiple locations
 (including the assumed unique location). One can not expect to
 identify exact boundaries between sub-cellular classes through marker
 annotation alone; the definition of these boundaries is better handled
@@ -606,15 +606,17 @@ algorithm, using the prediction scores (as described in the
 \ref{fig:plotSVM}).
 
 
-If the naming between the marker sets and the \texttt{MSnSet} dataset
-are different, one will have to convert and match the proteins
-according to the appropriate identifier. Sometimes, we find the
-equivalent entry name, Uniprot ID or accession number is stored with
-the data, which makes conversion between identifers relatively
-straightforward. If this is not the case however, conversion can be
-performed using \Biocpkg{biomaRt}, the Bioconductor
+If the protein naming between the marker sets and the \texttt{MSnSet}
+dataset are different e.g. the markers are labelled by Uniprot
+accession numbers and the dataset entries are labelled by Uniprot entry
+names, one will have to convert and match the proteins according to
+the appropriate identifier. Sometimes, we find the equivalent entry
+name, Uniprot ID or accession number is stored with the data, which
+makes conversion between identifers relatively straightforward. If
+this is not the case however, conversion can be performed using
+\Biocpkg{biomaRt}, the Bioconductor
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
-  resouces} or any conversion softwares available online.
+resouces} or any conversion softwares available online.
 
 We now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
