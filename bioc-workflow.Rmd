@@ -39,7 +39,7 @@ embryonic stem cells experiment [@hyper]. Additional annotated and
 pre-formatted datasets from various species are readily available in
 the `r Biocexptpkg("pRolocdata")` package.
 
-Installation of Bioconductor package is documented in details on the
+Installation of Bioconductor packages are documented in detail on the
 [Bioconductor installation help page](http://bioconductor.org/install/#install-bioconductor-packages). This
 procedure is also applicable to any packages, from
 [CRAN](https://cran.r-project.org/) as well as GitHub. Once a package
@@ -78,7 +78,7 @@ replicates were generated from the E14TG2a experiment, the first was
 to target low density fractions and the second and third were to
 emphasis separation of the denser organelles.  The intersect of
 replicates 1 and 2 was treated as a 20-plex dataset for the analysis.
-As discussed in the manuscript [@hyper] as it has been shown that
+As discussed in the manuscript [@hyper] it has been shown that
 combining replicates across from different gradients can increase
 spatial resolution [@Trotter:2010]. The combination of replicates resulted
 in 5032 proteins common in both experiments.
@@ -302,7 +302,7 @@ The same `normalise` function (or `normalize`, both spellings are
 supported) can also be applied in the first case described above.
 Different normalisation methods such as mean or median scaling,
 variance stabilisation or quantile normalisation, to cite a few, can
-be applied to accomodation different needs.
+be applied to accomodate different needs.
 
 As previously mentioned, before combination, the two replicates in the
 `hl` data that we read into R were separately normalised by sum (i.e.
