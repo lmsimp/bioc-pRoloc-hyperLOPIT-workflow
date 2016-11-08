@@ -574,7 +574,7 @@ analyses can be time consuming, but it is important to define markers
 that are representative of the multivariate data space and on which a
 classifier will be trained and generated. \Biocpkg{pRoloc} provides a
 convenience function, \texttt{addMarkers}, to directly add markers to
-a \texttt{MSnSet} object, as demonstrated in the code chunk
+an \texttt{MSnSet} object, as demonstrated in the code chunk
 below. These marker sets can be accessed using the
 \texttt{pRolocmarkers()} function. Marker sets are stored as a simple
 named vector in R, and originate from in-house user-defined sets of
@@ -829,9 +829,9 @@ illustrating the interface is available in the manuscript repository~\cite{ghrep
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
 etc. The compare application is called by default if the input object
-to \texttt{pRolocVis} is a \texttt{MSnSetList} of 2 \texttt{MSnSets},
+to \texttt{pRolocVis} is an \texttt{MSnSetList} of 2 \texttt{MSnSets},
 but it can also be specified by calling the argument \texttt{app =
-  "compare"}. For example, in the code chunk below we first create a
+  "compare"}. For example, in the code chunk below we first create an
 \texttt{MSnSetList} of replicates 1 and 2 of the hyperLOPIT data, this
 is then passed to \texttt{pRolocVis}.
 
