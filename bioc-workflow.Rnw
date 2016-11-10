@@ -1377,20 +1377,15 @@ immunofluorescence microscopy, protein annotations and sequences, and
 protein-protein interactions among others, represent a rich and vast
 source of complementary information. We can integrate this auxiliary
 information with our primary MS-based quantitative data using a
-paradigm known as transfer learning (TL). Transfer learning may be
-particuarly useful when sub-cellular niches are not equally
-well-resolved in a particular experiment, or if we have overlapping
-clusters in the data.
-
-The integration of data between different technologies is one of the
-biggest challenges in computational biology to date and the
-\Biocpkg{pRoloc} package provides functionality to do such analyses.
-We recently developed two transfer learning algorithms using a $k$-NN
-and SVM framework and applied them to the task of protein localisation
-prediction \cite{Breckels:2016}. In this section we will begin with
-explaining the concept of transfer learning and then show how to apply
-this in the frame of spatial proteomics and protein localisation
-prediction.
+paradigm known as transfer learning (TL). The integration of data
+between different technologies is one of the biggest challenges in
+computational biology to date and the \Biocpkg{pRoloc} package
+provides functionality to do such analyses. We recently developed two
+transfer learning algorithms using a $k$-NN and SVM framework and
+applied them to the task of protein localisation prediction
+\cite{Breckels:2016}. In this section we will begin with explaining
+the concept of transfer learning and then show how to apply this in
+the frame of spatial proteomics and protein localisation prediction.
 
 In TL one typically has a primary task that one wishes to solve, and
 some complementary (often heterogeneous) auxiliary information that is
@@ -1399,9 +1394,8 @@ solve the primary goal. For example, here our primary task is to
 assign proteins to their sub-cellular niche with high generalisation
 accuracy from data collected from quantitative MS-based experiments.
 We have already seen that straightforward supervised ML works well for
-these types of experiments, however, 
-Transfer learning is particularly useful for
-classes that are not as well separated.
+these types of experiments, however, Transfer learning is particularly
+useful for classes that are not as well separated.
 
 In the example below we extract Gene Ontology (GO) information to use
 as an auxiliary data source to help solve our task of protein
