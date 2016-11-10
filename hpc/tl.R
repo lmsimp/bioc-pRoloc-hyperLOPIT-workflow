@@ -9,8 +9,6 @@ library("pRoloc", lib.loc = lp)
 library("pRolocdata", lib.loc = lp)
 library("BiocParallel", lib.loc = lp)
 library("Rmpi")
-stopifnot(packageVersion("MLInterfaces") >= "1.53.1")
-
 
 ## Load LOPIT and GOCC data from pRolocdata package
 data("hyperLOPIT2015")
