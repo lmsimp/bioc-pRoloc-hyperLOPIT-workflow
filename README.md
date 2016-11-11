@@ -23,13 +23,10 @@ You are free:
 for any purpose, even commercially. The licensor cannot revoke these
 freedoms as long as you follow these license terms:
 
-* **Attribution** - You must give appropriate credit (mentioning that
-    your work is derived from work that is Copyright (c) Software
-    Carpentry and, where practical, linking to
-    http://software-carpentry.org/), provide a link to the license,
-    and indicate if changes were made. You may do so in any reasonable
-    manner, but not in any way that suggests the licensor endorses you
-    or your use.
+* **Attribution** - You must give appropriate credit provide a link to
+    the license, and indicate if changes were made. You may do so in
+    any reasonable manner, but not in any way that suggests the
+    licensor endorses you or your use.
 
 **No additional restrictions** - You may not apply legal terms or
 technological measures that legally restrict others from doing
