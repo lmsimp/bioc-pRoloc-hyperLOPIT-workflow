@@ -70,7 +70,7 @@ increase spatial resolution @Trotter:2010. The combination of replicates
 resulted in 5032 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
-structured and annotated computational object from the experiment
+structured and annotated computational objects from the experiment
 package. In this workflow, we will start with a description of how to
 generate these ad hoc objects starting from an arbitrary spreadsheets,
 as produced by many popular third-party applications.
@@ -245,7 +245,7 @@ description, number of quantified peptides etc (see below).
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ##  MSnbase version: 2.0.0
+    ##  MSnbase version: 2.0.1
 
 Below, we examine the quantitative information for first 5 proteins. It
 is also possible to access specific rows and columns by naming the
@@ -552,7 +552,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:57:45 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 14:38:29 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -608,10 +608,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Tue Nov  8 19:57:45 2016 
-    ## Subset [6725,20][5032,20] Tue Nov  8 19:57:46 2016 
-    ## Removed features with more than 0 NAs: Tue Nov  8 19:57:46 2016 
-    ## Dropped featureData's levels Tue Nov  8 19:57:46 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 14:38:29 2016 
+    ## Subset [6725,20][5032,20] Wed Nov 30 14:38:29 2016 
+    ## Removed features with more than 0 NAs: Wed Nov 30 14:38:29 2016 
+    ## Dropped featureData's levels Wed Nov 30 14:38:29 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -635,23 +635,25 @@ methods, that allows one to effectively summarise multi-dimensional data
 in to 2 or 3 dimensions to enable visualisation. Very generally, the
 original continuous multi-dimensional data is transformed into a set of
 orthogonal components ordered according to the amount of variability
-that they describe. The `plot2D` method in allows one to plot the
-principal components (PCs) of a dataset against one another, by default
-the first two components are plotted on the x- and y-axis, respectively
-(the `dims` argument can be used to plot other PCs). If distinct
-clusters are observed, we assume that there is organellar separation
-present in the data. Although, representing the multi-dimensional data
-along a limited set of PCs does not give us a hard quantitative measure
-of separation, it is extremely useful summarising complex experimental
-information in one figure, to get a simplified overview of the data.
+that they describe. The `plot2D` and `plot3D` methods in allows one to
+plot the principal components (PCs) of a dataset against one another, by
+default the first two components are plotted on the x- and y-axis for
+the `plot2D` function, and first three components are loaded for the
+`plot3D` function, respectively (the `dims` argument can be used to plot
+other PCs). If distinct clusters are observed, we assume that there is
+organellar separation present in the data. Although, representing the
+multi-dimensional data along a limited set of PCs does not give us a
+hard quantitative measure of separation, it is extremely useful
+summarising complex experimental information in one figure, to get a
+simplified overview of the data.
 
-In the code chunk below we produce a PCA plot of the mouse stem cell
-dataset (Figure [fig:pcahl]). One point on the plot represents one
-protein. We can indeed see several distinct protein clusters. We specify
-`fcol = NULL`, which means not to consider any feature variable to
-annotate the features (proteins) with colours. We will see later how to
-use this argument to annotate the PCA plot with prior information about
-sub-cellular localisation.
+In the code chunk below we produce a 2-dimensional PCA plot of the mouse
+stem cell dataset (Figure [fig:pcahl]). One point on the plot represents
+one protein. We can indeed see several distinct protein clusters. We
+specify `fcol = NULL`, which means not to consider any feature variable
+to annotate the features (proteins) with colours. We will see later how
+to use this argument to annotate the PCA plot with prior information
+about sub-cellular localisation.
 
 \
 `      `\
@@ -795,6 +797,9 @@ conversion can be performed using , the Bioconductor [annotation
 resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
 or any conversion softwares available online.
 
+\*Adding user-defined marker lists
+----------------------------------
+
 It is also possible for users to use their own marker list with the
 `addMarkers` function. The user needs to create a named vector of marker
 localisation, or a create a csv file with two columns (one for the
@@ -802,19 +807,33 @@ protein names, one for the corresponding sub-cellular marker annotation)
 and pass the vector or filename respectively to the function. As
 previously mentioned, the protein names of these markers must match some
 (but not necessarily all) of the `MSnSet`’s feature names. See
-\`?addMarkers\` for more details.
+`?addMarkers` for more details.
 
-We now visualise these annotations along the PCA plot using the `plot2D`
-function and then use the `addLegend` function to map the marker classes
-to the pre-defined colours. We also display the data along the first and
-seventh PCs using the `dims` argument. Note that in these calls to the
-`plot2D` function, we have omitted the `fcol` argument and use of the
-default `markers` feature variable to annotate the plot. We choose to
-display PCs 1 and 7 to illustrate that while upper principal components
-explain much less variability in the data (2.23% for PC7, as opposed to
-48.41% for PC1), we see that the mitochondrial (purple) and peroxisome
-(dark blue) clusters can be differenciated, despite the apparent overlap
-in the visualisation of the two first PCs (Figure [fig:plotmarkers]).
+In general, the Gene Ontology (GO) @Ashburner:2000, and in particular
+the cellular compartment (CC) namespace are a good starting point for
+protein annotation and marker definition. It is important to note
+however that automatic retrieval of sub-cellular localisation
+information, from or elsewhere, is only the beginning in defining a
+marker set for downstream analyses. Expert curation is vital to check
+that any annotation added is in the correct context for the biological
+question under investigation.
+
+\*Visualising markers
+---------------------
+
+Having added a the mouse markers to our `fData` from the `pRolocmarkers`
+we can now visualise these annotations along the PCA plot using the
+`plot2D` function and then use the `addLegend` function to map the
+marker classes to the pre-defined colours. We also display the data
+along the first and seventh PCs using the `dims` argument. Note that in
+these calls to the `plot2D` function, we have omitted the `fcol`
+argument and use of the default `markers` feature variable to annotate
+the plot. We choose to display PCs 1 and 7 to illustrate that while
+upper principal components explain much less variability in the data
+(2.23% for PC7, as opposed to 48.41% for PC1), we see that the
+mitochondrial (purple) and peroxisome (dark blue) clusters can be
+differenciated, despite the apparent overlap in the visualisation of the
+two first PCs (Figure [fig:plotmarkers]).
 
 `   `\
 `   `\
@@ -856,15 +875,6 @@ of *unknown* localisation.
     ##         Plasma membrane              Proteasome                 unknown 
     ##                      51                      34                    4122
 
-In general, the Gene Ontology (GO) @Ashburner:2000, and in particular
-the cellular compartment (CC) namespace are a good starting point for
-protein annotation and marker definition. It is important to note
-however that automatic retrieval of sub-cellular localisation
-information, from or elsewhere, is only the beginning in defining a
-marker set for downstream analyses. Expert curation is vital to check
-that any annotation added is in the correct context for the biological
-question under investigation.
-
 Another useful visualisation that relies on marker annotation is the
 representation of the protein profiles occupancy along the gradient
 using the `plotDist` function. While the PCA plot enables to efficiently
@@ -892,6 +902,50 @@ figure [fig:plotmarkers].
 
 Finally, in addition to `plot2D`, the `plot3D` function allows to
 interactively explore a 3-dimensional plot of the data.
+
+Features of interest {#features-of-interest .unnumbered}
+--------------------
+
+In addition to adding annotation using the `addMarkers` function one can
+store specific sets of proteins by using the *Features of interest*
+infrastructure from the package. If users have a specific subset of
+proteins they wish to highlight in their data they would first create a
+`FeaturesOfInterest` object. For example, if we wanted to highlight a
+proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156,
+which are some of the proteins known to form part of the 13S condensin
+complex, we would create a first create a `FeaturesOfInterest` object
+then use the function `highlightOnPlot` to highlight their location on a
+PCA plot.
+
+`     `\
+`    `\
+`                              `\
+`                              `\
+
+    ## Traceable object of class "FeaturesOfInterest"
+    ##  Created on Wed Nov 30 14:38:32 2016 
+    ##  Description:
+    ##   13S consensin proteins
+    ##  4 features of interest:
+    ##    Q8CG48, Q8CG47, Q8K2Z4, Q8C156
+
+\
+`   `\
+
+![Highlighting protein features of interest](figure/foi-1)
+
+[fig:foi]
+
+Users can also create several sets of `FeaturesOfInterest` object and
+store them in a `FoICollection`.
+
+It is also worthly of note that it is possible to search for a specific
+protein of interest by `featureNames` or using any identifying
+information found in the `fData` columns by using the search box on the
+`pRolocVis` application part of the package (see section on interactive
+visualisation). This can be handy for quickly searching and highlighting
+proteins on the fly, the disavanatge here is that proteins can only be
+searched for a one-by-one basis.
 
 Replication {#replication .unnumbered}
 ===========
@@ -930,7 +984,9 @@ experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
 that in the code chunk below, we mirror the x-axis to represent the two
-figures with the same orientation.
+figures with the same orientation. The interactive “compare” application
+part of the package is also useful for examining replicate experiments
+(see the next section interactive visualisation for details).
 
 `   `\
 `     `\
@@ -950,9 +1006,12 @@ interrogate quantitative spatial proteomics data. The package is
 currently under active development and it relies on the `shiny`
 framework for reactivity and interactivity. The package currently
 distributes 3 different GUI’s (*main* (default), *compare* or *compare*)
-which are wrapped and launched by the `pRolocVis` function. In the below
-code chunk we lauch the main app (note, we do not need to specify the
-argument, `app = main` as it is the default).
+which are wrapped and launched by the `pRolocVis` function.
+
+### The main application {#the-main-application .unnumbered}
+
+In the below code chunk we lauch the main app (note, we do not need to
+specify the argument, `app = main` as it is the default).
 
 \
 
@@ -973,6 +1032,8 @@ used to examine the patterns of proteins of interest. The Table
 selection tab provides an interface to control data table column
 selection. A short animation[^1] illustrating the interface is available
 in the manuscript repository @ghrepo.
+
+### The compare application {#the-compare-application .unnumbered}
 
 The *compare* application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
@@ -1008,6 +1069,8 @@ dataset appears on the left, and the second re-mapped data appears on
 the right. The order of the first (the reference data for remapping) and
 second dataset can be changed through regeneration/re-ordering of the
 `MSnSetList` object.
+
+### The classify application {#the-classify-application .unnumbered}
 
 The final application *classify*, has been designed to view machine
 learning classification results according to user-specified thresholds
@@ -1142,9 +1205,9 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Tue Nov  8 19:57:47 2016 
-    ## Added markers from  'pdres' marker vector. Tue Nov  8 19:57:48 2016 
-    ##  MSnbase version: 2.0.0
+    ## Added markers from  'mrk' marker vector. Wed Nov 30 14:38:31 2016 
+    ## Added markers from  'pdres' marker vector. Wed Nov 30 14:38:32 2016 
+    ##  MSnbase version: 2.0.1
 
 `   `
 
@@ -1447,29 +1510,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4361397               0.3054709               0.3865287 
+    ##               0.4346815               0.3050109               0.3898494 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6876809               0.6130306               0.4310852 
+    ##               0.6915344               0.6018374               0.4277405 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4143871               0.6198125               0.9504927 
+    ##               0.4215606               0.6043865               0.9499822 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7985420               0.7115356               0.3171008 
+    ##               0.7959813               0.7080413               0.3162206 
     ##         Plasma membrane              Proteasome 
-    ##               0.7140531               0.4219360
+    ##               0.7248143               0.4135359
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     172                      89 
+    ##                      84                     171                      88 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     475                     107 
+    ##                     296                     476                     109 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     118                     522 
+    ##                      24                     119                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     347                      39 
+    ##                     230                     343                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     315                     155                    2056
+    ##                     315                     158                    2058
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1543,9 +1606,13 @@ some complementary (often heterogeneous) auxiliary information that is
 related to the primary learning objective, that can be used to help
 solve the primary goal. For example, here our primary task is to assign
 proteins to their sub-cellular niche with high generalisation accuracy
-from data collected from quantitative MS-based experiments. In the
-example below we extract Gene Ontology (GO) information to use as an
-auxiliary data source to help solve our task of protein localisation
+from data collected from quantitative MS-based experiments. We have
+already seen that straightforward supervised ML works well for these
+types of experiments, however, Transfer learning is particularly useful
+for classes that are not as well separated.
+
+In the example below we extract Gene Ontology (GO) information to use as
+an auxiliary data source to help solve our task of protein localisation
 prediction.
 
 Using the functions `setAnnotationParams` and `makeGoSet` we can
@@ -1869,63 +1936,58 @@ position to re-generate the original results using the adequate software
 versions and retrace changes in the software that lead to failure and/or
 different results.
 
-    ## R version 3.3.2 Patched (2016-11-01 r71616)
-    ## Platform: x86_64-pc-linux-gnu (64-bit)
-    ## Running under: Ubuntu 14.04.5 LTS
+    ## R Under development (unstable) (2015-11-11 r69621)
+    ## Platform: x86_64-apple-darwin13.4.0 (64-bit)
+    ## Running under: OS X 10.11.5 (El Capitan)
     ## 
     ## locale:
-    ##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
-    ##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
-    ##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
-    ##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
-    ##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-    ## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+    ## [1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
     ## 
     ## attached base packages:
     ## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
     ## [8] datasets  base     
     ## 
     ## other attached packages:
-    ##  [1] pRolocdata_1.12.0    pRoloc_1.14.3        MLInterfaces_1.54.0 
-    ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
-    ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
-    ## [10] MSnbase_2.0.0        ProtGenerics_1.6.0   BiocParallel_1.8.1  
-    ## [13] mzR_2.8.0            Rcpp_0.12.7          Biobase_2.34.0      
+    ##  [1] pRolocdata_1.12.0    pRoloc_1.14.4        MLInterfaces_1.54.0 
+    ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.5        
+    ##  [7] AnnotationDbi_1.36.0 IRanges_2.5.40       S4Vectors_0.9.45    
+    ## [10] MSnbase_2.0.1        ProtGenerics_1.6.0   BiocParallel_1.8.1  
+    ## [13] mzR_2.8.0            Rcpp_0.12.8          Biobase_2.34.0      
     ## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
-    ## [19] BiocStyle_2.2.0      knitr_1.14          
+    ## [19] BiocStyle_2.2.1      knitr_1.15.1        
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
+    ##   [1] minqa_1.2.4           colorspace_1.3-1      hwriter_1.3.2        
     ##   [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
     ##   [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
     ##  [10] hexbin_1.27.1         MatrixModels_0.4-1    affyio_1.44.0        
     ##  [13] flexmix_2.3-13        mvtnorm_1.0-5         codetools_0.2-15     
-    ##  [16] splines_3.3.2         doParallel_1.0.10     impute_1.48.0        
+    ##  [16] splines_3.3.0         doParallel_1.0.10     impute_1.48.0        
     ##  [19] robustbase_0.92-6     jsonlite_1.1          nloptr_1.0.4         
-    ##  [22] caret_6.0-72          pbkrtest_0.4-6        rda_1.0.2-2          
+    ##  [22] caret_6.0-73          pbkrtest_0.4-6        rda_1.0.2-2          
     ##  [25] kernlab_0.9-25        vsn_3.42.3            sfsmisc_1.1-0        
     ##  [28] shiny_0.14.2          sampling_2.7          assertthat_0.1       
-    ##  [31] Matrix_1.2-7.1        limma_3.30.2          formatR_1.4          
-    ##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.2          
+    ##  [31] Matrix_1.2-7.1        lazyeval_0.2.0        limma_3.30.5         
+    ##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.0          
     ##  [37] ggvis_0.4.3           gtable_0.2.0          affy_1.52.0          
     ##  [40] reshape2_1.4.2        dplyr_0.5.0           MALDIquant_1.15      
     ##  [43] trimcluster_0.1-2     gdata_2.17.0          preprocessCore_1.36.0
     ##  [46] nlme_3.1-128          iterators_1.0.8       fpc_2.1-10           
     ##  [49] stringr_1.1.0         lme4_1.1-12           lpSolve_5.6.13       
     ##  [52] mime_0.5              gtools_3.5.0          dendextend_1.3.0     
-    ##  [55] DEoptimR_1.0-6        zlibbioc_1.20.0       MASS_7.3-45          
-    ##  [58] scales_0.4.0          BiocInstaller_1.24.0  pcaMethods_1.66.0    
-    ##  [61] SparseM_1.72          RColorBrewer_1.1-2    ggplot2_2.1.0        
-    ##  [64] biomaRt_2.30.0        rpart_4.1-10          stringi_1.1.2        
-    ##  [67] RSQLite_1.0.0         highr_0.6             genefilter_1.56.0    
-    ##  [70] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
-    ##  [73] prabclus_2.2-6        bitops_1.0-6          mzID_1.12.0          
-    ##  [76] evaluate_0.10         lattice_0.20-34       htmlwidgets_0.7      
-    ##  [79] gbm_2.1.1             plyr_1.8.4            magrittr_1.5         
-    ##  [82] R6_2.2.0              DBI_0.5-1             whisker_0.3-2        
-    ##  [85] mgcv_1.8-15           survival_2.40-1       RCurl_1.95-4.8       
-    ##  [88] nnet_7.3-12           tibble_1.2            msdata_0.14.0        
-    ##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.2           
+    ##  [55] DEoptimR_1.0-8        zlibbioc_1.20.0       MASS_7.3-45          
+    ##  [58] scales_0.4.1          BiocInstaller_1.24.0  pcaMethods_1.66.0    
+    ##  [61] SparseM_1.74          RColorBrewer_1.1-2    memoise_1.0.0        
+    ##  [64] ggplot2_2.2.0         biomaRt_2.30.0        rpart_4.1-10         
+    ##  [67] stringi_1.1.2         RSQLite_1.1           highr_0.6            
+    ##  [70] genefilter_1.56.0     randomForest_4.6-12   foreach_1.4.3        
+    ##  [73] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
+    ##  [76] mzID_1.12.0           evaluate_0.10         lattice_0.20-34      
+    ##  [79] htmlwidgets_0.8       gbm_2.1.1             plyr_1.8.4           
+    ##  [82] magrittr_1.5          R6_2.2.0              DBI_0.5-1            
+    ##  [85] whisker_0.3-2         mgcv_1.8-16           survival_2.40-1      
+    ##  [88] RCurl_1.95-4.8        nnet_7.3-12           tibble_1.2           
+    ##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.0           
     ##  [94] FNN_1.1               ModelMetrics_1.1.0    threejs_0.2.2        
     ##  [97] digest_0.6.10         diptest_0.75-7        httpuv_1.3.3         
     ## [100] munsell_0.4.3
