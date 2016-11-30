@@ -634,7 +634,7 @@ this is not the case however, conversion can be performed using
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
 
-\subsection{*Adding user-defined marker lists}
+\subsection*{Adding user-defined marker lists}
 It is also possible for users to use their own marker list with the
 \texttt{addMarkers} function. The user needs to create a named vector
 of marker localisation, or a create a csv file with two columns (one
@@ -654,7 +654,7 @@ curation is vital to check that any annotation added is in the correct
 context for the biological question under investigation.
 
 
-\subsection{*Visualising markers}
+\subsection*{Visualising markers}
 Having added a the mouse markers to our \texttt{fData} from the \texttt{pRolocmarkers} we can now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
 to map the marker classes to the pre-defined colours. We also display
@@ -738,7 +738,19 @@ Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
 
 \subsection*{Features of interest}
-In addition to adding annotation using the \texttt{addMarkers} function one can store specific sets of proteins by using the \textit{Features of interest} infrastructure from the \Biocpkg{MSnbase} package. If users have a specific subset of proteins they wish to highlight in their data they would first create a \texttt{FeaturesOfInterest} object. For example, if we wanted to highlight a proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, which are some of the proteins known to form part of the 13S condensin complex, we would create a first create a \texttt{FeaturesOfInterest} object then use the function \texttt{highlightOnPlot} to highlight their location on a PCA plot.
+
+In addition to adding annotation using the \texttt{addMarkers}
+function, one can store specific sets of proteins by using the
+\textit{Features of interest} infrastructure from the
+\Biocpkg{MSnbase} package. If users have specific subsets of proteins
+they wish to highlight in their data (possibly across multiple
+experiments) they would first create a \texttt{FeaturesOfInterest}
+object. For example, if we wanted to highlight a proteins with the
+accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, which are some
+of the proteins known to form part of the 13S condensin complex, we
+would create a first create a \texttt{FeaturesOfInterest} object, and
+subsequently highlight their location on a PCA plot with the
+\texttt{highlightOnPlot} function.
 
 \begin{figure}[!ht]
   \centering
@@ -753,13 +765,21 @@ plot2D(hl)
 addLegend(hl, cex = .6)
 highlightOnPlot(hl, foi13s)
 @  
-  \caption{Highlighting protein features of interest}
+  \caption{Highlighting protein features of interest.}
   \label{fig:foi}
 \end{figure}
 
-Users can also create several sets of \texttt{FeaturesOfInterest} object and store them in a \texttt{FoICollection}.
+Users can also create several sets of \texttt{FeaturesOfInterest}
+object and store them in a \texttt{FoICollection}.
 
-It is also worthly of note that it is possible to search for a specific protein of interest by \texttt{featureNames} or using any identifying information found in the \texttt{fData} columns by using the search box on the \texttt{pRolocVis} application part of the \Biocpkg{pRolocGUI} package (see section on interactive visualisation). This can be handy for quickly searching and highlighting proteins on the fly, the disavanatge here is that proteins can only be searched for a one-by-one basis.
+It is also worthly of note that it is possible to search for a
+specific protein of interest by \texttt{featureNames} or using any
+identifying information found in the \texttt{fData} columns by using
+the search box on the \texttt{pRolocVis} application part of the
+\Biocpkg{pRolocGUI} package (see section on interactive
+visualisation). This can be handy for quickly searching and
+highlighting proteins on the fly, the disavanatge here is that
+proteins can only be searched for a one-by-one basis.
 
 \section*{Replication}
 
