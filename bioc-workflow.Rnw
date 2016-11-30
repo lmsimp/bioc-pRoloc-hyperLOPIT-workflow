@@ -84,7 +84,7 @@ different gradients can increase spatial resolution
 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
-structured and annotated computational object from the 
+structured and annotated computational objects from the 
 \Biocexptpkg{pRolocdata} experiment package. In this workflow, we
 will start with a description of how to generate these ad hoc objects
 starting from an arbitrary spreadsheets, as produced by many popular
@@ -183,7 +183,7 @@ quantitation data is stored.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.65\textwidth]{./Figures/spreadsheet-screenshot.png}
+  \includegraphics[width=.85\textwidth]{./Figures/spreadsheet-screenshot.png}
   \caption{A screenshot of the data in the spreadsheet.}
   \label{fig:spreadsheet}
 \end{figure}
@@ -497,9 +497,9 @@ multi-dimensional data in to 2 or 3 dimensions to enable
 visualisation. Very generally, the original continuous
 multi-dimensional data is transformed into a set of orthogonal
 components ordered according to the amount of variability that they
-describe. The \texttt{plot2D} method in \Biocpkg{pRoloc} allows one to
+describe. The \texttt{plot2D} and \texttt{plot3D} methods in \Biocpkg{pRoloc} allows one to
 plot the principal components (PCs) of a dataset against one another,
-by default the first two components are plotted on the x- and y-axis,
+by default the first two components are plotted on the x- and y-axis for the \texttt{plot2D} function, and first three components are loaded for the \texttt{plot3D} function,
 respectively (the \texttt{dims} argument can be used to plot other PCs). If
 distinct clusters are observed, we assume that there is organellar
 separation present in the data. Although, representing the
@@ -508,7 +508,7 @@ hard quantitative measure of separation, it is extremely useful
 summarising complex experimental information in one figure, to get a
 simplified overview of the data.
 
-In the code chunk below we produce a PCA plot of the mouse stem cell
+In the code chunk below we produce a 2-dimensional PCA plot of the mouse stem cell
 dataset (Figure \ref{fig:pcahl}). One point on the plot represents one
 protein. We can indeed see several distinct protein clusters. We
 specify \texttt{fcol = NULL}, which means not to consider any feature
@@ -641,7 +641,7 @@ for the protein names, one for the corresponding sub-cellular marker
 annotation) and pass the vector or filename respectively to the
 function. As previously mentioned, the protein names of these markers
 must match some (but not necessarily all) of the \texttt{MSnSet}'s
-feature names. See `?addMarkers` for more details.
+feature names. See \texttt{?addMarkers} for more details.
 
 We now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
@@ -768,8 +768,7 @@ experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
 that in the code chunk below, we mirror the x-axis to represent the
-two figures with the same orientation.
-
+two figures with the same orientation. The interactive "compare" application part of the \Biocpkg{pRolocGUI} package is also useful for examining replicate experiments (see the next section interactive visualisation for details).
 
 \begin{figure}[!ht]
   \centering
@@ -795,7 +794,10 @@ development and it relies on the \texttt{shiny} framework for
 reactivity and interactivity. The package currently distributes 3
 different GUI's (\textit{main} (default), \textit{compare} or
 \textit{compare}) which are wrapped and launched by the
-\texttt{pRolocVis} function. In the below code chunk we lauch the main
+\texttt{pRolocVis} function. 
+
+\subsubsection*{The main application}
+In the below code chunk we lauch the main
 app (note, we do not need to specify the argument, \texttt{app =
   "main"} as it is the default).
 
@@ -826,6 +828,7 @@ control data table column selection. A short
 animation\footnote{\url{https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis\_pca.gif}}
 illustrating the interface is available in the manuscript repository~\cite{ghrepo}.
 
+\subsubsection*{The compare application}
 The \textit{compare} application is useful for examining two replicate
 experiments, or two experiments from different conditions, treatments
 etc. The compare application is called by default if the input object
@@ -867,6 +870,7 @@ the second re-mapped data appears on the right. The order of the first
 (the reference data for remapping) and second dataset can be changed
 through regeneration/re-ordering of the \texttt{MSnSetList} object.
 
+\subsubsection*{The classify application}
 The final application \textit{classify}, has been designed to view
 machine learning classification results according to user-specified
 thresholds for the assignment of proteins to its sub-cellular
