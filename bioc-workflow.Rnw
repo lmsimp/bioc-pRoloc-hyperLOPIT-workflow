@@ -1803,8 +1803,8 @@ repository on GitHub~\cite{ghrepo}.
 
 \subsection*{Author contributions}
 
-All authors developed the software presented in this workflow, and
-wrote and approved the manuscript.
+LMB and LG developed the software presented in this workflow. All
+authors wrote and approved the manuscript.
 
 \subsection*{Competing interests}
 

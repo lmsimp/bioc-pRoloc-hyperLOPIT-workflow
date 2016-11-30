@@ -552,7 +552,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:02:25 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:12:03 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -608,10 +608,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:02:25 2016 
-    ## Subset [6725,20][5032,20] Wed Nov 30 15:02:26 2016 
-    ## Removed features with more than 0 NAs: Wed Nov 30 15:02:26 2016 
-    ## Dropped featureData's levels Wed Nov 30 15:02:26 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:12:03 2016 
+    ## Subset [6725,20][5032,20] Wed Nov 30 15:12:04 2016 
+    ## Removed features with more than 0 NAs: Wed Nov 30 15:12:04 2016 
+    ## Dropped featureData's levels Wed Nov 30 15:12:04 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -889,23 +889,14 @@ figure [fig:plotmarkers].
 
 `   `\
 `  `\
-`              `
-
-<span>****</span>
-
-`  `
-
-<span>****</span>
-
+`              `\
 `  `\
-`                 `
-
-<span>****</span>
-
+`  `\
+`                 `\
 `  `\
 `                `
 
-<span>****</span>
+![Mitochondrion and peroxisome protein profiles.](figure/plotDist-1)
 
 [fig:plotDist2]
 
@@ -932,7 +923,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Wed Nov 30 15:02:28 2016 
+    ##  Created on Wed Nov 30 15:12:06 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1214,8 +1205,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Wed Nov 30 15:02:27 2016 
-    ## Added markers from  'pdres' marker vector. Wed Nov 30 15:02:28 2016 
+    ## Added markers from  'mrk' marker vector. Wed Nov 30 15:12:05 2016 
+    ## Added markers from  'pdres' marker vector. Wed Nov 30 15:12:06 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1519,29 +1510,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4348219               0.3034081               0.3800417 
+    ##               0.4326026               0.3045332               0.3826336 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6838374               0.5953475               0.4285470 
+    ##               0.6807851               0.5976944               0.4357420 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4261188               0.5933032               0.9494300 
+    ##               0.4311652               0.5972311               0.9495941 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7951832               0.7086165               0.3130830 
+    ##               0.7957440               0.7108354               0.3150959 
     ##         Plasma membrane              Proteasome 
-    ##               0.7004839               0.4193368
+    ##               0.7141152               0.4175162
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      84                     173                      83 
+    ##                      85                     171                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     294                     473                     101 
+    ##                     295                     473                     101 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      28                     124                     523 
+    ##                      27                     123                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     344                      39 
+    ##                     229                     345                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     321                     158                    2057
+    ##                     321                     159                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`

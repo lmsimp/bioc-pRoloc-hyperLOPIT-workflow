@@ -725,7 +725,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:02:25 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:14:03 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -807,10 +807,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:02:25 2016 
-## Subset [6725,20][5032,20] Wed Nov 30 15:02:26 2016 
-## Removed features with more than 0 NAs: Wed Nov 30 15:02:26 2016 
-## Dropped featureData's levels Wed Nov 30 15:02:26 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:14:03 2016 
+## Subset [6725,20][5032,20] Wed Nov 30 15:14:04 2016 
+## Removed features with more than 0 NAs: Wed Nov 30 15:14:04 2016 
+## Dropped featureData's levels Wed Nov 30 15:14:04 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1151,27 +1151,15 @@ along the 7th PC on the PCA plot on figure \ref{fig:plotmarkers}.
 \hlstd{hlo} \hlkwb{<-} \hlstd{hl[,} \hlkwd{order}\hlstd{(hl}\hlopt{$}\hlstd{Iodixonal.Density)]}
 \hlkwd{plotDist}\hlstd{(hlo[}\hlkwd{fData}\hlstd{(hlo)}\hlopt{$}\hlstd{markers} \hlopt{==} \hlstr{"Mitochondrion"}\hlstd{, ],}
          \hlkwc{pcol} \hlstd{=} \hlstr{"purple"}\hlstd{,} \hlkwc{fractions} \hlstd{=} \hlstr{"Tag"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `[.data.frame`(pData(object), , .frac): object '.frac' not found}}\begin{alltt}
 \hlkwd{title}\hlstd{(}\hlkwc{main} \hlstd{=} \hlstr{"Marker occupancy profiles along the gradient"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in title(main = "{}Marker occupancy profiles along the gradient"{}): plot.new has not been called yet}}\begin{alltt}
 \hlkwd{matlines}\hlstd{(}\hlkwd{t}\hlstd{(}\hlkwd{exprs}\hlstd{(hlo[}\hlkwd{fData}\hlstd{(hlo)}\hlopt{$}\hlstd{markers} \hlopt{==} \hlstr{"Peroxisome"}\hlstd{, ])),}
          \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{col} \hlstd{=} \hlstr{"darkblue"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"l"}\hlstd{)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in plot.xy(xy.coords(x, y), type = type, ...): plot.new has not been called yet}}\begin{alltt}
 \hlkwd{legend}\hlstd{(}\hlstr{"topleft"}\hlstd{,} \hlkwd{c}\hlstd{(}\hlstr{"Mitochondrion"}\hlstd{,} \hlstr{"Peroxisome"}\hlstd{),}
        \hlkwc{lty} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{col} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"purple"}\hlstd{,} \hlstr{"blue"}\hlstd{),} \hlkwc{bty} \hlstd{=} \hlstr{"n"}\hlstd{)}
 \end{alltt}
+\end{kframe}
+\includegraphics[width=.6\textwidth]{figure/plotDist-1} 
 
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in strwidth(legend, units = "{}user"{}, cex = cex, font = text.font): plot.new has not been called yet}}\end{kframe}
 \end{knitrout}
   \caption{Mitochondrion and peroxisome protein profiles.}
   \label{fig:plotDist2}
@@ -1208,7 +1196,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Wed Nov 30 15:02:28 2016 
+##  Created on Wed Nov 30 15:14:06 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1262,7 +1250,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Wed Nov 30 15:02:28 2016
+% Wed Nov 30 15:14:06 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1560,8 +1548,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Nov 30 15:02:27 2016 
-## Added markers from  'pdres' marker vector. Wed Nov 30 15:02:28 2016 
+## Added markers from  'mrk' marker vector. Wed Nov 30 15:14:05 2016 
+## Added markers from  'pdres' marker vector. Wed Nov 30 15:14:06 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -1972,15 +1960,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4348219               0.3034081               0.3800417 
+##               0.4366549               0.3041349               0.3799370 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6838374               0.5953475               0.4285470 
+##               0.6880299               0.6002876               0.4310921 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4261188               0.5933032               0.9494300 
+##               0.4165667               0.5997487               0.9494945 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7951832               0.7086165               0.3130830 
+##               0.7934108               0.7117905               0.3160580 
 ##         Plasma membrane              Proteasome 
-##               0.7004839               0.4193368
+##               0.7110269               0.4120044
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1988,15 +1976,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     173                      83 
+##                      85                     170                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     294                     473                     101 
+##                     296                     480                      96 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      28                     124                     523 
+##                      27                     125                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     344                      39 
+##                     230                     340                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     321                     158                    2057
+##                     322                     158                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2600,8 +2588,8 @@ repository on GitHub~\cite{ghrepo}.
 
 \subsection*{Author contributions}
 
-All authors developed the software presented in this workflow, and
-wrote and approved the manuscript.
+LMB and LG developed the software presented in this workflow. All
+authors wrote and approved the manuscript.
 
 \subsection*{Competing interests}
 
