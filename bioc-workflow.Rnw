@@ -689,7 +689,8 @@ plot2D(hl, main = "pRolocmarkers for mouse")
 addLegend(hl, cex = .6)
 plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 @  
-  \caption{Annotated PCA plots of the \texttt{hl} dataset.}
+\caption{Annotated PCA plots of the \texttt{hl} dataset, as produced
+  with \texttt{plt2D} and \texttt{plot3D} (right).}
   \label{fig:plotmarkers}
 \end{figure}
 

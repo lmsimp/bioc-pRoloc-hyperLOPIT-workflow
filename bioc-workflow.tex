@@ -734,7 +734,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:39:06 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:49:34 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -816,10 +816,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:39:06 2016 
-## Subset [6725,20][5032,20] Thu Dec  1 10:39:07 2016 
-## Removed features with more than 0 NAs: Thu Dec  1 10:39:07 2016 
-## Dropped featureData's levels Thu Dec  1 10:39:07 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:49:34 2016 
+## Subset [6725,20][5032,20] Thu Dec  1 10:49:35 2016 
+## Removed features with more than 0 NAs: Thu Dec  1 10:49:35 2016 
+## Dropped featureData's levels Thu Dec  1 10:49:35 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1097,7 +1097,8 @@ the two first PCs (Figure \ref{fig:plotmarkers}).
 \includegraphics[width=\textwidth]{figure/plotmarkers-1} 
 
 \end{knitrout}
-  \caption{Annotated PCA plots of the \texttt{hl} dataset.}
+\caption{Annotated PCA plots of the \texttt{hl} dataset, as produced
+  with \texttt{plt2D} and \texttt{plot3D} (right).}
   \label{fig:plotmarkers}
 \end{figure}
 
@@ -1207,7 +1208,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Thu Dec  1 10:39:09 2016 
+##  Created on Thu Dec  1 10:49:37 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1261,7 +1262,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Thu Dec  1 10:39:09 2016
+% Thu Dec  1 10:49:38 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1562,8 +1563,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Dec  1 10:39:08 2016 
-## Added markers from  'pdres' marker vector. Thu Dec  1 10:39:09 2016 
+## Added markers from  'mrk' marker vector. Thu Dec  1 10:49:37 2016 
+## Added markers from  'pdres' marker vector. Thu Dec  1 10:49:38 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -1974,15 +1975,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4350790               0.3036502               0.3798695 
+##               0.4343505               0.3047508               0.3888373 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6854737               0.6132301               0.4278794 
+##               0.6858101               0.5897977               0.4283659 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4176288               0.6005527               0.9494418 
+##               0.4175965               0.5981079               0.9494104 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7949941               0.7094819               0.3150650 
+##               0.7967111               0.7085718               0.3154399 
 ##         Plasma membrane              Proteasome 
-##               0.7117859               0.4212111
+##               0.7107861               0.4112064
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1990,15 +1991,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     171                      84 
+##                      85                     171                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     299                     467                     103 
+##                     296                     473                      95 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     523 
+##                      26                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      38 
+##                     229                     344                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     323                     156                    2059
+##                     323                     158                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
