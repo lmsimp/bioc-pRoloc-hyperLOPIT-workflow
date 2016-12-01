@@ -31,7 +31,9 @@ for clustering, classification and visualisation.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
-mass spectrometry data. We will focus on a recent pluripotent mouse
+mass spectrometry data, through to some essential data processing
+steps, and finish with different applications of machine learning
+(Figure \ref{fig:overview}). We focus on a recent pluripotent mouse
 embryonic stem cells experiment \cite{hyper}. These data, as well as
 additional annotated and pre-formatted datasets from various species
 are readily available in the \Biocexptpkg{pRolocdata} package.
@@ -56,6 +58,13 @@ keywords. For more general information about mass spectrometry and
 proteomics, the readers are invited to read the
 \Biocexptpkg{RforProteomics} package vignettes and associated
 papers \cite{Gatto:2014,Gatto:2015}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{./Figures/overview.png}
+  \caption{Schematic overview of the pRoloc pipeline from data import, through to data processing, machine learning and data export.}
+  \label{fig:overview}
+\end{figure}
 
 
 \section*{Reading and processing spatial proteomics data}
@@ -101,7 +110,7 @@ To make use of the full functionality of the \Biocpkg{pRoloc} software
 one needs to import their data into R and prepare them as an
 \texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for
 the efficient manipulation and processing of mass spectrometry and
-proteomics data in R. Figure 1 illustrates a simplified view of the
+proteomics data in R. Figure \ref{fig:msnset} illustrates a simplified view of the
 \texttt{MSnSet} structure; there exists 3 key sub-parts (termed slots)
 to such a data object: (1) the \texttt{exprs} (short for
 \textit{expression} data) slot for storing the quantitation data, (2)
@@ -499,8 +508,10 @@ multi-dimensional data is transformed into a set of orthogonal
 components ordered according to the amount of variability that they
 describe. The \texttt{plot2D} and \texttt{plot3D} methods in \Biocpkg{pRoloc} allows one to
 plot the principal components (PCs) of a dataset against one another,
-by default the first two components are plotted on the x- and y-axis for the \texttt{plot2D} function, and first three components are loaded for the \texttt{plot3D} function,
-respectively (the \texttt{dims} argument can be used to plot other PCs). If
+by default the first two components are plotted on the x- and y-axis
+for the \texttt{plot2D} function, and first three components are
+loaded for the \texttt{plot3D} function, respectively (the
+\texttt{dims} argument can be used to plot other PCs). If
 distinct clusters are observed, we assume that there is organellar
 separation present in the data. Although, representing the
 multi-dimensional data along a limited set of PCs does not give us a
@@ -655,19 +666,20 @@ context for the biological question under investigation.
 
 
 \subsection{*Visualising markers}
-Having added a the mouse markers to our \texttt{fData} from the \texttt{pRolocmarkers} we can now visualise these annotations along the PCA plot using the
-\texttt{plot2D} function and then use the \texttt{addLegend} function
-to map the marker classes to the pre-defined colours. We also display
-the data along the first and seventh PCs using the \texttt{dims}
-argument. Note that in these calls to the \texttt{plot2D} function, we
-have omitted the \texttt{fcol} argument and use of the default
-\texttt{"markers"} feature variable to annotate the plot. We choose
-to display PCs 1 and 7 to illustrate that while upper principal
-components explain much less variability in the data (2.23\% for PC7,
-as opposed to 48.41\% for PC1), we see that the mitochondrial (purple)
-and peroxisome (dark blue) clusters can be differenciated, despite the
-apparent overlap in the visualisation of the two first PCs
-(Figure \ref{fig:plotmarkers}).
+Having added a the mouse markers to our \texttt{fData} from the
+\texttt{pRolocmarkers} we can now visualise these annotations along
+the PCA plot using the \texttt{plot2D} function and then use the
+\texttt{addLegend} function to map the marker classes to the
+pre-defined colours. We also display the data along the first and
+seventh PCs using the \texttt{dims} argument. Note that in these calls
+to the \texttt{plot2D} function, we have omitted the \texttt{fcol}
+argument and use of the default \texttt{"markers"} feature variable to
+annotate the plot. We choose to display PCs 1 and 7 to illustrate that
+while upper principal components explain much less variability in the
+data (2.23\% for PC7, as opposed to 48.41\% for PC1), we see that the
+mitochondrial (purple) and peroxisome (dark blue) clusters can be
+differenciated, despite the apparent overlap in the visualisation of
+the two first PCs (Figure \ref{fig:plotmarkers}).
 
 \begin{figure}[!ht]
   \centering
@@ -738,7 +750,17 @@ Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
 
 \subsection*{Features of interest}
-In addition to adding annotation using the \texttt{addMarkers} function one can store specific sets of proteins by using the \textit{Features of interest} infrastructure from the \Biocpkg{MSnbase} package. If users have a specific subset of proteins they wish to highlight in their data they would first create a \texttt{FeaturesOfInterest} object. For example, if we wanted to highlight a proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, which are some of the proteins known to form part of the 13S condensin complex, we would create a first create a \texttt{FeaturesOfInterest} object then use the function \texttt{highlightOnPlot} to highlight their location on a PCA plot.
+In addition to adding annotation using the \texttt{addMarkers}
+function one can store specific sets of proteins by using the
+\textit{Features of interest} infrastructure from the
+\Biocpkg{MSnbase} package. If users have a specific subset of proteins
+they wish to highlight in their data they would first create a
+\texttt{FeaturesOfInterest} object. For example, if we wanted to
+highlight a proteins with the accession numbers Q8CG48, Q8CG47,
+Q8K2Z4, and Q8C156, which are some of the proteins known to form part
+of the 13S condensin complex, we would create a first create a
+\texttt{FeaturesOfInterest} object then use the function
+\texttt{highlightOnPlot} to highlight their location on a PCA plot.
 
 \begin{figure}[!ht]
   \centering
@@ -759,7 +781,14 @@ highlightOnPlot(hl, foi13s)
 
 Users can also create several sets of \texttt{FeaturesOfInterest} object and store them in a \texttt{FoICollection}.
 
-It is also worthly of note that it is possible to search for a specific protein of interest by \texttt{featureNames} or using any identifying information found in the \texttt{fData} columns by using the search box on the \texttt{pRolocVis} application part of the \Biocpkg{pRolocGUI} package (see section on interactive visualisation). This can be handy for quickly searching and highlighting proteins on the fly, the disavanatge here is that proteins can only be searched for a one-by-one basis.
+It is also worthly of note that it is possible to search for a
+specific protein of interest by \texttt{featureNames} or using any
+identifying information found in the \texttt{fData} columns by using
+the search box on the \texttt{pRolocVis} application part of the
+\Biocpkg{pRolocGUI} package (see section on interactive
+visualisation). This can be handy for quickly searching and
+highlighting proteins on the fly, the disavanatge here is that
+proteins can only be searched for a one-by-one basis.
 
 \section*{Replication}
 
@@ -796,7 +825,10 @@ experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
 that in the code chunk below, we mirror the x-axis to represent the
-two figures with the same orientation. The interactive "compare" application part of the \Biocpkg{pRolocGUI} package is also useful for examining replicate experiments (see the next section interactive visualisation for details).
+two figures with the same orientation. The interactive "compare"
+application part of the \Biocpkg{pRolocGUI} package is also useful for
+examining replicate experiments (see the next section interactive
+visualisation for details).
 
 \begin{figure}[!ht]
   \centering
