@@ -295,7 +295,7 @@ etc (see below).
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 2.0.1
+##  MSnbase version: 2.1.4
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -725,7 +725,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 14:38:29 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:14:03 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -807,10 +807,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 14:38:29 2016 
-## Subset [6725,20][5032,20] Wed Nov 30 14:38:29 2016 
-## Removed features with more than 0 NAs: Wed Nov 30 14:38:29 2016 
-## Dropped featureData's levels Wed Nov 30 14:38:29 2016 
+## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:14:03 2016 
+## Subset [6725,20][5032,20] Wed Nov 30 15:14:04 2016 
+## Removed features with more than 0 NAs: Wed Nov 30 15:14:04 2016 
+## Dropped featureData's levels Wed Nov 30 15:14:04 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -949,7 +949,7 @@ are continuosly updated and integrated.
 ## Gallus gallus [ggal]:
 ##  Ids: IPI, 102 markers
 ## Homo sapiens [hsap]:
-##  Ids: Uniprot ID, 205 markers
+##  Ids: Uniprot, 872 markers
 ## Mus musculus [mmus]:
 ##  Ids: Uniprot, 937 markers
 ## Saccharomyces cerevisiae [scer_sgd]:
@@ -1036,7 +1036,7 @@ this is not the case however, conversion can be performed using
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
 
-\subsection{*Adding user-defined marker lists}
+\subsection*{Adding user-defined marker lists}
 It is also possible for users to use their own marker list with the
 \texttt{addMarkers} function. The user needs to create a named vector
 of marker localisation, or a create a csv file with two columns (one
@@ -1056,7 +1056,7 @@ curation is vital to check that any annotation added is in the correct
 context for the biological question under investigation.
 
 
-\subsection{*Visualising markers}
+\subsection*{Visualising markers}
 Having added a the mouse markers to our \texttt{fData} from the \texttt{pRolocmarkers} we can now visualise these annotations along the PCA plot using the
 \texttt{plot2D} function and then use the \texttt{addLegend} function
 to map the marker classes to the pre-defined colours. We also display
@@ -1169,7 +1169,19 @@ Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
 
 \subsection*{Features of interest}
-In addition to adding annotation using the \texttt{addMarkers} function one can store specific sets of proteins by using the \textit{Features of interest} infrastructure from the \Biocpkg{MSnbase} package. If users have a specific subset of proteins they wish to highlight in their data they would first create a \texttt{FeaturesOfInterest} object. For example, if we wanted to highlight a proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, which are some of the proteins known to form part of the 13S condensin complex, we would create a first create a \texttt{FeaturesOfInterest} object then use the function \texttt{highlightOnPlot} to highlight their location on a PCA plot.
+
+In addition to adding annotation using the \texttt{addMarkers}
+function, one can store specific sets of proteins by using the
+\textit{Features of interest} infrastructure from the
+\Biocpkg{MSnbase} package. If users have specific subsets of proteins
+they wish to highlight in their data (possibly across multiple
+experiments) they would first create a \texttt{FeaturesOfInterest}
+object. For example, if we wanted to highlight a proteins with the
+accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, which are some
+of the proteins known to form part of the 13S condensin complex, we
+would create a first create a \texttt{FeaturesOfInterest} object, and
+subsequently highlight their location on a PCA plot with the
+\texttt{highlightOnPlot} function.
 
 \begin{figure}[!ht]
   \centering
@@ -1184,7 +1196,7 @@ In addition to adding annotation using the \texttt{addMarkers} function one can 
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Wed Nov 30 14:38:32 2016 
+##  Created on Wed Nov 30 15:14:06 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1199,13 +1211,21 @@ In addition to adding annotation using the \texttt{addMarkers} function one can 
 \includegraphics[width=.8\textwidth]{figure/foi-1} 
 
 \end{knitrout}
-  \caption{Highlighting protein features of interest}
+  \caption{Highlighting protein features of interest.}
   \label{fig:foi}
 \end{figure}
 
-Users can also create several sets of \texttt{FeaturesOfInterest} object and store them in a \texttt{FoICollection}.
+Users can also create several sets of \texttt{FeaturesOfInterest}
+object and store them in a \texttt{FoICollection}.
 
-It is also worthly of note that it is possible to search for a specific protein of interest by \texttt{featureNames} or using any identifying information found in the \texttt{fData} columns by using the search box on the \texttt{pRolocVis} application part of the \Biocpkg{pRolocGUI} package (see section on interactive visualisation). This can be handy for quickly searching and highlighting proteins on the fly, the disavanatge here is that proteins can only be searched for a one-by-one basis.
+It is also worthly of note that it is possible to search for a
+specific protein of interest by \texttt{featureNames} or using any
+identifying information found in the \texttt{fData} columns by using
+the search box on the \texttt{pRolocVis} application part of the
+\Biocpkg{pRolocGUI} package (see section on interactive
+visualisation). This can be handy for quickly searching and
+highlighting proteins on the fly, the disavanatge here is that
+proteins can only be searched for a one-by-one basis.
 
 \section*{Replication}
 
@@ -1229,8 +1249,8 @@ replicate, respectively). Different sets of gradient fractions are
 often pooled to obtain enough material and optimise acurate
 quantitation.
 
-% latex table generated in R 3.3.0 by xtable 1.8-2 package
-% Wed Nov 30 14:38:32 2016
+% latex table generated in R 3.3.2 by xtable 1.8-2 package
+% Wed Nov 30 15:14:06 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1528,9 +1548,9 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Nov 30 14:38:31 2016 
-## Added markers from  'pdres' marker vector. Wed Nov 30 14:38:32 2016 
-##  MSnbase version: 2.0.1
+## Added markers from  'mrk' marker vector. Wed Nov 30 15:14:05 2016 
+## Added markers from  'pdres' marker vector. Wed Nov 30 15:14:06 2016 
+##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
 \hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
@@ -1940,15 +1960,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4346815               0.3050109               0.3898494 
+##               0.4366549               0.3041349               0.3799370 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6915344               0.6018374               0.4277405 
+##               0.6880299               0.6002876               0.4310921 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4215606               0.6043865               0.9499822 
+##               0.4165667               0.5997487               0.9494945 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7959813               0.7080413               0.3162206 
+##               0.7934108               0.7117905               0.3160580 
 ##         Plasma membrane              Proteasome 
-##               0.7248143               0.4135359
+##               0.7110269               0.4120044
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1956,15 +1976,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     171                      88 
+##                      85                     170                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     296                     476                     109 
+##                     296                     480                      96 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      24                     119                     523 
+##                      27                     125                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      38 
+##                     230                     340                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     315                     158                    2058
+##                     322                     158                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2491,58 +2511,63 @@ failure and/or different results.
 \hlkwd{sessionInfo}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## R Under development (unstable) (2015-11-11 r69621)
-## Platform: x86_64-apple-darwin13.4.0 (64-bit)
-## Running under: OS X 10.11.5 (El Capitan)
+## R version 3.3.2 Patched (2016-11-01 r71616)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 14.04.5 LTS
 ## 
 ## locale:
-## [1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
+##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
+##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
+##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
 ## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
 ## [8] datasets  base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.12.0    pRoloc_1.14.4        MLInterfaces_1.54.0 
-##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.5        
-##  [7] AnnotationDbi_1.36.0 IRanges_2.5.40       S4Vectors_0.9.45    
-## [10] MSnbase_2.0.1        ProtGenerics_1.6.0   BiocParallel_1.8.1  
-## [13] mzR_2.8.0            Rcpp_0.12.8          Biobase_2.34.0      
+##  [1] pRolocdata_1.12.0    pRoloc_1.15.5        MLInterfaces_1.54.0 
+##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
+##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
+## [10] MSnbase_2.1.4        ProtGenerics_1.6.0   BiocParallel_1.8.1  
+## [13] mzR_2.8.0            Rcpp_0.12.7          Biobase_2.34.0      
 ## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
-## [19] BiocStyle_2.2.1      knitr_1.15.1        
+## [19] BiocStyle_2.2.0      knitr_1.14          
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] minqa_1.2.4           colorspace_1.3-1      hwriter_1.3.2        
+##   [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
 ##   [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
 ##   [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
 ##  [10] hexbin_1.27.1         MatrixModels_0.4-1    affyio_1.44.0        
 ##  [13] flexmix_2.3-13        mvtnorm_1.0-5         codetools_0.2-15     
-##  [16] splines_3.3.0         doParallel_1.0.10     impute_1.48.0        
+##  [16] splines_3.3.2         doParallel_1.0.10     impute_1.48.0        
 ##  [19] robustbase_0.92-6     jsonlite_1.1          nloptr_1.0.4         
-##  [22] caret_6.0-73          pbkrtest_0.4-6        rda_1.0.2-2          
+##  [22] caret_6.0-72          pbkrtest_0.4-6        rda_1.0.2-2          
 ##  [25] kernlab_0.9-25        vsn_3.42.3            sfsmisc_1.1-0        
 ##  [28] shiny_0.14.2          sampling_2.7          assertthat_0.1       
-##  [31] Matrix_1.2-7.1        lazyeval_0.2.0        limma_3.30.5         
-##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.0          
+##  [31] Matrix_1.2-7.1        limma_3.30.2          formatR_1.4          
+##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.2          
 ##  [37] ggvis_0.4.3           gtable_0.2.0          affy_1.52.0          
 ##  [40] reshape2_1.4.2        dplyr_0.5.0           MALDIquant_1.15      
 ##  [43] trimcluster_0.1-2     gdata_2.17.0          preprocessCore_1.36.0
 ##  [46] nlme_3.1-128          iterators_1.0.8       fpc_2.1-10           
 ##  [49] stringr_1.1.0         lme4_1.1-12           lpSolve_5.6.13       
 ##  [52] mime_0.5              gtools_3.5.0          dendextend_1.3.0     
-##  [55] DEoptimR_1.0-8        zlibbioc_1.20.0       MASS_7.3-45          
-##  [58] scales_0.4.1          BiocInstaller_1.24.0  pcaMethods_1.66.0    
-##  [61] SparseM_1.74          RColorBrewer_1.1-2    memoise_1.0.0        
-##  [64] ggplot2_2.2.0         biomaRt_2.30.0        rpart_4.1-10         
-##  [67] stringi_1.1.2         RSQLite_1.1           highr_0.6            
-##  [70] genefilter_1.56.0     randomForest_4.6-12   foreach_1.4.3        
-##  [73] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
-##  [76] mzID_1.12.0           evaluate_0.10         lattice_0.20-34      
-##  [79] htmlwidgets_0.8       gbm_2.1.1             plyr_1.8.4           
-##  [82] magrittr_1.5          R6_2.2.0              DBI_0.5-1            
-##  [85] whisker_0.3-2         mgcv_1.8-16           survival_2.40-1      
-##  [88] RCurl_1.95-4.8        nnet_7.3-12           tibble_1.2           
-##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.0           
+##  [55] DEoptimR_1.0-6        zlibbioc_1.20.0       MASS_7.3-45          
+##  [58] scales_0.4.0          BiocInstaller_1.24.0  pcaMethods_1.66.0    
+##  [61] SparseM_1.72          RColorBrewer_1.1-2    ggplot2_2.1.0        
+##  [64] biomaRt_2.30.0        rpart_4.1-10          stringi_1.1.2        
+##  [67] RSQLite_1.0.0         highr_0.6             genefilter_1.56.0    
+##  [70] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
+##  [73] prabclus_2.2-6        bitops_1.0-6          mzID_1.12.0          
+##  [76] evaluate_0.10         lattice_0.20-34       htmlwidgets_0.7      
+##  [79] gbm_2.1.1             plyr_1.8.4            magrittr_1.5         
+##  [82] R6_2.2.0              DBI_0.5-1             whisker_0.3-2        
+##  [85] mgcv_1.8-15           survival_2.40-1       RCurl_1.95-4.8       
+##  [88] nnet_7.3-12           tibble_1.2            msdata_0.14.0        
+##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.2           
 ##  [94] FNN_1.1               ModelMetrics_1.1.0    threejs_0.2.2        
 ##  [97] digest_0.6.10         diptest_0.75-7        httpuv_1.3.3         
 ## [100] munsell_0.4.3
@@ -2563,8 +2588,8 @@ repository on GitHub~\cite{ghrepo}.
 
 \subsection*{Author contributions}
 
-All authors developed the software presented in this workflow, and
-wrote and approved the manuscript.
+LMB and LG developed the software presented in this workflow. All
+authors wrote and approved the manuscript.
 
 \subsection*{Competing interests}
 
