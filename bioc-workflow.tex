@@ -22,7 +22,9 @@ for clustering, classification and visualisation.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
-mass spectrometry data. We will focus on a recent pluripotent mouse
+mass spectrometry data, through to some essential data processing
+steps, and finish with different applications of machine learning
+(Figure \ref{fig:overview}). We focus on a recent pluripotent mouse
 embryonic stem cells experiment \cite{hyper}. These data, as well as
 additional annotated and pre-formatted datasets from various species
 are readily available in the \Biocexptpkg{pRolocdata} package.
@@ -47,6 +49,13 @@ keywords. For more general information about mass spectrometry and
 proteomics, the readers are invited to read the
 \Biocexptpkg{RforProteomics} package vignettes and associated
 papers \cite{Gatto:2014,Gatto:2015}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{./Figures/overview.pdf}
+  \caption{Schematic overview of the pRoloc pipeline from data import, through to data processing, machine learning and data export.}
+  \label{fig:overview}
+\end{figure}
 
 
 \section*{Reading and processing spatial proteomics data}
@@ -92,7 +101,7 @@ To make use of the full functionality of the \Biocpkg{pRoloc} software
 one needs to import their data into R and prepare them as an
 \texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for
 the efficient manipulation and processing of mass spectrometry and
-proteomics data in R. Figure 1 illustrates a simplified view of the
+proteomics data in R. Figure \ref{fig:msnset} illustrates a simplified view of the
 \texttt{MSnSet} structure; there exists 3 key sub-parts (termed slots)
 to such a data object: (1) the \texttt{exprs} (short for
 \textit{expression} data) slot for storing the quantitation data, (2)
@@ -725,7 +734,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:14:03 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:39:06 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -807,10 +816,10 @@ is 0) missing values.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:14:03 2016 
-## Subset [6725,20][5032,20] Wed Nov 30 15:14:04 2016 
-## Removed features with more than 0 NAs: Wed Nov 30 15:14:04 2016 
-## Dropped featureData's levels Wed Nov 30 15:14:04 2016 
+## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:39:06 2016 
+## Subset [6725,20][5032,20] Thu Dec  1 10:39:07 2016 
+## Removed features with more than 0 NAs: Thu Dec  1 10:39:07 2016 
+## Dropped featureData's levels Thu Dec  1 10:39:07 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -839,8 +848,10 @@ multi-dimensional data is transformed into a set of orthogonal
 components ordered according to the amount of variability that they
 describe. The \texttt{plot2D} and \texttt{plot3D} methods in \Biocpkg{pRoloc} allows one to
 plot the principal components (PCs) of a dataset against one another,
-by default the first two components are plotted on the x- and y-axis for the \texttt{plot2D} function, and first three components are loaded for the \texttt{plot3D} function,
-respectively (the \texttt{dims} argument can be used to plot other PCs). If
+by default the first two components are plotted on the x- and y-axis
+for the \texttt{plot2D} function, and first three components are
+loaded for the \texttt{plot3D} function, respectively (the
+\texttt{dims} argument can be used to plot other PCs). If
 distinct clusters are observed, we assume that there is organellar
 separation present in the data. Although, representing the
 multi-dimensional data along a limited set of PCs does not give us a
@@ -1057,19 +1068,20 @@ context for the biological question under investigation.
 
 
 \subsection*{Visualising markers}
-Having added a the mouse markers to our \texttt{fData} from the \texttt{pRolocmarkers} we can now visualise these annotations along the PCA plot using the
-\texttt{plot2D} function and then use the \texttt{addLegend} function
-to map the marker classes to the pre-defined colours. We also display
-the data along the first and seventh PCs using the \texttt{dims}
-argument. Note that in these calls to the \texttt{plot2D} function, we
-have omitted the \texttt{fcol} argument and use of the default
-\texttt{"markers"} feature variable to annotate the plot. We choose
-to display PCs 1 and 7 to illustrate that while upper principal
-components explain much less variability in the data (2.23\% for PC7,
-as opposed to 48.41\% for PC1), we see that the mitochondrial (purple)
-and peroxisome (dark blue) clusters can be differenciated, despite the
-apparent overlap in the visualisation of the two first PCs
-(Figure \ref{fig:plotmarkers}).
+Having added a the mouse markers to our \texttt{fData} from the
+\texttt{pRolocmarkers} we can now visualise these annotations along
+the PCA plot using the \texttt{plot2D} function and then use the
+\texttt{addLegend} function to map the marker classes to the
+pre-defined colours. We also display the data along the first and
+seventh PCs using the \texttt{dims} argument. Note that in these calls
+to the \texttt{plot2D} function, we have omitted the \texttt{fcol}
+argument and use of the default \texttt{"markers"} feature variable to
+annotate the plot. We choose to display PCs 1 and 7 to illustrate that
+while upper principal components explain much less variability in the
+data (2.23\% for PC7, as opposed to 48.41\% for PC1), we see that the
+mitochondrial (purple) and peroxisome (dark blue) clusters can be
+differenciated, despite the apparent overlap in the visualisation of
+the two first PCs (Figure \ref{fig:plotmarkers}).
 
 \begin{figure}[!ht]
   \centering
@@ -1169,7 +1181,6 @@ Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
 
 \subsection*{Features of interest}
-
 In addition to adding annotation using the \texttt{addMarkers}
 function, one can store specific sets of proteins by using the
 \textit{Features of interest} infrastructure from the
@@ -1196,7 +1207,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Wed Nov 30 15:14:06 2016 
+##  Created on Thu Dec  1 10:39:09 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1218,7 +1229,7 @@ subsequently highlight their location on a PCA plot with the
 Users can also create several sets of \texttt{FeaturesOfInterest}
 object and store them in a \texttt{FoICollection}.
 
-It is also worthly of note that it is possible to search for a
+It is also worthy of note that it is possible to search for a
 specific protein of interest by \texttt{featureNames} or using any
 identifying information found in the \texttt{fData} columns by using
 the search box on the \texttt{pRolocVis} application part of the
@@ -1250,7 +1261,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Wed Nov 30 15:14:06 2016
+% Thu Dec  1 10:39:09 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1272,7 +1283,10 @@ experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
 assuring that each displays acceptable sub-cellular resolution. Note
 that in the code chunk below, we mirror the x-axis to represent the
-two figures with the same orientation. The interactive "compare" application part of the \Biocpkg{pRolocGUI} package is also useful for examining replicate experiments (see the next section interactive visualisation for details).
+two figures with the same orientation. The interactive "compare"
+application part of the \Biocpkg{pRolocGUI} package is also useful for
+examining replicate experiments (see the next section interactive
+visualisation for details).
 
 \begin{figure}[!ht]
   \centering
@@ -1548,8 +1562,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Nov 30 15:14:05 2016 
-## Added markers from  'pdres' marker vector. Wed Nov 30 15:14:06 2016 
+## Added markers from  'mrk' marker vector. Thu Dec  1 10:39:08 2016 
+## Added markers from  'pdres' marker vector. Thu Dec  1 10:39:09 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -1960,15 +1974,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4366549               0.3041349               0.3799370 
+##               0.4350790               0.3036502               0.3798695 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6880299               0.6002876               0.4310921 
+##               0.6854737               0.6132301               0.4278794 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4165667               0.5997487               0.9494945 
+##               0.4176288               0.6005527               0.9494418 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7934108               0.7117905               0.3160580 
+##               0.7949941               0.7094819               0.3150650 
 ##         Plasma membrane              Proteasome 
-##               0.7110269               0.4120044
+##               0.7117859               0.4212111
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -1976,15 +1990,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      84 
+##                      85                     171                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     296                     480                      96 
+##                     299                     467                     103 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     125                     523 
+##                      27                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     340                      38 
+##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     322                     158                    2058
+##                     323                     156                    2059
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

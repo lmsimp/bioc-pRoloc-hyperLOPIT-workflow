@@ -61,7 +61,7 @@ papers \cite{Gatto:2014,Gatto:2015}.
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.5\textwidth]{./Figures/overview.png}
+  \includegraphics[width=.5\textwidth]{./Figures/overview.pdf}
   \caption{Schematic overview of the pRoloc pipeline from data import, through to data processing, machine learning and data export.}
   \label{fig:overview}
 \end{figure}

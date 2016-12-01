@@ -19,10 +19,12 @@ visualisation.
 
 In this workflow, we will describe how to prepare the spatial proteomics
 data starting from a spreadsheet containing quantitative mass
-spectrometry data. We will focus on a recent pluripotent mouse embryonic
-stem cells experiment @hyper. These data, as well as additional
-annotated and pre-formatted datasets from various species are readily
-available in the package.
+spectrometry data, through to some essential data processing steps, and
+finish with different applications of machine learning (Figure
+[fig:overview]). We focus on a recent pluripotent mouse embryonic stem
+cells experiment @hyper. These data, as well as additional annotated and
+pre-formatted datasets from various species are readily available in the
+package.
 
 Installation of Bioconductor package is documented in detail on the
 [Bioconductor installation help
@@ -43,6 +45,12 @@ Questions can be tagged with specific package names or keywords. For
 more general information about mass spectrometry and proteomics, the
 readers are invited to read the package vignettes and associated papers
 @Gatto:2014 [@Gatto:2015].
+
+![Schematic overview of the pRoloc pipeline from data import, through to
+data processing, machine learning and data
+export.](./Figures/overview.pdf)
+
+[fig:overview]
 
 Reading and processing spatial proteomics data {#reading-and-processing-spatial-proteomics-data .unnumbered}
 ==============================================
@@ -85,14 +93,14 @@ The infrastructure: `pRoloc` and `MSnbase` packages {#the-infrastructure-proloc-
 To make use of the full functionality of the software one needs to
 import their data into R and prepare them as an `MSnSet`. The `MSnSet`
 is a dedicated data structure for the efficient manipulation and
-processing of mass spectrometry and proteomics data in R. Figure 1
-illustrates a simplified view of the `MSnSet` structure; there exists 3
-key sub-parts (termed slots) to such a data object: (1) the `exprs`
-(short for *expression* data) slot for storing the quantitation data,
-(2) the `fData` slot (short for *feature*-metadata) for storing the
-feature meta-data, and finally (3) the `pData` slot (short for
-*pheno*-metadata, i.e. sample phenotypic data) for storing the sample
-meta-data.
+processing of mass spectrometry and proteomics data in R. Figure
+[fig:msnset] illustrates a simplified view of the `MSnSet` structure;
+there exists 3 key sub-parts (termed slots) to such a data object: (1)
+the `exprs` (short for *expression* data) slot for storing the
+quantitation data, (2) the `fData` slot (short for *feature*-metadata)
+for storing the feature meta-data, and finally (3) the `pData` slot
+(short for *pheno*-metadata, i.e. sample phenotypic data) for storing
+the sample meta-data.
 
 ![Simplified representation of the `MSnSet` data structure (reproduced
 with permission from the vignette)](./Figures/msnset.png)
@@ -552,7 +560,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:12:03 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:39:06 2016 
     ##  MSnbase version: 1.21.7
 
 More details above combining data are given in the dedicated *Combining
@@ -608,10 +616,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Wed Nov 30 15:12:03 2016 
-    ## Subset [6725,20][5032,20] Wed Nov 30 15:12:04 2016 
-    ## Removed features with more than 0 NAs: Wed Nov 30 15:12:04 2016 
-    ## Dropped featureData's levels Wed Nov 30 15:12:04 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:39:06 2016 
+    ## Subset [6725,20][5032,20] Thu Dec  1 10:39:07 2016 
+    ## Removed features with more than 0 NAs: Thu Dec  1 10:39:07 2016 
+    ## Dropped featureData's levels Thu Dec  1 10:39:07 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -923,7 +931,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Wed Nov 30 15:12:06 2016 
+    ##  Created on Thu Dec  1 10:39:09 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -939,7 +947,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 Users can also create several sets of `FeaturesOfInterest` object and
 store them in a `FoICollection`.
 
-It is also worthly of note that it is possible to search for a specific
+It is also worthy of note that it is possible to search for a specific
 protein of interest by `featureNames` or using any identifying
 information found in the `fData` columns by using the search box on the
 `pRolocVis` application part of the package (see section on interactive
@@ -1205,8 +1213,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Wed Nov 30 15:12:05 2016 
-    ## Added markers from  'pdres' marker vector. Wed Nov 30 15:12:06 2016 
+    ## Added markers from  'mrk' marker vector. Thu Dec  1 10:39:08 2016 
+    ## Added markers from  'pdres' marker vector. Thu Dec  1 10:39:09 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1510,15 +1518,15 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4326026               0.3045332               0.3826336 
+    ##               0.4350790               0.3036502               0.3798695 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6807851               0.5976944               0.4357420 
+    ##               0.6854737               0.6132301               0.4278794 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4311652               0.5972311               0.9495941 
+    ##               0.4176288               0.6005527               0.9494418 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7957440               0.7108354               0.3150959 
+    ##               0.7949941               0.7094819               0.3150650 
     ##         Plasma membrane              Proteasome 
-    ##               0.7141152               0.4175162
+    ##               0.7117859               0.4212111
 
 `             `
 
@@ -1526,13 +1534,13 @@ unknown.
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
     ##                      85                     171                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     295                     473                     101 
+    ##                     299                     467                     103 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     123                     523 
+    ##                      27                     124                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     345                      39 
+    ##                     230                     343                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     321                     159                    2057
+    ##                     323                     156                    2059
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -2009,8 +2017,8 @@ on GitHub @ghrepo.
 Author contributions {#author-contributions .unnumbered}
 --------------------
 
-All authors developed the software presented in this workflow, and wrote
-and approved the manuscript.
+LMB and LG developed the software presented in this workflow. All
+authors wrote and approved the manuscript.
 
 Competing interests {#competing-interests .unnumbered}
 -------------------
