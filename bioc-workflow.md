@@ -5,19 +5,19 @@ Quantitative mass spectrometry based spatial proteomics involves
 elaborate, expensive and time consuming experimental procedures and
 considerable effort is invested in the generation of such data. Multiple
 research groups have described a variety of approaches to establish high
-quality proteome-wide datasets (see for example @Gatto2010 for a review,
-and @hyper [@Itzhak:2016] for recent examples). However, data analysis
-is as critical as data production for reliable and insightful biological
-interpretation. Here, we walk the reader through a typical pipeline for
-the analysis of such data using several Bioconductor packages for the R
-statistical programming environment.
+quality proteome-wide datasets (see for example @Gatto:2010 for a
+review, and @hyper [@Itzhak:2016] for recent examples). However, data
+analysis is as critical as data production for reliable and insightful
+biological interpretation. Here, we walk the reader through a typical
+pipeline for the analysis of such data using several Bioconductor
+packages for the R statistical programming environment.
 
 The main package to analyse protein localisation data is , which offers
 a set of dedicated functions for the analysis of such data. itself
 relies on to manipulate and process quantitative proteomics data. Many
 other packages are used by for clustering, classification and
 visualisation. Support for interactive visualisation is offered by the
-`pRolocGUI` package.
+package.
 
 In this workflow, we will describe how to prepare the spatial proteomics
 data starting from a spreadsheet containing quantitative mass
@@ -95,8 +95,8 @@ While we focus here on a LOPIT-type dataset, these analyses are relevant
 for any quantitative spatial proteomics data, irrespective of the
 fractionation or quantitation (i.e. labelled or label-free) methods.
 
-The infrastructure: `pRoloc` and `MSnbase` packages {#the-infrastructure-proloc-and-msnbase-packages .unnumbered}
----------------------------------------------------
+The infrastructure: and packages {#the-infrastructure-and-packages .unnumbered}
+--------------------------------
 
 To make use of the full functionality of the software one needs to
 import their data into R and prepare them as an `MSnSet`. The `MSnSet`
@@ -154,13 +154,13 @@ To use the `readMSnSet2` function, as a minimum one must specify the
 file path to the data and which columns of the spreadsheet contain
 quantitation data. In the code chunk below, we start by identifying the
 file that we want to use. The `system.file` function is used to return
-the path to the `extdata` directory from the `pRolocdata` package, which
-is where our file of interest resides. We then use the `dir` function to
-list the content of that directory and store the path that matches the
-file name of interest in the `csvfile`. Note that these two lines are
-only needed here to locate a file in a package; in a more general use
-case, the user would defined the `csvfile` variable containing the file
-name of interest directly.
+the path to the `extdata` directory from the package, which is where our
+file of interest resides. We then use the `dir` function to list the
+content of that directory and store the path that matches the file name
+of interest in the `csvfile`. Note that these two lines are only needed
+here to locate a file in a package; in a more general use case, the user
+would defined the `csvfile` variable containing the file name of
+interest directly.
 
 A common pitfall here is to provide only the file name, rather than full
 path to the file (which is what is shown below with `basename`; we don’t
@@ -589,7 +589,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 18:16:03 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 19:09:16 2016 
     ##  MSnbase version: 1.21.7
 
 More details about combining data are given in the dedicated *Combining
@@ -647,10 +647,10 @@ dimensions of the data.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 18:16:03 2016 
-    ## Subset [6725,20][5032,20] Fri Dec  2 18:16:03 2016 
-    ## Removed features with more than 0 NAs: Fri Dec  2 18:16:03 2016 
-    ## Dropped featureData's levels Fri Dec  2 18:16:03 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 19:09:16 2016 
+    ## Subset [6725,20][5032,20] Fri Dec  2 19:09:16 2016 
+    ## Removed features with more than 0 NAs: Fri Dec  2 19:09:16 2016 
+    ## Dropped featureData's levels Fri Dec  2 19:09:16 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -963,7 +963,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Fri Dec  2 18:16:05 2016 
+    ##  Created on Fri Dec  2 19:09:18 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1253,8 +1253,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Fri Dec  2 18:16:04 2016 
-    ## Added markers from  'pdres' marker vector. Fri Dec  2 18:16:06 2016 
+    ## Added markers from  'mrk' marker vector. Fri Dec  2 19:09:18 2016 
+    ## Added markers from  'pdres' marker vector. Fri Dec  2 19:09:19 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1499,7 +1499,7 @@ localisations from the SVM predictions.
 `            `
 
 ![Classification results. Colours indicate class membership and point
-size are representative or the classification
+size are representative of the classification
 confidence.](figure/plotSVM-1)
 
 [fig:plotSVM]
@@ -1536,7 +1536,7 @@ organelle (Figure [fig:threshold]).
 \
 `  `\
 \
-`     `\
+`      `\
 `     `\
 `             `
 
@@ -1566,29 +1566,48 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4352871               0.3035428               0.3855788 
+    ##               0.4359719               0.3027894               0.3807832 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6881871               0.6057278               0.4324654 
+    ##               0.6994864               0.6018155               0.4232624 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4289930               0.6015118               0.9499169 
+    ##               0.4141776               0.5871408               0.9494709 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7939425               0.7081657               0.3164716 
+    ##               0.7959998               0.7097865               0.3121881 
     ##         Plasma membrane              Proteasome 
-    ##               0.7213703               0.4188724
+    ##               0.7104260               0.4136511
+    ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
+    ##               0.4359719               0.3027894               0.3807832 
+    ##                 Cytosol   Endoplasmic reticulum                Endosome 
+    ##               0.6994864               0.6018155               0.4232624 
+    ##    Extracellular matrix                Lysosome           Mitochondrion 
+    ##               0.4141776               0.5871408               0.9494709 
+    ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
+    ##               0.7959998               0.7097865               0.3121881 
+    ##         Plasma membrane              Proteasome 
+    ##               0.7104260               0.4136511
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      84                     171                      88 
+    ##                      86                     169                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     299                     474                      99 
+    ##                     296                     477                      93 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      26                     124                     522 
+    ##                      27                     124                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     344                      39 
+    ##                     230                     343                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     319                     157                    2057
+    ##                     326                     158                    2058
+
+The organelle threshold (`ts` above) can also be set manually using an
+interactive app (see below) or by using a named vector of thresholds, as
+shown in the putative example below for 4 organelles.
+
+`         `
+
+    ##    PM  Mito Golgi    ER 
+    ## 0.612 0.701 0.810 0.920
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1625,14 +1644,14 @@ display the classifier scores by data class. On the left, there is a
 sidebar panel with sliders to control the thresholds upon which
 classifications are made. There are two types of cut-off that the user
 can choose from: (1) *Quantile* and (2) *User-defined*. By default, when
-the application is launched quatile scoring is selected and set to 0.5,
+the application is launched quantile scoring is selected and set to 0.5,
 the median. The class-specific score thresholds that correspond to
-selecting the desired quantile are shown on as red dots on the boxplot.
-The assignments on the PCA plot are also updated according to the
-selected threshold. The quantile threshold can be set by moving the
-corresponding quantile slider. If one wished to set their own cut-offs
-the *User-defined* radio button must be selected and then the sliders
-for defining user-specified scores become active and the scores and
+selecting the desired quantile are shown as red dots on the boxplot. The
+assignments on the PCA plot are also updated according to the selected
+threshold. The quantile threshold can be set by moving the corresponding
+quantile slider. If one wished to set their own cut-offs the
+*User-defined* radio button must be selected and then the sliders for
+defining user-specified scores become active and the scores and
 highlighted on the boxplot by blue dots. For more information we refer
 users to the tutorial
 [vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html).
@@ -1703,13 +1722,12 @@ also apply filtering based on evidence codes as desired, see
 
 The function `makeGoSet` uses the package to query the relevent database
 (e.g. Ensembl, Uniprot) for GO terms. All GO terms that have been
-observed for the 5032 proteins in the hyperLOPIT dataset are retieved.
-Users should note that the number of GO terms retreived is also
-dependent on the database version queried and thus is always subject to
-change. We find it is common to see GO terms with only one protein
-assigned to that term. Such terms do not bring any information for
-building the classifier and are thus removes using the `filterBinMSnSet`
-function.
+observed for the 5032 proteins in the hyperLOPIT dataset are retrieved.
+Users should note that the number of GO terms used is also dependent on
+the database version queried and thus is always subject to change. We
+find it is common to see GO terms with only one protein assigned to that
+term. Such terms do not bring any information for building the
+classifier and are thus removed using the `filterBinMSnSet` function.
 
 `  `
 
@@ -1757,7 +1775,7 @@ well-separated under hyperLOPIT and LOPIT obtain a class score of 1
 (i.e. use only primary data from transfer learning @Breckels:2016).
 Therefore, for the optimisation stage of the analyses we can already
 infer a subcellular class weight of 1 for these niches and only optimise
-over the remaining organelles. This can signifciantly cut down
+over the remaining organelles. This can significantly cut down
 optimisation time as by removing these 4 classes from the optimisation
 (and not the classification) we only have `4^{10}` class weight
 combinations to consider instead of `4^{14}` combinations.
@@ -1765,8 +1783,8 @@ combinations to consider instead of `4^{14}` combinations.
 In the example below we remove these 4 classes from the marker set,
 re-run the `knnOptimisation` for each data source and then run the
 `knntlOptimisation` with the 10 remaining classes. (Note: this is not
-run live as this the `hl` dataset with 10 classes, 707 markers and
-4$^{10}$ combinations of parameters takes around 76 hours to run on the
+run live as the `hl` dataset with 10 classes, 707 markers and 4$^{10}$
+combinations of parameters takes around 76 hours to run on the
 University of Cambridge HPC using 256 workers).
 
 To remove the 4 classes and create a new column of markers in the
@@ -1855,7 +1873,7 @@ then use this as input for the classification.
 
 One of the benefits of the algorithm is the ability to manually select
 weights for each class. In the optimisation above, for time constraints,
-we removed the two ribosomal subunits and the two nulcear compartments,
+we removed the two ribosomal subunits and the two nuclear compartments,
 and therefore in the code chunk below when we extract the best
 parameters, these subcellular niches are not included. To include these
 4 subcellular niches in the next classification step we must include
@@ -1907,17 +1925,22 @@ and cutoffs calculated using the `classify` app in `pRolocVis`,
 predictions obtained using `getPredictions` in the same way as
 demonstrated above for the SVM classifier.
 
+In ’s [transfer learning
+vignette](http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-transfer-learning.pdf),
+we demonstrate how to use imaging data from the Human Protein Atlas
+@Uhlen:2010 via the package @hpar as an auxiliary data source.
+
 Unsupervised machine learning {#unsupervised-machine-learning .unnumbered}
 =============================
 
-In `pRoloc` there is functionality for unsupervsied machine learning
-methods. In unsupervised learning, the training data consists of a set
-of input vectors e.g. protein profiles, ignoring the information about
-the class label e.g. localisation, other than for annotation purposes.
-The main goal in unsupervised learning is to uncover groups of similar
-features within the data, termed clustering. Ordination methods such as
-principal components analysis (PCA) also fall into the category of
-unsupervised learning methods, where the data can be projected from a
+In there is functionality for unsupervsied machine learning methods. In
+unsupervised learning, the training data consists of a set of input
+vectors e.g. protein profiles, ignoring the information about the class
+label e.g. localisation, other than for annotation purposes. The main
+goal in unsupervised learning is to uncover groups of similar features
+within the data, termed clustering. Ordination methods such as principal
+components analysis (PCA) also fall into the category of unsupervised
+learning methods, where the data can be projected from a
 high-dimensional space down to two or three dimensions for the purpose
 of visualisation.
 
@@ -1925,14 +1948,14 @@ As described and demonstrated already above, PCA is a valuable and
 powerful method for data visualisation and quality control. Another
 application uses hierarchical clustering to summarise the relation
 between marker proteins using he `mrkHClust` function, where the
-euclidean distance bewteen average class-specific profiles is used to
+euclidean distance between average class-specific profiles is used to
 produce a dendrogramme describing a simple relationship between the
 sub-cellular classes (Figure [fig:mrkHclust]). The `mrkHClust` uses the
 same defaults as all other function, using the `markers` feature
 variable to define marker proteins. In the code chunk, we adapt the
 figure margins to fully display the class names.
 
-`     `\
+`      `\
 
 ![Hierarchical clustering of the average marker profiles summarising the
 relation between organelles profiles.](figure/hclust-1)
@@ -1945,8 +1968,8 @@ proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for enrichment
 of organelles and complexes. In the latter we do not make good use of
 valuable prior knowledge, and in our experience unsupervised clustering
-can be extremely difficult due poor estimates of the number of clusters
-that may appear in the data.
+can be extremely difficult due to poor estimates of the number of
+clusters that may appear in the data.
 
 Writing and exporting data {#writing-and-exporting-data .unnumbered}
 ==========================
@@ -1967,13 +1990,13 @@ all feature variable names, and write the resulting data to the file
 
 `         `
 
-Exporting to a spreadsheet however looses a lot of important
-information, such as the processing data, and the sample metadata in the
-*phenoData* slot. Other objects, such a parameters from the machine
-learning optimisation, cannot be represented as tabular data. To
-directly serialise R objects to disk, on can use the standard `save`
-function, and later reload the object using `save`. For example, to save
-and then re-load the parameters from the SVM optimisation,
+Exporting to a spreadsheet however loses a lot of important information,
+such as the processing data, and the sample metadata in the *phenoData*
+slot. Other objects, such as parameters from the machine learning
+optimisation, cannot be represented as tabular data. To directly
+serialise R objects to disk, on can use the standard `save` function,
+and later reload the object using `save`. For example, to save and then
+re-load the parameters from the SVM optimisation,
 
 \
 `   `\
@@ -2081,9 +2104,9 @@ The authors declare that they have no competing interest.
 Grant information {#grant-information .unnumbered}
 -----------------
 
-LMB is supported by a Wellcome Trust Technology Development Grant (grant
-number 108467/Z/15/Z). LG is supported by the BBSRC Strategic Longer and
-Larger grant (Award BB/L002817/1).
+LMB and CMM are supported by a Wellcome Trust Technology Development
+Grant (grant number 108441/Z/15/Z). LG is supported by the BBSRC
+Strategic Longer and Larger grant (Award BB/L002817/1).
 
 Acknowledgements {#acknowledgements .unnumbered}
 ----------------
