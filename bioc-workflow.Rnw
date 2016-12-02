@@ -594,14 +594,14 @@ can be done using the \texttt{plotDist} and \texttt{boxplot}
 functions, that plot the protein profiles occupancy along the gradient
 (we also display the mean channel intensities) and a \texttt{boxplot}
 of the column intensities.  In the two plots displayed on figure
-\ref{fig:qcbx}, we re-order the TMT channles to pair corresponding
+\ref{fig:qcbx}, we re-order the TMT channels to pair corresponding
 channels in the two replicates (rather than ordering the channels by
 replicate).
 
 \begin{figure}[!ht]
   \centering
 <<qcbx, out.width="\\textwidth", fig.asp=1/2>>=
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2)) ## creates a two-panel figure
 o <- order(hl$Iodixonal.Density)
 plotDist(hl[, o], pcol = "#00000010")
 lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
@@ -718,7 +718,7 @@ annotate the plot. We choose to display PCs 1 and 7 to illustrate that
 while upper principal components explain much less variability in the
 data (2.23\% for PC7, as opposed to 48.41\% for PC1), we see that the
 mitochondrial (purple) and peroxisome (dark blue) clusters can be
-differenciated, despite the apparent overlap in the visualisation of
+differentiated, despite the apparent overlap in the visualisation of
 the two first PCs (Figure \ref{fig:plotmarkers}).
 
 \begin{figure}[!ht]
@@ -735,23 +735,23 @@ plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 \end{figure}
 
 
-The defualt colours for plotting have been defined so as to enable to
-differenciate up to 30 classes. If more are provided, different
+The default colours for plotting have been defined so as to enable the
+differentiation of up to 30 classes. If more are provided, different
 character symbols (circles, squares, ... and empty and solid symbols)
 are used. The colours and the default plotting characters (solid dots
 for the markers and empty circles for the features of unknown
 localisation) can of course be changed, as described in the
 \texttt{setStockcol} manual page.
 
-As demonstrated in \cite{hyper} and illustrated in the PCA plot above,
-the Golgi apparatus proteins (dark brown) display a dynamic pattern,
-noting sets of Golgi marker proteins that are distributed amongst
-other subcellular structures, an observation supported by microscopy.
-As such, we are going to reset the annotation of Golgi markers to
-unknown using the \texttt{fDataTounknown} function. It is often used
-to replace empty strings (\texttt{""}) or missing values in the
-markers definition to a common definition of \textit{unknown}
-localisation.
+As demonstrated in \cite{hyper} and illustrated in the PCA plot
+(figure \ref{fig:plotmarkers}), the Golgi apparatus proteins (dark
+brown) display a dynamic pattern, noting sets of Golgi marker proteins
+that are distributed amongst other subcellular structures, an
+observation supported by microscopy.  As such, we are going to reset
+the annotation of Golgi markers to unknown using the
+\texttt{fDataToUnknown} function. It is often used to replace empty
+strings (\texttt{""}) or missing values in the markers definition to a
+common definition of \textit{unknown} localisation.
 
 <<removeGA>>=
 hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")

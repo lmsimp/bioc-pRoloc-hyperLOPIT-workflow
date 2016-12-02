@@ -770,7 +770,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 17:06:03 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 17:19:06 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -855,10 +855,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 17:06:03 2016 
-## Subset [6725,20][5032,20] Fri Dec  2 17:06:04 2016 
-## Removed features with more than 0 NAs: Fri Dec  2 17:06:04 2016 
-## Dropped featureData's levels Fri Dec  2 17:06:04 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 17:19:06 2016 
+## Subset [6725,20][5032,20] Fri Dec  2 17:19:07 2016 
+## Removed features with more than 0 NAs: Fri Dec  2 17:19:07 2016 
+## Dropped featureData's levels Fri Dec  2 17:19:07 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -940,7 +940,7 @@ can be done using the \texttt{plotDist} and \texttt{boxplot}
 functions, that plot the protein profiles occupancy along the gradient
 (we also display the mean channel intensities) and a \texttt{boxplot}
 of the column intensities.  In the two plots displayed on figure
-\ref{fig:qcbx}, we re-order the TMT channles to pair corresponding
+\ref{fig:qcbx}, we re-order the TMT channels to pair corresponding
 channels in the two replicates (rather than ordering the channels by
 replicate).
 
@@ -949,7 +949,7 @@ replicate).
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))} \hlcom{## creates a two-panel figure}
 \hlstd{o} \hlkwb{<-} \hlkwd{order}\hlstd{(hl}\hlopt{$}\hlstd{Iodixonal.Density)}
 \hlkwd{plotDist}\hlstd{(hl[, o],} \hlkwc{pcol} \hlstd{=} \hlstr{"#00000010"}\hlstd{)}
 \hlkwd{lines}\hlstd{(}\hlkwd{colMeans}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, o])),} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{)}
@@ -1119,7 +1119,7 @@ annotate the plot. We choose to display PCs 1 and 7 to illustrate that
 while upper principal components explain much less variability in the
 data (2.23\% for PC7, as opposed to 48.41\% for PC1), we see that the
 mitochondrial (purple) and peroxisome (dark blue) clusters can be
-differenciated, despite the apparent overlap in the visualisation of
+differentiated, despite the apparent overlap in the visualisation of
 the two first PCs (Figure \ref{fig:plotmarkers}).
 
 \begin{figure}[!ht]
@@ -1142,23 +1142,23 @@ the two first PCs (Figure \ref{fig:plotmarkers}).
 \end{figure}
 
 
-The defualt colours for plotting have been defined so as to enable to
-differenciate up to 30 classes. If more are provided, different
+The default colours for plotting have been defined so as to enable the
+differentiation of up to 30 classes. If more are provided, different
 character symbols (circles, squares, ... and empty and solid symbols)
 are used. The colours and the default plotting characters (solid dots
 for the markers and empty circles for the features of unknown
 localisation) can of course be changed, as described in the
 \texttt{setStockcol} manual page.
 
-As demonstrated in \cite{hyper} and illustrated in the PCA plot above,
-the Golgi apparatus proteins (dark brown) display a dynamic pattern,
-noting sets of Golgi marker proteins that are distributed amongst
-other subcellular structures, an observation supported by microscopy.
-As such, we are going to reset the annotation of Golgi markers to
-unknown using the \texttt{fDataTounknown} function. It is often used
-to replace empty strings (\texttt{""}) or missing values in the
-markers definition to a common definition of \textit{unknown}
-localisation.
+As demonstrated in \cite{hyper} and illustrated in the PCA plot
+(figure \ref{fig:plotmarkers}), the Golgi apparatus proteins (dark
+brown) display a dynamic pattern, noting sets of Golgi marker proteins
+that are distributed amongst other subcellular structures, an
+observation supported by microscopy.  As such, we are going to reset
+the annotation of Golgi markers to unknown using the
+\texttt{fDataToUnknown} function. It is often used to replace empty
+strings (\texttt{""}) or missing values in the markers definition to a
+common definition of \textit{unknown} localisation.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1247,7 +1247,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Fri Dec  2 17:06:06 2016 
+##  Created on Fri Dec  2 17:19:09 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1301,7 +1301,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Dec  2 17:06:07 2016
+% Fri Dec  2 17:19:09 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1602,8 +1602,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Dec  2 17:06:05 2016 
-## Added markers from  'pdres' marker vector. Fri Dec  2 17:06:07 2016 
+## Added markers from  'mrk' marker vector. Fri Dec  2 17:19:08 2016 
+## Added markers from  'pdres' marker vector. Fri Dec  2 17:19:09 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -2014,15 +2014,15 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4350585               0.3020114               0.3827713 
+##               0.4368179               0.3037653               0.3856993 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6916987               0.5981016               0.4325049 
+##               0.6916475               0.5951696               0.4377555 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4337431               0.5912701               0.9497307 
+##               0.4317514               0.5919750               0.9527663 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7942905               0.7137491               0.3148182 
+##               0.7947663               0.7096575               0.3269003 
 ##         Plasma membrane              Proteasome 
-##               0.7173760               0.4123604
+##               0.7210996               0.4155492
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2030,15 +2030,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      86                     169                      88 
+##                      85                     172                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     297                     477                      98 
+##                     296                     477                     100 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      28                     123                     522 
+##                      27                     123                     513 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     342                      39 
+##                     231                     344                      42 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     318                     158                    2057
+##                     318                     157                    2059
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2583,12 +2583,12 @@ failure and/or different results.
 ## 
 ## other attached packages:
 ##  [1] pRolocdata_1.12.0    pRoloc_1.15.5        MLInterfaces_1.54.0 
-##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
-##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
+##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.5        
+##  [7] AnnotationDbi_1.36.0 IRanges_2.8.1        S4Vectors_0.12.1    
 ## [10] MSnbase_2.1.4        ProtGenerics_1.6.0   BiocParallel_1.8.1  
-## [13] mzR_2.8.0            Rcpp_0.12.7          Biobase_2.34.0      
+## [13] mzR_2.8.0            Rcpp_0.12.8          Biobase_2.34.0      
 ## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
-## [19] BiocStyle_2.2.1      knitr_1.14          
+## [19] BiocStyle_2.2.1      knitr_1.15.1        
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] minqa_1.2.4           colorspace_1.3-1      hwriter_1.3.2        
@@ -2598,10 +2598,10 @@ failure and/or different results.
 ##  [13] flexmix_2.3-13        mvtnorm_1.0-5         codetools_0.2-15     
 ##  [16] splines_3.3.2         doParallel_1.0.10     impute_1.48.0        
 ##  [19] robustbase_0.92-6     jsonlite_1.1          nloptr_1.0.4         
-##  [22] caret_6.0-72          pbkrtest_0.4-6        rda_1.0.2-2          
+##  [22] caret_6.0-73          pbkrtest_0.4-6        rda_1.0.2-2          
 ##  [25] kernlab_0.9-25        vsn_3.42.3            sfsmisc_1.1-0        
 ##  [28] shiny_0.14.2          sampling_2.7          assertthat_0.1       
-##  [31] Matrix_1.2-7.1        limma_3.30.2          formatR_1.4          
+##  [31] Matrix_1.2-7.1        lazyeval_0.2.0        limma_3.30.6         
 ##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.2          
 ##  [37] ggvis_0.4.3           gtable_0.2.0          affy_1.52.0          
 ##  [40] reshape2_1.4.2        dplyr_0.5.0           MALDIquant_1.15      
@@ -2609,22 +2609,22 @@ failure and/or different results.
 ##  [46] nlme_3.1-128          iterators_1.0.8       fpc_2.1-10           
 ##  [49] stringr_1.1.0         lme4_1.1-12           lpSolve_5.6.13       
 ##  [52] mime_0.5              gtools_3.5.0          dendextend_1.3.0     
-##  [55] DEoptimR_1.0-6        zlibbioc_1.20.0       MASS_7.3-45          
-##  [58] scales_0.4.0          BiocInstaller_1.24.0  pcaMethods_1.66.0    
-##  [61] SparseM_1.72          RColorBrewer_1.1-2    ggplot2_2.1.0        
-##  [64] biomaRt_2.30.0        rpart_4.1-10          stringi_1.1.2        
-##  [67] RSQLite_1.0.0         highr_0.6             genefilter_1.56.0    
-##  [70] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
-##  [73] prabclus_2.2-6        bitops_1.0-6          mzID_1.12.0          
-##  [76] evaluate_0.10         lattice_0.20-34       htmlwidgets_0.7      
-##  [79] gbm_2.1.1             plyr_1.8.4            magrittr_1.5         
-##  [82] R6_2.2.0              DBI_0.5-1             whisker_0.3-2        
-##  [85] mgcv_1.8-15           survival_2.40-1       RCurl_1.95-4.8       
-##  [88] nnet_7.3-12           tibble_1.2            msdata_0.14.0        
-##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.2           
-##  [94] FNN_1.1               ModelMetrics_1.1.0    threejs_0.2.2        
-##  [97] digest_0.6.10         diptest_0.75-7        httpuv_1.3.3         
-## [100] munsell_0.4.3
+##  [55] DEoptimR_1.0-8        zlibbioc_1.20.0       MASS_7.3-45          
+##  [58] scales_0.4.1          BiocInstaller_1.24.0  pcaMethods_1.66.0    
+##  [61] SparseM_1.74          RColorBrewer_1.1-2    memoise_1.0.0        
+##  [64] ggplot2_2.2.0         biomaRt_2.30.0        rpart_4.1-10         
+##  [67] stringi_1.1.2         RSQLite_1.1           highr_0.6            
+##  [70] genefilter_1.56.0     randomForest_4.6-12   foreach_1.4.3        
+##  [73] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
+##  [76] mzID_1.12.0           evaluate_0.10         lattice_0.20-34      
+##  [79] htmlwidgets_0.8       gbm_2.1.1             plyr_1.8.4           
+##  [82] magrittr_1.5          R6_2.2.0              DBI_0.5-1            
+##  [85] whisker_0.3-2         mgcv_1.8-16           survival_2.40-1      
+##  [88] RCurl_1.95-4.8        nnet_7.3-12           tibble_1.2           
+##  [91] msdata_0.14.0         car_2.1-3             mlbench_2.1-1        
+##  [94] grid_3.3.2            FNN_1.1               ModelMetrics_1.1.0   
+##  [97] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
+## [100] httpuv_1.3.3          munsell_0.4.3
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
