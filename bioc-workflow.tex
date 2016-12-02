@@ -8,7 +8,7 @@ elaborate, expensive and time consuming experimental procedures and
 considerable effort is invested in the generation of such data.
 Multiple research groups have described a variety of approaches to
 establish high quality proteome-wide datasets (see for example
-\cite{Gatto2010} for a review, and \cite{hyper,Itzhak:2016} for recent
+\cite{Gatto:2010} for a review, and \cite{hyper,Itzhak:2016} for recent
 examples). However, data analysis is as critical as data production
 for reliable and insightful biological interpretation. Here, we walk
 the reader through a typical pipeline for the analysis of such data
@@ -21,7 +21,7 @@ analysis of such data. \Biocpkg{pRoloc} itself relies on
 \Biocpkg{MSnbase} to manipulate and process quantitative proteomics
 data. Many other packages are used by \Biocpkg{pRoloc} for clustering,
 classification and visualisation. Support for interactive
-visualisation is offered by the \texttt{pRolocGUI} package.
+visualisation is offered by the \Biocpkg{pRolocGUI} package.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
@@ -110,7 +110,7 @@ relevant for any quantitative spatial proteomics data, irrespective of
 the fractionation or quantitation (i.e. labelled or label-free)
 methods.
 
-\subsection*{The infrastructure: \texttt{pRoloc} and \texttt{MSnbase} packages}
+\subsection*{The infrastructure: \Biocpkg{pRoloc} and \Biocpkg{MSnbase} packages}
 
 To make use of the full functionality of the \Biocpkg{pRoloc} software
 one needs to import their data into R and prepare them as an
@@ -176,7 +176,7 @@ specify the file path to the data and which columns of the spreadsheet
 contain quantitation data. In the code chunk below, we start by
 identifying the file that we want to use. The \texttt{system.file}
 function is used to return the path to the \texttt{extdata} directory
-from the \texttt{pRolocdata} package, which is where our file of
+from the \Biocexptpkg{pRolocdata} package, which is where our file of
 interest resides. We then use the \texttt{dir} function to list the
 content of that directory and store the path that matches the file
 name of interest in the \texttt{csvfile}. Note that these two lines
@@ -770,7 +770,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 17:19:06 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 19:09:16 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -855,10 +855,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 17:19:06 2016 
-## Subset [6725,20][5032,20] Fri Dec  2 17:19:07 2016 
-## Removed features with more than 0 NAs: Fri Dec  2 17:19:07 2016 
-## Dropped featureData's levels Fri Dec  2 17:19:07 2016 
+## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 19:09:16 2016 
+## Subset [6725,20][5032,20] Fri Dec  2 19:09:16 2016 
+## Removed features with more than 0 NAs: Fri Dec  2 19:09:16 2016 
+## Dropped featureData's levels Fri Dec  2 19:09:16 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1151,7 +1151,7 @@ localisation) can of course be changed, as described in the
 \texttt{setStockcol} manual page.
 
 As demonstrated in \cite{hyper} and illustrated in the PCA plot
-(figure \ref{fig:plotmarkers}), the Golgi apparatus proteins (dark
+(Figure \ref{fig:plotmarkers}), the Golgi apparatus proteins (dark
 brown) display a dynamic pattern, noting sets of Golgi marker proteins
 that are distributed amongst other subcellular structures, an
 observation supported by microscopy.  As such, we are going to reset
@@ -1247,7 +1247,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Fri Dec  2 17:19:09 2016 
+##  Created on Fri Dec  2 19:09:18 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1301,7 +1301,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Fri Dec  2 17:19:09 2016
+% Fri Dec  2 19:09:19 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1345,6 +1345,13 @@ visualisation for details).
   \label{fig:plot2Drep}
 \end{figure}
 
+In addition, the reproducibility can be assessed by performing
+independent classification analyses on each replicate (see the section
+on \textit{Supervised machine learning} below) and comparing the the
+results. Even when the gradient conditions different (for unexpected
+technical or voluntary reasons, to maximise resolution when combining
+experiments \cite{Trotter:2010}), one expects agreement in the most
+confident organelle assignments.
 
 \clearpage
 
@@ -1358,7 +1365,7 @@ data. The \Biocpkg{pRolocGUI} package is currently under active
 development and it relies on the \texttt{shiny} framework for
 reactivity and interactivity. The package currently distributes 3
 different GUI's (\textit{main} (default), \textit{compare} or
-\textit{compare}) which are wrapped and launched by the
+\textit{classify}) which are wrapped and launched by the
 \texttt{pRolocVis} function. 
 
 \subsubsection*{The main application}
@@ -1385,7 +1392,7 @@ app (note, we do not need to specify the argument, \texttt{app =
 
 As diplayed in the screenshot in figure \ref{fig:app}, the
 \textit{main} application is designed for exploratory data analysis
-and is divied into 3 tabs: (1) PCA, (2) Profiles and (3) Table
+and is divided into 3 tabs: (1) PCA, (2) Profiles and (3) Table
 selection. The default view upon loading is the PCA tab, which
 features a clickable interface and zoomable PCA plot with an
 interactive data table for displaying the quantitation information.
@@ -1524,9 +1531,9 @@ database, the Gene Ontology and the literature.
 
 In the code chunk below we show how to run the \texttt{phenoDisco}
 function and return a novelty detection result, according to the
-specified parameters. The algorithm parameters \texttt{times}, \texttt{GS} and \texttt{p}
-are passed to the function, along with the \texttt{fcol} to tell the
-algorithm where the input training data is contained. 
+specified parameters. The algorithm parameters \texttt{times} and
+\texttt{GS} are passed to the function, along with the \texttt{fcol}
+to tell the algorithm where the input training data is contained.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1550,7 +1557,7 @@ have found for larger datasets (e.g. 5000+ proteins) a higher
 \texttt{times} is requried for convergence. \texttt{GS} defines the
 minimum number of proteins allowed per new data cluster and thus
 heavily influences what type of new clusters are extracted. For
-example, if a user is interesed in the detection of small complexes
+example, if a user is interested in the detection of small complexes
 they may wish to use a small \texttt{GS = 10}, or \texttt{= 20} etc.
 If they wish to detect larger, more abundant sub-cellular niches a
 much higher \texttt{GS} would be preferable. Specifying a small
@@ -1602,8 +1609,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Fri Dec  2 17:19:08 2016 
-## Added markers from  'pdres' marker vector. Fri Dec  2 17:19:09 2016 
+## Added markers from  'mrk' marker vector. Fri Dec  2 19:09:18 2016 
+## Added markers from  'pdres' marker vector. Fri Dec  2 19:09:19 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -1733,7 +1740,7 @@ partition. The best parameters chosen from the cross-validation stage
 are then used to build a classifier to predict the class labels of the
 protein profiles on the test partition. Observed and expected
 classication results can be compared, and then used to assess how well
-a given model works by getting an estimate of the classiers ability to
+a given model works by getting an estimate of the classifiers ability to
 achieve a good generalisation i.e. that is given an unknown example
 predict its class label with high accuracy. In \Biocpkg{pRoloc},
 algorithmic performance is estimated using stratified 80/20
@@ -1798,7 +1805,7 @@ proportional to the class frequencies.
 As mentioned previously, we rely on the default feature variable
 \texttt{"markers"} to define the class labels and hence do not need to
 specify it in the above code chunk.  To use another feature variables,
-one need to explicitly specify its name using the \texttt{fcol}
+one needs to explicitly specify its name using the \texttt{fcol}
 argument (for example \texttt{fcol = "markers2"}).
 
 The output \texttt{params} is an object of class \texttt{GenRegRes}; a
@@ -1893,6 +1900,7 @@ weights. As above, the \texttt{fcol} argument does not need to be
 specified as we use the labels defined in the default
 \texttt{"markers"} feature variable.
 
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1900,6 +1908,21 @@ specified as we use the labels defined in the default
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
+In the code chunk above, we pass the whole \texttt{params} parameter
+results and, internally, the first pair that return the highest F1
+score are returned (using the \texttt{getParams} function above). It
+is advised to always check that these are actually good parameters
+and, if necessary, set them explicitly, as shown below.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{hl} \hlkwb{<-} \hlkwd{svmClassification}\hlstd{(hl,} \hlkwc{cost} \hlstd{=} \hlnum{16}\hlstd{,} \hlkwc{sigma} \hlstd{=} \hlnum{0.1}\hlstd{,} \hlkwc{class.weights} \hlstd{= w,} \hlkwc{fcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 
 Automatically, the output of the above classification, the organelle
 predictions and assignment scores, are stored in the
@@ -1934,7 +1957,7 @@ high scoring localisations from the SVM predictions.
 
 \end{knitrout}
 \caption{Classification results. Colours indicate class membership and
-  point size are representative or the classification confidence.}
+  point size are representative of the classification confidence.}
   \label{fig:plotSVM}
 \end{figure}
 
@@ -1976,7 +1999,7 @@ distributions per organelle (Figure \ref{fig:threshold}).
 \hlcom{## First remove the markers}
 \hlstd{preds} \hlkwb{<-} \hlkwd{unknownMSnSet}\hlstd{(hl)}
 \hlcom{## Plot a boxplot of the scores of each organelle}
-\hlkwd{par}\hlstd{(}\hlkwc{oma} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{10.5}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{))}
+\hlkwd{par}\hlstd{(}\hlkwc{oma} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{10.5}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{))} \hlcom{## sets outer margins}
 \hlkwd{boxplot}\hlstd{(svm.scores} \hlopt{~} \hlstd{svm,} \hlkwc{data} \hlstd{=} \hlkwd{fData}\hlstd{(preds),}
         \hlkwc{ylab} \hlstd{=} \hlstr{"SVM scores"}\hlstd{,} \hlkwc{las} \hlstd{=} \hlnum{2}\hlstd{)}
 \end{alltt}
@@ -2010,19 +2033,29 @@ labelled as unknown.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{ts} \hlkwb{<-} \hlkwd{orgQuants}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{=} \hlnum{.5}\hlstd{)}
+\hlstd{(ts} \hlkwb{<-} \hlkwd{orgQuants}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{=} \hlnum{.5}\hlstd{))}
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4368179               0.3037653               0.3856993 
+##               0.4359719               0.3027894               0.3807832 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6916475               0.5951696               0.4377555 
+##               0.6994864               0.6018155               0.4232624 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4317514               0.5919750               0.9527663 
+##               0.4141776               0.5871408               0.9494709 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7947663               0.7096575               0.3269003 
+##               0.7959998               0.7097865               0.3121881 
 ##         Plasma membrane              Proteasome 
-##               0.7210996               0.4155492
+##               0.7104260               0.4136511
+##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
+##               0.4359719               0.3027894               0.3807832 
+##                 Cytosol   Endoplasmic reticulum                Endosome 
+##               0.6994864               0.6018155               0.4232624 
+##    Extracellular matrix                Lysosome           Mitochondrion 
+##               0.4141776               0.5871408               0.9494709 
+##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
+##               0.7959998               0.7097865               0.3121881 
+##         Plasma membrane              Proteasome 
+##               0.7104260               0.4136511
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2030,15 +2063,31 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      88 
+##                      86                     169                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     296                     477                     100 
+##                     296                     477                      93 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     123                     513 
+##                      27                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     231                     344                      42 
+##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     318                     157                    2059
+##                     326                     158                    2058
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+The organelle threshold (\texttt{ts} above) can also be set manually
+using an interactive app (see below) or by using a named vector of
+thresholds, as shown in the putative example below for 4 organelles.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{(ts} \hlkwb{<-} \hlkwd{setNames}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0.612}\hlstd{,} \hlnum{0.701}\hlstd{,} \hlnum{0.81}\hlstd{,} \hlnum{0.92}\hlstd{),} \hlkwd{c}\hlstd{(}\hlstr{"PM"}\hlstd{,} \hlstr{"Mito"}\hlstd{,} \hlstr{"Golgi"}\hlstd{,} \hlstr{"ER"}\hlstd{)))}
+\end{alltt}
+\begin{verbatim}
+##    PM  Mito Golgi    ER 
+## 0.612 0.701 0.810 0.920
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2102,10 +2151,10 @@ a sidebar panel with sliders to control the thresholds upon which
 classifications are made. There are two types of cut-off that the user
 can choose from: (1) \textit{Quantile} and (2)
 \textit{User-defined}. By default, when the application is launched
-quatile scoring is selected and set to 0.5, the median. The
+quantile scoring is selected and set to 0.5, the median. The
 class-specific score thresholds that correspond to selecting the
-desired quantile are shown on as red dots on the boxplot. The
-assignments on the PCA plot are also updated according to the selected
+desired quantile are shown as red dots on the boxplot. The assignments
+on the PCA plot are also updated according to the selected
 threshold. The quantile threshold can be set by moving the
 corresponding quantile slider. If one wished to set their own cut-offs
 the \textit{User-defined} radio button must be selected and then the
@@ -2197,12 +2246,12 @@ evidence codes as desired, see \texttt{?makeGoSet} for more details.
 The function \texttt{makeGoSet} uses the \Biocpkg{biomaRt} package to
 query the relevent database (e.g. Ensembl, Uniprot) for GO terms. All
 GO terms that have been observed for the 5032 proteins in the
-hyperLOPIT dataset are retieved. Users should note that the number of
-GO terms retreived is also dependent on the database version queried
-and thus is always subject to change. We find it is common to see GO
-terms with only one protein assigned to that term. Such terms do not
-bring any information for building the classifier and are thus removes
-using the \texttt{filterBinMSnSet} function.
+hyperLOPIT dataset are retrieved. Users should note that the number of
+GO terms used is also dependent on the database version queried and
+thus is always subject to change. We find it is common to see GO terms
+with only one protein assigned to that term. Such terms do not bring
+any information for building the classifier and are thus removed using
+the \texttt{filterBinMSnSet} function.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2258,7 +2307,7 @@ class score of 1 (i.e. use only primary data from transfer learning
 \cite{Breckels:2016}). Therefore, for the optimisation stage of the
 analyses we can already infer a subcellular class weight of 1 for
 these niches and only optimise over the remaining organelles.  This
-can signifciantly cut down optimisation time as by removing these 4
+can significantly cut down optimisation time as by removing these 4
 classes from the optimisation (and not the classification) we only
 have \texttt{4$^{10}$} class weight combinations to consider instead
 of \texttt{4$^{14}$} combinations.
@@ -2266,7 +2315,7 @@ of \texttt{4$^{14}$} combinations.
 In the example below we remove these 4 classes from the marker set,
 re-run the \texttt{knnOptimisation} for each data source and then run
 the \texttt{knntlOptimisation} with the 10 remaining classes. (Note:
-this is not run live as this the \texttt{hl} dataset with 10 classes,
+this is not run live as the \texttt{hl} dataset with 10 classes,
 707 markers and 4$^{10}$ combinations of parameters takes around 76
 hours to run on the University of Cambridge HPC using 256 workers).
 
@@ -2389,7 +2438,7 @@ weights and then use this as input for the classification.
 
 One of the benefits of the algorithm is the ability to manually select
 weights for each class. In the optimisation above, for time
-constraints, we removed the two ribosomal subunits and the two nulcear
+constraints, we removed the two ribosomal subunits and the two nuclear
 compartments, and therefore in the code chunk below when we extract
 the best parameters, these subcellular niches are not included. To
 include these 4 subcellular niches in the next classification step we
@@ -2453,9 +2502,15 @@ appended to the \texttt{fData} slot and named \texttt{knntl} and
 using \texttt{getPredictions} in the same way as demonstrated above
 for the SVM classifier.
 
+In \Biocpkg{pRoloc}'s
+\href{http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-transfer-learning.pdf}{transfer
+  learning vignette}, we demonstrate how to use imaging data from the
+Human Protein Atlas \cite{Uhlen:2010} via the \Biocpkg{hpar} package
+\cite{hpar} as an auxiliary data source.
+
 \section*{Unsupervised machine learning}
 
-In \texttt{pRoloc} there is functionality for unsupervsied machine
+In \Biocpkg{pRoloc} there is functionality for unsupervsied machine
 learning methods. In unsupervised learning, the training data consists
 of a set of input vectors e.g. protein profiles, ignoring the
 information about the class label e.g. localisation, other than for
@@ -2470,7 +2525,7 @@ As described and demonstrated already above, PCA is a valuable and
 powerful method for data visualisation and quality control. Another
 application uses hierarchical clustering to summarise the relation
 between marker proteins using he \texttt{mrkHClust} function, where
-the euclidean distance bewteen average class-specific profiles is used
+the euclidean distance between average class-specific profiles is used
 to produce a dendrogramme describing a simple relationship between the
 sub-cellular classes (Figure~\ref{fig:mrkHclust}). The
 \texttt{mrkHClust} uses the same defaults as all other function, using
@@ -2483,7 +2538,7 @@ names.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{15}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{))}
+\hlkwd{par}\hlstd{(}\hlkwc{mar} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{15}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{1}\hlstd{,} \hlnum{0}\hlstd{))} \hlcom{## set figure margin}
 \hlkwd{mrkHClust}\hlstd{(hl)}
 \end{alltt}
 \end{kframe}
@@ -2500,8 +2555,8 @@ marker proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for
 enrichment of organelles and complexes. In the latter we do not make
 good use of valuable prior knowledge, and in our experience
-unsupervised clustering can be extremely difficult due poor estimates
-of the number of clusters that may appear in the data.
+unsupervised clustering can be extremely difficult due to poor
+estimates of the number of clusters that may appear in the data.
 
 \section*{Writing and exporting data}
 
@@ -2528,9 +2583,9 @@ names, and write the resulting data to the file \texttt{"hl.csv"}.
 \end{kframe}
 \end{knitrout}
 
-Exporting to a spreadsheet however looses a lot of important
+Exporting to a spreadsheet however loses a lot of important
 information, such as the processing data, and the sample metadata in
-the \textit{phenoData} slot. Other objects, such a parameters from the
+the \textit{phenoData} slot. Other objects, such as parameters from the
 machine learning optimisation, cannot be represented as tabular
 data. To directly serialise R objects to disk, on can use the standard
 \texttt{save} function, and later reload the object using
@@ -2648,7 +2703,7 @@ with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
 
 The source of this document, including the code necessary to reproduce
 the analyses and figures is available in a public manuscript
-repository on GitHub~\cite{ghrepo}.
+repository on GitHub~\cite{ghrepo}. 
 
 \bigskip
 
@@ -2663,9 +2718,9 @@ The authors declare that they have no competing interest.
 
 \subsection*{Grant information}
 
-LMB is supported by a Wellcome Trust Technology Development Grant
-(grant number 108467/Z/15/Z). LG is supported by the BBSRC Strategic
-Longer and Larger grant (Award BB/L002817/1).
+LMB and CMM are supported by a Wellcome Trust Technology Development
+Grant (grant number 108441/Z/15/Z). LG is supported by the BBSRC
+Strategic Longer and Larger grant (Award BB/L002817/1).
 
 
 \subsection*{Acknowledgements}

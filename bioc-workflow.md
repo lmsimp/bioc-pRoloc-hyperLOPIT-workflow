@@ -5,17 +5,19 @@ Quantitative mass spectrometry based spatial proteomics involves
 elaborate, expensive and time consuming experimental procedures and
 considerable effort is invested in the generation of such data. Multiple
 research groups have described a variety of approaches to establish high
-quality proteome-wide datasets. However, data analysis is as critical as
-data production for reliable and insightful biological interpretation.
-Here, we walk the reader through a typical pipeline for the analysis of
-such data using several Bioconductor packages for the R statistical
-programming environment.
+quality proteome-wide datasets (see for example @Gatto2010 for a review,
+and @hyper [@Itzhak:2016] for recent examples). However, data analysis
+is as critical as data production for reliable and insightful biological
+interpretation. Here, we walk the reader through a typical pipeline for
+the analysis of such data using several Bioconductor packages for the R
+statistical programming environment.
 
 The main package to analyse protein localisation data is , which offers
 a set of dedicated functions for the analysis of such data. itself
 relies on to manipulate and process quantitative proteomics data. Many
 other packages are used by for clustering, classification and
-visualisation.
+visualisation. Support for interactive visualisation is offered by the
+`pRolocGUI` package.
 
 In this workflow, we will describe how to prepare the spatial proteomics
 data starting from a spreadsheet containing quantitative mass
@@ -29,6 +31,12 @@ package.
 Installation of Bioconductor package is documented in detail on the
 [Bioconductor installation help
 page](http://bioconductor.org/install/#install-bioconductor-packages).
+Below, we show how to install the four main packages used in this
+workflow:
+
+\
+`   `
+
 This procedure is also applicable to any packages, from
 [CRAN](https://cran.r-project.org/) as well as GitHub. Once a package
 has been installed, it needs to be loaded for its functionality to
@@ -73,15 +81,15 @@ the E14TG2a experiment, the first was to target low density fractions
 and the second and third were to emphasis separation of the denser
 organelles. The intersect of replicates 1 and 2 was treated as a 20-plex
 dataset for the analysis. As discussed in the manuscript @hyper, it has
-been shown that combining replicates across from different gradients can
+been shown that combining replicates from different gradients can
 increase spatial resolution @Trotter:2010. The combination of replicates
 resulted in 5032 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
-structured and annotated computational objects from the experiment
-package. In this workflow, we will start with a description of how to
-generate these ad hoc objects starting from an arbitrary spreadsheets,
-as produced by many popular third-party applications.
+structured and annotated datasets from the experiment package. In this
+workflow, we will start with a description of how to generate these ad
+hoc data objects starting from an arbitrary spreadsheet, as produced by
+many popular third-party applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are relevant
 for any quantitative spatial proteomics data, irrespective of the
@@ -130,7 +138,7 @@ There are a number of ways to import quantitation data and create an
 capabilities
 vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf).
 One suggested simple method is to use the function `readMSnSet2`. The
-function takes a single spreadsheet filename as input and extracts the
+function takes a single spreadsheet file name as input and extracts the
 columns containing the quantitation data, as identified by the argument
 `ecol`, to create the expression data, while the other columns in the
 spreadsheet are appended to the feature meta-data slot. By example, in
@@ -144,10 +152,23 @@ we make use of below.
 
 To use the `readMSnSet2` function, as a minimum one must specify the
 file path to the data and which columns of the spreadsheet contain
-quantitation data. The `getEcols` function exists to help users identify
-which columns of the spreadsheet contain the quantitation data. In the
-last line of the code chunk below, we print the file name (not the full
-path, which will vary from computer to computer).
+quantitation data. In the code chunk below, we start by identifying the
+file that we want to use. The `system.file` function is used to return
+the path to the `extdata` directory from the `pRolocdata` package, which
+is where our file of interest resides. We then use the `dir` function to
+list the content of that directory and store the path that matches the
+file name of interest in the `csvfile`. Note that these two lines are
+only needed here to locate a file in a package; in a more general use
+case, the user would defined the `csvfile` variable containing the file
+name of interest directly.
+
+A common pitfall here is to provide only the file name, rather than full
+path to the file (which is what is shown below with `basename`; we don’t
+print the full path, as it will vary from computer to computer). Note
+that only specifying the name of the file is sufficient when it exists
+in the working directory (i.e. the directory in which R is running,
+which can be queried and changed with the `getwd` and `setwd` functions
+respectively).
 
 \
 `     `\
@@ -159,8 +180,10 @@ path, which will vary from computer to computer).
 Note that the file is compressed (as indicated by the `gz`, for `gzip`,
 extension), and will be decompressed on-the-fly when read into R.
 
-The spreadsheet that was deposited by the authors contains two headers,
-with the second header containing information about where the
+Next, we need to identify which columns in the spreadsheet contain the
+quantitation data. This can be done using the `getEcols` function inside
+R. The spreadsheet that was deposited by the authors contains two
+headers, with the second header containing information about where the
 quantitation data is stored.
 
 ![A screenshot of the data in the
@@ -170,7 +193,9 @@ spreadsheet.](./Figures/spreadsheet-screenshot.png)
 
 We can display the names of the second header by calling the `getEcols`
 function with the argument `n = 2` (the default value is `n = 1`), to
-specify that we wish to display the column names of the second line.
+specify that we wish to display the column names of the second line. We
+also specify the name of the spreadsheet file (defined as `csvfile`
+above) and the separator that splits cells.
 
 `      `
 
@@ -255,9 +280,9 @@ description, number of quantified peptides etc (see below).
     ## - - - Processing information - - -
     ##  MSnbase version: 2.1.4
 
-Below, we examine the quantitative information for first 5 proteins. It
-is also possible to access specific rows and columns by naming the
-proteins and TMT tag channels of interest.
+Below, we examine the quantitative information along the whole gradient
+for first 5 proteins. It is also possible to access specific rows and
+columns by naming the proteins and TMT tag channels of interest.
 
     ##           X126 X127N X127C X128N X128C X129N X129C X130N X130C  X131
     ## Q9JHU4   0.028 0.034 0.024 0.014 0.026 0.045 0.107 0.341 0.059 0.321
@@ -324,29 +349,29 @@ what feature data information is stored in the associated columns.
 
 `    `\
 `   `\
-` `
+\
+`  `
 
-    ##          uniprot.accession  uniprot.id
-    ## Q9JHU4              Q9JHU4 DYHC1_MOUSE
-    ## Q9QXS1-3          Q9QXS1-3  PLEC_MOUSE
-    ## Q9ERU9              Q9ERU9  RBP2_MOUSE
-    ## P26039              P26039  TLN1_MOUSE
-    ##                                                                                                                                 description
-    ## Q9JHU4                                              Cytoplasmic dynein 1 heavy chain 1 OS=Mus musculus GN=Dync1h1 PE=1 SV=2 - [DYHC1_MOUSE]
-    ## Q9QXS1-3 Isoform PLEC-1 of Plectin OS=Mus musculus GN=Plec - [PLEC_MOUSE]|Isoform PLEC-1A of Plectin OS=Mus musculus GN=Plec - [PLEC_MOUSE]
-    ## Q9ERU9                                                     E3 SUMO-protein ligase RanBP2 OS=Mus musculus GN=Ranbp2 PE=1 SV=2 - [RBP2_MOUSE]
-    ## P26039                                                                             Talin-1 OS=Mus musculus GN=Tln1 PE=1 SV=2 - [TLN1_MOUSE]
-    ##          peptides.expt1 peptides.expt2 peptides.expt3
-    ## Q9JHU4              175            166            322
-    ## Q9QXS1-3            123            150            174
-    ## Q9ERU9              101             90            181
-    ## P26039              101             94            167
+    ##          uniprot.accession  uniprot.id peptides.expt1 peptides.expt2
+    ## Q9JHU4              Q9JHU4 DYHC1_MOUSE            175            166
+    ## Q9QXS1-3          Q9QXS1-3  PLEC_MOUSE            123            150
+    ## Q9ERU9              Q9ERU9  RBP2_MOUSE            101             90
+    ## P26039              P26039  TLN1_MOUSE            101             94
+    ##          peptides.expt3
+    ## Q9JHU4              322
+    ## Q9QXS1-3            174
+    ## Q9ERU9              181
+    ## P26039              167
 
 Note that when using the simple `readMSnSet2` procedure, the `pData`
 slot which is used to store information about the samples/channels is
-kept empty. It is advised to annotate the channels as well. Below, we
-annotate the replicate from which the profiles originate and the TMT tag
-(extracted from the sample/channel names).
+kept empty. As illustrated below, one can use the `$` operator to access
+(or create) individual columns in the metadata slot. It is advised to
+annotate the channels as well. Below, we annotate the replicate from
+which the profiles originate and the TMT tag (extracted from the
+sample/channel names). To do so, we use the sample names that were
+assigned automatically using the quantiation column names and remove
+leading `X` and trailing `.1` using the `sub` function.
 
 `     `\
 `      `\
@@ -376,7 +401,7 @@ annotate the replicate from which the profiles originate and the TMT tag
 Throughout this workflow we refer to the different columns that are
 found in the `exprs` (expression data) slot as channels (short for TMT
 channels). In the frame of LOPIT and hyperLOPIT these channels
-consititue the relative abundance of each protein (along the rows) in
+constitute the relative abundance of each protein (along the rows) in
 the channel of interest. Each TMT channel originates from fractions
 collected from the density gradient, or a set of pooled fractions or may
 be a sample originating from an alternative preparation e.g. such as
@@ -439,12 +464,12 @@ normalisation will depend on the underlying quantitative technology and
 the experimental design, and will not be addressed in this workflow. The
 second aspect, and more specific to spatial proteomics data, is scaling
 all the organelle-specific profiles into a same intensity interval
-(typically 0 and 1) by, for example, diving each intensity by the sum of
-the intensities for that quantitative feature. This is not necessary in
-this example as the intensities for each replicate have already been
-re-scaled to 1 in Proteome Discoverer. However, if one wanted to do this
-they would execute the `normalise` function as demonstrated in the below
-code chunk.
+(typically 0 and 1) by, for example, dividing each intensity by the sum
+of the intensities for that quantitative feature. This is not necessary
+in this example as the intensities for each replicate have already been
+re-scaled to 1 in Proteome Discoverer v1.4, Thermo Fisher. However, if
+one wanted to do this they would execute the `normalise` function as
+demonstrated in the below code chunk.
 
 `     `
 
@@ -455,9 +480,10 @@ sub-cellular channels.
 
 The same `normalise` function (or `normalize`, both spellings are
 supported) can also be applied in the first case described above.
-Different normalisation methods such as mean or median scaling, variance
-stabilisation or quantile normalisation, to cite a few, can be applied
-to accomodate different needs.
+Different normalisation methods, such as mean or median scaling,
+variance stabilisation or quantile normalisation, to cite a few, can be
+applied to accomodate different needs (see `?normalise` for available
+options).
 
 As previously mentioned, before combination, the two replicates in the
 `hl` data that we read into R were separately normalised by sum (i.e. to
@@ -514,10 +540,10 @@ another. The function `updateSampleNames` can be used do this.
     ##  [1] "X126.2"  "X127N.2" "X127C.2" "X128N.2" "X128C.2" "X129N.2" "X129C.2"
     ##  [8] "X130N.2" "X130C.2" "X131.2"
 
-In addition, to matching names, the content of the feature metadata for
+In addition to matching names, the content of the feature metadata for
 identical feature annotations must match exactly across the data to be
 combined. In particular for these data, we expect the same proteins in
-each replicates to be annotated with the same UniProt entry names and
+each replicate to be annotated with the same UniProt entry names and
 descriptions, but not with the same coverage of number of peptides or
 peptide-spectrum matches (PSMs).
 
@@ -528,10 +554,13 @@ peptide-spectrum matches (PSMs).
     ## [4] "PSMs"               "ProteinCoverage"    "markers"
 
 Below, we update the replicate specific feature variable names and
-remove the shared annotation.
+remove the shared annotation. In the first line, we update only the
+feature variable names 3 to 5 (by appending a `1`) and in the second
+line, we apply the `updateFvarLabels` function to update all feature
+variable names (by appending a `2`).
 
 `   `\
-`   `\
+`      `\
 `  `\
 `  `\
 
@@ -560,10 +589,10 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:49:34 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 18:16:03 2016 
     ##  MSnbase version: 1.21.7
 
-More details above combining data are given in the dedicated *Combining
+More details about combining data are given in the dedicated *Combining
 MSnSet instances* section of the [tutorial
 vignette](http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf).
 
@@ -596,7 +625,9 @@ values.](figure/namap-1)
 We prefer to remove proteins that were not assayed in both replicated
 experiments. This is done with the `filterNA` function that removes
 features (proteins) that contain more than a certain proportion (default
-is 0) missing values.
+is 0) missing values. The *Processing information* section summarises
+how combining and filtering missing values (subsetting) changed the
+dimensions of the data.
 
 `  `\
 
@@ -616,10 +647,10 @@ is 0) missing values.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Thu Dec  1 10:49:34 2016 
-    ## Subset [6725,20][5032,20] Thu Dec  1 10:49:35 2016 
-    ## Removed features with more than 0 NAs: Thu Dec  1 10:49:35 2016 
-    ## Dropped featureData's levels Thu Dec  1 10:49:35 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 18:16:03 2016 
+    ## Subset [6725,20][5032,20] Fri Dec  2 18:16:03 2016 
+    ## Removed features with more than 0 NAs: Fri Dec  2 18:16:03 2016 
+    ## Dropped featureData's levels Fri Dec  2 18:16:03 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins were
@@ -690,11 +721,11 @@ gradient to identify channels displaying particularly low yield. This
 can be done using the `plotDist` and `boxplot` functions, that plot the
 protein profiles occupancy along the gradient (we also display the mean
 channel intensities) and a `boxplot` of the column intensities. In the
-two plots displayed on figure [fig:qcbx], we re-order the TMT channles
+two plots displayed on figure [fig:qcbx], we re-order the TMT channels
 to pair corresponding channels in the two replicates (rather than
 ordering the channels by replicate).
 
-`   `\
+`    `\
 `  `\
 `   `\
 `      `\
@@ -812,7 +843,7 @@ It is also possible for users to use their own marker list with the
 `addMarkers` function. The user needs to create a named vector of marker
 localisation, or a create a csv file with two columns (one for the
 protein names, one for the corresponding sub-cellular marker annotation)
-and pass the vector or filename respectively to the function. As
+and pass the vector or file name respectively to the function. As
 previously mentioned, the protein names of these markers must match some
 (but not necessarily all) of the `MSnSet`’s feature names. See
 `?addMarkers` for more details.
@@ -840,7 +871,7 @@ the plot. We choose to display PCs 1 and 7 to illustrate that while
 upper principal components explain much less variability in the data
 (2.23% for PC7, as opposed to 48.41% for PC1), we see that the
 mitochondrial (purple) and peroxisome (dark blue) clusters can be
-differenciated, despite the apparent overlap in the visualisation of the
+differentiated, despite the apparent overlap in the visualisation of the
 two first PCs (Figure [fig:plotmarkers]).
 
 `   `\
@@ -853,22 +884,22 @@ two first PCs (Figure [fig:plotmarkers]).
 
 [fig:plotmarkers]
 
-The defualt colours for plotting have been defined so as to enable to
-differenciate up to 30 classes. If more are provided, different
+The default colours for plotting have been defined so as to enable the
+differentiation of up to 30 classes. If more are provided, different
 character symbols (circles, squares, ... and empty and solid symbols)
 are used. The colours and the default plotting characters (solid dots
 for the markers and empty circles for the features of unknown
 localisation) can of course be changed, as described in the
 `setStockcol` manual page.
 
-As demonstrated in @hyper and illustrated in the PCA plot above, the
-Golgi apparatus proteins (dark brown) display a dynamic pattern, noting
-sets of Golgi marker proteins that are distributed amongst other
-subcellular structures, an observation supported by microscopy. As such,
-we are going to reset the annotation of Golgi markers to unknown using
-the `fDataTounknown` function. It is often used to replace empty strings
-(``) or missing values in the markers definition to a common definition
-of *unknown* localisation.
+As demonstrated in @hyper and illustrated in the PCA plot (Figure
+[fig:plotmarkers]), the Golgi apparatus proteins (dark brown) display a
+dynamic pattern, noting sets of Golgi marker proteins that are
+distributed amongst other subcellular structures, an observation
+supported by microscopy. As such, we are going to reset the annotation
+of Golgi markers to unknown using the `fDataToUnknown` function. It is
+often used to replace empty strings (``) or missing values in the
+markers definition to a common definition of *unknown* localisation.
 
 `        `\
 
@@ -932,7 +963,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Thu Dec  1 10:49:37 2016 
+    ##  Created on Fri Dec  2 18:16:05 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1005,6 +1036,14 @@ part of the package is also useful for examining replicate experiments
 
 [fig:plot2Drep]
 
+In addition, the reproducibility can be assessed by performing
+independent classification analyses on each replicate (see the section
+on *Supervised machine learning* below) and comparing the the results.
+Even when the gradient conditions different (for unexpected technical or
+voluntary reasons, to maximise resolution when combining experiments
+@Trotter:2010), one expects agreement in the most confident organelle
+assignments.
+
 Interactive visualisation {#interactive-visualisation .unnumbered}
 =========================
 
@@ -1014,8 +1053,8 @@ interest. Using the package we can interactively visualise, explore and
 interrogate quantitative spatial proteomics data. The package is
 currently under active development and it relies on the `shiny`
 framework for reactivity and interactivity. The package currently
-distributes 3 different GUI’s (*main* (default), *compare* or *compare*)
-which are wrapped and launched by the `pRolocVis` function.
+distributes 3 different GUI’s (*main* (default), *compare* or
+*classify*) which are wrapped and launched by the `pRolocVis` function.
 
 ### The main application {#the-main-application .unnumbered}
 
@@ -1030,10 +1069,10 @@ app in the package. ](./Figures/mainapp.png)
 [fig:app]
 
 As diplayed in the screenshot in figure [fig:app], the *main*
-application is designed for exploratory data analysis and is divied into
-3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default view
-upon loading is the PCA tab, which features a clickable interface and
-zoomable PCA plot with an interactive data table for displaying the
+application is designed for exploratory data analysis and is divided
+into 3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default
+view upon loading is the PCA tab, which features a clickable interface
+and zoomable PCA plot with an interactive data table for displaying the
 quantitation information. Particular proteins of interest can be
 highlighted using the text search box. There is also an alternate
 profiles tab for visualisation of the protein profiles, which can be
@@ -1154,9 +1193,9 @@ and the literature.
 
 In the code chunk below we show how to run the `phenoDisco` function and
 return a novelty detection result, according to the specified
-parameters. The algorithm parameters `times`, `GS` and `p` are passed to
-the function, along with the `fcol` to tell the algorithm where the
-input training data is contained.
+parameters. The algorithm parameters `times` and `GS` are passed to the
+function, along with the `fcol` to tell the algorithm where the input
+training data is contained.
 
 \
 `           `
@@ -1173,11 +1212,11 @@ increase the value to `times = 200` as we have found for larger datasets
 (e.g. 5000+ proteins) a higher `times` is requried for convergence. `GS`
 defines the minimum number of proteins allowed per new data cluster and
 thus heavily influences what type of new clusters are extracted. For
-example, if a user is interesed in the detection of small complexes they
-may wish to use a small `GS = 10`, or `= 20` etc. If they wish to detect
-larger, more abundant sub-cellular niches a much higher `GS` would be
-preferable. Specifying a small `GS` can be more time consuming than
-using a larger `GS`, and there is a trade off between finding
+example, if a user is interested in the detection of small complexes
+they may wish to use a small `GS = 10`, or `= 20` etc. If they wish to
+detect larger, more abundant sub-cellular niches a much higher `GS`
+would be preferable. Specifying a small `GS` can be more time consuming
+than using a larger `GS`, and there is a trade off between finding
 interesting small complexes and those that may not be of interest as we
 find there is a tendancy to find more noise when using a small `GS`
 compared to using a higher one.
@@ -1214,8 +1253,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Thu Dec  1 10:49:37 2016 
-    ## Added markers from  'pdres' marker vector. Thu Dec  1 10:49:38 2016 
+    ## Added markers from  'mrk' marker vector. Fri Dec  2 18:16:04 2016 
+    ## Added markers from  'pdres' marker vector. Fri Dec  2 18:16:06 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1319,7 +1358,7 @@ from the cross-validation stage are then used to build a classifier to
 predict the class labels of the protein profiles on the test partition.
 Observed and expected classication results can be compared, and then
 used to assess how well a given model works by getting an estimate of
-the classiers ability to achieve a good generalisation i.e. that is
+the classifiers ability to achieve a good generalisation i.e. that is
 given an unknown example predict its class label with high accuracy. In
 , algorithmic performance is estimated using stratified 80/20
 partitioning for the training/testing subsets respectively, in
@@ -1366,7 +1405,7 @@ frequencies.
 
 As mentioned previously, we rely on the default feature variable
 `markers` to define the class labels and hence do not need to specify it
-in the above code chunk. To use another feature variables, one need to
+in the above code chunk. To use another feature variables, one needs to
 explicitly specify its name using the `fcol` argument (for example
 `fcol = markers2`).
 
@@ -1431,6 +1470,14 @@ passed to the function, along with the class weights. As above, the
 defined in the default `markers` feature variable.
 
 `       `
+
+In the code chunk above, we pass the whole `params` parameter results
+and, internally, the first pair that return the highest F1 score are
+returned (using the `getParams` function above). It is advised to always
+check that these are actually good parameters and, if necessary, set
+them explicitly, as shown below.
+
+`             `
 
 Automatically, the output of the above classification, the organelle
 predictions and assignment scores, are stored in the `featureData` slot
@@ -1519,29 +1566,29 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4343505               0.3047508               0.3888373 
+    ##               0.4352871               0.3035428               0.3855788 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6858101               0.5897977               0.4283659 
+    ##               0.6881871               0.6057278               0.4324654 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4175965               0.5981079               0.9494104 
+    ##               0.4289930               0.6015118               0.9499169 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7967111               0.7085718               0.3154399 
+    ##               0.7939425               0.7081657               0.3164716 
     ##         Plasma membrane              Proteasome 
-    ##               0.7107861               0.4112064
+    ##               0.7213703               0.4188724
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     171                      88 
+    ##                      84                     171                      88 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     473                      95 
+    ##                     299                     474                      99 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      26                     124                     523 
+    ##                      26                     124                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
     ##                     229                     344                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     323                     158                    2058
+    ##                     319                     157                    2057
 
 The output of `getPredictons` is the original `MSnSet` dataset with a
 new feature variable appended to the feature data called `fcol.pred`
@@ -1963,25 +2010,25 @@ different results.
     ## 
     ## other attached packages:
     ##  [1] pRolocdata_1.12.0    pRoloc_1.15.5        MLInterfaces_1.54.0 
-    ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.4        
-    ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.0        S4Vectors_0.12.0    
+    ##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.5        
+    ##  [7] AnnotationDbi_1.36.0 IRanges_2.8.1        S4Vectors_0.12.1    
     ## [10] MSnbase_2.1.4        ProtGenerics_1.6.0   BiocParallel_1.8.1  
-    ## [13] mzR_2.8.0            Rcpp_0.12.7          Biobase_2.34.0      
+    ## [13] mzR_2.8.0            Rcpp_0.12.8          Biobase_2.34.0      
     ## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
-    ## [19] BiocStyle_2.2.0      knitr_1.14          
+    ## [19] BiocStyle_2.2.1      knitr_1.15.1        
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] minqa_1.2.4           colorspace_1.2-7      hwriter_1.3.2        
+    ##   [1] minqa_1.2.4           colorspace_1.3-1      hwriter_1.3.2        
     ##   [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
     ##   [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
     ##  [10] hexbin_1.27.1         MatrixModels_0.4-1    affyio_1.44.0        
     ##  [13] flexmix_2.3-13        mvtnorm_1.0-5         codetools_0.2-15     
     ##  [16] splines_3.3.2         doParallel_1.0.10     impute_1.48.0        
     ##  [19] robustbase_0.92-6     jsonlite_1.1          nloptr_1.0.4         
-    ##  [22] caret_6.0-72          pbkrtest_0.4-6        rda_1.0.2-2          
+    ##  [22] caret_6.0-73          pbkrtest_0.4-6        rda_1.0.2-2          
     ##  [25] kernlab_0.9-25        vsn_3.42.3            sfsmisc_1.1-0        
     ##  [28] shiny_0.14.2          sampling_2.7          assertthat_0.1       
-    ##  [31] Matrix_1.2-7.1        limma_3.30.2          formatR_1.4          
+    ##  [31] Matrix_1.2-7.1        lazyeval_0.2.0        limma_3.30.6         
     ##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.2          
     ##  [37] ggvis_0.4.3           gtable_0.2.0          affy_1.52.0          
     ##  [40] reshape2_1.4.2        dplyr_0.5.0           MALDIquant_1.15      
@@ -1989,22 +2036,27 @@ different results.
     ##  [46] nlme_3.1-128          iterators_1.0.8       fpc_2.1-10           
     ##  [49] stringr_1.1.0         lme4_1.1-12           lpSolve_5.6.13       
     ##  [52] mime_0.5              gtools_3.5.0          dendextend_1.3.0     
-    ##  [55] DEoptimR_1.0-6        zlibbioc_1.20.0       MASS_7.3-45          
-    ##  [58] scales_0.4.0          BiocInstaller_1.24.0  pcaMethods_1.66.0    
-    ##  [61] SparseM_1.72          RColorBrewer_1.1-2    ggplot2_2.1.0        
-    ##  [64] biomaRt_2.30.0        rpart_4.1-10          stringi_1.1.2        
-    ##  [67] RSQLite_1.0.0         highr_0.6             genefilter_1.56.0    
-    ##  [70] randomForest_4.6-12   foreach_1.4.3         e1071_1.6-7          
-    ##  [73] prabclus_2.2-6        bitops_1.0-6          mzID_1.12.0          
-    ##  [76] evaluate_0.10         lattice_0.20-34       htmlwidgets_0.7      
-    ##  [79] gbm_2.1.1             plyr_1.8.4            magrittr_1.5         
-    ##  [82] R6_2.2.0              DBI_0.5-1             whisker_0.3-2        
-    ##  [85] mgcv_1.8-15           survival_2.40-1       RCurl_1.95-4.8       
-    ##  [88] nnet_7.3-12           tibble_1.2            msdata_0.14.0        
-    ##  [91] car_2.1-3             mlbench_2.1-1         grid_3.3.2           
-    ##  [94] FNN_1.1               ModelMetrics_1.1.0    threejs_0.2.2        
-    ##  [97] digest_0.6.10         diptest_0.75-7        httpuv_1.3.3         
-    ## [100] munsell_0.4.3
+    ##  [55] DEoptimR_1.0-8        zlibbioc_1.20.0       MASS_7.3-45          
+    ##  [58] scales_0.4.1          BiocInstaller_1.24.0  pcaMethods_1.66.0    
+    ##  [61] SparseM_1.74          RColorBrewer_1.1-2    memoise_1.0.0        
+    ##  [64] ggplot2_2.2.0         biomaRt_2.30.0        rpart_4.1-10         
+    ##  [67] stringi_1.1.2         RSQLite_1.1           highr_0.6            
+    ##  [70] genefilter_1.56.0     randomForest_4.6-12   foreach_1.4.3        
+    ##  [73] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
+    ##  [76] mzID_1.12.0           evaluate_0.10         lattice_0.20-34      
+    ##  [79] htmlwidgets_0.8       gbm_2.1.1             plyr_1.8.4           
+    ##  [82] magrittr_1.5          R6_2.2.0              DBI_0.5-1            
+    ##  [85] whisker_0.3-2         mgcv_1.8-16           survival_2.40-1      
+    ##  [88] RCurl_1.95-4.8        nnet_7.3-12           tibble_1.2           
+    ##  [91] msdata_0.14.0         car_2.1-3             mlbench_2.1-1        
+    ##  [94] grid_3.3.2            FNN_1.1               ModelMetrics_1.1.0   
+    ##  [97] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
+    ## [100] httpuv_1.3.3          munsell_0.4.3
+
+We also recommend that users regularly update the packages as well as
+the R itself. This can be done with the `biocLite` function.
+
+\
 
 It is always important to include session information details along with
 a [short reproducible
