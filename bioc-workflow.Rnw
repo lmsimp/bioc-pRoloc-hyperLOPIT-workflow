@@ -16,18 +16,21 @@ Quantitative mass spectrometry based spatial proteomics involves
 elaborate, expensive and time consuming experimental procedures and
 considerable effort is invested in the generation of such data.
 Multiple research groups have described a variety of approaches to
-establish high quality proteome-wide datasets. However, data analysis
-is as critical as data production for reliable and insightful
-biological interpretation. Here, we walk the reader through a typical
-pipeline for the analysis of such data using several Bioconductor
-packages for the R statistical programming environment.
+establish high quality proteome-wide datasets (see for example
+\cite{Gatto2010} for a review, and \cite{hyper,Itzhak:2016} for recent
+examples). However, data analysis is as critical as data production
+for reliable and insightful biological interpretation. Here, we walk
+the reader through a typical pipeline for the analysis of such data
+using several Bioconductor packages for the R statistical programming
+environment.
 
 The main package to analyse protein localisation data is
 \Biocpkg{pRoloc}, which offers a set of dedicated functions for the
 analysis of such data. \Biocpkg{pRoloc} itself relies on
-\Biocpkg{MSnbase} to manipulate and process quantitative
-proteomics data. Many other packages are used by \Biocpkg{pRoloc}
-for clustering, classification and visualisation.
+\Biocpkg{MSnbase} to manipulate and process quantitative proteomics
+data. Many other packages are used by \Biocpkg{pRoloc} for clustering,
+classification and visualisation. Support for interactive
+visualisation is offered by the \texttt{pRolocGUI} package.
 
 In this workflow, we will describe how to prepare the spatial
 proteomics data starting from a spreadsheet containing quantitative
@@ -40,13 +43,21 @@ are readily available in the \Biocexptpkg{pRolocdata} package.
 
 Installation of Bioconductor package is documented in detail on the
 \href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
-  installation help page}. This procedure is also applicable to any
-packages, from \href{https://cran.r-project.org/}{CRAN} as well as
-GitHub. Once a package has been installed, it needs to be loaded for
-its functionality to become available in the R session; this is done
-with the \texttt{library} function e.g.  to load the
-\Biocpkg{pRoloc} one would type \texttt{library("pRoloc")}
-after installation.
+  installation help page}. Below, we show how to install the four main
+packages used in this workflow:
+
+<<install, eval=FALSE>>=
+source("https://bioconductor.org/biocLite.R")
+biocLite(c("MSnase", "pRoloc", "pRolocdata", "pRolocGUI"))
+@
+
+
+This procedure is also applicable to any packages, from
+\href{https://cran.r-project.org/}{CRAN} as well as GitHub. Once a
+package has been installed, it needs to be loaded for its
+functionality to become available in the R session; this is done with
+the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} one
+would type \texttt{library("pRoloc")} after installation.
 
 If you have questions about this workflow in particular, or about
 other Bioconductor packages in general, they are best asked on the
@@ -87,17 +98,17 @@ from the E14TG2a experiment, the first was to target low density
 fractions and the second and third were to emphasis separation of the
 denser organelles.  The intersect of replicates 1 and 2 was treated as
 a 20-plex dataset for the analysis.  As discussed in the manuscript
-\cite{hyper}, it has been shown that combining replicates across from
+\cite{hyper}, it has been shown that combining replicates from
 different gradients can increase spatial resolution
 \cite{Trotter:2010}. The combination of replicates resulted in 5032
 proteins common in both experiments.
 
 These, as well as many other data are directly available as properly
-structured and annotated computational objects from the 
-\Biocexptpkg{pRolocdata} experiment package. In this workflow, we
-will start with a description of how to generate these ad hoc objects
-starting from an arbitrary spreadsheets, as produced by many popular
-third-party applications. 
+structured and annotated datasets from the \Biocexptpkg{pRolocdata}
+experiment package. In this workflow, we will start with a description
+of how to generate these ad hoc data objects starting from an
+arbitrary spreadsheet, as produced by many popular third-party
+applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
 relevant for any quantitative spatial proteomics data, irrespective of
@@ -152,11 +163,11 @@ There are a number of ways to import quantitation data and create an
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf}{input/output
   capabilities vignette}. One suggested simple method is to use the
 function \texttt{readMSnSet2}. The function takes a single spreadsheet
-filename as input and extracts the columns containing the quantitation
-data, as identified by the argument \texttt{ecol}, to create the
-expression data, while the other columns in the spreadsheet are
-appended to the feature meta-data slot.  By example, in the code chunk
-below we read in the \texttt{csv} spreadsheet containing the
+file name as input and extracts the columns containing the
+quantitation data, as identified by the argument \texttt{ecol}, to
+create the expression data, while the other columns in the spreadsheet
+are appended to the feature meta-data slot.  By example, in the code
+chunk below we read in the \texttt{csv} spreadsheet containing the
 quantitation data from the intersect of replicates 1 and 2 of the
 mouse map \cite{hyper}, using the \texttt{readMSnSet2} function. The
 data is as available online with the manuscript (see tab 2 of the
@@ -165,14 +176,26 @@ be exported as a text-based spreadsheet). It is also available as a
 \texttt{csv} in the Bioconductor \Biocexptpkg{pRolocdata} data
 package, which we make use of below.
 
-To use the \texttt{readMSnSet2} function, as a minimum one must specify the
-file path to the data and which columns of the spreadsheet contain
-quantitation data. The \texttt{getEcols} function exists to help users
-identify which columns of the spreadsheet contain the
-quantitation data. In the last line of the code chunk below, we print
-the file name (not the full path, which will vary from computer to
-computer). 
+To use the \texttt{readMSnSet2} function, as a minimum one must
+specify the file path to the data and which columns of the spreadsheet
+contain quantitation data. In the code chunk below, we start by
+identifying the file that we want to use. The \texttt{system.file}
+function is used to return the path to the \texttt{extdata} directory
+from the \texttt{pRolocdata} package, which is where our file of
+interest resides. We then use the \texttt{dir} function to list the
+content of that directory and store the path that matches the file
+name of interest in the \texttt{csvfile}. Note that these two lines
+are only needed here to locate a file in a package; in a more general
+use case, the user would defined the \texttt{csvfile} variable
+containing the file name of interest directly.
 
+A common pitfall here is to provide only the file name, rather than
+full path to the file (which is what is shown below with
+\texttt{basename}; we don't print the full path, as it will vary from
+computer to computer). Note that only specifying the name of the file
+is sufficient when it exists in the working directory (i.e. the
+directory in which R is running, which can be queried and changed with
+the \texttt{getwd} and \texttt{setwd} functions respectively).
 
 <<getFilename, cache = cache>>=
 library("MSnbase")
@@ -186,9 +209,11 @@ Note that the file is compressed (as indicated by the \texttt{gz}, for
 \texttt{gzip}, extension), and will be decompressed on-the-fly when
 read into R.
 
-The spreadsheet that was deposited by the authors contains two
-headers, with the second header containing information about where the
-quantitation data is stored. 
+Next, we need to identify which columns in the spreadsheet contain the
+quantitation data. This can be done using the \texttt{getEcols}
+function inside R. The spreadsheet that was deposited by the authors
+contains two headers, with the second header containing information
+about where the quantitation data is stored.
 
 \begin{figure}[!ht]
   \centering
@@ -199,10 +224,11 @@ quantitation data is stored.
 
 
 We can display the names of the second header by calling the
-\texttt{getEcols} function with the argument \texttt{n = 2} (the default value is \texttt{n
-= 1}), to specify that we wish to display the column names of the
-second line.
-
+\texttt{getEcols} function with the argument \texttt{n = 2} (the
+default value is \texttt{n = 1}), to specify that we wish to display
+the column names of the second line. We also specify the name of the
+spreadsheet file (defined as \texttt{csvfile} above) and the
+separator that splits cells.
 
 <<getEcols>>=
 getEcols(csvfile, split = ",", n = 2)
@@ -237,9 +263,10 @@ etc (see below).
 hl
 @
 
-Below, we examine the quantitative information for first 5 proteins.
-It is also possible to access specific rows and columns by naming the
-proteins and TMT tag channels of interest. 
+Below, we examine the quantitative information along the whole
+gradient for first 5 proteins.  It is also possible to access specific
+rows and columns by naming the proteins and TMT tag channels of
+interest.
 
 <<assesshl>>=
 exprs(hl)[1:5, ]
@@ -262,14 +289,20 @@ what feature data information is stored in the associated columns.
 fvarLabels(hl)
 fvarLabels(hl)[1:3] <- c("uniprot.accession", "uniprot.id", "description")
 fvarLabels(hl)[4:6] <- paste0("peptides.expt", 1:3)
-fData(hl)[1:4, 1:6]
+## feature vars 1, 2, and 4 to 6
+fData(hl)[1:4, c(1:2, 4:6)]
 @
 
-Note that when using the simple \texttt{readMSnSet2} procedure, the \texttt{pData}
-slot which is used to store information about the samples/channels
-is kept empty. It is advised to annotate the channels as
-well. Below, we annotate the replicate from which the profiles
-originate and the TMT tag (extracted from the sample/channel names).
+Note that when using the simple \texttt{readMSnSet2} procedure, the
+\texttt{pData} slot which is used to store information about the
+samples/channels is kept empty. As illustrated below, one can use the
+\texttt{\$} operator to access (or create) individual columns in the
+metadata slot. It is advised to annotate the channels as well. Below,
+we annotate the replicate from which the profiles originate and the
+TMT tag (extracted from the sample/channel names). To do so, we use
+the sample names that were assigned automatically using the
+quantiation column names and remove leading \texttt{X} and trailing
+\texttt{.1} using the \texttt{sub} function.
 
 <<pdata>>=
 pData(hl)$Replicate <- rep(1:2, each = 10)
@@ -279,7 +312,7 @@ pData(hl)
 
 Throughout this workflow we refer to the different columns that
 are found in the \texttt{exprs} (expression data) slot as channels (short for TMT channels).
-In the frame of LOPIT and hyperLOPIT these channels consititue the
+In the frame of LOPIT and hyperLOPIT these channels constitute the
 relative abundance of each protein (along the rows) in the channel of
 interest. Each TMT channel originates from fractions collected from
 the density gradient, or a set of pooled fractions or may be a sample
@@ -319,19 +352,19 @@ pData(hl)
 
 There are two aspects related to data normalisation that are relevant
 to spatial proteomics data processing. The first one focuses on
-reducing purely technical variation between channels without
-affecting biological variability (i.e. the shape of the quantitative
+reducing purely technical variation between channels without affecting
+biological variability (i.e. the shape of the quantitative
 profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
 addressed in this workflow. The second aspect, and more specific to
 spatial proteomics data, is scaling all the organelle-specific
 profiles into a same intensity interval (typically 0 and 1) by, for
-example, diving each intensity by the sum of the intensities for that
-quantitative feature. This is not necessary in this example as the
-intensities for each replicate have already been re-scaled to 1 in
-Proteome Discoverer. However, if one wanted to do this they would
-execute the \texttt{normalise} function as demonstrated in the below code
-chunk.
+example, dividing each intensity by the sum of the intensities for
+that quantitative feature. This is not necessary in this example as
+the intensities for each replicate have already been re-scaled to 1 in
+Proteome Discoverer v1.4, Thermo Fisher. However, if one wanted to do
+this they would execute the \texttt{normalise} function as
+demonstrated in the below code chunk.
 
 <<normsum, eval = FALSE>>= 
 hl <- normalise(hl, method = "sum") 
@@ -342,11 +375,12 @@ absolute intensities of the quantitative features along the rows, to
 focus subsequent analyses on the relative profiles along the
 sub-cellular channels.
 
-The same \texttt{normalise} function (or \texttt{normalize}, both spellings are
-supported) can also be applied in the first case described above.
-Different normalisation methods such as mean or median scaling,
-variance stabilisation or quantile normalisation, to cite a few, can
-be applied to accomodate different needs.
+The same \texttt{normalise} function (or \texttt{normalize}, both
+spellings are supported) can also be applied in the first case
+described above.  Different normalisation methods, such as mean or
+median scaling, variance stabilisation or quantile normalisation, to
+cite a few, can be applied to accomodate different needs (see
+\texttt{?normalise} for available options).
 
 As previously mentioned, before combination, the two replicates in the
 \texttt{hl} data that we read into R were separately normalised by sum (i.e.
@@ -406,12 +440,12 @@ sampleNames(hyperLOPIT2015ms3r1)
 sampleNames(hyperLOPIT2015ms3r2)
 @
 
-In addition, to matching names, the content of the feature metadata
-for identical feature annotations must match exactly across the data
-to be combined. In particular for these data, we expect the same
-proteins in each replicates to be annotated with the same UniProt
-entry names and descriptions, but not with the same coverage of number
-of peptides or peptide-spectrum matches (PSMs).
+In addition to matching names, the content of the feature metadata for
+identical feature annotations must match exactly across the data to be
+combined. In particular for these data, we expect the same proteins in
+each replicate to be annotated with the same UniProt entry names and
+descriptions, but not with the same coverage of number of peptides or
+peptide-spectrum matches (PSMs).
 
 <<fvarnames>>=
 fvarLabels(hyperLOPIT2015ms3r1)
@@ -419,12 +453,15 @@ fvarLabels(hyperLOPIT2015ms3r2)
 @
 
 Below, we update the replicate specific feature variable names and
-remove the shared annotation.
+remove the shared annotation. In the first line, we update only the
+feature variable names 3 to 5 (by appending a \texttt{1}) and in the
+second line, we apply the \texttt{updateFvarLabels} function to update
+all feature variable names (by appending a \texttt{2}).
 
 <<fvarnames2>>=
 fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
-fvarLabels(hyperLOPIT2015ms3r2)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r2)[3:5], 2)
-fData(hyperLOPIT2015ms3r1) <- fData(hyperLOPIT2015ms3r1)[1:5] 
+hyperLOPIT2015ms3r2 <- updateFvarLabels(hyperLOPIT2015ms3r2, "2", sep = "")
+fData(hyperLOPIT2015ms3r1) <- fData(hyperLOPIT2015ms3r1)[1:5]
 fData(hyperLOPIT2015ms3r2) <- fData(hyperLOPIT2015ms3r2)[3:5]
 fvarLabels(hyperLOPIT2015ms3r1)
 fvarLabels(hyperLOPIT2015ms3r2)
@@ -437,7 +474,7 @@ combined <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
 combined
 @
 
-More details above combining data are given in the dedicated
+More details about combining data are given in the dedicated
 \textit{Combining MSnSet instances} section of the \Biocpkg{MSnbase}
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-demo.pdf}{tutorial
   vignette}.
@@ -477,8 +514,11 @@ image2(is.na(combined), col = c("black", "white"),
 
 We prefer to remove proteins that were not assayed in both replicated
 experiments. This is done with the \texttt{filterNA} function that
-removes features (proteins) that contain more than a certain proportion (default
-is 0) missing values.
+removes features (proteins) that contain more than a certain
+proportion (default is 0) missing values. The \textit{Processing
+  information} section summarises how combining and filtering missing
+values (subsetting) changed the dimensions of the data.
+
 
 <<filterNA>>=
 combined <- filterNA(combined)
@@ -650,7 +690,7 @@ It is also possible for users to use their own marker list with the
 \texttt{addMarkers} function. The user needs to create a named vector
 of marker localisation, or a create a csv file with two columns (one
 for the protein names, one for the corresponding sub-cellular marker
-annotation) and pass the vector or filename respectively to the
+annotation) and pass the vector or file name respectively to the
 function. As previously mentioned, the protein names of these markers
 must match some (but not necessarily all) of the \texttt{MSnSet}'s
 feature names. See \texttt{?addMarkers} for more details.
@@ -1803,6 +1843,14 @@ failure and/or different results.
 
 <<si>>=
 sessionInfo()
+@
+
+We also recommend that users regularly update the packages as well as
+the R itself. This can be done with the \texttt{biocLite} function.
+
+<<update, eval=FALSE>>=
+library("BiocInstaller")
+biocLite()
 @
 
 It is always important to include session information details along
