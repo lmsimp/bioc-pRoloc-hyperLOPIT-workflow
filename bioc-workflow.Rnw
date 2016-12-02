@@ -744,7 +744,7 @@ localisation) can of course be changed, as described in the
 \texttt{setStockcol} manual page.
 
 As demonstrated in \cite{hyper} and illustrated in the PCA plot
-(figure \ref{fig:plotmarkers}), the Golgi apparatus proteins (dark
+(Figure \ref{fig:plotmarkers}), the Golgi apparatus proteins (dark
 brown) display a dynamic pattern, noting sets of Golgi marker proteins
 that are distributed amongst other subcellular structures, an
 observation supported by microscopy.  As such, we are going to reset
@@ -884,6 +884,13 @@ plot2D(hl[, hl$Replicate == 2], main = "Replicate 2", mirrorX = TRUE)
   \label{fig:plot2Drep}
 \end{figure}
 
+In addition, the reproducibility can be assessed by performing
+independent classification analyses on each replicate (see the section
+on \textit{Supervised machine learning} below) and comparing the the
+results. Even when the gradient conditions different (for unexpected
+technical or voluntary reasons, to maximise resolution when combining
+experiments \cite{Trotter:2010}), one expects agreement in the most
+confident organelle assignments.
 
 \clearpage
 
@@ -1860,7 +1867,7 @@ with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
 
 The source of this document, including the code necessary to reproduce
 the analyses and figures is available in a public manuscript
-repository on GitHub~\cite{ghrepo}.
+repository on GitHub~\cite{ghrepo}. 
 
 \bigskip
 
