@@ -2,7 +2,7 @@ Introduction {#introduction .unnumbered}
 ============
 
 Quantitative mass spectrometry based spatial proteomics involves
-elaborate, expensive and time consuming experimental procedures and
+elaborate, expensive and time consuming experimental protocols and
 considerable effort is invested in the generation of such data. Multiple
 research groups have described a variety of approaches to establish high
 quality proteome-wide datasets (see for example @Gatto:2010 for a
@@ -80,10 +80,10 @@ accuracy and precision. Three biological replicates were generated from
 the E14TG2a experiment, the first was to target low density fractions
 and the second and third were to emphasis separation of the denser
 organelles. The intersect of replicates 1 and 2 was treated as a 20-plex
-dataset for the analysis. As discussed in the manuscript @hyper, it has
+dataset for the analysis. As discussed in the publication @hyper, it has
 been shown that combining replicates from different gradients can
 increase spatial resolution @Trotter:2010. The combination of replicates
-resulted in 5032 proteins common in both experiments.
+resulted in 5032 proteins common to both experiments.
 
 These, as well as many other data are directly available as properly
 structured and annotated datasets from the experiment package. In this
@@ -120,14 +120,14 @@ proteins (accession numbers, description, …), information related to the
 identification search (confidence scores, number of peptides, …) as well
 as annotation about know sub-cellular location (see in particular the
 *Markers* section) and results from data analysis. The sample metadata
-would, for example, record what labelling ions were used for the
+would, for example, record what stable isotope labels were used for the
 respective fraction (when labelled quantitation is used), replicate
 number, fraction number along the gradient and pooling information.
 
 Another slot of interest is `processingData`, that logs the processing
 `MSnSet` objects undergo. The processing log can be accessed with the
 `processingData` function and is displayed under *Processing
-information* in the textual object summary when an `MSnSet`’s name it
+information* in the textual object summary when an `MSnSet`’s name is
 typed in the R console.
 
 Importing data {#importing-data .unnumbered}
@@ -182,9 +182,9 @@ extension), and will be decompressed on-the-fly when read into R.
 
 Next, we need to identify which columns in the spreadsheet contain the
 quantitation data. This can be done using the `getEcols` function inside
-R. The spreadsheet that was deposited by the authors contains two
-headers, with the second header containing information about where the
-quantitation data is stored.
+R. The spreadsheet deposited by the authors contains two headers, with
+the second header containing information about where the quantitation
+data is stored.
 
 ![A screenshot of the data in the
 spreadsheet.](./Figures/spreadsheet-screenshot.png)
@@ -262,7 +262,7 @@ hyperLOPIT).
 
 Below, we display a short summary of the data. The data contains 5032
 proteins/features common across the 2 biological replicates for the
-respective 2 x 10-plex reporter tags (20 columns/samples), along with
+respective 2 x 10-plex reporter tags (20 columns or samples), along with
 associated feature meta-data such as protein markers, protein
 description, number of quantified peptides etc (see below).
 
@@ -467,15 +467,15 @@ all the organelle-specific profiles into a same intensity interval
 (typically 0 and 1) by, for example, dividing each intensity by the sum
 of the intensities for that quantitative feature. This is not necessary
 in this example as the intensities for each replicate have already been
-re-scaled to 1 in Proteome Discoverer v1.4, Thermo Fisher. However, if
-one wanted to do this they would execute the `normalise` function as
-demonstrated in the below code chunk.
+re-scaled to 1 in Proteome Discoverer v1.4 Thermo Fisher. However, if
+the data require normalisation, the user can execute the `normalise`
+function as demonstrated in the below code chunk.
 
 `     `
 
-This transformation of the data assures to cancel the effect of the
-absolute intensities of the quantitative features along the rows, to
-focus subsequent analyses on the relative profiles along the
+This transformation of the data assures cancellation of the effect of
+the absolute intensities of the quantitative features along the rows,
+and focus subsequent analyses on the relative profiles along the
 sub-cellular channels.
 
 The same `normalise` function (or `normalize`, both spellings are
@@ -589,7 +589,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 19:09:16 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:04:40 2016 
     ##  MSnbase version: 1.21.7
 
 More details about combining data are given in the dedicated *Combining
@@ -605,8 +605,8 @@ how a high content in missing values in spatial proteomics data and
 their inappropriate handling leads to a reduction of sub-cellular
 resolution. Missing data can be imputated using ’s `impute` function.
 The method underlying the imputation method is then determined by a
-`methods` parameter. To impute missing values using nearest neighbour
-imputation, one would
+`methods` parameter (see `?impute` for available options). To impute
+missing values using nearest neighbour imputation, one would
 
 `     `
 
@@ -647,16 +647,16 @@ dimensions of the data.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Fri Dec  2 19:09:16 2016 
-    ## Subset [6725,20][5032,20] Fri Dec  2 19:09:16 2016 
-    ## Removed features with more than 0 NAs: Fri Dec  2 19:09:16 2016 
-    ## Dropped featureData's levels Fri Dec  2 19:09:16 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:04:40 2016 
+    ## Subset [6725,20][5032,20] Sat Dec  3 19:04:40 2016 
+    ## Removed features with more than 0 NAs: Sat Dec  3 19:04:40 2016 
+    ## Dropped featureData's levels Sat Dec  3 19:04:40 2016 
     ##  MSnbase version: 1.21.7
 
-When more than 2 datasets are to be combined and too many proteins were
-not consistently assayed, leading to too many proteins being filtered
-out, we suggest to implement an ensemble of classifiers voting on
-protein-sub-cellular niche membership over the output of several
+When more than 2 datasets are to be combined and too many proteins have
+not been consistently assayed, leading to too many proteins being
+filtered out, we suggest to implement an ensemble of classifiers voting
+on protein-sub-cellular niche membership over the output of several
 experiments (see section *Supervised machine learning* for the
 description of sub-cellular assignments).
 
@@ -665,48 +665,48 @@ Quality Control {#quality-control .unnumbered}
 
 Data quality is routinely examined through visualisation to verify that
 sub-cellular niches have been separated along the gradient. Based on De
-Duve’s principle @DeDuve:1981 proteins that co-localise exhibit similar
-quantitation profiles across the gradient fractions employed. One
-approach that has been widely used to visualise and inspect high
-throughput mass spectrometry-based proteomics data is principal
-components analysis (PCA). PCA is one of many dimensionality reduction
-methods, that allows one to effectively summarise multi-dimensional data
-in to 2 or 3 dimensions to enable visualisation. Very generally, the
-original continuous multi-dimensional data is transformed into a set of
-orthogonal components ordered according to the amount of variability
-that they describe. The `plot2D` and `plot3D` methods in allows one to
-plot the principal components (PCs) of a dataset against one another, by
-default the first two components are plotted on the x- and y-axis for
-the `plot2D` function, and first three components are loaded for the
-`plot3D` function, respectively (the `dims` argument can be used to plot
-other PCs). If distinct clusters are observed, we assume that there is
-organellar separation present in the data. Although, representing the
-multi-dimensional data along a limited set of PCs does not give us a
-hard quantitative measure of separation, it is extremely useful
-summarising complex experimental information in one figure, to get a
-simplified overview of the data.
+Duve’s principle @DeDuve:1981 proteins that co-localise in a cell,
+exhibit similar quantitation profiles across the gradient fractions
+employed. One approach that has been widely used to visualise and
+inspect high throughput mass spectrometry-based proteomics data is
+principal components analysis (PCA). PCA is one of many dimensionality
+reduction methods, that allows one to effectively summarise
+multi-dimensional data in to 2 or 3 dimensions to enable visualisation.
+Very generally, the original continuous multi-dimensional data is
+transformed into a set of orthogonal components ordered according to the
+amount of variability that they describe. The `plot2D` and `plot3D`
+methods in allows one to plot the principal components (PCs) of a
+dataset against one another, by default the first two components are
+plotted on the x- and y-axis for the `plot2D` function, and first three
+components are loaded for the `plot3D` function, respectively (the
+`dims` argument can be used to plot other PCs). If distinct clusters are
+observed, we assume that there is organellar separation present in the
+data. Although, representing the multi-dimensional data along a limited
+set of PCs does not give us a hard quantitative measure of separation,
+it is extremely useful summarising complex experimental information in
+one figure, to get a simplified overview of the data.
 
 In the code chunk below we produce a 2-dimensional PCA plot of the mouse
-stem cell dataset (Figure [fig:pcahl]). One point on the plot represents
-one protein. We can indeed see several distinct protein clusters. We
-specify `fcol = NULL`, which means not to consider any feature variable
-to annotate the features (proteins) with colours. We will see later how
-to use this argument to annotate the PCA plot with prior information
+stem cell dataset (Figure [fig:pcahl]). Each point on the plot
+represents one protein. We can indeed see several distinct protein
+clusters. We specify `fcol = NULL` to ignore feature metadata columns
+and not annotate any feature (protein) with a colour. We will see later
+how to use this argument to annotate the PCA plot with prior information
 about sub-cellular localisation.
 
 \
 `      `\
 `   `
 
-![PCA plot of the mouse stem cell data `hl`. Each dot represent a single
-protein, and cluster of proteins represent proteins residing in the same
-sub-cellular niche. The figure on the right bins proteins and represent
-the bins density to highlight the presence of protein clusters.
-](figure/qcplot-1 "fig:") ![PCA plot of the mouse stem cell data `hl`.
-Each dot represent a single protein, and cluster of proteins represent
-proteins residing in the same sub-cellular niche. The figure on the
-right bins proteins and represent the bins density to highlight the
-presence of protein clusters. ](figure/qcplot-2 "fig:")
+![PCA plot of the mouse stem cell data `hl`. Each dot represents a
+single protein, and cluster of proteins represent proteins residing in
+the same sub-cellular niche. The figure on the right bins proteins and
+represent the bins density to highlight the presence of protein
+clusters. ](figure/qcplot-1 "fig:") ![PCA plot of the mouse stem cell
+data `hl`. Each dot represents a single protein, and cluster of proteins
+represent proteins residing in the same sub-cellular niche. The figure
+on the right bins proteins and represent the bins density to highlight
+the presence of protein clusters. ](figure/qcplot-2 "fig:")
 
 [fig:pcahl]
 
@@ -729,10 +729,10 @@ ordering the channels by replicate).
 `  `\
 `   `\
 `      `\
-`   `
+`      `
 
-![Protein profiles and distribution of channel
-intensities.](figure/qcbx-1)
+![Protein profiles and distribution of channel intensities. The red dots
+represent the mean relative intensity for each channel. ](figure/qcbx-1)
 
 [fig:qcbx]
 
@@ -778,9 +778,9 @@ These markers can then be mapped to an `MSnSet`’s `featureNames`. The
 mouse dataset used here has Uniprot IDs stored as the `featureNames`
 (see `head(featureNames(hl))`) and the names of the vector of the mouse
 markers stored in (`mmus` markers) are also Uniprot IDs (see `head(mrk)`
-in the code chunk below), so it is straightforward to match names
-between the markers and the `MSnSet` instance using the `addMarkers`
-function.
+in the code chunk below, that displays the 6 first markers), so it is
+straightforward to match names between the markers and the `MSnSet`
+instance using the `addMarkers` function.
 
 \
 `    `\
@@ -816,14 +816,15 @@ distribution of genuine residents of a sub-cellular niche. We generally
 recommend a conservative approach in defining markers to avoid false
 assignments when assigning sub-cellular localisation of proteins of
 unknown localisation. A more relaxed definition of markers, i.e. one
-that broadly or over-confidently defines markers, risks to erroneously
-assign proteins to a single location, when, in reality, they reside in
-multiple locations (including the assumed unique location). One can not
-expect to identify exact boundaries between sub-cellular classes through
-marker annotation alone; the definition of these boundaries is better
-handled algorithmically, i.e. after application of the supervised
-learning algorithm, using the prediction scores (as described in the
-*Classification* section, in particular Figure [fig:plotSVM]).
+that broadly or over-confidently defines markers, risks the erroneous
+assignment of proteins to a single location, when, in reality, they
+reside in multiple locations (including the assumed unique location).
+One can not expect to identify exact boundaries between sub-cellular
+classes through marker annotation alone; the definition of these
+boundaries is better handled algorithmically, i.e. after application of
+the supervised learning algorithm, using the prediction scores (as
+described in the *Classification* section, in particular Figure
+[fig:plotSVM]).
 
 If the protein naming between the marker sets and the `MSnSet` dataset
 are different e.g. the markers are labelled by Uniprot accession numbers
@@ -879,10 +880,21 @@ two first PCs (Figure [fig:plotmarkers]).
 `   `\
 `       `
 
-![Annotated PCA plots of the `hl` dataset, as produced with `plt2D` and
-`plot3D` (right).](figure/plotmarkers-1)
+![Annotated PCA plots of the `hl` dataset, as produced with
+`plot2D`.](figure/plotmarkers-1)
 
 [fig:plotmarkers]
+
+The data can also be visualised along three PCs using the `plot3D`
+function (Figure [fig:plotmarkers3d]). When produced interactively, the
+plot can be rotated and zoomined using the mouse.
+
+`     `
+
+![Using the `plot3D` function to visualise the `hl` dataset along PCs 1,
+2 and 7. ](./Figures/plot3d.pdf)
+
+[fig:plotmarkers3d]
 
 The default colours for plotting have been defined so as to enable the
 differentiation of up to 30 classes. If more are provided, different
@@ -963,7 +975,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Fri Dec  2 19:09:18 2016 
+    ##  Created on Sat Dec  3 19:04:42 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1253,8 +1265,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Fri Dec  2 19:09:18 2016 
-    ## Added markers from  'pdres' marker vector. Fri Dec  2 19:09:19 2016 
+    ## Added markers from  'mrk' marker vector. Sat Dec  3 19:04:42 2016 
+    ## Added markers from  'pdres' marker vector. Sat Dec  3 19:04:43 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1566,39 +1578,39 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4359719               0.3027894               0.3807832 
+    ##               0.4350485               0.3033775               0.3961358 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6994864               0.6018155               0.4232624 
+    ##               0.6950651               0.6019249               0.4258898 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4141776               0.5871408               0.9494709 
+    ##               0.4211684               0.5886021               0.9502983 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7959998               0.7097865               0.3121881 
+    ##               0.7945171               0.7088008               0.3181116 
     ##         Plasma membrane              Proteasome 
-    ##               0.7104260               0.4136511
+    ##               0.7102314               0.4186695
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4359719               0.3027894               0.3807832 
+    ##               0.4350485               0.3033775               0.3961358 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6994864               0.6018155               0.4232624 
+    ##               0.6950651               0.6019249               0.4258898 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4141776               0.5871408               0.9494709 
+    ##               0.4211684               0.5886021               0.9502983 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7959998               0.7097865               0.3121881 
+    ##               0.7945171               0.7088008               0.3181116 
     ##         Plasma membrane              Proteasome 
-    ##               0.7104260               0.4136511
+    ##               0.7102314               0.4186695
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      86                     169                      84 
+    ##                      85                     171                      89 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     477                      93 
+    ##                     299                     477                      95 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     124                     523 
+    ##                      28                     125                     520 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     343                      38 
+    ##                     229                     345                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     326                     158                    2058
+    ##                     317                     155                    2058
 
 The organelle threshold (`ts` above) can also be set manually using an
 interactive app (see below) or by using a named vector of thresholds, as

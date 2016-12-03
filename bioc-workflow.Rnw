@@ -13,16 +13,16 @@ cache <- FALSE
 \section*{Introduction}
 
 Quantitative mass spectrometry based spatial proteomics involves
-elaborate, expensive and time consuming experimental procedures and
+elaborate, expensive and time consuming experimental protocols and
 considerable effort is invested in the generation of such data.
 Multiple research groups have described a variety of approaches to
 establish high quality proteome-wide datasets (see for example
-\cite{Gatto:2010} for a review, and \cite{hyper,Itzhak:2016} for recent
-examples). However, data analysis is as critical as data production
-for reliable and insightful biological interpretation. Here, we walk
-the reader through a typical pipeline for the analysis of such data
-using several Bioconductor packages for the R statistical programming
-environment.
+\cite{Gatto:2010} for a review, and \cite{hyper,Itzhak:2016} for
+recent examples). However, data analysis is as critical as data
+production for reliable and insightful biological
+interpretation. Here, we walk the reader through a typical pipeline
+for the analysis of such data using several Bioconductor packages for
+the R statistical programming environment.
 
 The main package to analyse protein localisation data is
 \Biocpkg{pRoloc}, which offers a set of dedicated functions for the
@@ -97,11 +97,11 @@ accuracy and precision. Three biological replicates were generated
 from the E14TG2a experiment, the first was to target low density
 fractions and the second and third were to emphasis separation of the
 denser organelles.  The intersect of replicates 1 and 2 was treated as
-a 20-plex dataset for the analysis.  As discussed in the manuscript
+a 20-plex dataset for the analysis.  As discussed in the publication
 \cite{hyper}, it has been shown that combining replicates from
 different gradients can increase spatial resolution
 \cite{Trotter:2010}. The combination of replicates resulted in 5032
-proteins common in both experiments.
+proteins common to both experiments.
 
 These, as well as many other data are directly available as properly
 structured and annotated datasets from the \Biocexptpkg{pRolocdata}
@@ -144,8 +144,8 @@ proteins (accession numbers, description, \ldots), information related
 to the identification search (confidence scores, number of peptides,
 \ldots) as well as annotation about know sub-cellular location (see in
 particular the \textit{Markers} section) and results from data
-analysis. The sample metadata would, for example, record what
-labelling ions were used for the respective fraction (when labelled
+analysis. The sample metadata would, for example, record what stable
+isotope labels were used for the respective fraction (when labelled
 quantitation is used), replicate number, fraction number along the
 gradient and pooling information.
 
@@ -153,7 +153,7 @@ Another slot of interest is \texttt{processingData}, that logs the
 processing \texttt{MSnSet} objects undergo. The processing log can be
 accessed with the \texttt{processingData} function and is displayed
 under \textit{Processing information} in the textual object summary
-when an \texttt{MSnSet}'s name it typed in the R console.
+when an \texttt{MSnSet}'s name is typed in the R console.
 
 \subsection*{Importing data}
 
@@ -211,9 +211,9 @@ read into R.
 
 Next, we need to identify which columns in the spreadsheet contain the
 quantitation data. This can be done using the \texttt{getEcols}
-function inside R. The spreadsheet that was deposited by the authors
-contains two headers, with the second header containing information
-about where the quantitation data is stored.
+function inside R. The spreadsheet deposited by the authors contains
+two headers, with the second header containing information about where
+the quantitation data is stored.
 
 \begin{figure}[!ht]
   \centering
@@ -254,7 +254,7 @@ hl <- readMSnSet2(csvfile, ecol = 8:27, fnames = 1, skip = 1)
 Below, we display a short summary of the data. The data contains 
 \Sexpr{nrow(hl)} proteins/features common across the 2 biological replicates
 for the respective 2 x 10-plex reporter tags (\Sexpr{ncol(hl)}
-columns/samples), along with associated feature meta-data such as
+columns or samples), along with associated feature meta-data such as
 protein markers, protein description, number of quantified peptides
 etc (see below).
 
@@ -362,17 +362,17 @@ profiles into a same intensity interval (typically 0 and 1) by, for
 example, dividing each intensity by the sum of the intensities for
 that quantitative feature. This is not necessary in this example as
 the intensities for each replicate have already been re-scaled to 1 in
-Proteome Discoverer v1.4, Thermo Fisher. However, if one wanted to do
-this they would execute the \texttt{normalise} function as
+Proteome Discoverer v1.4 Thermo Fisher. However, if the data require
+normalisation, the user can execute the \texttt{normalise} function as
 demonstrated in the below code chunk.
 
 <<normsum, eval = FALSE>>= 
 hl <- normalise(hl, method = "sum") 
 @
 
-This transformation of the data assures to cancel the effect of the
-absolute intensities of the quantitative features along the rows, to
-focus subsequent analyses on the relative profiles along the
+This transformation of the data assures cancellation of the effect of
+the absolute intensities of the quantitative features along the rows,
+and focus subsequent analyses on the relative profiles along the
 sub-cellular channels.
 
 The same \texttt{normalise} function (or \texttt{normalize}, both
@@ -489,8 +489,8 @@ data and their inappropriate handling leads to a reduction of
 sub-cellular resolution. Missing data can be imputated using
 \Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
 the imputation method is then determined by a \texttt{methods}
-parameter. To impute missing values using nearest neighbour
-imputation, one would
+parameter (see \texttt{?impute} for available options). To impute
+missing values using nearest neighbour imputation, one would
 
 <<impute, eval=FALSE>>=
 hl <- impute(hl, method = "knn")
@@ -525,47 +525,47 @@ combined <- filterNA(combined)
 combined
 @
 
-When more than 2 datasets are to be combined and too many proteins were
-not consistently assayed, leading to too many proteins being filtered
-out, we suggest to implement an ensemble of classifiers voting on
-protein-sub-cellular niche membership over the output of several
-experiments (see section \textit{Supervised machine learning} for the
-description of sub-cellular assignments).
+When more than 2 datasets are to be combined and too many proteins
+have not been consistently assayed, leading to too many proteins being
+filtered out, we suggest to implement an ensemble of classifiers
+voting on protein-sub-cellular niche membership over the output of
+several experiments (see section \textit{Supervised machine learning}
+for the description of sub-cellular assignments).
 
 \section*{Quality Control}
 
 Data quality is routinely examined through visualisation to verify
 that sub-cellular niches have been separated along the gradient. Based
-on De Duve's principle \cite{DeDuve:1981} proteins that co-localise
-exhibit similar quantitation profiles across the gradient fractions
-employed. One approach that has been widely used to visualise and
-inspect high throughput mass spectrometry-based proteomics data is
-principal components analysis (PCA). PCA is one of many dimensionality
-reduction methods, that allows one to effectively summarise
-multi-dimensional data in to 2 or 3 dimensions to enable
+on De Duve's principle \cite{DeDuve:1981} proteins that co-localise in
+a cell, exhibit similar quantitation profiles across the gradient
+fractions employed. One approach that has been widely used to
+visualise and inspect high throughput mass spectrometry-based
+proteomics data is principal components analysis (PCA). PCA is one of
+many dimensionality reduction methods, that allows one to effectively
+summarise multi-dimensional data in to 2 or 3 dimensions to enable
 visualisation. Very generally, the original continuous
 multi-dimensional data is transformed into a set of orthogonal
 components ordered according to the amount of variability that they
-describe. The \texttt{plot2D} and \texttt{plot3D} methods in \Biocpkg{pRoloc} allows one to
-plot the principal components (PCs) of a dataset against one another,
-by default the first two components are plotted on the x- and y-axis
-for the \texttt{plot2D} function, and first three components are
-loaded for the \texttt{plot3D} function, respectively (the
-\texttt{dims} argument can be used to plot other PCs). If
-distinct clusters are observed, we assume that there is organellar
-separation present in the data. Although, representing the
+describe. The \texttt{plot2D} and \texttt{plot3D} methods in
+\Biocpkg{pRoloc} allows one to plot the principal components (PCs) of
+a dataset against one another, by default the first two components are
+plotted on the x- and y-axis for the \texttt{plot2D} function, and
+first three components are loaded for the \texttt{plot3D} function,
+respectively (the \texttt{dims} argument can be used to plot other
+PCs). If distinct clusters are observed, we assume that there is
+organellar separation present in the data. Although, representing the
 multi-dimensional data along a limited set of PCs does not give us a
 hard quantitative measure of separation, it is extremely useful
 summarising complex experimental information in one figure, to get a
 simplified overview of the data.
 
-In the code chunk below we produce a 2-dimensional PCA plot of the mouse stem cell
-dataset (Figure \ref{fig:pcahl}). One point on the plot represents one
-protein. We can indeed see several distinct protein clusters. We
-specify \texttt{fcol = NULL}, which means not to consider any feature
-variable to annotate the features (proteins) with colours. We will see
-later how to use this argument to annotate the PCA plot with prior information
-about sub-cellular localisation.
+In the code chunk below we produce a 2-dimensional PCA plot of the
+mouse stem cell dataset (Figure \ref{fig:pcahl}). Each point on the
+plot represents one protein. We can indeed see several distinct
+protein clusters. We specify \texttt{fcol = NULL} to ignore feature
+metadata columns and not annotate any feature (protein) with a
+colour. We will see later how to use this argument to annotate the PCA
+plot with prior information about sub-cellular localisation.
 
 \begin{figure}[!ht]
   \centering
@@ -575,7 +575,7 @@ plot2D(hl, fcol = NULL, col = "black")
 plot2D(hl, method = "hexbin")
 @  
 \caption{PCA plot of the mouse stem cell data \texttt{hl}. Each dot
-  represent a single protein, and cluster of proteins represent
+  represents a single protein, and cluster of proteins represent
   proteins residing in the same sub-cellular niche. The figure on the
   right bins proteins and represent the bins density to highlight the
   presence of protein clusters. }
@@ -605,9 +605,10 @@ par(mfrow = c(1, 2)) ## creates a two-panel figure
 o <- order(hl$Iodixonal.Density)
 plotDist(hl[, o], pcol = "#00000010")
 lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
-boxplot(exprs(hl[, o]), las = 2)
+boxplot(exprs(hl[, o]), las = 2, cex.axis = .7)
 @  
-  \caption{Protein profiles and distribution of channel intensities.}
+\caption{Protein profiles and distribution of channel intensities. The
+  red dots represent the mean relative intensity for each channel. }
   \label{fig:qcbx}
 \end{figure}
 
@@ -642,9 +643,10 @@ These markers can then be mapped to an \texttt{MSnSet}'s
 stored as the \texttt{featureNames} (see
 \texttt{head(featureNames(hl))}) and the names of the vector of the
 mouse markers stored in \Biocpkg{pRoloc} (\texttt{mmus} markers) are
-also Uniprot IDs (see \texttt{head(mrk)} in the code chunk below), so
-it is straightforward to match names between the markers and the
-\texttt{MSnSet} instance using the \texttt{addMarkers} function. 
+also Uniprot IDs (see \texttt{head(mrk)} in the code chunk below, that
+displays the 6 first markers), so it is straightforward to match names
+between the markers and the \texttt{MSnSet} instance using the
+\texttt{addMarkers} function.
 
 <<addmarkers>>=
 ## Use mouse markers
@@ -663,8 +665,8 @@ niche. We generally recommend a conservative approach in defining
 markers to avoid false assignments when assigning sub-cellular
 localisation of proteins of unknown localisation. A more relaxed
 definition of markers, i.e. one that broadly or over-confidently
-defines markers, risks to erroneously assign proteins to a single
-location, when, in reality, they reside in multiple locations
+defines markers, risks the erroneous assignment of proteins to a
+single location, when, in reality, they reside in multiple locations
 (including the assumed unique location). One can not expect to
 identify exact boundaries between sub-cellular classes through marker
 annotation alone; the definition of these boundaries is better handled
@@ -678,10 +680,10 @@ dataset are different e.g. the markers are labelled by Uniprot
 accession numbers and the dataset entries are labelled by Uniprot
 entry names, one will have to convert and match the proteins according
 to the appropriate identifier. Sometimes, we find the equivalent entry
-name, Uniprot ID or accession number is stored with the data, which
-makes conversion between identifers relatively straightforward. If
-this is not the case however, conversion can be performed using
-\Biocpkg{biomaRt}, the Bioconductor
+name, Uniprot ID or accession number is stored in the feature
+metadata, which makes conversion between identifers relatively
+straightforward. If this is not the case however, conversion can be
+performed using \Biocpkg{biomaRt}, the Bioconductor
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
   resouces} or any conversion softwares available online.
 
@@ -706,8 +708,9 @@ context for the biological question under investigation.
 
 
 \subsection*{Visualising markers}
+
 Having added a the mouse markers to our \texttt{fData} from the
-\texttt{pRolocmarkers} we can now visualise these annotations along
+\texttt{pRolocmarkers}, we can now visualise these annotations along
 the PCA plot using the \texttt{plot2D} function and then use the
 \texttt{addLegend} function to map the marker classes to the
 pre-defined colours. We also display the data along the first and
@@ -721,6 +724,7 @@ mitochondrial (purple) and peroxisome (dark blue) clusters can be
 differentiated, despite the apparent overlap in the visualisation of
 the two first PCs (Figure \ref{fig:plotmarkers}).
 
+
 \begin{figure}[!ht]
   \centering
 <<plotmarkers, out.width="\\textwidth", fig.width=12, fig.asp=1/2>>=
@@ -730,10 +734,25 @@ addLegend(hl, cex = .6)
 plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
 @  
 \caption{Annotated PCA plots of the \texttt{hl} dataset, as produced
-  with \texttt{plt2D} and \texttt{plot3D} (right).}
+  with \texttt{plot2D}.}
   \label{fig:plotmarkers}
 \end{figure}
 
+The data can also be visualised along three PCs using the
+\texttt{plot3D} function (Figure \ref{fig:plotmarkers3d}). When
+produced interactively, the plot can be rotated and zoomined using the
+mouse.
+
+\begin{figure}[htb]
+  \centering
+<<plotmarkers3d, eval=FALSE>>=
+plot3D(hl, dims = c(1, 2, 7))
+@
+  \includegraphics[width=.55\textwidth]{./Figures/plot3d.pdf}
+  \caption{Using the \texttt{plot3D} function to visualise the
+    \texttt{hl} dataset along PCs 1, 2 and 7. }
+  \label{fig:plotmarkers3d}
+\end{figure}
 
 The default colours for plotting have been defined so as to enable the
 differentiation of up to 30 classes. If more are provided, different
@@ -761,15 +780,16 @@ getMarkers(hl)
 
 Another useful visualisation that relies on marker annotation is the
 representation of the protein profiles occupancy along the gradient
-using the \texttt{plotDist} function. While the PCA plot enables to
-efficiently visualise the complete dataset and assess the relative
-separation of different sub-cellular niches, comparing profiles of a
-few marker clusters is useful to assess how exactly they differ (in
-terms of peak channels, for example). On figure \ref{fig:plotDist2},
-we plot the profile of the mitochondrial and peroxisome markers to
-highlight the differences in profiles between these two sets of
-markers in the channels labelled with tag 129C, as represented above
-along the 7th PC on the PCA plot on figure \ref{fig:plotmarkers}.
+using the \texttt{plotDist} function. While the PCA plot enables
+efficient visualisation of the complete dataset and assessment the
+relative separation of different sub-cellular niches, comparing
+profiles of a few marker clusters is useful to assess how exactly they
+differ (in terms of peak channels, for example). On figure
+\ref{fig:plotDist2}, we plot the profile of the mitochondrial and
+peroxisome markers to highlight the differences in profiles between
+these two sets of markers in the channels labelled with tag 129C, as
+represented above along the 7th PC on the PCA plot on figure
+\ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -928,16 +948,17 @@ pRolocVis(hl)
 As diplayed in the screenshot in figure \ref{fig:app}, the
 \textit{main} application is designed for exploratory data analysis
 and is divided into 3 tabs: (1) PCA, (2) Profiles and (3) Table
-selection. The default view upon loading is the PCA tab, which
-features a clickable interface and zoomable PCA plot with an
+selection. The default view upon loading is the \textit{PCA} tab,
+which features a clickable interface and zoomable PCA plot with an
 interactive data table for displaying the quantitation information.
 Particular proteins of interest can be highlighted using the text
-search box. There is also an alternate profiles tab for visualisation
-of the protein profiles, which can be used to examine the patterns of
-proteins of interest. The Table selection tab provides an interface to
-control data table column selection. A short
+search box. There is also a \textit{Profiles} tab for visualisation of
+the protein profiles, which can be used to examine the patterns of
+proteins of interest. The \textit{Table selection} tab provides an
+interface to control data table column selection. A short
 animation\footnote{\url{https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/blob/master/Figures/pRolocVis\_pca.gif}}
-illustrating the interface is available in the manuscript repository~\cite{ghrepo}.
+illustrating the interface is available in the manuscript
+repository~\cite{ghrepo}.
 
 \subsubsection*{The compare application}
 The \textit{compare} application is useful for examining two replicate
