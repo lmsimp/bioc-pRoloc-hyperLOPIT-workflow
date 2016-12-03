@@ -589,7 +589,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:04:40 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
     ##  MSnbase version: 1.21.7
 
 More details about combining data are given in the dedicated *Combining
@@ -647,10 +647,10 @@ dimensions of the data.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:04:40 2016 
-    ## Subset [6725,20][5032,20] Sat Dec  3 19:04:40 2016 
-    ## Removed features with more than 0 NAs: Sat Dec  3 19:04:40 2016 
-    ## Dropped featureData's levels Sat Dec  3 19:04:40 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
+    ## Subset [6725,20][5032,20] Sat Dec  3 19:46:21 2016 
+    ## Removed features with more than 0 NAs: Sat Dec  3 19:46:21 2016 
+    ## Dropped featureData's levels Sat Dec  3 19:46:21 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins have
@@ -831,9 +831,10 @@ are different e.g. the markers are labelled by Uniprot accession numbers
 and the dataset entries are labelled by Uniprot entry names, one will
 have to convert and match the proteins according to the appropriate
 identifier. Sometimes, we find the equivalent entry name, Uniprot ID or
-accession number is stored with the data, which makes conversion between
-identifers relatively straightforward. If this is not the case however,
-conversion can be performed using , the Bioconductor [annotation
+accession number is stored in the feature metadata, which makes
+conversion between identifers relatively straightforward. If this is not
+the case however, conversion can be performed using , the Bioconductor
+[annotation
 resouces](http://bioconductor.org/help/workflows/annotation/Annotation_Resources/)
 or any conversion softwares available online.
 
@@ -861,12 +862,12 @@ question under investigation.
 Visualising markers {#visualising-markers .unnumbered}
 -------------------
 
-Having added a the mouse markers to our `fData` from the `pRolocmarkers`
-we can now visualise these annotations along the PCA plot using the
-`plot2D` function and then use the `addLegend` function to map the
-marker classes to the pre-defined colours. We also display the data
-along the first and seventh PCs using the `dims` argument. Note that in
-these calls to the `plot2D` function, we have omitted the `fcol`
+Having added a the mouse markers to our `fData` from the
+`pRolocmarkers`, we can now visualise these annotations along the PCA
+plot using the `plot2D` function and then use the `addLegend` function
+to map the marker classes to the pre-defined colours. We also display
+the data along the first and seventh PCs using the `dims` argument. Note
+that in these calls to the `plot2D` function, we have omitted the `fcol`
 argument and use of the default `markers` feature variable to annotate
 the plot. We choose to display PCs 1 and 7 to illustrate that while
 upper principal components explain much less variability in the data
@@ -929,15 +930,15 @@ markers definition to a common definition of *unknown* localisation.
 
 Another useful visualisation that relies on marker annotation is the
 representation of the protein profiles occupancy along the gradient
-using the `plotDist` function. While the PCA plot enables to efficiently
-visualise the complete dataset and assess the relative separation of
-different sub-cellular niches, comparing profiles of a few marker
-clusters is useful to assess how exactly they differ (in terms of peak
-channels, for example). On figure [fig:plotDist2], we plot the profile
-of the mitochondrial and peroxisome markers to highlight the differences
-in profiles between these two sets of markers in the channels labelled
-with tag 129C, as represented above along the 7th PC on the PCA plot on
-figure [fig:plotmarkers].
+using the `plotDist` function. While the PCA plot enables efficient
+visualisation of the complete dataset and assessment the relative
+separation of different sub-cellular niches, comparing profiles of a few
+marker clusters is useful to assess how exactly they differ (in terms of
+peak channels, for example). On figure [fig:plotDist2], we plot the
+profile of the mitochondrial and peroxisome markers to highlight the
+differences in profiles between these two sets of markers in the
+channels labelled with tag 129C, as represented above along the 7th PC
+on the PCA plot on figure [fig:plotmarkers].
 
 `   `\
 `  `\
@@ -975,7 +976,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Sat Dec  3 19:04:42 2016 
+    ##  Created on Sat Dec  3 19:46:22 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1083,15 +1084,15 @@ app in the package. ](./Figures/mainapp.png)
 As diplayed in the screenshot in figure [fig:app], the *main*
 application is designed for exploratory data analysis and is divided
 into 3 tabs: (1) PCA, (2) Profiles and (3) Table selection. The default
-view upon loading is the PCA tab, which features a clickable interface
+view upon loading is the *PCA* tab, which features a clickable interface
 and zoomable PCA plot with an interactive data table for displaying the
 quantitation information. Particular proteins of interest can be
-highlighted using the text search box. There is also an alternate
-profiles tab for visualisation of the protein profiles, which can be
-used to examine the patterns of proteins of interest. The Table
-selection tab provides an interface to control data table column
-selection. A short animation[^1] illustrating the interface is available
-in the manuscript repository @ghrepo.
+highlighted using the text search box. There is also a *Profiles* tab
+for visualisation of the protein profiles, which can be used to examine
+the patterns of proteins of interest. The *Table selection* tab provides
+an interface to control data table column selection. A short
+animation[^1] illustrating the interface is available in the manuscript
+repository @ghrepo.
 
 ### The compare application {#the-compare-application .unnumbered}
 
@@ -1205,9 +1206,10 @@ and the literature.
 
 In the code chunk below we show how to run the `phenoDisco` function and
 return a novelty detection result, according to the specified
-parameters. The algorithm parameters `times` and `GS` are passed to the
-function, along with the `fcol` to tell the algorithm where the input
-training data is contained.
+parameters. The algorithm parameters `times` (number of iterations) and
+`GS` (minimum number of proteins required to form a new phenotype) are
+passed to the function, along with the `fcol` to tell the algorithm
+where the input training data is contained.
 
 \
 `           `
@@ -1265,8 +1267,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Sat Dec  3 19:04:42 2016 
-    ## Added markers from  'pdres' marker vector. Sat Dec  3 19:04:43 2016 
+    ## Added markers from  'mrk' marker vector. Sat Dec  3 19:46:22 2016 
+    ## Added markers from  'pdres' marker vector. Sat Dec  3 19:46:23 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1360,7 +1362,7 @@ Optimisation {#optimisation .unnumbered}
 
 In the code chunk below we use a Support Vector Machine (SVM) to learn a
 classifier on the labelled training data. As previously mentioned, one
-first needs to train the classifiers parameters before an algorithm can
+first needs to train the classifier’s parameters before an algorithm can
 be used to predict the class labels of the proteins with unknown
 location. One of the most common ways to optimise the parameters of a
 classifier is to partition the labelled data into training and testing
@@ -1386,13 +1388,14 @@ validation set.
 
 Classifier accuracy is estimated using the macro F1 score, i.e. the
 harmonic mean of precision and recall. In the code chunk below we
-demonstrate how to optimise the free parameters, `sigma` and `cost`, of
-a classical SVM classifier with a Gaussian kernel using the function
-`svmOptimisation`. As the number of labelled instances per class varies
-from organelle to organelle, we can account for class imbalance by
-setting specific class weights when generating the SVM model. Below the
-weights, `w` are set to be inversely proportional to the class
-frequencies.
+demonstrate how to optimise the free parameters, `sigma` (the inverse
+kernel width for the radial basis kernel) and `cost` (the cost of
+constraints violation), of a classical SVM classifier with a Gaussian
+kernel using the function `svmOptimisation`. As the number of labelled
+instances per class varies from organelle to organelle, we can account
+for class imbalance by setting specific class weights when generating
+the SVM model. Below the weights, `w` are set to be inversely
+proportional to the class frequencies.
 
 `     `
 
@@ -1578,39 +1581,39 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4350485               0.3033775               0.3961358 
+    ##               0.4332618               0.3058476               0.3871539 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6950651               0.6019249               0.4258898 
+    ##               0.6745670               0.6093870               0.4335865 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4211684               0.5886021               0.9502983 
+    ##               0.4193893               0.6121402               0.9498369 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7945171               0.7088008               0.3181116 
+    ##               0.7946622               0.7092443               0.3158764 
     ##         Plasma membrane              Proteasome 
-    ##               0.7102314               0.4186695
+    ##               0.7096980               0.4169878
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4350485               0.3033775               0.3961358 
+    ##               0.4332618               0.3058476               0.3871539 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6950651               0.6019249               0.4258898 
+    ##               0.6745670               0.6093870               0.4335865 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4211684               0.5886021               0.9502983 
+    ##               0.4193893               0.6121402               0.9498369 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7945171               0.7088008               0.3181116 
+    ##               0.7946622               0.7092443               0.3158764 
     ##         Plasma membrane              Proteasome 
-    ##               0.7102314               0.4186695
+    ##               0.7096980               0.4169878
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     171                      89 
+    ##                      85                     172                      85 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     299                     477                      95 
+    ##                     298                     475                     107 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      28                     125                     520 
+    ##                      25                     119                     523 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     229                     345                      39 
+    ##                     230                     342                      38 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     317                     155                    2058
+    ##                     320                     157                    2056
 
 The organelle threshold (`ts` above) can also be set manually using an
 interactive app (see below) or by using a named vector of thresholds, as
@@ -1661,7 +1664,7 @@ the median. The class-specific score thresholds that correspond to
 selecting the desired quantile are shown as red dots on the boxplot. The
 assignments on the PCA plot are also updated according to the selected
 threshold. The quantile threshold can be set by moving the corresponding
-quantile slider. If one wished to set their own cut-offs the
+quantile slider. If the users wishes to set their own cut-offs, the
 *User-defined* radio button must be selected and then the sliders for
 defining user-specified scores become active and the scores and
 highlighted on the boxplot by blue dots. For more information we refer
@@ -1716,9 +1719,10 @@ that will enable to perform the query, which is done using
 `par <- setAnnotationParams()` will present two menus, firstly asking
 you to identify the species of study, and then what type of identifier
 you have used to annotate the proteins in your `MSnSet`. It is also
-possible to pass patterns to match the species e.g. in the code chunk
-below we pass `Mus musculus`, and the identifier type for our data (see
-`featureNames(hl)`) which is `Uniprot/Swissprot`, for the Biomart query.
+possible to pass arbitrary text to match the species e.g. in the code
+chunk below we pass `Mus musculus`, and the identifier type for our data
+(see `featureNames(hl)`) which is `Uniprot/Swissprot`, for the Biomart
+query.
 
 `     `
 
@@ -2117,8 +2121,9 @@ Grant information {#grant-information .unnumbered}
 -----------------
 
 LMB and CMM are supported by a Wellcome Trust Technology Development
-Grant (grant number 108441/Z/15/Z). LG is supported by the BBSRC
-Strategic Longer and Larger grant (Award BB/L002817/1).
+Grant (grant number 108441/Z/15/Z). KSL is a Wellcome Trust Joint
+Investigator (110170/Z/15/Z). LG is supported by the BBSRC Strategic
+Longer and Larger grant (Award BB/L002817/1).
 
 Acknowledgements {#acknowledgements .unnumbered}
 ----------------
