@@ -8,12 +8,13 @@ elaborate, expensive and time consuming experimental protocols and
 considerable effort is invested in the generation of such data.
 Multiple research groups have described a variety of approaches to
 establish high quality proteome-wide datasets (see for example
-\cite{Gatto:2010} for a review, and \cite{hyper,Itzhak:2016} for
-recent examples). However, data analysis is as critical as data
-production for reliable and insightful biological
-interpretation. Here, we walk the reader through a typical pipeline
-for the analysis of such data using several Bioconductor packages for
-the R statistical programming environment.
+\cite{Gatto:2010} for a review, and
+\cite{hyper,Itzhak:2016,Jean_Beltran:2016} for recent
+examples). However, data analysis is as critical as data production
+for reliable and insightful biological interpretation. Here, we walk
+the reader through a typical pipeline for the analysis of such data
+using several Bioconductor packages for the R statistical programming
+environment.
 
 The main package to analyse protein localisation data is
 \Biocpkg{pRoloc}, which offers a set of dedicated functions for the
@@ -770,7 +771,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 20:38:06 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -855,10 +856,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
-## Subset [6725,20][5032,20] Sat Dec  3 19:46:21 2016 
-## Removed features with more than 0 NAs: Sat Dec  3 19:46:21 2016 
-## Dropped featureData's levels Sat Dec  3 19:46:21 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 20:38:06 2016 
+## Subset [6725,20][5032,20] Sat Dec  3 20:38:06 2016 
+## Removed features with more than 0 NAs: Sat Dec  3 20:38:06 2016 
+## Dropped featureData's levels Sat Dec  3 20:38:06 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1271,7 +1272,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Sat Dec  3 19:46:22 2016 
+##  Created on Sat Dec  3 20:38:08 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1325,7 +1326,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Sat Dec  3 19:46:23 2016
+% Sat Dec  3 20:38:08 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1636,8 +1637,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Sat Dec  3 19:46:22 2016 
-## Added markers from  'pdres' marker vector. Sat Dec  3 19:46:23 2016 
+## Added markers from  'mrk' marker vector. Sat Dec  3 20:38:08 2016 
+## Added markers from  'pdres' marker vector. Sat Dec  3 20:38:09 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -2066,25 +2067,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4332618               0.3058476               0.3871539 
+##               0.4347094               0.3030356               0.3854031 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6745670               0.6093870               0.4335865 
+##               0.6849680               0.5994838               0.4265235 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4193893               0.6121402               0.9498369 
+##               0.4183489               0.5905225               0.9493973 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946622               0.7092443               0.3158764 
+##               0.7954761               0.7092834               0.3116761 
 ##         Plasma membrane              Proteasome 
-##               0.7096980               0.4169878
+##               0.7196883               0.4190620
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4332618               0.3058476               0.3871539 
+##               0.4347094               0.3030356               0.3854031 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6745670               0.6093870               0.4335865 
+##               0.6849680               0.5994838               0.4265235 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4193893               0.6121402               0.9498369 
+##               0.4183489               0.5905225               0.9493973 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946622               0.7092443               0.3158764 
+##               0.7954761               0.7092834               0.3116761 
 ##         Plasma membrane              Proteasome 
-##               0.7096980               0.4169878
+##               0.7196883               0.4190620
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2092,15 +2093,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      85 
+##                      85                     170                      87 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     298                     475                     107 
+##                     300                     472                     102 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      25                     119                     523 
+##                      27                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     342                      38 
+##                     229                     345                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     320                     157                    2056
+##                     317                     155                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
