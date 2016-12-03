@@ -770,7 +770,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:13:15 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -855,10 +855,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:13:15 2016 
-## Subset [6725,20][5032,20] Sat Dec  3 19:13:15 2016 
-## Removed features with more than 0 NAs: Sat Dec  3 19:13:15 2016 
-## Dropped featureData's levels Sat Dec  3 19:13:15 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
+## Subset [6725,20][5032,20] Sat Dec  3 19:46:21 2016 
+## Removed features with more than 0 NAs: Sat Dec  3 19:46:21 2016 
+## Dropped featureData's levels Sat Dec  3 19:46:21 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1271,7 +1271,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Sat Dec  3 19:13:17 2016 
+##  Created on Sat Dec  3 19:46:22 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1325,7 +1325,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Sat Dec  3 19:13:18 2016
+% Sat Dec  3 19:46:23 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1556,9 +1556,11 @@ database, the Gene Ontology and the literature.
 
 In the code chunk below we show how to run the \texttt{phenoDisco}
 function and return a novelty detection result, according to the
-specified parameters. The algorithm parameters \texttt{times} and
-\texttt{GS} are passed to the function, along with the \texttt{fcol}
-to tell the algorithm where the input training data is contained.
+specified parameters. The algorithm parameters \texttt{times} (number
+of iterations) and \texttt{GS} (minimum number of proteins required to
+form a new phenotype) are passed to the function, along with the
+\texttt{fcol} to tell the algorithm where the input training data is
+contained.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1634,8 +1636,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Sat Dec  3 19:13:17 2016 
-## Added markers from  'pdres' marker vector. Sat Dec  3 19:13:18 2016 
+## Added markers from  'mrk' marker vector. Sat Dec  3 19:46:22 2016 
+## Added markers from  'pdres' marker vector. Sat Dec  3 19:46:23 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -1755,7 +1757,7 @@ parameters for the algorithm of choice.
 
 In the code chunk below we use a Support Vector Machine (SVM) to learn
 a classifier on the labelled training data. As previously mentioned,
-one first needs to train the classifiers parameters before an
+one first needs to train the classifier's parameters before an
 algorithm can be used to predict the class labels of the proteins with
 unknown location. One of the most common ways to optimise the
 parameters of a classifier is to partition the labelled data into
@@ -1765,8 +1767,8 @@ partition. The best parameters chosen from the cross-validation stage
 are then used to build a classifier to predict the class labels of the
 protein profiles on the test partition. Observed and expected
 classication results can be compared, and then used to assess how well
-a given model works by getting an estimate of the classifiers ability to
-achieve a good generalisation i.e. that is given an unknown example
+a given model works by getting an estimate of the classifiers ability
+to achieve a good generalisation i.e. that is given an unknown example
 predict its class label with high accuracy. In \Biocpkg{pRoloc},
 algorithmic performance is estimated using stratified 80/20
 partitioning for the training/testing subsets respectively, in
@@ -1782,13 +1784,15 @@ the validation set.
 
 Classifier accuracy is estimated using the macro F1 score, i.e. the
 harmonic mean of precision and recall. In the code chunk below we
-demonstrate how to optimise the free parameters, \texttt{sigma} and
-\texttt{cost}, of a classical SVM classifier with a Gaussian kernel
-using the function \texttt{svmOptimisation}. As the number of labelled
-instances per class varies from organelle to organelle, we can account
-for class imbalance by setting specific class weights when generating
-the SVM model. Below the weights, \texttt{w} are set to be inversely
-proportional to the class frequencies.
+demonstrate how to optimise the free parameters, \texttt{sigma} (the
+inverse kernel width for the radial basis kernel) and \texttt{cost}
+(the cost of constraints violation), of a classical SVM classifier
+with a Gaussian kernel using the function \texttt{svmOptimisation}. As
+the number of labelled instances per class varies from organelle to
+organelle, we can account for class imbalance by setting specific
+class weights when generating the SVM model. Below the weights,
+\texttt{w} are set to be inversely proportional to the class
+frequencies.
 
 
 
@@ -2062,25 +2066,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4365435               0.3040122               0.3854846 
+##               0.4332618               0.3058476               0.3871539 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6882175               0.5970631               0.4277083 
+##               0.6745670               0.6093870               0.4335865 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4184674               0.5929501               0.9507120 
+##               0.4193893               0.6121402               0.9498369 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7951351               0.7077463               0.3169610 
+##               0.7946622               0.7092443               0.3158764 
 ##         Plasma membrane              Proteasome 
-##               0.7256612               0.4192384
+##               0.7096980               0.4169878
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4365435               0.3040122               0.3854846 
+##               0.4332618               0.3058476               0.3871539 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6882175               0.5970631               0.4277083 
+##               0.6745670               0.6093870               0.4335865 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4184674               0.5929501               0.9507120 
+##               0.4193893               0.6121402               0.9498369 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7951351               0.7077463               0.3169610 
+##               0.7946622               0.7092443               0.3158764 
 ##         Plasma membrane              Proteasome 
-##               0.7256612               0.4192384
+##               0.7096980               0.4169878
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2088,15 +2092,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     171                      88 
+##                      85                     172                      85 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     295                     478                      99 
+##                     298                     475                     107 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     520 
+##                      25                     119                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     345                      39 
+##                     230                     342                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     315                     158                    2060
+##                     320                     157                    2056
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2181,10 +2185,10 @@ class-specific score thresholds that correspond to selecting the
 desired quantile are shown as red dots on the boxplot. The assignments
 on the PCA plot are also updated according to the selected
 threshold. The quantile threshold can be set by moving the
-corresponding quantile slider. If one wished to set their own cut-offs
-the \textit{User-defined} radio button must be selected and then the
-sliders for defining user-specified scores become active and the
-scores and highlighted on the boxplot by blue dots. For more
+corresponding quantile slider. If the users wishes to set their own
+cut-offs, the \textit{User-defined} radio button must be selected and
+then the sliders for defining user-specified scores become active and
+the scores and highlighted on the boxplot by blue dots. For more
 information we refer users to the \Biocpkg{pRolocGUI} tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 
@@ -2239,9 +2243,9 @@ that will enable to perform the query, which is done using
   setAnnotationParams()} will present two menus, firstly asking you to
 identify the species of study, and then what type of identifier you
 have used to annotate the proteins in your \texttt{MSnSet}. It is also
-possible to pass patterns to match the species e.g. in the code chunk
-below we pass \texttt{"Mus musculus"}, and the identifier type for our
-data (see \texttt{featureNames(hl)}) which is
+possible to pass arbitrary text to match the species e.g. in the code
+chunk below we pass \texttt{"Mus musculus"}, and the identifier type
+for our data (see \texttt{featureNames(hl)}) which is
 \texttt{"Uniprot/Swissprot"}, for the Biomart query.
 
 \begin{knitrout}
@@ -2744,8 +2748,9 @@ The authors declare that they have no competing interest.
 \subsection*{Grant information}
 
 LMB and CMM are supported by a Wellcome Trust Technology Development
-Grant (grant number 108441/Z/15/Z). LG is supported by the BBSRC
-Strategic Longer and Larger grant (Award BB/L002817/1).
+Grant (grant number 108441/Z/15/Z). KSL is a Wellcome Trust Joint
+Investigator (110170/Z/15/Z). LG is supported by the BBSRC Strategic
+Longer and Larger grant (Award BB/L002817/1).
 
 
 \subsection*{Acknowledgements}

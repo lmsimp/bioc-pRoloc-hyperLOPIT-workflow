@@ -1062,9 +1062,11 @@ getMarkers(hl, fcol = "phenoDisco.Input")
 
 In the code chunk below we show how to run the \texttt{phenoDisco}
 function and return a novelty detection result, according to the
-specified parameters. The algorithm parameters \texttt{times} and
-\texttt{GS} are passed to the function, along with the \texttt{fcol}
-to tell the algorithm where the input training data is contained.
+specified parameters. The algorithm parameters \texttt{times} (number
+of iterations) and \texttt{GS} (minimum number of proteins required to
+form a new phenotype) are passed to the function, along with the
+\texttt{fcol} to tell the algorithm where the input training data is
+contained.
 
 <<runPD, eval = FALSE>>=
 ## As per Christoforou et al (2016), 
@@ -1201,7 +1203,7 @@ parameters for the algorithm of choice.
 
 In the code chunk below we use a Support Vector Machine (SVM) to learn
 a classifier on the labelled training data. As previously mentioned,
-one first needs to train the classifiers parameters before an
+one first needs to train the classifier's parameters before an
 algorithm can be used to predict the class labels of the proteins with
 unknown location. One of the most common ways to optimise the
 parameters of a classifier is to partition the labelled data into
@@ -1211,8 +1213,8 @@ partition. The best parameters chosen from the cross-validation stage
 are then used to build a classifier to predict the class labels of the
 protein profiles on the test partition. Observed and expected
 classication results can be compared, and then used to assess how well
-a given model works by getting an estimate of the classifiers ability to
-achieve a good generalisation i.e. that is given an unknown example
+a given model works by getting an estimate of the classifiers ability
+to achieve a good generalisation i.e. that is given an unknown example
 predict its class label with high accuracy. In \Biocpkg{pRoloc},
 algorithmic performance is estimated using stratified 80/20
 partitioning for the training/testing subsets respectively, in
@@ -1228,13 +1230,15 @@ the validation set.
 
 Classifier accuracy is estimated using the macro F1 score, i.e. the
 harmonic mean of precision and recall. In the code chunk below we
-demonstrate how to optimise the free parameters, \texttt{sigma} and
-\texttt{cost}, of a classical SVM classifier with a Gaussian kernel
-using the function \texttt{svmOptimisation}. As the number of labelled
-instances per class varies from organelle to organelle, we can account
-for class imbalance by setting specific class weights when generating
-the SVM model. Below the weights, \texttt{w} are set to be inversely
-proportional to the class frequencies.
+demonstrate how to optimise the free parameters, \texttt{sigma} (the
+inverse kernel width for the radial basis kernel) and \texttt{cost}
+(the cost of constraints violation), of a classical SVM classifier
+with a Gaussian kernel using the function \texttt{svmOptimisation}. As
+the number of labelled instances per class varies from organelle to
+organelle, we can account for class imbalance by setting specific
+class weights when generating the SVM model. Below the weights,
+\texttt{w} are set to be inversely proportional to the class
+frequencies.
 
 <<loadpdRes, echo=FALSE>>=
 svmf <- dir(extdatadir, full.names = TRUE,
@@ -1514,10 +1518,10 @@ class-specific score thresholds that correspond to selecting the
 desired quantile are shown as red dots on the boxplot. The assignments
 on the PCA plot are also updated according to the selected
 threshold. The quantile threshold can be set by moving the
-corresponding quantile slider. If one wished to set their own cut-offs
-the \textit{User-defined} radio button must be selected and then the
-sliders for defining user-specified scores become active and the
-scores and highlighted on the boxplot by blue dots. For more
+corresponding quantile slider. If the users wishes to set their own
+cut-offs, the \textit{User-defined} radio button must be selected and
+then the sliders for defining user-specified scores become active and
+the scores and highlighted on the boxplot by blue dots. For more
 information we refer users to the \Biocpkg{pRolocGUI} tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 
@@ -1572,9 +1576,9 @@ that will enable to perform the query, which is done using
   setAnnotationParams()} will present two menus, firstly asking you to
 identify the species of study, and then what type of identifier you
 have used to annotate the proteins in your \texttt{MSnSet}. It is also
-possible to pass patterns to match the species e.g. in the code chunk
-below we pass \texttt{"Mus musculus"}, and the identifier type for our
-data (see \texttt{featureNames(hl)}) which is
+possible to pass arbitrary text to match the species e.g. in the code
+chunk below we pass \texttt{"Mus musculus"}, and the identifier type
+for our data (see \texttt{featureNames(hl)}) which is
 \texttt{"Uniprot/Swissprot"}, for the Biomart query.
 
 <<setap, eval=FALSE>>=
@@ -1930,8 +1934,9 @@ The authors declare that they have no competing interest.
 \subsection*{Grant information}
 
 LMB and CMM are supported by a Wellcome Trust Technology Development
-Grant (grant number 108441/Z/15/Z). LG is supported by the BBSRC
-Strategic Longer and Larger grant (Award BB/L002817/1).
+Grant (grant number 108441/Z/15/Z). KSL is a Wellcome Trust Joint
+Investigator (110170/Z/15/Z). LG is supported by the BBSRC Strategic
+Longer and Larger grant (Award BB/L002817/1).
 
 
 \subsection*{Acknowledgements}
