@@ -602,11 +602,13 @@ replicate).
 \begin{figure}[!ht]
   \centering
 <<qcbx, out.width="\\textwidth", fig.asp=1/2>>=
-par(mfrow = c(1, 2)) ## creates a two-panel figure
+par(mfrow = c(1, 2), ## creates a two-panel figure
+    las = 2,         ## axis labels orientation
+    cex.axis = .7)   ## axis label size
 o <- order(hl$Iodixonal.Density)
-plotDist(hl[, o], pcol = "#00000010")
+plotDist(hl[, o], pcol = "#00000010", xlab = "")
 lines(colMeans(exprs(hl[, o])), col = "red", type = "b")
-boxplot(exprs(hl[, o]), las = 2, cex.axis = .7)
+boxplot(exprs(hl[, o]))
 @  
 \caption{Protein profiles and distribution of channel intensities. The
   red dots represent the mean relative intensity for each channel. }
@@ -1170,7 +1172,7 @@ their protein profiles by using the \texttt{pRolocVis} function in the
 \Biocpkg{pRolocGUI} package. We found that phenotype 1 was
 enriched in nucleus associated proteins, phenotype 2 in chromatin
 associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
-in lysosomal and endosomal proteins.
+in both lysosomal and endosomal proteins.
 
 % <<vishl, eval=FALSE>>=
 % pRolocVis(hl, fcol = "pd")

@@ -6,11 +6,12 @@ elaborate, expensive and time consuming experimental protocols and
 considerable effort is invested in the generation of such data. Multiple
 research groups have described a variety of approaches to establish high
 quality proteome-wide datasets (see for example @Gatto:2010 for a
-review, and @hyper [@Itzhak:2016] for recent examples). However, data
-analysis is as critical as data production for reliable and insightful
-biological interpretation. Here, we walk the reader through a typical
-pipeline for the analysis of such data using several Bioconductor
-packages for the R statistical programming environment.
+review, and @hyper [@Itzhak:2016; @Jean_Beltran:2016] for recent
+examples). However, data analysis is as critical as data production for
+reliable and insightful biological interpretation. Here, we walk the
+reader through a typical pipeline for the analysis of such data using
+several Bioconductor packages for the R statistical programming
+environment.
 
 The main package to analyse protein localisation data is , which offers
 a set of dedicated functions for the analysis of such data. itself
@@ -589,7 +590,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Sun Dec  4 09:22:15 2016 
     ##  MSnbase version: 1.21.7
 
 More details about combining data are given in the dedicated *Combining
@@ -647,10 +648,10 @@ dimensions of the data.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 19:46:20 2016 
-    ## Subset [6725,20][5032,20] Sat Dec  3 19:46:21 2016 
-    ## Removed features with more than 0 NAs: Sat Dec  3 19:46:21 2016 
-    ## Dropped featureData's levels Sat Dec  3 19:46:21 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Sun Dec  4 09:22:15 2016 
+    ## Subset [6725,20][5032,20] Sun Dec  4 09:22:16 2016 
+    ## Removed features with more than 0 NAs: Sun Dec  4 09:22:16 2016 
+    ## Dropped featureData's levels Sun Dec  4 09:22:16 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins have
@@ -726,10 +727,11 @@ to pair corresponding channels in the two replicates (rather than
 ordering the channels by replicate).
 
 `    `\
+`               `\
+`         `\
 `  `\
-`   `\
 `      `\
-`      `
+`      `\
 
 ![Protein profiles and distribution of channel intensities. The red dots
 represent the mean relative intensity for each channel. ](figure/qcbx-1)
@@ -976,7 +978,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Sat Dec  3 19:46:22 2016 
+    ##  Created on Sun Dec  4 09:22:17 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1267,8 +1269,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Sat Dec  3 19:46:22 2016 
-    ## Added markers from  'pdres' marker vector. Sat Dec  3 19:46:23 2016 
+    ## Added markers from  'mrk' marker vector. Sun Dec  4 09:22:17 2016 
+    ## Added markers from  'pdres' marker vector. Sun Dec  4 09:22:18 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1331,7 +1333,7 @@ We can also examine each phenotype interactively and visualise their
 protein profiles by using the `pRolocVis` function in the package. We
 found that phenotype 1 was enriched in nucleus associated proteins,
 phenotype 2 in chromatin associated proteins, phenotype 3 in cytosolic
-and phenotypes 4 and 5 in lysosomal and endosomal proteins.
+and phenotypes 4 and 5 in both lysosomal and endosomal proteins.
 
 Supervised machine learning {#supervised-machine-learning .unnumbered}
 ===========================
@@ -1581,39 +1583,39 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4332618               0.3058476               0.3871539 
+    ##               0.4351539               0.3024251               0.3833827 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6745670               0.6093870               0.4335865 
+    ##               0.6782466               0.6004558               0.4345984 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4193893               0.6121402               0.9498369 
+    ##               0.4251852               0.5903493               0.9501766 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7946622               0.7092443               0.3158764 
+    ##               0.7953310               0.7096086               0.3138186 
     ##         Plasma membrane              Proteasome 
-    ##               0.7096980               0.4169878
+    ##               0.7165863               0.4200117
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4332618               0.3058476               0.3871539 
+    ##               0.4351539               0.3024251               0.3833827 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6745670               0.6093870               0.4335865 
+    ##               0.6782466               0.6004558               0.4345984 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4193893               0.6121402               0.9498369 
+    ##               0.4251852               0.5903493               0.9501766 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7946622               0.7092443               0.3158764 
+    ##               0.7953310               0.7096086               0.3138186 
     ##         Plasma membrane              Proteasome 
-    ##               0.7096980               0.4169878
+    ##               0.7165863               0.4200117
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     172                      85 
+    ##                      85                     170                      84 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     298                     475                     107 
+    ##                     297                     476                     100 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      25                     119                     523 
+    ##                      27                     123                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     342                      38 
+    ##                     230                     343                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     320                     157                    2056
+    ##                     322                     157                    2057
 
 The organelle threshold (`ts` above) can also be set manually using an
 interactive app (see below) or by using a named vector of thresholds, as

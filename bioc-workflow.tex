@@ -771,7 +771,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 20:38:06 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Dec  4 09:22:15 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -856,10 +856,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Sat Dec  3 20:38:06 2016 
-## Subset [6725,20][5032,20] Sat Dec  3 20:38:06 2016 
-## Removed features with more than 0 NAs: Sat Dec  3 20:38:06 2016 
-## Dropped featureData's levels Sat Dec  3 20:38:06 2016 
+## Combined [6725,20] and [6268,10] MSnSets Sun Dec  4 09:22:15 2016 
+## Subset [6725,20][5032,20] Sun Dec  4 09:22:16 2016 
+## Removed features with more than 0 NAs: Sun Dec  4 09:22:16 2016 
+## Dropped featureData's levels Sun Dec  4 09:22:16 2016 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -950,11 +950,13 @@ replicate).
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{))} \hlcom{## creates a two-panel figure}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{),} \hlcom{## creates a two-panel figure}
+    \hlkwc{las} \hlstd{=} \hlnum{2}\hlstd{,}         \hlcom{## axis labels orientation}
+    \hlkwc{cex.axis} \hlstd{=} \hlnum{.7}\hlstd{)}   \hlcom{## axis label size}
 \hlstd{o} \hlkwb{<-} \hlkwd{order}\hlstd{(hl}\hlopt{$}\hlstd{Iodixonal.Density)}
-\hlkwd{plotDist}\hlstd{(hl[, o],} \hlkwc{pcol} \hlstd{=} \hlstr{"#00000010"}\hlstd{)}
+\hlkwd{plotDist}\hlstd{(hl[, o],} \hlkwc{pcol} \hlstd{=} \hlstr{"#00000010"}\hlstd{,} \hlkwc{xlab} \hlstd{=} \hlstr{""}\hlstd{)}
 \hlkwd{lines}\hlstd{(}\hlkwd{colMeans}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, o])),} \hlkwc{col} \hlstd{=} \hlstr{"red"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"b"}\hlstd{)}
-\hlkwd{boxplot}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, o]),} \hlkwc{las} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{cex.axis} \hlstd{=} \hlnum{.7}\hlstd{)}
+\hlkwd{boxplot}\hlstd{(}\hlkwd{exprs}\hlstd{(hl[, o]))}
 \end{alltt}
 \end{kframe}
 \includegraphics[width=\textwidth]{figure/qcbx-1} 
@@ -1272,7 +1274,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Sat Dec  3 20:38:08 2016 
+##  Created on Sun Dec  4 09:22:17 2016 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1326,7 +1328,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Sat Dec  3 20:38:08 2016
+% Sun Dec  4 09:22:18 2016
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1637,8 +1639,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Sat Dec  3 20:38:08 2016 
-## Added markers from  'pdres' marker vector. Sat Dec  3 20:38:09 2016 
+## Added markers from  'mrk' marker vector. Sun Dec  4 09:22:17 2016 
+## Added markers from  'pdres' marker vector. Sun Dec  4 09:22:18 2016 
 ##  MSnbase version: 2.1.4
 \end{verbatim}
 \begin{alltt}
@@ -1724,7 +1726,7 @@ their protein profiles by using the \texttt{pRolocVis} function in the
 \Biocpkg{pRolocGUI} package. We found that phenotype 1 was
 enriched in nucleus associated proteins, phenotype 2 in chromatin
 associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
-in lysosomal and endosomal proteins.
+in both lysosomal and endosomal proteins.
 
 % <<vishl, eval=FALSE>>=
 % pRolocVis(hl, fcol = "pd")
@@ -2067,25 +2069,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4347094               0.3030356               0.3854031 
+##               0.4351539               0.3024251               0.3833827 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6849680               0.5994838               0.4265235 
+##               0.6782466               0.6004558               0.4345984 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4183489               0.5905225               0.9493973 
+##               0.4251852               0.5903493               0.9501766 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7954761               0.7092834               0.3116761 
+##               0.7953310               0.7096086               0.3138186 
 ##         Plasma membrane              Proteasome 
-##               0.7196883               0.4190620
+##               0.7165863               0.4200117
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4347094               0.3030356               0.3854031 
+##               0.4351539               0.3024251               0.3833827 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6849680               0.5994838               0.4265235 
+##               0.6782466               0.6004558               0.4345984 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4183489               0.5905225               0.9493973 
+##               0.4251852               0.5903493               0.9501766 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7954761               0.7092834               0.3116761 
+##               0.7953310               0.7096086               0.3138186 
 ##         Plasma membrane              Proteasome 
-##               0.7196883               0.4190620
+##               0.7165863               0.4200117
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2093,15 +2095,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      87 
+##                      85                     170                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     300                     472                     102 
+##                     297                     476                     100 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     523 
+##                      27                     123                     522 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     345                      38 
+##                     230                     343                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     317                     155                    2058
+##                     322                     157                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
