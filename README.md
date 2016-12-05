@@ -4,10 +4,16 @@
 
 This workflow describes the detailed analysis of a mouse embryonic
 stem cell spatial proteomics dataset using the
-[pRoloc`](http://bioconductor.org/packages/devel/bioc/html/pRolocGUI.html)
-suite of software. This workflow will be submitted for peer review to
-F1000research.
+[`pRoloc`](http://bioconductor.org/packages/devel/bioc/html/pRoloc.html)
+suite of software. The workflow
+([this file](https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/raw/master/bioc-proloc-hyperlopit.pdf))
+has been submitted for peer review to
+[F1000research's Bioconductor channel](https://f1000research.com/channels/bioconductor).
 
+Also have a look at the
+[issues](https://github.com/lmsimp/bioc-pRoloc-hyperLOPIT-workflow/issues)
+for additional questions. If you have any, please open one of your
+own.
 
 It is made available under the [Creative Commons Attribution
 license](https://creativecommons.org/licenses/by/4.0/). The following
