@@ -1,6 +1,6 @@
 # A Bioconductor workflow for processing and analysing spatial proteomics data
 
-[![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow)
+[![Build Status](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow.svg?branch=master)](https://travis-ci.org/lmsimp/bioc-pRoloc-hyperLOPIT-workflow) [![DOI](https://zenodo.org/badge/57978741.svg)](https://zenodo.org/badge/latestdoi/57978741)
 
 This workflow describes the detailed analysis of a mouse embryonic
 stem cell spatial proteomics dataset using the
