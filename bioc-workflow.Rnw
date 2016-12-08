@@ -22,7 +22,7 @@ establish high quality proteome-wide datasets (see for example
 examples). However, data analysis is as critical as data production
 for reliable and insightful biological interpretation. Here, we walk
 the reader through a typical pipeline for the analysis of such data
-using several Bioconductor packages for the R statistical programming
+using several Bioconductor~\cite{Huber:2015} packages for the R statistical programming
 environment.
 
 The main package to analyse protein localisation data is

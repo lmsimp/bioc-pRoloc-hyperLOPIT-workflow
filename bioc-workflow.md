@@ -10,8 +10,8 @@ review, and @hyper [@Itzhak:2016; @Jean_Beltran:2016] for recent
 examples). However, data analysis is as critical as data production for
 reliable and insightful biological interpretation. Here, we walk the
 reader through a typical pipeline for the analysis of such data using
-several Bioconductor packages for the R statistical programming
-environment.
+several Bioconductor @Huber:2015 packages for the R statistical
+programming environment.
 
 The main package to analyse protein localisation data is , which offers
 a set of dedicated functions for the analysis of such data. itself
@@ -590,7 +590,7 @@ We can now combine the two experiments into a single `MSnSet`:
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Mon Dec  5 09:40:22 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Dec  8 12:09:01 2016 
     ##  MSnbase version: 1.21.7
 
 More details about combining data are given in the dedicated *Combining
@@ -648,10 +648,10 @@ dimensions of the data.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Combined [6725,20] and [6268,10] MSnSets Mon Dec  5 09:40:22 2016 
-    ## Subset [6725,20][5032,20] Mon Dec  5 09:40:22 2016 
-    ## Removed features with more than 0 NAs: Mon Dec  5 09:40:22 2016 
-    ## Dropped featureData's levels Mon Dec  5 09:40:22 2016 
+    ## Combined [6725,20] and [6268,10] MSnSets Thu Dec  8 12:09:01 2016 
+    ## Subset [6725,20][5032,20] Thu Dec  8 12:09:01 2016 
+    ## Removed features with more than 0 NAs: Thu Dec  8 12:09:01 2016 
+    ## Dropped featureData's levels Thu Dec  8 12:09:01 2016 
     ##  MSnbase version: 1.21.7
 
 When more than 2 datasets are to be combined and too many proteins have
@@ -978,7 +978,7 @@ location on a PCA plot with the `highlightOnPlot` function.
 `                              `\
 
     ## Traceable object of class "FeaturesOfInterest"
-    ##  Created on Mon Dec  5 09:40:24 2016 
+    ##  Created on Thu Dec  8 12:09:03 2016 
     ##  Description:
     ##   13S consensin proteins
     ##  4 features of interest:
@@ -1269,8 +1269,8 @@ function. We see that 5 new phenotype data clusters were found.
     ## experimentData: use 'experimentData(object)'
     ## Annotation:  
     ## - - - Processing information - - -
-    ## Added markers from  'mrk' marker vector. Mon Dec  5 09:40:24 2016 
-    ## Added markers from  'pdres' marker vector. Mon Dec  5 09:40:25 2016 
+    ## Added markers from  'mrk' marker vector. Thu Dec  8 12:09:03 2016 
+    ## Added markers from  'pdres' marker vector. Thu Dec  8 12:09:04 2016 
     ##  MSnbase version: 2.1.4
 
 `   `
@@ -1583,39 +1583,39 @@ unknown.
 `              `
 
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4334288               0.3056337               0.3985514 
+    ##               0.4322999               0.3055155               0.3838354 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6981462               0.6008776               0.4186913 
+    ##               0.6883460               0.6037025               0.4275289 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4206833               0.5867712               0.9495542 
+    ##               0.4276601               0.5906588               0.9501307 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7955894               0.7084349               0.3137019 
+    ##               0.7947781               0.7105373               0.3137337 
     ##         Plasma membrane              Proteasome 
-    ##               0.7297792               0.4140046
+    ##               0.7191668               0.4144056
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##               0.4334288               0.3056337               0.3985514 
+    ##               0.4322999               0.3055155               0.3838354 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##               0.6981462               0.6008776               0.4186913 
+    ##               0.6883460               0.6037025               0.4275289 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##               0.4206833               0.5867712               0.9495542 
+    ##               0.4276601               0.5906588               0.9501307 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##               0.7955894               0.7084349               0.3137019 
+    ##               0.7947781               0.7105373               0.3137337 
     ##         Plasma membrane              Proteasome 
-    ##               0.7297792               0.4140046
+    ##               0.7191668               0.4144056
 
 `             `
 
     ## ans
     ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-    ##                      85                     170                      92 
+    ##                      84                     171                      88 
     ##                 Cytosol   Endoplasmic reticulum                Endosome 
-    ##                     296                     478                      96 
+    ##                     296                     478                     100 
     ##    Extracellular matrix                Lysosome           Mitochondrion 
-    ##                      27                     125                     523 
+    ##                      27                     123                     522 
     ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-    ##                     230                     343                      39 
+    ##                     229                     342                      39 
     ##         Plasma membrane              Proteasome                 unknown 
-    ##                     313                     158                    2057
+    ##                     316                     159                    2058
 
 The organelle threshold (`ts` above) can also be set manually using an
 interactive app (see below) or by using a named vector of thresholds, as
