@@ -1089,10 +1089,10 @@ contained.
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
 @
 
-Note: We do not evaluate this code chunk in this document as the
+\sout{Note: We do not evaluate this code chunk in this document as the
 algorithm is computationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
-when parallelised over 40 workers.
+when parallelised over 40 workers.}
 
 The argument \texttt{times} indicates the number of times we run
 unsupervied Gaussian Mixture Modelling before defining a new phenotype
@@ -1120,10 +1120,22 @@ defines the number of GMM components to test and fit; the default is
 package \cite{mclust}). One should note that the decreasing the
 \texttt{GS}, and increasing the values of the arguments
 \texttt{times}, \texttt{G} (among other function arguments, see
-\texttt{?phenoDisco}) will heavily influence (increase) the total time
-taken to run the algorithm.  \texttt{phenoDisco} supports
+\texttt{?phenoDisco}) will heavily influence (increase) the total
+time taken to run the algorithm.  \texttt{phenoDisco} supports
 parallelisation and we strongly suggest you make use of a parallel
-processing to run these analyses.
+processing to run these analyses. 
+
+\hl{Please note, in this document we can not evaluate the call to 
+`phenoDisco` in the code chunk above as the algorithm is computationally 
+intensive and best parallelised over multiple workers. This phenoDisco 
+analysis took ~24 hours to complete when parallelised over 40 workers. 
+The ouput of running the \texttt{phenoDisco} algorithm is an
+\texttt{MSnSet} containing the new data clusters, appended to the
+\texttt{featureData} under the name \texttt{pd}. We have made the results
+readily available for users to interrogate and get an idea of the type
+of output one may gain from using this function.} The results can be
+displayed by using the \texttt{getMarkers} function. We see that 5 new
+phenotype data clusters were found.
 
 <<loadPDres, echo=FALSE>>=
 f0 <- dir(extdatadir, full.names = TRUE,
@@ -1134,11 +1146,7 @@ setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 @
 
-The ouput of running the \texttt{phenoDisco} algorithm is an
-\texttt{MSnSet} containing the new data clusters, appended to the
-\texttt{featureData} under the name \texttt{pd}. The results can be
-displayed by using the \texttt{getMarkers} function. We see that 5 new
-phenotype data clusters were found.
+
 
 <<showPDres>>=
 hl
