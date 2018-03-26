@@ -22,8 +22,8 @@ establish high quality proteome-wide datasets (see for example
 examples). However, data analysis is as critical as data production
 for reliable and insightful biological interpretation. Here, we walk
 the reader through a typical pipeline for the analysis of such data
-using several Bioconductor~\cite{Huber:2015} packages for the R statistical programming
-environment.
+using several Bioconductor~\cite{Huber:2015} packages for the R
+statistical programming environment.
 
 The main package to analyse protein localisation data is
 \Biocpkg{pRoloc}, which offers a set of dedicated functions for the
@@ -716,16 +716,29 @@ Having added a the mouse markers to our \texttt{fData} from the
 \texttt{pRolocmarkers}, we can now visualise these annotations along
 the PCA plot using the \texttt{plot2D} function and then use the
 \texttt{addLegend} function to map the marker classes to the
-pre-defined colours. We also display the data along the first and
-seventh PCs using the \texttt{dims} argument. Note that in these calls
-to the \texttt{plot2D} function, we have omitted the \texttt{fcol}
-argument and use of the default \texttt{"markers"} feature variable to
-annotate the plot. We choose to display PCs 1 and 7 to illustrate that
-while upper principal components explain much less variability in the
-data (2.23\% for PC7, as opposed to 48.41\% for PC1), we see that the
-mitochondrial (purple) and peroxisome (dark blue) clusters can be
-differentiated, despite the apparent overlap in the visualisation of
-the two first PCs (Figure \ref{fig:plotmarkers}).
+pre-defined colours. \hl{As mentioned previously, PCA transforms the
+original high dimensional data into a set of linearly uncorrelated
+principal components such that the first accounts for as much
+variability in the data as possible and each succeeding component in
+turn has the highest variance possible under the constraint that it
+be orthogonal to the preceding components. We saw in the previous
+section how this is useful for quality control and checking
+organelle seperation.  Adding marker definiton allows one to quickly
+see if known residents appear in defined clusters. One must be
+careful though as different organelles may be resolved in different
+dimensions.} For example, we can display the data along the first and
+seventh PCs using the \texttt{dims} argument. Note that in these
+calls to the \texttt{plot2D} function, we have omitted the
+\texttt{fcol} argument and use of the default \texttt{"markers"}
+feature variable to annotate the plot. We choose to display PCs 1
+and 7 to illustrate that while upper principal components explain
+much less variability in the data (2.23\% for PC7, as opposed to
+48.41\% for PC1), we see that the mitochondrial (purple) and
+peroxisome (dark blue) clusters can be differentiated, despite the
+apparent overlap in the visualisation of the two first PCs (Figure
+\ref{fig:plotmarkers}).  This is further highlighted if we plot the
+profiles of these two clusters using the \texttt{plotDist} function
+(Fig \ref{fig:plotDist2}).
 
 
 \begin{figure}[!ht]
@@ -740,6 +753,24 @@ plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
   with \texttt{plot2D}.}
   \label{fig:plotmarkers}
 \end{figure}
+
+
+\begin{figure}[!ht]
+  \centering
+<<plotDist, out.width=".6\\textwidth", fig.asp=3/5>>=
+hlo <- hl[, order(hl$Iodixonal.Density)]
+plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
+         pcol = "purple", fractions = "Tag")
+title(main = "Marker occupancy profiles along the gradient")
+matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
+         lty = 1, col = "darkblue", type = "l")
+legend("topleft", c("Mitochondrion", "Peroxisome"),
+       lty = 1, col = c("purple", "blue"), bty = "n")
+@  
+  \caption{Mitochondrion and peroxisome protein profiles.}
+  \label{fig:plotDist2}
+\end{figure}
+
 
 The data can also be visualised along three PCs using the
 \texttt{plot3D} function (Figure \ref{fig:plotmarkers3d}). When
@@ -793,22 +824,6 @@ peroxisome markers to highlight the differences in profiles between
 these two sets of markers in the channels labelled with tag 129C, as
 represented above along the 7th PC on the PCA plot on figure
 \ref{fig:plotmarkers}.
-
-\begin{figure}[!ht]
-  \centering
-<<plotDist, out.width=".6\\textwidth", fig.asp=3/5>>=
-hlo <- hl[, order(hl$Iodixonal.Density)]
-plotDist(hlo[fData(hlo)$markers == "Mitochondrion", ],
-         pcol = "purple", fractions = "Tag")
-title(main = "Marker occupancy profiles along the gradient")
-matlines(t(exprs(hlo[fData(hlo)$markers == "Peroxisome", ])),
-         lty = 1, col = "darkblue", type = "l")
-legend("topleft", c("Mitochondrion", "Peroxisome"),
-       lty = 1, col = c("purple", "blue"), bty = "n")
-@  
-  \caption{Mitochondrion and peroxisome protein profiles.}
-  \label{fig:plotDist2}
-\end{figure}
 
 Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
