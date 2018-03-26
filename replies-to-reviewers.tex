@@ -1,0 +1,65 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fixltx2e}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{marvosym}
+\usepackage{wasysym}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\setlength{\parindent}{0pt}
+\geometry{top = 0.5in, bottom = 0.5 in, left = 0.5 in, right = 0.5 in}
+\tolerance=1000
+\setcounter{secnumdepth}{0}
+\author{Lisa Breckels and Laurent Gatto}
+\date{\today}
+
+\title{A Bioconductor workflow for processing and analysing spatial proteomics data \\ Reply to reviewers}
+
+\begin{document}
+
+\maketitle
+
+\section*{Reviewer 1 - Daniel J. Stekhoven}
+
+We thank reviewer 1 for their comments. Please find our responses to
+these inset below.
+
+\begin{quote} \textcolor{gray}{
+Next to reducing the dimensions of data for visualisation, PCA also offers a way to understand how the variability is distributed across the multidimensional data by providing linear combinations of the variables which then constitute the actual PCs. On that note it would be nice to mention this in Visualising markers section on page 16, where PC7 explains not much variability but due to the correct weighing of the variables we do get a separation between mitochondrial and peroxisome. This then can be further motivated with Figure 9 - where we probably can see that the weights for the fractions where the two localisations differ are larger than otherwise.}
+\end{quote}
+
+We have added a paragraph reminding users what PCA does in the Visualising Markers section to motivate the choice of looking at PC's 1 and 7. Figure 9 (now Figure 8) and corresponding code has been moved to this section and explanation of the plotDist function to lead on from the reference to marker profiles and separation.  
+
+
+
+\begin{quote}  \textcolor{gray}{
+}
+\end{quote}
+
+
+
+
+
+
+
+We thank the reviewer for their constructive and positive comments.
+
+\section*{Reviewer 2: Leonard J. Foster}
+
+\begin{quote}\textcolor{gray}{ }
+\end{quote}
+
+
+\end{document}

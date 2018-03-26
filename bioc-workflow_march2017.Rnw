@@ -736,9 +736,21 @@ much less variability in the data (2.23\% for PC7, as opposed to
 48.41\% for PC1), we see that the mitochondrial (purple) and
 peroxisome (dark blue) clusters can be differentiated, despite the
 apparent overlap in the visualisation of the two first PCs (Figure
-\ref{fig:plotmarkers}).  This is further highlighted if we plot the
+\ref{fig:plotmarkers}).  \hl{This is further highlighted if we plot the
 profiles of these two clusters using the \texttt{plotDist} function
-(Fig \ref{fig:plotDist2}).
+(Fig \ref{fig:plotDist2}).} \hl{The \texttt{plotDist} function is
+another useful visualisation that relies on marker annotation. It
+allows one to represent the protein profiles occupancy along the
+gradient \sout{using the \texttt{plotDist} function}. While the PCA
+plot enables efficient visualisation of the complete dataset and
+assessment the relative separation of different sub-cellular niches,
+comparing profiles of a few marker clusters is useful to assess how
+exactly they differ (in terms of peak channels, for example). On
+figure \ref{fig:plotDist2}, we plot the profile of the mitochondrial
+and peroxisome markers to highlight the differences in profiles
+between these two sets of markers in the channels labelled with tag
+129C, as represented above along the 7th PC on the PCA plot on
+figure \ref{fig:plotmarkers}.}
 
 
 \begin{figure}[!ht]
@@ -810,20 +822,6 @@ common definition of \textit{unknown} localisation.
 hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
 getMarkers(hl)
 @
-
-
-Another useful visualisation that relies on marker annotation is the
-representation of the protein profiles occupancy along the gradient
-using the \texttt{plotDist} function. While the PCA plot enables
-efficient visualisation of the complete dataset and assessment the
-relative separation of different sub-cellular niches, comparing
-profiles of a few marker clusters is useful to assess how exactly they
-differ (in terms of peak channels, for example). On figure
-\ref{fig:plotDist2}, we plot the profile of the mitochondrial and
-peroxisome markers to highlight the differences in profiles between
-these two sets of markers in the channels labelled with tag 129C, as
-represented above along the 7th PC on the PCA plot on figure
-\ref{fig:plotmarkers}.
 
 Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
