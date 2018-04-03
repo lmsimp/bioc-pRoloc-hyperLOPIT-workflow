@@ -60,12 +60,14 @@ page 23 on, because it takes 24 hours to compute it using 40 cores?
 The results are available and stored in `pRolocdata` for users. This
 is what is called in the manuscript under the hood:
 
-\begin{lstlisting}[language=R] extdatadir <- system.file("extdata",
-package = "pRolocdata") csvfile <- dir(extdatadir, full.names =
-TRUE, pattern = "hyperLOPIT-SIData-ms3-rep12-intersect.csv") f0 <-
-dir(extdatadir, full.names = TRUE, pattern = "bpw-pdres.rds") pdres
-<- readRDS(f0) hl <- addMarkers(hl, pdres, mcol = "pd", verbose =
-FALSE) \end{lstlisting}
+\begin{lstlisting}[language=R] 
+extdatadir <- system.file("extdata", package = "pRolocdata") 
+csvfile <- dir(extdatadir, full.names = TRUE, pattern = 
+                            "hyperLOPIT-SIData-ms3-rep12-intersect.csv") 
+f0 <- dir(extdatadir, full.names = TRUE, pattern = "bpw-pdres.rds") 
+pdres <- readRDS(f0) 
+hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE) 
+\end{lstlisting}
 
 Please note that we already say in the workflow: "Note: We do not
 evaluate this code chunk in this document as the algorithm is

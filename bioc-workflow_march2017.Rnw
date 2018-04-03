@@ -354,12 +354,12 @@ pData(hl)
 There are two aspects related to data normalisation that are relevant
 to spatial proteomics data processing. The first one focuses on
 reducing purely technical variation between channels without affecting
-biological variability (i.e. the shape of the quantitative
+biological variability (i.e. the shape of the quantitatives
 profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
 addressed in this workflow. The second aspect, and more specific to
 spatial proteomics data, is scaling all the organelle-specific
-profiles into a same intensity interval (typically 0 and 1) by, for
+profiles into \sout{a}\hl{the} same intensity interval (typically 0 and 1) by, for
 example, dividing each intensity by the sum of the intensities for
 that quantitative feature. This is not necessary in this example as
 the intensities for each replicate have already been re-scaled to 1 in
@@ -487,7 +487,7 @@ and should be addressed independently of this workflow
 \cite{Webb-Robertson:2015,Lazar:2016}. In \cite{Gatto:2014b}, we have
 described how a high content in missing values in spatial proteomics
 data and their inappropriate handling leads to a reduction of
-sub-cellular resolution. Missing data can be imputated using
+sub-cellular resolution. \sout{Missing data can be imputated} \hl{We can impute missing data} using
 \Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
 the imputation method is then determined by a \texttt{methods}
 parameter (see \texttt{?impute} for available options). To impute
@@ -508,7 +508,7 @@ image2(is.na(combined), col = c("black", "white"),
        main = "Missing values (white cells) after combining replicates")
 @  
 \caption{Heatmap of missing values. Note that the features are
-  re-ordered to highlight cluster of proteins with similar numbers of
+  re-ordered to highlight \hl{clusters} of proteins with similar numbers of
   missing values.}
   \label{fig:namap}
 \end{figure}
@@ -833,16 +833,18 @@ function, one can store specific sets of proteins by using the
 \Biocpkg{MSnbase} package. If users have specific subsets of proteins
 they wish to highlight in their data (possibly across multiple
 experiments) they would first create a \texttt{FeaturesOfInterest}
-object. For example, if we wanted to highlight a proteins with the
-accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, which are some
-of the proteins known to form part of the 13S condensin complex, we
-would create a first create a \texttt{FeaturesOfInterest} object, and
+object \hl{and then use the \textit{highlightOnPlot} function to 
+visualise these}. For example, if we wanted to highlight \sout{a} 
+proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, 
+which are some of the proteins known to form part of the 13S condensin complex, 
+we \hl{would call the following code:}
+\sout{would create a first create a \texttt{FeaturesOfInterest} object, and
 subsequently highlight their location on a PCA plot with the
-\texttt{highlightOnPlot} function.
+\texttt{highlightOnPlot} function.}
 
 \begin{figure}[!ht]
   \centering
-<<foi, fig.width=10, out.width=".8\\textwidth">>= 
+<<foi, fig.width=10, out.width=".8\\textwidth">>=
 prots <- c("Q8CG48", "Q8CG47", "Q8K2Z4", "Q8C156")
 foi13s <- FeaturesOfInterest(description = "13S consensin proteins",
                              fnames = prots, 
@@ -852,7 +854,7 @@ foi13s
 plot2D(hl)
 addLegend(hl, cex = .6)
 highlightOnPlot(hl, foi13s)
-@  
+@
   \caption{Highlighting protein features of interest.}
   \label{fig:foi}
 \end{figure}
@@ -1133,7 +1135,7 @@ The ouput of running the \texttt{phenoDisco} algorithm is an
 \texttt{MSnSet} containing the new data clusters, appended to the
 \texttt{featureData} under the name \texttt{pd}. We have made the results
 readily available for users to interrogate and get an idea of the type
-of output one may gain from using this function.} The results can be
+of output one may expect from using this function.} The results can be
 displayed by using the \texttt{getMarkers} function. We see that 5 new
 phenotype data clusters were found.
 
@@ -1195,9 +1197,9 @@ enriched in nucleus associated proteins, phenotype 2 in chromatin
 associated proteins, phenotype 3 in cytosolic and phenotypes 4 and 5
 in both lysosomal and endosomal proteins.
 
-% <<vishl, eval=FALSE>>=
-% pRolocVis(hl, fcol = "pd")
-% @
+<<vishl, eval=FALSE>>=
+pRolocVis(hl, fcol = "pd")
+@
 
 \section*{Supervised machine learning}
 
@@ -1607,7 +1609,6 @@ for our data (see \texttt{featureNames(hl)}) which is
 
 <<setap, eval=FALSE>>=
 par <- setAnnotationParams(inputs = c("Mus musculus", "UniProt/Swissprot"))
-
 @
 
 Now we have contructed the query parameters we can use the

@@ -1,3 +1,129 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to Overleaf --- just edit your article on the left,
+% and we'll compile it for you on the right. If you give 
+% someone the link to this page, they can edit at the same
+% time. See the help menu above for more info. Enjoy!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% For more detailed article preparation guidelines, please see:
+% http://f1000research.com/author-guidelines
+
+%% \documentclass[10pt,a4paper,twocolumn]{article}
+\documentclass[10pt,a4paper]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{f1000_styles}
+
+%% Default: numerical citations
+\usepackage[numbers]{natbib}
+
+%% Uncomment this lines for superscript citations insteadl
+% \usepackage[super]{natbib}
+
+%% Uncomment these lines for author-year citations instead
+% \usepackage[round]{natbib}
+% \let\cite\citep
+
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{knitr}
+\usepackage{alltt}
+
+\definecolor{fgcolor}{rgb}{.5,.6,.7}
+
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}
+
+\newcommand{\Rpackage}[1]{\textsl{#1}}
+\newcommand\Biocpkg[1]{%
+  {\href{http://bioconductor.org/packages/#1}%
+    {\Rpackage{#1}}}}
+\newcommand\Biocannopkg[1]{\Biocpkg{#1}}
+\newcommand\Biocexptpkg[1]{\Biocpkg{#1}}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\title{A Bioconductor workflow for processing and analysing spatial proteomics data}
+
+% \titlenote{The title should be detailed enough for someone to know
+% whether the article would be of interest to them, but also
+% concise. Please ensure the broadness and claims within the title are
+% appropriate to the content of the article itself.}
+
+\author[1,2]{Lisa M. Breckels}
+\author[2]{Claire M. Mulvey}
+\author[2]{Kathryn S. Lilley}
+\author[1,2]{Laurent Gatto}
+\affil[1]{Computational Proteomics Unit, Cambridge Systems Biology Centre, University of Cambridge, Tennis Court Road, Cambridge, CB2 1GA, UK}
+\affil[2]{Cambridge Centre for Proteomics, Department of Biochemistry, University of Cambridge, Tennis Court Road, Cambridge, CB2 1GA, UK}
+
+\maketitle
+\thispagestyle{fancy}
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
 
 
 
@@ -335,7 +461,7 @@ etc (see below).
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 2.1.4
+##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -652,7 +778,7 @@ At the R prompt, typing
 \end{kframe}
 \end{knitrout}
 
-will list the 54 datasets that are
+will list the 75 datasets that are
 available in \Biocexptpkg{pRolocdata}.
 
 %% $
@@ -752,11 +878,17 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{combined} \hlkwb{<-} \hlkwd{combine}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: 'combine' is deprecated.\\\#\# Use 'gtable\_combine' instead.\\\#\# See help("{}Deprecated"{})}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `[[<-.data.frame`(`*tmp*`, i, value = structure(list(t = numeric(0), : replacement has 0 rows, data has 10}}\begin{alltt}
 \hlstd{combined}
 \end{alltt}
 \begin{verbatim}
 ## MSnSet (storageMode: lockedEnvironment)
-## assayData: 6725 features, 20 samples 
+## assayData: 5032 features, 20 samples 
 ##   element names: exprs 
 ## protocolData: none
 ## phenoData
@@ -764,15 +896,28 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ##   varLabels: Replicate TMT.Reagent ... Iodixonal.Density (5 total)
 ##   varMetadata: labelDescription
 ## featureData
-##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2Y3-3 (6725 total)
+##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
 ##   fvarLabels: EntryName ProteinDescription ... ProteinCoverage2 (8
 ##     total)
 ##   fvarMetadata: labelDescription
 ## experimentData: use 'experimentData(object)'
+##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Dec  8 12:09:01 2016 
-##  MSnbase version: 1.21.7
+## Combined [5489,10] and [6268,10] MSnSets Mon Mar 26 16:47:45 2018 
+## Subset [6725,20][5032,20] Mon Mar 26 16:48:04 2018 
+## Removed features with more than 0 NAs: Mon Mar 26 16:48:04 2018 
+## Dropped featureData's levels Mon Mar 26 16:48:04 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 12:00:57 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 12:00:57 2018 
+## Dropped featureData's levels Tue Apr  3 12:00:57 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 12:56:07 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 12:56:07 2018 
+## Dropped featureData's levels Tue Apr  3 12:56:07 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 12:56:42 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 12:56:42 2018 
+## Dropped featureData's levels Tue Apr  3 12:56:42 2018 
+##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -854,13 +999,26 @@ values (subsetting) changed the dimensions of the data.
 ##     total)
 ##   fvarMetadata: labelDescription
 ## experimentData: use 'experimentData(object)'
+##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Thu Dec  8 12:09:01 2016 
-## Subset [6725,20][5032,20] Thu Dec  8 12:09:01 2016 
-## Removed features with more than 0 NAs: Thu Dec  8 12:09:01 2016 
-## Dropped featureData's levels Thu Dec  8 12:09:01 2016 
-##  MSnbase version: 1.21.7
+## Combined [5489,10] and [6268,10] MSnSets Mon Mar 26 16:47:45 2018 
+## Subset [6725,20][5032,20] Mon Mar 26 16:48:04 2018 
+## Removed features with more than 0 NAs: Mon Mar 26 16:48:04 2018 
+## Dropped featureData's levels Mon Mar 26 16:48:04 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 12:00:57 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 12:00:57 2018 
+## Dropped featureData's levels Tue Apr  3 12:00:57 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 12:56:07 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 12:56:07 2018 
+## Dropped featureData's levels Tue Apr  3 12:56:07 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 12:56:42 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 12:56:42 2018 
+## Dropped featureData's levels Tue Apr  3 12:56:42 2018 
+## Subset [5032,20][5032,20] Tue Apr  3 13:37:03 2018 
+## Removed features with more than 0 NAs: Tue Apr  3 13:37:03 2018 
+## Dropped featureData's levels Tue Apr  3 13:37:03 2018 
+##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1274,7 +1432,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Thu Dec  8 12:09:03 2016 
+##  Created on Tue Apr  3 13:37:05 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1327,8 +1485,8 @@ replicate, respectively). Different sets of gradient fractions are
 often pooled to obtain enough material and optimise acurate
 quantitation.
 
-% latex table generated in R 3.3.2 by xtable 1.8-2 package
-% Thu Dec  8 12:09:03 2016
+% latex table generated in R 3.5.0 by xtable 1.8-2 package
+% Tue Apr  3 13:37:05 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1639,9 +1797,9 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Thu Dec  8 12:09:03 2016 
-## Added markers from  'pdres' marker vector. Thu Dec  8 12:09:04 2016 
-##  MSnbase version: 2.1.4
+## Added markers from  'mrk' marker vector. Tue Apr  3 13:37:04 2018 
+## Added markers from  'pdres' marker vector. Tue Apr  3 13:37:06 2018 
+##  MSnbase version: 2.5.9
 \end{verbatim}
 \begin{alltt}
 \hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
@@ -1938,7 +2096,9 @@ specified as we use the labels defined in the default
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{svmClassification}\hlstd{(hl, params,} \hlkwc{class.weights} \hlstd{= w,} \hlkwc{fcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
 \end{alltt}
-\end{kframe}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning in seq\_len(trpr): first element used of 'length.out' argument}}\end{kframe}
 \end{knitrout}
 
 In the code chunk above, we pass the whole \texttt{params} parameter
@@ -2069,25 +2229,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4322999               0.3055155               0.3838354 
+##               0.4401665               0.3022831               0.3793515 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6883460               0.6037025               0.4275289 
+##               0.6907964               0.6076611               0.4275322 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4276601               0.5906588               0.9501307 
+##               0.4235684               0.5973413               0.9495950 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7947781               0.7105373               0.3137337 
+##               0.7960356               0.7115733               0.3153275 
 ##         Plasma membrane              Proteasome 
-##               0.7191668               0.4144056
+##               0.7118966               0.4169883
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4322999               0.3055155               0.3838354 
+##               0.4401665               0.3022831               0.3793515 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6883460               0.6037025               0.4275289 
+##               0.6907964               0.6076611               0.4275322 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4276601               0.5906588               0.9501307 
+##               0.4235684               0.5973413               0.9495950 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7947781               0.7105373               0.3137337 
+##               0.7960356               0.7115733               0.3153275 
 ##         Plasma membrane              Proteasome 
-##               0.7191668               0.4144056
+##               0.7118966               0.4169883
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2095,15 +2255,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     171                      88 
+##                      85                     170                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     296                     478                     100 
+##                     296                     473                     100 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     123                     522 
+##                      28                     123                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     342                      39 
+##                     230                     344                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     316                     159                    2058
+##                     321                     159                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2652,66 +2812,77 @@ failure and/or different results.
 \hlkwd{sessionInfo}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## R version 3.3.2 Patched (2016-11-01 r71616)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 14.04.5 LTS
+## R Under development (unstable) (2018-03-21 r74432)
+## Platform: x86_64-apple-darwin15.6.0 (64-bit)
+## Running under: macOS High Sierra 10.13.3
+## 
+## Matrix products: default
+## BLAS: /System/Library/Frameworks/Accelerate.framework/Versions/A/Frameworks/vecLib.framework/Versions/A/libBLAS.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_GB.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_GB.UTF-8        LC_COLLATE=en_GB.UTF-8    
-##  [5] LC_MONETARY=en_GB.UTF-8    LC_MESSAGES=en_GB.UTF-8   
-##  [7] LC_PAPER=en_GB.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
+## [1] en_GB.UTF-8/en_GB.UTF-8/en_GB.UTF-8/C/en_GB.UTF-8/en_GB.UTF-8
 ## 
 ## attached base packages:
-## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
-## [8] datasets  base     
+## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.12.0    pRoloc_1.15.5        MLInterfaces_1.54.0 
-##  [4] cluster_2.0.5        annotate_1.52.0      XML_3.98-1.5        
-##  [7] AnnotationDbi_1.36.0 IRanges_2.8.1        S4Vectors_0.12.1    
-## [10] MSnbase_2.1.4        ProtGenerics_1.6.0   BiocParallel_1.8.1  
-## [13] mzR_2.8.0            Rcpp_0.12.8          Biobase_2.34.0      
-## [16] BiocGenerics_0.20.0  gridExtra_2.2.1      xtable_1.8-2        
-## [19] BiocStyle_2.2.1      knitr_1.15.1        
+##  [1] pRolocdata_1.17.2    gridExtra_2.3        xtable_1.8-2        
+##  [4] BiocStyle_2.7.8      knitr_1.20           rgl_0.99.9          
+##  [7] pRolocGUI_1.13.1     pRoloc_1.19.3        MLInterfaces_1.59.1 
+## [10] cluster_2.0.6        annotate_1.57.2      XML_3.98-1.10       
+## [13] AnnotationDbi_1.41.4 IRanges_2.13.28      S4Vectors_0.17.37   
+## [16] MSnbase_2.5.9        ProtGenerics_1.11.0  BiocParallel_1.13.1 
+## [19] mzR_2.13.5           Rcpp_0.12.16         Biobase_2.39.2      
+## [22] BiocGenerics_0.25.3 
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] minqa_1.2.4           colorspace_1.3-1      hwriter_1.3.2        
-##   [4] class_7.3-14          modeltools_0.2-21     mclust_5.2           
-##   [7] pls_2.5-0             base64enc_0.1-3       proxy_0.4-16         
-##  [10] hexbin_1.27.1         MatrixModels_0.4-1    affyio_1.44.0        
-##  [13] flexmix_2.3-13        mvtnorm_1.0-5         codetools_0.2-15     
-##  [16] splines_3.3.2         doParallel_1.0.10     impute_1.48.0        
-##  [19] robustbase_0.92-6     jsonlite_1.1          nloptr_1.0.4         
-##  [22] caret_6.0-73          pbkrtest_0.4-6        rda_1.0.2-2          
-##  [25] kernlab_0.9-25        vsn_3.42.3            sfsmisc_1.1-0        
-##  [28] shiny_0.14.2          sampling_2.7          assertthat_0.1       
-##  [31] Matrix_1.2-7.1        lazyeval_0.2.0        limma_3.30.6         
-##  [34] htmltools_0.3.5       quantreg_5.29         tools_3.3.2          
-##  [37] ggvis_0.4.3           gtable_0.2.0          affy_1.52.0          
-##  [40] reshape2_1.4.2        dplyr_0.5.0           MALDIquant_1.15      
-##  [43] trimcluster_0.1-2     gdata_2.17.0          preprocessCore_1.36.0
-##  [46] nlme_3.1-128          iterators_1.0.8       fpc_2.1-10           
-##  [49] stringr_1.1.0         lme4_1.1-12           lpSolve_5.6.13       
-##  [52] mime_0.5              gtools_3.5.0          dendextend_1.3.0     
-##  [55] DEoptimR_1.0-8        zlibbioc_1.20.0       MASS_7.3-45          
-##  [58] scales_0.4.1          BiocInstaller_1.24.0  pcaMethods_1.66.0    
-##  [61] SparseM_1.74          RColorBrewer_1.1-2    memoise_1.0.0        
-##  [64] ggplot2_2.2.0         biomaRt_2.30.0        rpart_4.1-10         
-##  [67] stringi_1.1.2         RSQLite_1.1           highr_0.6            
-##  [70] genefilter_1.56.0     randomForest_4.6-12   foreach_1.4.3        
-##  [73] e1071_1.6-7           prabclus_2.2-6        bitops_1.0-6         
-##  [76] mzID_1.12.0           evaluate_0.10         lattice_0.20-34      
-##  [79] htmlwidgets_0.8       gbm_2.1.1             plyr_1.8.4           
-##  [82] magrittr_1.5          R6_2.2.0              DBI_0.5-1            
-##  [85] whisker_0.3-2         mgcv_1.8-16           survival_2.40-1      
-##  [88] RCurl_1.95-4.8        nnet_7.3-12           tibble_1.2           
-##  [91] msdata_0.14.0         car_2.1-3             mlbench_2.1-1        
-##  [94] grid_3.3.2            FNN_1.1               ModelMetrics_1.1.0   
-##  [97] threejs_0.2.2         digest_0.6.10         diptest_0.75-7       
-## [100] httpuv_1.3.3          munsell_0.4.3
+##   [1] backports_1.1.2       plyr_1.8.4            igraph_1.2.1         
+##   [4] lazyeval_0.2.1        splines_3.5.0         ggvis_0.4.3          
+##   [7] crosstalk_1.0.0       ggplot2_2.2.1         digest_0.6.15        
+##  [10] foreach_1.4.4         BiocInstaller_1.29.4  htmltools_0.3.6      
+##  [13] viridis_0.5.0         gdata_2.18.0          magrittr_1.5         
+##  [16] memoise_1.1.0         doParallel_1.0.11     sfsmisc_1.1-2        
+##  [19] limma_3.35.13         recipes_0.1.2         gower_0.1.2          
+##  [22] rda_1.0.2-2           dimRed_0.1.0          lpSolve_5.6.13       
+##  [25] prettyunits_1.0.2     colorspace_1.3-2      blob_1.1.0           
+##  [28] dplyr_0.7.4           tcltk_3.5.0           jsonlite_1.5         
+##  [31] RCurl_1.95-4.10       hexbin_1.27.2         genefilter_1.61.1    
+##  [34] bindr_0.1.1           impute_1.53.0         survival_2.41-3      
+##  [37] iterators_1.0.9       glue_1.2.0            DRR_0.0.3            
+##  [40] gtable_0.2.0          ipred_0.9-6           zlibbioc_1.25.0      
+##  [43] kernlab_0.9-25        ddalpha_1.3.1.1       prabclus_2.2-6       
+##  [46] DEoptimR_1.0-8        scales_0.5.0          vsn_3.47.1           
+##  [49] mvtnorm_1.0-7         DBI_0.8               viridisLite_0.3.0    
+##  [52] progress_1.1.2        foreign_0.8-70        bit_1.1-12           
+##  [55] proxy_0.4-21          mclust_5.4            preprocessCore_1.41.0
+##  [58] DT_0.4                lava_1.6              prodlim_1.6.1        
+##  [61] sampling_2.8          htmlwidgets_1.0       httr_1.3.1           
+##  [64] threejs_0.3.1         FNN_1.1               RColorBrewer_1.1-2   
+##  [67] fpc_2.1-11            modeltools_0.2-21     pkgconfig_2.0.1      
+##  [70] flexmix_2.3-14        nnet_7.3-12           caret_6.0-78         
+##  [73] tidyselect_0.2.4      rlang_0.2.0           reshape2_1.4.3       
+##  [76] munsell_0.4.3         mlbench_2.1-1         tools_3.5.0          
+##  [79] RSQLite_2.0           pls_2.6-0             broom_0.4.3          
+##  [82] evaluate_0.10.1       stringr_1.3.0         yaml_2.1.18          
+##  [85] mzID_1.17.0           ModelMetrics_1.1.0    bit64_0.9-7          
+##  [88] robustbase_0.92-8     randomForest_4.6-12   purrr_0.2.4          
+##  [91] dendextend_1.7.0      bindrcpp_0.2          nlme_3.1-136         
+##  [94] whisker_0.3-2         mime_0.5              RcppRoll_0.2.2       
+##  [97] biomaRt_2.35.12       compiler_3.5.0        e1071_1.6-8          
+## [100] affyio_1.49.1         tibble_1.4.2          stringi_1.1.7        
+## [103] highr_0.6             lattice_0.20-35       trimcluster_0.1-2    
+## [106] Matrix_1.2-12         psych_1.7.8           gbm_2.1.3            
+## [109] pillar_1.2.1          MALDIquant_1.17       bitops_1.0-6         
+## [112] httpuv_1.3.6.2        R6_2.2.2              pcaMethods_1.71.0    
+## [115] affy_1.57.0           hwriter_1.3.2         codetools_0.2-15     
+## [118] MASS_7.3-49           gtools_3.5.0          assertthat_0.2.0     
+## [121] CVST_0.2-1            rprojroot_1.3-2       withr_2.1.2          
+## [124] mnormt_1.5-5          diptest_0.75-7        grid_3.5.0           
+## [127] rpart_4.1-13          timeDate_3043.102     tidyr_0.8.0          
+## [130] class_7.3-14          rmarkdown_1.9         shiny_1.0.5          
+## [133] lubridate_1.7.3       base64enc_0.1-3
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2765,3 +2936,10 @@ Cambridge High Performance Computing Service, provided by Dell
 Inc. using Strategic Research Infrastructure Funding from the Higher
 Education Funding Council for England and funding from the Science and
 Technology Facilities Council.
+
+\bigskip
+
+{\small\bibliographystyle{unsrtnat}
+\bibliography{bibliography}}
+
+\end{document}
