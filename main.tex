@@ -1,0 +1,85 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Welcome to Overleaf --- just edit your article on the left,
+% and we'll compile it for you on the right. If you give 
+% someone the link to this page, they can edit at the same
+% time. See the help menu above for more info. Enjoy!
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% For more detailed article preparation guidelines, please see:
+% http://f1000research.com/author-guidelines
+
+%% \documentclass[10pt,a4paper,twocolumn]{article}
+\documentclass[10pt,a4paper]{article}
+\usepackage{f1000_styles}
+
+%% Default: numerical citations
+\usepackage[numbers]{natbib}
+
+%% Uncomment this lines for superscript citations insteadl
+% \usepackage[super]{natbib}
+
+%% Uncomment these lines for author-year citations instead
+% \usepackage[round]{natbib}
+% \let\cite\citep
+
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{knitr}
+\usepackage{alltt}
+
+\definecolor{fgcolor}{rgb}{.5,.6,.7}
+
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}
+
+\newcommand{\Rpackage}[1]{\textsl{#1}}
+\newcommand\Biocpkg[1]{%
+  {\href{http://bioconductor.org/packages/#1}%
+    {\Rpackage{#1}}}}
+\newcommand\Biocannopkg[1]{\Biocpkg{#1}}
+\newcommand\Biocexptpkg[1]{\Biocpkg{#1}}
+
+
+\begin{document}
+
+\title{A Bioconductor workflow for processing and analysing spatial proteomics data}
+
+% \titlenote{The title should be detailed enough for someone to know
+% whether the article would be of interest to them, but also
+% concise. Please ensure the broadness and claims within the title are
+% appropriate to the content of the article itself.}
+
+\author[1,2]{Lisa M. Breckels}
+\author[2]{Claire M. Mulvey}
+\author[2]{Kathryn S. Lilley}
+\author[1,2]{Laurent Gatto}
+\affil[1]{Computational Proteomics Unit, Cambridge Systems Biology Centre, University of Cambridge, Tennis Court Road, Cambridge, CB2 1GA, UK}
+\affil[2]{Cambridge Centre for Proteomics, Department of Biochemistry, University of Cambridge, Tennis Court Road, Cambridge, CB2 1GA, UK}
+
+\maketitle
+\thispagestyle{fancy}
+
+\begin{abstract}
+\input{abstract}
+\end{abstract}
+
+\input{bioc-workflow}
+
+\bigskip
+
+{\small\bibliographystyle{unsrtnat}
+\bibliography{bibliography}}
+
+\end{document}
