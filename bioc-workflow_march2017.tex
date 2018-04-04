@@ -565,7 +565,7 @@ profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
 addressed in this workflow. The second aspect, and more specific to
 spatial proteomics data, is scaling all the organelle-specific
-profiles into \st{a} \hl{the} same intensity interval (typically 0 and 1) by, for
+profiles into \st{a}\hl{the} same intensity interval (typically 0 and 1) by, for
 example, dividing each intensity by the sum of the intensities for
 that quantitative feature. This is not necessary in this example as
 the intensities for each replicate have already been re-scaled to 1 in
@@ -778,10 +778,19 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [5489,10] and [6268,10] MSnSets Mon Mar 26 16:47:45 2018 
-## Subset [6725,20][5032,20] Mon Mar 26 16:48:04 2018 
-## Removed features with more than 0 NAs: Mon Mar 26 16:48:04 2018 
-## Dropped featureData's levels Mon Mar 26 16:48:04 2018 
+## Combined [5489,10] and [6268,10] MSnSets Wed Apr  4 13:30:04 2018 
+## Subset [6725,20][5032,20] Wed Apr  4 13:30:17 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:30:17 2018 
+## Dropped featureData's levels Wed Apr  4 13:30:17 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:33:06 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:33:06 2018 
+## Dropped featureData's levels Wed Apr  4 13:33:06 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:42:10 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:42:10 2018 
+## Dropped featureData's levels Wed Apr  4 13:42:10 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:45:12 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:45:12 2018 
+## Dropped featureData's levels Wed Apr  4 13:45:12 2018 
 ##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
@@ -867,13 +876,22 @@ values (subsetting) changed the dimensions of the data.
 ##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [5489,10] and [6268,10] MSnSets Mon Mar 26 16:47:45 2018 
-## Subset [6725,20][5032,20] Mon Mar 26 16:48:04 2018 
-## Removed features with more than 0 NAs: Mon Mar 26 16:48:04 2018 
-## Dropped featureData's levels Mon Mar 26 16:48:04 2018 
-## Subset [5032,20][5032,20] Tue Apr  3 17:46:47 2018 
-## Removed features with more than 0 NAs: Tue Apr  3 17:46:47 2018 
-## Dropped featureData's levels Tue Apr  3 17:46:48 2018 
+## Combined [5489,10] and [6268,10] MSnSets Wed Apr  4 13:30:04 2018 
+## Subset [6725,20][5032,20] Wed Apr  4 13:30:17 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:30:17 2018 
+## Dropped featureData's levels Wed Apr  4 13:30:17 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:33:06 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:33:06 2018 
+## Dropped featureData's levels Wed Apr  4 13:33:06 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:42:10 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:42:10 2018 
+## Dropped featureData's levels Wed Apr  4 13:42:10 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:45:12 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:45:12 2018 
+## Dropped featureData's levels Wed Apr  4 13:45:12 2018 
+## Subset [5032,20][5032,20] Wed Apr  4 13:47:14 2018 
+## Removed features with more than 0 NAs: Wed Apr  4 13:47:14 2018 
+## Dropped featureData's levels Wed Apr  4 13:47:14 2018 
 ##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
@@ -1303,7 +1321,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Tue Apr  3 17:46:49 2018 
+##  Created on Wed Apr  4 13:47:16 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1357,7 +1375,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.5.0 by xtable 1.8-2 package
-% Tue Apr  3 17:46:49 2018
+% Wed Apr  4 13:47:16 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1676,8 +1694,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Apr  3 17:46:49 2018 
-## Added markers from  'pdres' marker vector. Tue Apr  3 17:46:50 2018 
+## Added markers from  'mrk' marker vector. Wed Apr  4 13:47:15 2018 
+## Added markers from  'pdres' marker vector. Wed Apr  4 13:47:17 2018 
 ##  MSnbase version: 2.5.10
 \end{verbatim}
 \begin{alltt}
@@ -2112,25 +2130,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4333396               0.3051261               0.3870872 
+##               0.4369121               0.3042575               0.3807524 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6736435               0.6011995               0.4213771 
+##               0.6850502               0.6093775               0.4324733 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4135168               0.5581414               0.9497578 
+##               0.4261633               0.5908828               0.9491150 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7956060               0.7091274               0.3126237 
+##               0.7944096               0.7083224               0.3140141 
 ##         Plasma membrane              Proteasome 
-##               0.7100209               0.4188587
+##               0.7126035               0.4150477
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4333396               0.3051261               0.3870872 
+##               0.4369121               0.3042575               0.3807524 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6736435               0.6011995               0.4213771 
+##               0.6850502               0.6093775               0.4324733 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4135168               0.5581414               0.9497578 
+##               0.4261633               0.5908828               0.9491150 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7956060               0.7091274               0.3126237 
+##               0.7944096               0.7083224               0.3140141 
 ##         Plasma membrane              Proteasome 
-##               0.7100209               0.4188587
+##               0.7126035               0.4150477
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2138,15 +2156,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     172                      89 
+##                      84                     173                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     294                     476                     103 
+##                     297                     468                     102 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     120                     522 
+##                      28                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      39 
+##                     229                     343                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     316                     158                    2058
+##                     322                     159                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2711,59 +2729,61 @@ failure and/or different results.
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.17.2    gridExtra_2.3        xtable_1.8-2        
-##  [4] BiocStyle_2.7.8      knitr_1.20           pRoloc_1.19.3       
-##  [7] MLInterfaces_1.59.1  cluster_2.0.6        annotate_1.57.2     
-## [10] XML_3.98-1.10        AnnotationDbi_1.41.4 IRanges_2.13.28     
-## [13] S4Vectors_0.17.37    MSnbase_2.5.10       ProtGenerics_1.11.0 
-## [16] BiocParallel_1.13.1  mzR_2.13.5           Rcpp_0.12.16        
-## [19] Biobase_2.39.2       BiocGenerics_0.25.3 
+##  [1] BiocStyle_2.7.8      gridExtra_2.3        shiny_1.0.5         
+##  [4] pRolocGUI_1.13.1     rgl_0.99.9           pRolocdata_1.17.2   
+##  [7] pRoloc_1.19.3        MLInterfaces_1.59.1  cluster_2.0.6       
+## [10] annotate_1.57.2      XML_3.98-1.10        AnnotationDbi_1.41.4
+## [13] IRanges_2.13.28      S4Vectors_0.17.37    MSnbase_2.5.10      
+## [16] ProtGenerics_1.11.0  BiocParallel_1.13.1  mzR_2.13.5          
+## [19] Rcpp_0.12.16         Biobase_2.39.2       BiocGenerics_0.25.3 
+## [22] xtable_1.8-2         knitr_1.20          
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] backports_1.1.2       plyr_1.8.4            igraph_1.2.1         
 ##   [4] lazyeval_0.2.1        splines_3.5.0         ggvis_0.4.3          
 ##   [7] crosstalk_1.0.0       ggplot2_2.2.1         digest_0.6.15        
 ##  [10] foreach_1.4.4         BiocInstaller_1.29.4  htmltools_0.3.6      
-##  [13] viridis_0.5.0         gdata_2.18.0          magrittr_1.5         
-##  [16] memoise_1.1.0         doParallel_1.0.11     sfsmisc_1.1-2        
-##  [19] limma_3.35.13         recipes_0.1.2         gower_0.1.2          
-##  [22] rda_1.0.2-2           dimRed_0.1.0          lpSolve_5.6.13       
-##  [25] prettyunits_1.0.2     colorspace_1.3-2      blob_1.1.0           
-##  [28] dplyr_0.7.4           RCurl_1.95-4.10       hexbin_1.27.2        
-##  [31] genefilter_1.61.1     bindr_0.1.1           impute_1.53.0        
-##  [34] survival_2.41-3       iterators_1.0.9       glue_1.2.0           
-##  [37] DRR_0.0.3             gtable_0.2.0          ipred_0.9-6          
-##  [40] zlibbioc_1.25.0       kernlab_0.9-25        ddalpha_1.3.1.1      
-##  [43] prabclus_2.2-6        DEoptimR_1.0-8        scales_0.5.0         
-##  [46] vsn_3.47.1            mvtnorm_1.0-7         DBI_0.8              
-##  [49] viridisLite_0.3.0     progress_1.1.2        foreign_0.8-70       
-##  [52] bit_1.1-12            proxy_0.4-21          mclust_5.4           
-##  [55] preprocessCore_1.41.0 lava_1.6              prodlim_1.6.1        
-##  [58] sampling_2.8          htmlwidgets_1.0       httr_1.3.1           
-##  [61] threejs_0.3.1         FNN_1.1               RColorBrewer_1.1-2   
-##  [64] fpc_2.1-11            modeltools_0.2-21     pkgconfig_2.0.1      
-##  [67] flexmix_2.3-14        nnet_7.3-12           caret_6.0-78         
-##  [70] tidyselect_0.2.4      rlang_0.2.0           reshape2_1.4.3       
-##  [73] munsell_0.4.3         mlbench_2.1-1         tools_3.5.0          
-##  [76] RSQLite_2.0           pls_2.6-0             broom_0.4.3          
-##  [79] evaluate_0.10.1       stringr_1.3.0         yaml_2.1.18          
-##  [82] mzID_1.17.0           ModelMetrics_1.1.0    bit64_0.9-7          
-##  [85] robustbase_0.92-8     randomForest_4.6-12   purrr_0.2.4          
-##  [88] dendextend_1.7.0      bindrcpp_0.2          nlme_3.1-136         
-##  [91] whisker_0.3-2         mime_0.5              RcppRoll_0.2.2       
-##  [94] biomaRt_2.35.12       compiler_3.5.0        e1071_1.6-8          
-##  [97] affyio_1.49.1         tibble_1.4.2          stringi_1.1.7        
-## [100] highr_0.6             lattice_0.20-35       trimcluster_0.1-2    
-## [103] Matrix_1.2-12         psych_1.7.8           gbm_2.1.3            
-## [106] pillar_1.2.1          MALDIquant_1.17       bitops_1.0-6         
-## [109] httpuv_1.3.6.2        R6_2.2.2              pcaMethods_1.71.0    
-## [112] affy_1.57.0           hwriter_1.3.2         codetools_0.2-15     
-## [115] MASS_7.3-49           gtools_3.5.0          assertthat_0.2.0     
-## [118] CVST_0.2-1            rprojroot_1.3-2       withr_2.1.2          
-## [121] mnormt_1.5-5          diptest_0.75-7        grid_3.5.0           
-## [124] rpart_4.1-13          timeDate_3043.102     tidyr_0.8.0          
-## [127] class_7.3-14          rmarkdown_1.9         shiny_1.0.5          
-## [130] lubridate_1.7.3       base64enc_0.1-3
+##  [13] rsconnect_0.8.8       viridis_0.5.0         gdata_2.18.0         
+##  [16] magrittr_1.5          memoise_1.1.0         doParallel_1.0.11    
+##  [19] sfsmisc_1.1-2         limma_3.35.13         recipes_0.1.2        
+##  [22] gower_0.1.2           rda_1.0.2-2           dimRed_0.1.0         
+##  [25] lpSolve_5.6.13        prettyunits_1.0.2     colorspace_1.3-2     
+##  [28] blob_1.1.0            dplyr_0.7.4           jsonlite_1.5         
+##  [31] RCurl_1.95-4.10       hexbin_1.27.2         genefilter_1.61.1    
+##  [34] bindr_0.1.1           impute_1.53.0         survival_2.41-3      
+##  [37] iterators_1.0.9       glue_1.2.0            DRR_0.0.3            
+##  [40] gtable_0.2.0          ipred_0.9-6           zlibbioc_1.25.0      
+##  [43] kernlab_0.9-25        ddalpha_1.3.1.1       prabclus_2.2-6       
+##  [46] DEoptimR_1.0-8        scales_0.5.0          vsn_3.47.1           
+##  [49] mvtnorm_1.0-7         DBI_0.8               viridisLite_0.3.0    
+##  [52] progress_1.1.2        foreign_0.8-70        bit_1.1-12           
+##  [55] proxy_0.4-21          mclust_5.4            preprocessCore_1.41.0
+##  [58] DT_0.4                lava_1.6              prodlim_1.6.1        
+##  [61] sampling_2.8          htmlwidgets_1.0       httr_1.3.1           
+##  [64] threejs_0.3.1         FNN_1.1               RColorBrewer_1.1-2   
+##  [67] fpc_2.1-11            modeltools_0.2-21     pkgconfig_2.0.1      
+##  [70] flexmix_2.3-14        nnet_7.3-12           caret_6.0-78         
+##  [73] tidyselect_0.2.4      rlang_0.2.0           reshape2_1.4.3       
+##  [76] munsell_0.4.3         mlbench_2.1-1         tools_3.5.0          
+##  [79] RSQLite_2.0           pls_2.6-0             broom_0.4.3          
+##  [82] evaluate_0.10.1       stringr_1.3.0         mzID_1.17.0          
+##  [85] yaml_2.1.18           ModelMetrics_1.1.0    bit64_0.9-7          
+##  [88] robustbase_0.92-8     randomForest_4.6-12   purrr_0.2.4          
+##  [91] dendextend_1.7.0      bindrcpp_0.2          nlme_3.1-136         
+##  [94] whisker_0.3-2         mime_0.5              RcppRoll_0.2.2       
+##  [97] biomaRt_2.35.12       compiler_3.5.0        e1071_1.6-8          
+## [100] affyio_1.49.1         tibble_1.4.2          stringi_1.1.7        
+## [103] highr_0.6             lattice_0.20-35       trimcluster_0.1-2    
+## [106] Matrix_1.2-12         psych_1.7.8           gbm_2.1.3            
+## [109] pillar_1.2.1          MALDIquant_1.17       bitops_1.0-6         
+## [112] httpuv_1.3.6.2        R6_2.2.2              pcaMethods_1.71.0    
+## [115] affy_1.57.0           hwriter_1.3.2         codetools_0.2-15     
+## [118] MASS_7.3-49           gtools_3.5.0          assertthat_0.2.0     
+## [121] CVST_0.2-1            rprojroot_1.3-2       withr_2.1.2          
+## [124] mnormt_1.5-5          diptest_0.75-7        grid_3.5.0           
+## [127] rpart_4.1-13          timeDate_3043.102     tidyr_0.8.0          
+## [130] class_7.3-14          rmarkdown_1.9         lubridate_1.7.3      
+## [133] base64enc_0.1-3
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

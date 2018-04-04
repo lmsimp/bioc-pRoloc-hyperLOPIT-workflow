@@ -3,7 +3,6 @@
 library("BiocStyle")
 suppressPackageStartupMessages(library("knitr"))
 suppressPackageStartupMessages(library("xtable"))
-suppressPackageStartupMessages(library("gridExtra"))
 suppressPackageStartupMessages(library("MSnbase"))
 suppressPackageStartupMessages(library("pRoloc"))
 suppressPackageStartupMessages(library("pRolocdata"))
@@ -359,7 +358,7 @@ profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
 addressed in this workflow. The second aspect, and more specific to
 spatial proteomics data, is scaling all the organelle-specific
-profiles into \sout{a}\hl{the} same intensity interval (typically 0 and 1) by, for
+profiles into \st{a}\hl{the} same intensity interval (typically 0 and 1) by, for
 example, dividing each intensity by the sum of the intensities for
 that quantitative feature. This is not necessary in this example as
 the intensities for each replicate have already been re-scaled to 1 in
@@ -487,7 +486,7 @@ and should be addressed independently of this workflow
 \cite{Webb-Robertson:2015,Lazar:2016}. In \cite{Gatto:2014b}, we have
 described how a high content in missing values in spatial proteomics
 data and their inappropriate handling leads to a reduction of
-sub-cellular resolution. \sout{Missing data can be imputated} \hl{We can impute missing data} using
+sub-cellular resolution. \st{Missing data can be imputated} \hl{We can impute missing data} using
 \Biocpkg{MSnbase}'s \texttt{impute} function. The method underlying
 the imputation method is then determined by a \texttt{methods}
 parameter (see \texttt{?impute} for available options). To impute
@@ -737,20 +736,20 @@ much less variability in the data (2.23\% for PC7, as opposed to
 peroxisome (dark blue) clusters can be differentiated, despite the
 apparent overlap in the visualisation of the two first PCs (Figure
 \ref{fig:plotmarkers}).  \hl{This is further highlighted if we plot the
-profiles of these two clusters using the \texttt{plotDist} function
-(Fig \ref{fig:plotDist2}).} \hl{The \texttt{plotDist} function is
+profiles of these two clusters using the \texttt{plotDist} function}
+(Fig \ref{fig:plotDist2}). \hl{The \texttt{plotDist} function is
 another useful visualisation that relies on marker annotation. It
 allows one to represent the protein profiles occupancy along the
-gradient \sout{using the \texttt{plotDist} function}. While the PCA
+gradient} \st{using the \texttt{plotDist} function}. \hl{While the PCA
 plot enables efficient visualisation of the complete dataset and
 assessment the relative separation of different sub-cellular niches,
 comparing profiles of a few marker clusters is useful to assess how
 exactly they differ (in terms of peak channels, for example). On
-figure \ref{fig:plotDist2}, we plot the profile of the mitochondrial
+figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
 and peroxisome markers to highlight the differences in profiles
 between these two sets of markers in the channels labelled with tag
 129C, as represented above along the 7th PC on the PCA plot on
-figure \ref{fig:plotmarkers}.}
+figure} \ref{fig:plotmarkers}.
 
 
 \begin{figure}[!ht]
@@ -834,11 +833,11 @@ function, one can store specific sets of proteins by using the
 they wish to highlight in their data (possibly across multiple
 experiments) they would first create a \texttt{FeaturesOfInterest}
 object \hl{and then use the \textit{highlightOnPlot} function to 
-visualise these}. For example, if we wanted to highlight \sout{a} 
+visualise these}. For example, if we wanted to highlight \st{a} 
 proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, 
 which are some of the proteins known to form part of the 13S condensin complex, 
 we \hl{would call the following code:}
-\sout{would create a first create a \texttt{FeaturesOfInterest} object, and
+\st{would create a first create a \texttt{FeaturesOfInterest} object, and
 subsequently highlight their location on a PCA plot with the
 \texttt{highlightOnPlot} function.}
 
@@ -1091,7 +1090,7 @@ contained.
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
 @
 
-\sout{Note: We do not evaluate this code chunk in this document as the
+\st{Note: We do not evaluate this code chunk in this document as the
 algorithm is computationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
 when parallelised over 40 workers.}
