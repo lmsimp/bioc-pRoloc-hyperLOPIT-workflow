@@ -111,7 +111,7 @@ arbitrary spreadsheet, as produced by many popular third-party
 applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
-relevant for any quantitative spatial proteomics data, irrespective of
+\hl{relevent} for any quantitative spatial proteomics data, irrespective of
 the fractionation or quantitation (i.e. labelled or label-free)
 methods.
 
@@ -198,7 +198,6 @@ directory in which R is running, which can be queried and changed with
 the \texttt{getwd} and \texttt{setwd} functions respectively).
 
 <<getFilename, cache = cache>>=
-library("MSnbase")
 extdatadir <- system.file("extdata", package = "pRolocdata")
 csvfile <- dir(extdatadir, full.names = TRUE,
           pattern = "hyperLOPIT-SIData-ms3-rep12-intersect.csv")
@@ -350,7 +349,7 @@ pData(hl)
 
 \subsubsection*{Normalisation}
 
-There are two aspects related to data normalisation that are relevant
+There are two aspects related to data normalisation that are \hl{relevent}
 to spatial proteomics data processing. The first one focuses on
 reducing purely technical variation between channels without affecting
 biological variability (i.e. the shape of the quantitatives
@@ -358,7 +357,7 @@ profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
 addressed in this workflow. The second aspect, and more specific to
 spatial proteomics data, is scaling all the organelle-specific
-profiles into \st{a}\hl{the} same intensity interval (typically 0 and 1) by, for
+profiles into \hl{the} same intensity interval (typically 0 and 1) by, for
 example, dividing each intensity by the sum of the intensities for
 that quantitative feature. This is not necessary in this example as
 the intensities for each replicate have already been re-scaled to 1 in
@@ -611,9 +610,10 @@ boxplot(exprs(hl[, o]))
 @  
 \caption{Protein profiles and distribution of channel intensities. The
   red dots represent the mean relative intensity for each channel. }
-  \label{fig:qcbx}
+  \label{fig:q  cbx}
 \end{figure}
 
+\pagebreak
 
 \section*{Markers}
 
@@ -711,46 +711,31 @@ context for the biological question under investigation.
 
 \subsection*{Visualising markers}
 
-Having added a the mouse markers to our \texttt{fData} from the
-\texttt{pRolocmarkers}, we can now visualise these annotations along
+Having added the mouse markers to our \texttt{fData} from the
+\texttt{pRolocmarkers}, we can now visualise these annotations on
 the PCA plot using the \texttt{plot2D} function and then use the
 \texttt{addLegend} function to map the marker classes to the
-pre-defined colours. \hl{As mentioned previously, PCA transforms the
+pre-defined colours. \hl{As previously mentioned, PCA transforms the
 original high dimensional data into a set of linearly uncorrelated
-principal components such that the first accounts for as much
+principal components (PCs) such that the first accounts for as much
 variability in the data as possible and each succeeding component in
 turn has the highest variance possible under the constraint that it
 be orthogonal to the preceding components. We saw in the previous
-section how this is useful for quality control and checking
-organelle seperation.  Adding marker definiton allows one to quickly
+section how visualisation of the PCs is useful for quality control and checking
+organelle seperation. Adding marker definiton allows one to quickly
 see if known residents appear in defined clusters. One must be
 careful though as different organelles may be resolved in different
 dimensions.} For example, we can display the data along the first and
 seventh PCs using the \texttt{dims} argument. Note that in these
 calls to the \texttt{plot2D} function, we have omitted the
-\texttt{fcol} argument and use of the default \texttt{"markers"}
-feature variable to annotate the plot. We choose to display PCs 1
+\texttt{fcol} argument and so by default the feature variable named
+\texttt{"markers"} is used to annotate the plot. We choose to display PCs 1
 and 7 to illustrate that while upper principal components explain
 much less variability in the data (2.23\% for PC7, as opposed to
 48.41\% for PC1), we see that the mitochondrial (purple) and
 peroxisome (dark blue) clusters can be differentiated, despite the
 apparent overlap in the visualisation of the two first PCs (Figure
-\ref{fig:plotmarkers}).  \hl{This is further highlighted if we plot the
-profiles of these two clusters using the \texttt{plotDist} function}
-(Fig \ref{fig:plotDist2}). \hl{The \texttt{plotDist} function is
-another useful visualisation that relies on marker annotation. It
-allows one to represent the protein profiles occupancy along the
-gradient} \st{using the \texttt{plotDist} function}. \hl{While the PCA
-plot enables efficient visualisation of the complete dataset and
-assessment the relative separation of different sub-cellular niches,
-comparing profiles of a few marker clusters is useful to assess how
-exactly they differ (in terms of peak channels, for example). On
-figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
-and peroxisome markers to highlight the differences in profiles
-between these two sets of markers in the channels labelled with tag
-129C, as represented above along the 7th PC on the PCA plot on
-figure} \ref{fig:plotmarkers}.
-
+\ref{fig:plotmarkers}). 
 
 \begin{figure}[!ht]
   \centering
@@ -765,6 +750,22 @@ plot2D(hl, dims = c(1, 7), main = "Marker resolution along PC 1 and 7")
   \label{fig:plotmarkers}
 \end{figure}
 
+
+\hl{This is further highlighted if we plot the
+profiles of these two clusters using the \texttt{plotDist} function}
+(Figure \ref{fig:plotDist2}). \hl{The \texttt{plotDist} function is
+another useful visualisation that relies on marker annotation. It
+allows one to represent the protein profiles occupancy along the
+gradient. While the PCA
+plot enables efficient visualisation of the complete dataset and
+assessment the relative separation of different sub-cellular niches,
+comparing profiles of a few marker clusters is useful to assess how
+exactly they differ (in terms of peak channels, for example). On
+figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
+and peroxisome markers to highlight the differences in profiles
+between these two sets of markers in the channels labelled with tag
+129C, as represented above along the 7th PC on the PCA plot on
+figure} \ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -837,9 +838,7 @@ visualise these}. For example, if we wanted to highlight \st{a}
 proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, 
 which are some of the proteins known to form part of the 13S condensin complex, 
 we \hl{would call the following code:}
-\st{would create a first create a \texttt{FeaturesOfInterest} object, and
-subsequently highlight their location on a PCA plot with the
-\texttt{highlightOnPlot} function.}
+
 
 \begin{figure}[!ht]
   \centering
@@ -881,7 +880,7 @@ association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
 
 Direct comparisons of individual channels in replicated experiments
-does not provide an adequate, goal-driven assessment of different
+do\st{es} not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
 identical selected fractions along the gradient. For example, in the
@@ -899,7 +898,7 @@ xtable(pData(hl)[i, ],
        label = "tab:pdtab")
 @
 
-The more relevant comparison unit is not a single channel, but rather
+The more \hl{relevent} comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised 
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
@@ -1090,10 +1089,12 @@ contained.
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
 @
 
-\st{Note: We do not evaluate this code chunk in this document as the
-algorithm is computationally intensive and best parallelised over
+\hl{The above analysis is comptationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
-when parallelised over 40 workers.}
+when parallelised over 40 workers. As such, to avoid executing this
+time consuming analysis users can access the above results which are
+pre-computed and stored along with the \texttt{pRolocdata} package. 
+Please see the appendix to load these results.}
 
 The argument \texttt{times} indicates the number of times we run
 unsupervied Gaussian Mixture Modelling before defining a new phenotype
@@ -1121,22 +1122,10 @@ defines the number of GMM components to test and fit; the default is
 package \cite{mclust}). One should note that the decreasing the
 \texttt{GS}, and increasing the values of the arguments
 \texttt{times}, \texttt{G} (among other function arguments, see
-\texttt{?phenoDisco}) will heavily influence (increase) the total
-time taken to run the algorithm.  \texttt{phenoDisco} supports
+\texttt{?phenoDisco}) will heavily influence (increase) the total time
+taken to run the algorithm.  \texttt{phenoDisco} supports
 parallelisation and we strongly suggest you make use of a parallel
-processing to run these analyses. 
-
-\hl{Please note, in this document we can not evaluate the call to 
-`phenoDisco` in the code chunk above as the algorithm is computationally 
-intensive and best parallelised over multiple workers. This phenoDisco 
-analysis took ~24 hours to complete when parallelised over 40 workers. 
-The ouput of running the \texttt{phenoDisco} algorithm is an
-\texttt{MSnSet} containing the new data clusters, appended to the
-\texttt{featureData} under the name \texttt{pd}. We have made the results
-readily available for users to interrogate and get an idea of the type
-of output one may expect from using this function.} The results can be
-displayed by using the \texttt{getMarkers} function. We see that 5 new
-phenotype data clusters were found.
+processing to run these analyses.
 
 <<loadPDres, echo=FALSE>>=
 f0 <- dir(extdatadir, full.names = TRUE,
@@ -1147,7 +1136,11 @@ setStockcol(NULL)
 setStockcol(paste0(getStockcol(), 70))
 @
 
-
+The ouput of running the \texttt{phenoDisco} algorithm is an
+\texttt{MSnSet} containing the new data clusters, appended to the
+\texttt{featureData} under the name \texttt{pd}. The results can be
+displayed by using the \texttt{getMarkers} function. We see that 5 new
+phenotype data clusters were found.
 
 <<showPDres>>=
 hl
@@ -1217,7 +1210,7 @@ sub-cellular niches
 There are several classification algorithms readily available in
 \Biocpkg{pRoloc}, which are documented in the dedicated
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf}{\Biocpkg{pRoloc}
-  machine learning techniques vignette}.  We find the general tendancy
+  machine learning techniques vignette}.  We find the general \hl{tendency}
 to be that it is not the choice of classifier, but the improper
 optimisation of the algorithmic parameters, that limits classification
 accuracy. Before employing any classification algorithm and generating
@@ -1265,16 +1258,22 @@ class weights when generating the SVM model. Below the weights,
 \texttt{w} are set to be inversely proportional to the class
 frequencies.
 
-<<loadpdRes, echo=FALSE>>=
+<<getsvmweight>>=
+w <- table(getMarkers(hl, verbose = TRUE))
+w <- 1/w[names(w) != "unknown"]
+@
+
+\hl{In the code chunk below we then pass these weights 
+to the \texttt{svmOptimisation} function. Once again, we provide
+the optimisation results for users to load directly if they wish to save
+computational time, please see the appendix to load these results.}
+
+<<loadpdRes, echo=TRUE>>=
 svmf <- dir(extdatadir, full.names = TRUE,
               pattern = "bpw-svmopt.rds") 
 params <- readRDS(svmf)
 @
 
-<<getsvmweight>>=
-w <- table(getMarkers(hl, verbose = TRUE))
-w <- 1/w[names(w) != "unknown"]
-@
 
 <<dosvmopt, eval=FALSE>>=
 ## 100 rounds of optimisation with five-fold cross-validation
@@ -1388,7 +1387,7 @@ e.g. \texttt{fcol = "svm"}.
 
 Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
 argument to change the size of each point on the plot to be inversely
-proportional to the SVM score. This gives an initial overview of the
+proportional to the SVM score (Figure \ref{fig:plotSVM}). This gives an initial overview of the
 high scoring localisations from the SVM predictions.
 
 <<setColors, include=FALSE>>=
@@ -1410,7 +1409,7 @@ addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
   point size are representative of the classification confidence.}
   \label{fig:plotSVM}
 \end{figure}
-
+\pagebreak
 
 The adjustment of the point size intuitively confers important
 information that is more difficult to define formally (we
@@ -1455,6 +1454,8 @@ boxplot(svm.scores ~ svm, data = fData(preds),
   \label{fig:threshold}
 \end{figure}
 
+\pagebreak
+
 There are many ways to set thresholds and the choice of method will
 depend on the biological question and experimental design at hand. One
 viable approach in the frame of the above experimetal design would be
@@ -1466,7 +1467,7 @@ would depend on the information available, for example, validity or
 lack of validity for the localisation from another experiment as
 reported in the literature or a reliable database.  If such
 information is not available, one crude method is to set a threshold
-per organelle by extracting the median or 3rd quantile score per
+per organelle by extracting the median or 3rd \hl{quartile} score per
 organelle.  For example, in the code chunk below, we use the
 \texttt{orgQuants} function to extract the median organelle scores and
 then pass these scores to the \texttt{getPredictions} function to
@@ -1616,7 +1617,9 @@ Now we have contructed the query parameters we can use the
 terms are downloaded, without any filtering on evidence codes. It is
 also possible to download terms from the molecular function and
 biological process GO namespaces, and also apply filtering based on
-evidence codes as desired, see \texttt{?makeGoSet} for more details.
+evidence codes as desired, see \texttt{?makeGoSet} for more details. 
+\hl{(We also provide the pre-computed \texttt{gocc} object for users
+if they wish to load directly, please see the appendix).}
 
 <<makego, eval=FALSE>>=
 gocc <- makeGoSet(hl, params = par, namespace = "cellular_component")
@@ -1663,7 +1666,7 @@ primary data (and this implicitly implies that a weight of
 $1 - \theta = 0$ is given to the auxiliary data), and similarly a
 weight of $\theta = 0$ implies that all weight is given to the
 auxiliary data (so 0 is given to the primary source). If we conduct a
-parameter seach and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
+parameter \hl{search} and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
 class, and if we have, for example 10 subcellular niches, this will
 result in \texttt{4$^{10}$} different combinations of parameters to
 test. The parameter optimisation is therefore time consuming and as
@@ -1687,15 +1690,20 @@ classes from the optimisation (and not the classification) we only
 have \texttt{4$^{10}$} class weight combinations to consider instead
 of \texttt{4$^{14}$} combinations.
 
-In the example below we remove these 4 classes from the marker set,
+In the example below we \hl{first} remove these 4 classes from the marker set
+\hl{and create a new marker set called tlmarkers. Then we}
 re-run the \texttt{knnOptimisation} for each data source and then run
 the \texttt{knntlOptimisation} with the 10 remaining classes. (Note:
 this is not run live as the \texttt{hl} dataset with 10 classes,
 707 markers and 4$^{10}$ combinations of parameters takes around 76
-hours to run on the University of Cambridge HPC using 256 workers).
+hours to run on the University of Cambridge HPC using 256 workers. 
+\hl{To save time for users, the results of the following optimisation 
+are pre-computed and provided with the \texttt{pRolocdata} package. 
+Please see the appendix for details on how
+to load these directly}.)
 
-To remove the 4 classes and create a new column of markers in the
-feature data called \texttt{tlmarkers} to use for the analysis:
+\st{To remove the 4 classes and create a new column of markers in the
+feature data called tlmarkers to use for the analysis:}
 
 <<loadgocc, include=FALSE>>=
 gofile <- dir(extdatadir, full.names = TRUE,
@@ -1729,7 +1737,7 @@ kpopt <- knnOptimisation(hl, fcol = "tlmarkers")
 kaopt <- knnOptimisation(gocc, fcol = "tlmarkers")
 @
 
-From examining the parameter seach plots as described in section
+From examining the parameter \hl{search} plots as described in section
 \textit{Optimisation}, we find the best $k$'s for both the primary and
 auxiliary are 3.
 
@@ -1901,8 +1909,8 @@ information, such as the processing data, and the sample metadata in
 the \textit{phenoData} slot. Other objects, such as parameters from the
 machine learning optimisation, cannot be represented as tabular
 data. To directly serialise R objects to disk, on can use the standard
-\texttt{save} function, and later reload the object using
-\texttt{save}. For example, to save and then re-load the parameters
+\texttt{save} function, and later reload the object using \st{save}
+\texttt{load}. For example, to save and then re-load the parameters
 from the SVM optimisation,
 
 <<saveData, eval = FALSE>>=
@@ -1913,7 +1921,7 @@ save(params, file = "svmparams.rda")
 load(file = "svmparams.rda")
 @
 
-\section*{Session information}
+\section*{Session information and getting help}
 
 The function \texttt{sessionInfo} provides a summary of all packages
 and versions used to generate this document. This enables us to record
@@ -1972,3 +1980,50 @@ Cambridge High Performance Computing Service, provided by Dell
 Inc. using Strategic Research Infrastructure Funding from the Higher
 Education Funding Council for England and funding from the Science and
 Technology Facilities Council.
+
+\subsection*{Appendix}
+
+\subsubsection{Novelty detection results}
+
+To load the pre-computed novelty detection results please execute the
+following lines of code
+
+<<loadPDres_apx, eval=FALSE>>=
+## Specifying the path to the PD results
+f0 <- dir(extdatadir, full.names = TRUE,
+          pattern = "bpw-pdres.rds")
+## Reading the PD results
+pdres <- readRDS(f0)
+## Adding the PD results to the hl MSnSet
+hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE)
+@
+
+\subsubsection{SVM optimisation}
+
+To load the results of the SVM optimisation 
+
+<<loadpdRes_apx, eval=FALSE>>=
+## Specifying the path to the SVM optimisation results
+svmf <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-svmopt.rds") 
+## Reading the results
+params <- readRDS(svmf)
+@
+
+\subsubsection{Transfer learning results}
+
+To load the GO CC dataset 
+
+<<loadgocc_apx, eval=FALSE>>=
+gofile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-gocc.rds")
+gocc <- readRDS(gofile)
+@
+
+To load the results of the transfer learning
+
+<<loadtlres_apx, eval=FALSE>>=
+tlfile <- dir(extdatadir, full.names = TRUE,
+              pattern = "bpw-tlopt.rds")
+tlopt <- readRDS(tlfile)
+@

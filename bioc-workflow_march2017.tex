@@ -107,7 +107,7 @@ arbitrary spreadsheet, as produced by many popular third-party
 applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
-relevant for any quantitative spatial proteomics data, irrespective of
+\hl{relevent} for any quantitative spatial proteomics data, irrespective of
 the fractionation or quantitation (i.e. labelled or label-free)
 methods.
 
@@ -196,7 +196,6 @@ the \texttt{getwd} and \texttt{setwd} functions respectively).
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{library}\hlstd{(}\hlstr{"MSnbase"}\hlstd{)}
 \hlstd{extdatadir} \hlkwb{<-} \hlkwd{system.file}\hlstd{(}\hlstr{"extdata"}\hlstd{,} \hlkwc{package} \hlstd{=} \hlstr{"pRolocdata"}\hlstd{)}
 \hlstd{csvfile} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
           \hlkwc{pattern} \hlstd{=} \hlstr{"hyperLOPIT-SIData-ms3-rep12-intersect.csv"}\hlstd{)}
@@ -557,7 +556,7 @@ each replicate are stored here.
 
 \subsubsection*{Normalisation}
 
-There are two aspects related to data normalisation that are relevant
+There are two aspects related to data normalisation that are \hl{relevent}
 to spatial proteomics data processing. The first one focuses on
 reducing purely technical variation between channels without affecting
 biological variability (i.e. the shape of the quantitatives
@@ -565,7 +564,7 @@ profiles). This normalisation will depend on the underlying
 quantitative technology and the experimental design, and will not be
 addressed in this workflow. The second aspect, and more specific to
 spatial proteomics data, is scaling all the organelle-specific
-profiles into \st{a}\hl{the} same intensity interval (typically 0 and 1) by, for
+profiles into \hl{the} same intensity interval (typically 0 and 1) by, for
 example, dividing each intensity by the sum of the intensities for
 that quantitative feature. This is not necessary in this example as
 the intensities for each replicate have already been re-scaled to 1 in
@@ -778,19 +777,31 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [5489,10] and [6268,10] MSnSets Wed Apr  4 13:30:04 2018 
-## Subset [6725,20][5032,20] Wed Apr  4 13:30:17 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:30:17 2018 
-## Dropped featureData's levels Wed Apr  4 13:30:17 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:33:06 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:33:06 2018 
-## Dropped featureData's levels Wed Apr  4 13:33:06 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:42:10 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:42:10 2018 
-## Dropped featureData's levels Wed Apr  4 13:42:10 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:45:12 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:45:12 2018 
-## Dropped featureData's levels Wed Apr  4 13:45:12 2018 
+## Combined [5489,10] and [6268,10] MSnSets Tue Apr 10 11:36:36 2018 
+## Subset [6725,20][5032,20] Tue Apr 10 11:36:36 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 11:36:36 2018 
+## Dropped featureData's levels Tue Apr 10 11:36:36 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 14:00:41 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 14:00:41 2018 
+## Dropped featureData's levels Tue Apr 10 14:00:41 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:11:22 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:11:22 2018 
+## Dropped featureData's levels Tue Apr 10 16:11:22 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:17:52 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:17:52 2018 
+## Dropped featureData's levels Tue Apr 10 16:17:52 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:25:51 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:25:51 2018 
+## Dropped featureData's levels Tue Apr 10 16:25:51 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:29:26 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:29:26 2018 
+## Dropped featureData's levels Tue Apr 10 16:29:27 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:35:47 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:35:47 2018 
+## Dropped featureData's levels Tue Apr 10 16:35:47 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:47:20 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:47:20 2018 
+## Dropped featureData's levels Tue Apr 10 16:47:20 2018 
 ##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
@@ -876,22 +887,34 @@ values (subsetting) changed the dimensions of the data.
 ##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [5489,10] and [6268,10] MSnSets Wed Apr  4 13:30:04 2018 
-## Subset [6725,20][5032,20] Wed Apr  4 13:30:17 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:30:17 2018 
-## Dropped featureData's levels Wed Apr  4 13:30:17 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:33:06 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:33:06 2018 
-## Dropped featureData's levels Wed Apr  4 13:33:06 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:42:10 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:42:10 2018 
-## Dropped featureData's levels Wed Apr  4 13:42:10 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:45:12 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:45:12 2018 
-## Dropped featureData's levels Wed Apr  4 13:45:12 2018 
-## Subset [5032,20][5032,20] Wed Apr  4 13:47:14 2018 
-## Removed features with more than 0 NAs: Wed Apr  4 13:47:14 2018 
-## Dropped featureData's levels Wed Apr  4 13:47:14 2018 
+## Combined [5489,10] and [6268,10] MSnSets Tue Apr 10 11:36:36 2018 
+## Subset [6725,20][5032,20] Tue Apr 10 11:36:36 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 11:36:36 2018 
+## Dropped featureData's levels Tue Apr 10 11:36:36 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 14:00:41 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 14:00:41 2018 
+## Dropped featureData's levels Tue Apr 10 14:00:41 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:11:22 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:11:22 2018 
+## Dropped featureData's levels Tue Apr 10 16:11:22 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:17:52 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:17:52 2018 
+## Dropped featureData's levels Tue Apr 10 16:17:52 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:25:51 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:25:51 2018 
+## Dropped featureData's levels Tue Apr 10 16:25:51 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:29:26 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:29:26 2018 
+## Dropped featureData's levels Tue Apr 10 16:29:27 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:35:47 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:35:47 2018 
+## Dropped featureData's levels Tue Apr 10 16:35:47 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:47:20 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:47:20 2018 
+## Dropped featureData's levels Tue Apr 10 16:47:20 2018 
+## Subset [5032,20][5032,20] Tue Apr 10 16:52:54 2018 
+## Removed features with more than 0 NAs: Tue Apr 10 16:52:54 2018 
+## Dropped featureData's levels Tue Apr 10 16:52:54 2018 
 ##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
@@ -996,9 +1019,10 @@ replicate).
 \end{knitrout}
 \caption{Protein profiles and distribution of channel intensities. The
   red dots represent the mean relative intensity for each channel. }
-  \label{fig:qcbx}
+  \label{fig:q  cbx}
 \end{figure}
 
+\pagebreak
 
 \section*{Markers}
 
@@ -1145,46 +1169,31 @@ context for the biological question under investigation.
 
 \subsection*{Visualising markers}
 
-Having added a the mouse markers to our \texttt{fData} from the
-\texttt{pRolocmarkers}, we can now visualise these annotations along
+Having added the mouse markers to our \texttt{fData} from the
+\texttt{pRolocmarkers}, we can now visualise these annotations on
 the PCA plot using the \texttt{plot2D} function and then use the
 \texttt{addLegend} function to map the marker classes to the
-pre-defined colours. \hl{As mentioned previously, PCA transforms the
+pre-defined colours. \hl{As previously mentioned, PCA transforms the
 original high dimensional data into a set of linearly uncorrelated
-principal components such that the first accounts for as much
+principal components (PCs) such that the first accounts for as much
 variability in the data as possible and each succeeding component in
 turn has the highest variance possible under the constraint that it
 be orthogonal to the preceding components. We saw in the previous
-section how this is useful for quality control and checking
-organelle seperation.  Adding marker definiton allows one to quickly
+section how visualisation of the PCs is useful for quality control and checking
+organelle seperation. Adding marker definiton allows one to quickly
 see if known residents appear in defined clusters. One must be
 careful though as different organelles may be resolved in different
 dimensions.} For example, we can display the data along the first and
 seventh PCs using the \texttt{dims} argument. Note that in these
 calls to the \texttt{plot2D} function, we have omitted the
-\texttt{fcol} argument and use of the default \texttt{"markers"}
-feature variable to annotate the plot. We choose to display PCs 1
+\texttt{fcol} argument and so by default the feature variable named
+\texttt{"markers"} is used to annotate the plot. We choose to display PCs 1
 and 7 to illustrate that while upper principal components explain
 much less variability in the data (2.23\% for PC7, as opposed to
 48.41\% for PC1), we see that the mitochondrial (purple) and
 peroxisome (dark blue) clusters can be differentiated, despite the
 apparent overlap in the visualisation of the two first PCs (Figure
-\ref{fig:plotmarkers}).  \hl{This is further highlighted if we plot the
-profiles of these two clusters using the \texttt{plotDist} function}
-(Fig \ref{fig:plotDist2}). \hl{The \texttt{plotDist} function is
-another useful visualisation that relies on marker annotation. It
-allows one to represent the protein profiles occupancy along the
-gradient} \st{using the \texttt{plotDist} function}. \hl{While the PCA
-plot enables efficient visualisation of the complete dataset and
-assessment the relative separation of different sub-cellular niches,
-comparing profiles of a few marker clusters is useful to assess how
-exactly they differ (in terms of peak channels, for example). On
-figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
-and peroxisome markers to highlight the differences in profiles
-between these two sets of markers in the channels labelled with tag
-129C, as represented above along the 7th PC on the PCA plot on
-figure} \ref{fig:plotmarkers}.
-
+\ref{fig:plotmarkers}). 
 
 \begin{figure}[!ht]
   \centering
@@ -1205,6 +1214,22 @@ figure} \ref{fig:plotmarkers}.
   \label{fig:plotmarkers}
 \end{figure}
 
+
+\hl{This is further highlighted if we plot the
+profiles of these two clusters using the \texttt{plotDist} function}
+(Figure \ref{fig:plotDist2}). \hl{The \texttt{plotDist} function is
+another useful visualisation that relies on marker annotation. It
+allows one to represent the protein profiles occupancy along the
+gradient. While the PCA
+plot enables efficient visualisation of the complete dataset and
+assessment the relative separation of different sub-cellular niches,
+comparing profiles of a few marker clusters is useful to assess how
+exactly they differ (in terms of peak channels, for example). On
+figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
+and peroxisome markers to highlight the differences in profiles
+between these two sets of markers in the channels labelled with tag
+129C, as represented above along the 7th PC on the PCA plot on
+figure} \ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -1304,9 +1329,7 @@ visualise these}. For example, if we wanted to highlight \st{a}
 proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, 
 which are some of the proteins known to form part of the 13S condensin complex, 
 we \hl{would call the following code:}
-\st{would create a first create a \texttt{FeaturesOfInterest} object, and
-subsequently highlight their location on a PCA plot with the
-\texttt{highlightOnPlot} function.}
+
 
 \begin{figure}[!ht]
   \centering
@@ -1321,7 +1344,7 @@ subsequently highlight their location on a PCA plot with the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Wed Apr  4 13:47:16 2018 
+##  Created on Tue Apr 10 16:52:56 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1363,7 +1386,7 @@ association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
 
 Direct comparisons of individual channels in replicated experiments
-does not provide an adequate, goal-driven assessment of different
+do\st{es} not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
 identical selected fractions along the gradient. For example, in the
@@ -1375,7 +1398,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.5.0 by xtable 1.8-2 package
-% Wed Apr  4 13:47:16 2018
+% Tue Apr 10 16:52:56 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1391,7 +1414,7 @@ X127C &   1 & 127C & 8 to 9 (pooled) & 11.00 \\
 \end{table}
 
 
-The more relevant comparison unit is not a single channel, but rather
+The more \hl{relevent} comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised 
 experiment-wide on a PCA plot. As such, we prefer to focus on the
 direct, qualitative comparison of individual replicate PCA plots,
@@ -1621,10 +1644,12 @@ contained.
 \end{kframe}
 \end{knitrout}
 
-\st{Note: We do not evaluate this code chunk in this document as the
-algorithm is computationally intensive and best parallelised over
+\hl{The above analysis is comptationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
-when parallelised over 40 workers.}
+when parallelised over 40 workers. As such, to avoid executing this
+time consuming analysis users can access the above results which are
+pre-computed and stored along with the \texttt{pRolocdata} package. 
+Please see the appendix to load these results.}
 
 The argument \texttt{times} indicates the number of times we run
 unsupervied Gaussian Mixture Modelling before defining a new phenotype
@@ -1652,26 +1677,18 @@ defines the number of GMM components to test and fit; the default is
 package \cite{mclust}). One should note that the decreasing the
 \texttt{GS}, and increasing the values of the arguments
 \texttt{times}, \texttt{G} (among other function arguments, see
-\texttt{?phenoDisco}) will heavily influence (increase) the total
-time taken to run the algorithm.  \texttt{phenoDisco} supports
+\texttt{?phenoDisco}) will heavily influence (increase) the total time
+taken to run the algorithm.  \texttt{phenoDisco} supports
 parallelisation and we strongly suggest you make use of a parallel
-processing to run these analyses. 
+processing to run these analyses.
 
-\hl{Please note, in this document we can not evaluate the call to 
-`phenoDisco` in the code chunk above as the algorithm is computationally 
-intensive and best parallelised over multiple workers. This phenoDisco 
-analysis took ~24 hours to complete when parallelised over 40 workers. 
+
+
 The ouput of running the \texttt{phenoDisco} algorithm is an
 \texttt{MSnSet} containing the new data clusters, appended to the
-\texttt{featureData} under the name \texttt{pd}. We have made the results
-readily available for users to interrogate and get an idea of the type
-of output one may expect from using this function.} The results can be
+\texttt{featureData} under the name \texttt{pd}. The results can be
 displayed by using the \texttt{getMarkers} function. We see that 5 new
 phenotype data clusters were found.
-
-
-
-
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1694,8 +1711,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Wed Apr  4 13:47:15 2018 
-## Added markers from  'pdres' marker vector. Wed Apr  4 13:47:17 2018 
+## Added markers from  'mrk' marker vector. Tue Apr 10 16:52:55 2018 
+## Added markers from  'pdres' marker vector. Tue Apr 10 16:52:56 2018 
 ##  MSnbase version: 2.5.10
 \end{verbatim}
 \begin{alltt}
@@ -1808,7 +1825,7 @@ sub-cellular niches
 There are several classification algorithms readily available in
 \Biocpkg{pRoloc}, which are documented in the dedicated
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRoloc/inst/doc/pRoloc-ml.pdf}{\Biocpkg{pRoloc}
-  machine learning techniques vignette}.  We find the general tendancy
+  machine learning techniques vignette}.  We find the general \hl{tendency}
 to be that it is not the choice of classifier, but the improper
 optimisation of the algorithmic parameters, that limits classification
 accuracy. Before employing any classification algorithm and generating
@@ -1856,8 +1873,6 @@ class weights when generating the SVM model. Below the weights,
 \texttt{w} are set to be inversely proportional to the class
 frequencies.
 
-
-
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1881,6 +1896,22 @@ frequencies.
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
+\hl{In the code chunk below we then pass these weights 
+to the \texttt{svmOptimisation} function. Once again, we provide
+the optimisation results for users to load directly if they wish to save
+computational time, please see the appendix to load these results.}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{svmf} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+              \hlkwc{pattern} \hlstd{=} \hlstr{"bpw-svmopt.rds"}\hlstd{)}
+\hlstd{params} \hlkwb{<-} \hlkwd{readRDS}\hlstd{(svmf)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2029,7 +2060,7 @@ e.g. \texttt{fcol = "svm"}.
 
 Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
 argument to change the size of each point on the plot to be inversely
-proportional to the SVM score. This gives an initial overview of the
+proportional to the SVM score (Figure \ref{fig:plotSVM}). This gives an initial overview of the
 high scoring localisations from the SVM predictions.
 
 
@@ -2053,7 +2084,7 @@ high scoring localisations from the SVM predictions.
   point size are representative of the classification confidence.}
   \label{fig:plotSVM}
 \end{figure}
-
+\pagebreak
 
 The adjustment of the point size intuitively confers important
 information that is more difficult to define formally (we
@@ -2104,6 +2135,8 @@ distributions per organelle (Figure \ref{fig:threshold}).
   \label{fig:threshold}
 \end{figure}
 
+\pagebreak
+
 There are many ways to set thresholds and the choice of method will
 depend on the biological question and experimental design at hand. One
 viable approach in the frame of the above experimetal design would be
@@ -2115,7 +2148,7 @@ would depend on the information available, for example, validity or
 lack of validity for the localisation from another experiment as
 reported in the literature or a reliable database.  If such
 information is not available, one crude method is to set a threshold
-per organelle by extracting the median or 3rd quantile score per
+per organelle by extracting the median or 3rd \hl{quartile} score per
 organelle.  For example, in the code chunk below, we use the
 \texttt{orgQuants} function to extract the median organelle scores and
 then pass these scores to the \texttt{getPredictions} function to
@@ -2130,25 +2163,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4369121               0.3042575               0.3807524 
+##               0.4323379               0.3037630               0.3822328 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6850502               0.6093775               0.4324733 
+##               0.6930642               0.6014878               0.4426545 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4261633               0.5908828               0.9491150 
+##               0.4224179               0.5978957               0.9497788 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7944096               0.7083224               0.3140141 
+##               0.7950203               0.7117761               0.3147679 
 ##         Plasma membrane              Proteasome 
-##               0.7126035               0.4150477
+##               0.7042806               0.4150910
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4369121               0.3042575               0.3807524 
+##               0.4323379               0.3037630               0.3822328 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6850502               0.6093775               0.4324733 
+##               0.6930642               0.6014878               0.4426545 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4261633               0.5908828               0.9491150 
+##               0.4224179               0.5978957               0.9497788 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7944096               0.7083224               0.3140141 
+##               0.7950203               0.7117761               0.3147679 
 ##         Plasma membrane              Proteasome 
-##               0.7126035               0.4150477
+##               0.7042806               0.4150910
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2156,15 +2189,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     173                      84 
+##                      85                     170                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     297                     468                     102 
+##                     301                     478                      99 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      28                     124                     523 
+##                      27                     123                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     343                      39 
+##                     230                     341                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     322                     159                    2057
+##                     322                     154                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2326,7 +2359,9 @@ Now we have contructed the query parameters we can use the
 terms are downloaded, without any filtering on evidence codes. It is
 also possible to download terms from the molecular function and
 biological process GO namespaces, and also apply filtering based on
-evidence codes as desired, see \texttt{?makeGoSet} for more details.
+evidence codes as desired, see \texttt{?makeGoSet} for more details. 
+\hl{(We also provide the pre-computed \texttt{gocc} object for users
+if they wish to load directly, please see the appendix).}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -2381,7 +2416,7 @@ primary data (and this implicitly implies that a weight of
 $1 - \theta = 0$ is given to the auxiliary data), and similarly a
 weight of $\theta = 0$ implies that all weight is given to the
 auxiliary data (so 0 is given to the primary source). If we conduct a
-parameter seach and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
+parameter \hl{search} and test weights $\theta = {0, 1/3, 2/3, 1}$ for each
 class, and if we have, for example 10 subcellular niches, this will
 result in \texttt{4$^{10}$} different combinations of parameters to
 test. The parameter optimisation is therefore time consuming and as
@@ -2405,15 +2440,20 @@ classes from the optimisation (and not the classification) we only
 have \texttt{4$^{10}$} class weight combinations to consider instead
 of \texttt{4$^{14}$} combinations.
 
-In the example below we remove these 4 classes from the marker set,
+In the example below we \hl{first} remove these 4 classes from the marker set
+\hl{and create a new marker set called tlmarkers. Then we}
 re-run the \texttt{knnOptimisation} for each data source and then run
 the \texttt{knntlOptimisation} with the 10 remaining classes. (Note:
 this is not run live as the \texttt{hl} dataset with 10 classes,
 707 markers and 4$^{10}$ combinations of parameters takes around 76
-hours to run on the University of Cambridge HPC using 256 workers).
+hours to run on the University of Cambridge HPC using 256 workers. 
+\hl{To save time for users, the results of the following optimisation 
+are pre-computed and provided with the \texttt{pRolocdata} package. 
+Please see the appendix for details on how
+to load these directly}.)
 
-To remove the 4 classes and create a new column of markers in the
-feature data called \texttt{tlmarkers} to use for the analysis:
+\st{To remove the 4 classes and create a new column of markers in the
+feature data called tlmarkers to use for the analysis:}
 
 
 
@@ -2467,7 +2507,7 @@ the best $k$'s for each data source.
 \end{kframe}
 \end{knitrout}
 
-From examining the parameter seach plots as described in section
+From examining the parameter \hl{search} plots as described in section
 \textit{Optimisation}, we find the best $k$'s for both the primary and
 auxiliary are 3.
 
@@ -2681,8 +2721,8 @@ information, such as the processing data, and the sample metadata in
 the \textit{phenoData} slot. Other objects, such as parameters from the
 machine learning optimisation, cannot be represented as tabular
 data. To directly serialise R objects to disk, on can use the standard
-\texttt{save} function, and later reload the object using
-\texttt{save}. For example, to save and then re-load the parameters
+\texttt{save} function, and later reload the object using \st{save}
+\texttt{load}. For example, to save and then re-load the parameters
 from the SVM optimisation,
 
 \begin{knitrout}
@@ -2697,7 +2737,7 @@ from the SVM optimisation,
 \end{kframe}
 \end{knitrout}
 
-\section*{Session information}
+\section*{Session information and getting help}
 
 The function \texttt{sessionInfo} provides a summary of all packages
 and versions used to generate this document. This enables us to record
@@ -2729,61 +2769,59 @@ failure and/or different results.
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] BiocStyle_2.7.8      gridExtra_2.3        shiny_1.0.5         
-##  [4] pRolocGUI_1.13.1     rgl_0.99.9           pRolocdata_1.17.2   
-##  [7] pRoloc_1.19.3        MLInterfaces_1.59.1  cluster_2.0.6       
-## [10] annotate_1.57.2      XML_3.98-1.10        AnnotationDbi_1.41.4
-## [13] IRanges_2.13.28      S4Vectors_0.17.37    MSnbase_2.5.10      
-## [16] ProtGenerics_1.11.0  BiocParallel_1.13.1  mzR_2.13.5          
-## [19] Rcpp_0.12.16         Biobase_2.39.2       BiocGenerics_0.25.3 
-## [22] xtable_1.8-2         knitr_1.20          
+##  [1] gridExtra_2.3        pRolocdata_1.17.3    pRoloc_1.19.3       
+##  [4] MLInterfaces_1.59.1  cluster_2.0.6        annotate_1.57.2     
+##  [7] XML_3.98-1.10        AnnotationDbi_1.41.4 IRanges_2.13.28     
+## [10] S4Vectors_0.17.37    MSnbase_2.5.10       ProtGenerics_1.11.0 
+## [13] BiocParallel_1.13.1  mzR_2.13.5           Rcpp_0.12.16        
+## [16] Biobase_2.39.2       BiocGenerics_0.25.3  xtable_1.8-2        
+## [19] BiocStyle_2.7.8      knitr_1.20          
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] backports_1.1.2       plyr_1.8.4            igraph_1.2.1         
 ##   [4] lazyeval_0.2.1        splines_3.5.0         ggvis_0.4.3          
 ##   [7] crosstalk_1.0.0       ggplot2_2.2.1         digest_0.6.15        
 ##  [10] foreach_1.4.4         BiocInstaller_1.29.4  htmltools_0.3.6      
-##  [13] rsconnect_0.8.8       viridis_0.5.0         gdata_2.18.0         
-##  [16] magrittr_1.5          memoise_1.1.0         doParallel_1.0.11    
-##  [19] sfsmisc_1.1-2         limma_3.35.13         recipes_0.1.2        
-##  [22] gower_0.1.2           rda_1.0.2-2           dimRed_0.1.0         
-##  [25] lpSolve_5.6.13        prettyunits_1.0.2     colorspace_1.3-2     
-##  [28] blob_1.1.0            dplyr_0.7.4           jsonlite_1.5         
-##  [31] RCurl_1.95-4.10       hexbin_1.27.2         genefilter_1.61.1    
-##  [34] bindr_0.1.1           impute_1.53.0         survival_2.41-3      
-##  [37] iterators_1.0.9       glue_1.2.0            DRR_0.0.3            
-##  [40] gtable_0.2.0          ipred_0.9-6           zlibbioc_1.25.0      
-##  [43] kernlab_0.9-25        ddalpha_1.3.1.1       prabclus_2.2-6       
-##  [46] DEoptimR_1.0-8        scales_0.5.0          vsn_3.47.1           
-##  [49] mvtnorm_1.0-7         DBI_0.8               viridisLite_0.3.0    
-##  [52] progress_1.1.2        foreign_0.8-70        bit_1.1-12           
-##  [55] proxy_0.4-21          mclust_5.4            preprocessCore_1.41.0
-##  [58] DT_0.4                lava_1.6              prodlim_1.6.1        
-##  [61] sampling_2.8          htmlwidgets_1.0       httr_1.3.1           
-##  [64] threejs_0.3.1         FNN_1.1               RColorBrewer_1.1-2   
-##  [67] fpc_2.1-11            modeltools_0.2-21     pkgconfig_2.0.1      
-##  [70] flexmix_2.3-14        nnet_7.3-12           caret_6.0-78         
-##  [73] tidyselect_0.2.4      rlang_0.2.0           reshape2_1.4.3       
-##  [76] munsell_0.4.3         mlbench_2.1-1         tools_3.5.0          
-##  [79] RSQLite_2.0           pls_2.6-0             broom_0.4.3          
-##  [82] evaluate_0.10.1       stringr_1.3.0         mzID_1.17.0          
-##  [85] yaml_2.1.18           ModelMetrics_1.1.0    bit64_0.9-7          
-##  [88] robustbase_0.92-8     randomForest_4.6-12   purrr_0.2.4          
-##  [91] dendextend_1.7.0      bindrcpp_0.2          nlme_3.1-136         
-##  [94] whisker_0.3-2         mime_0.5              RcppRoll_0.2.2       
-##  [97] biomaRt_2.35.12       compiler_3.5.0        e1071_1.6-8          
-## [100] affyio_1.49.1         tibble_1.4.2          stringi_1.1.7        
-## [103] highr_0.6             lattice_0.20-35       trimcluster_0.1-2    
-## [106] Matrix_1.2-12         psych_1.7.8           gbm_2.1.3            
-## [109] pillar_1.2.1          MALDIquant_1.17       bitops_1.0-6         
-## [112] httpuv_1.3.6.2        R6_2.2.2              pcaMethods_1.71.0    
-## [115] affy_1.57.0           hwriter_1.3.2         codetools_0.2-15     
-## [118] MASS_7.3-49           gtools_3.5.0          assertthat_0.2.0     
-## [121] CVST_0.2-1            rprojroot_1.3-2       withr_2.1.2          
-## [124] mnormt_1.5-5          diptest_0.75-7        grid_3.5.0           
-## [127] rpart_4.1-13          timeDate_3043.102     tidyr_0.8.0          
-## [130] class_7.3-14          rmarkdown_1.9         lubridate_1.7.3      
-## [133] base64enc_0.1-3
+##  [13] viridis_0.5.0         gdata_2.18.0          magrittr_1.5         
+##  [16] memoise_1.1.0         doParallel_1.0.11     sfsmisc_1.1-2        
+##  [19] limma_3.35.13         recipes_0.1.2         gower_0.1.2          
+##  [22] rda_1.0.2-2           dimRed_0.1.0          lpSolve_5.6.13       
+##  [25] prettyunits_1.0.2     colorspace_1.3-2      blob_1.1.0           
+##  [28] dplyr_0.7.4           RCurl_1.95-4.10       hexbin_1.27.2        
+##  [31] genefilter_1.61.1     bindr_0.1.1           impute_1.53.0        
+##  [34] survival_2.41-3       iterators_1.0.9       glue_1.2.0           
+##  [37] DRR_0.0.3             gtable_0.2.0          ipred_0.9-6          
+##  [40] zlibbioc_1.25.0       kernlab_0.9-25        ddalpha_1.3.1.1      
+##  [43] prabclus_2.2-6        DEoptimR_1.0-8        scales_0.5.0         
+##  [46] vsn_3.47.1            mvtnorm_1.0-7         DBI_0.8              
+##  [49] viridisLite_0.3.0     progress_1.1.2        foreign_0.8-70       
+##  [52] bit_1.1-12            proxy_0.4-21          mclust_5.4           
+##  [55] preprocessCore_1.41.0 lava_1.6              prodlim_1.6.1        
+##  [58] sampling_2.8          htmlwidgets_1.0       httr_1.3.1           
+##  [61] threejs_0.3.1         FNN_1.1               RColorBrewer_1.1-2   
+##  [64] fpc_2.1-11            modeltools_0.2-21     pkgconfig_2.0.1      
+##  [67] flexmix_2.3-14        nnet_7.3-12           caret_6.0-78         
+##  [70] tidyselect_0.2.4      rlang_0.2.0           reshape2_1.4.3       
+##  [73] munsell_0.4.3         mlbench_2.1-1         tools_3.5.0          
+##  [76] RSQLite_2.0           pls_2.6-0             broom_0.4.3          
+##  [79] evaluate_0.10.1       stringr_1.3.0         mzID_1.17.0          
+##  [82] yaml_2.1.18           ModelMetrics_1.1.0    bit64_0.9-7          
+##  [85] robustbase_0.92-8     randomForest_4.6-12   purrr_0.2.4          
+##  [88] dendextend_1.7.0      bindrcpp_0.2          nlme_3.1-136         
+##  [91] whisker_0.3-2         mime_0.5              RcppRoll_0.2.2       
+##  [94] biomaRt_2.35.12       compiler_3.5.0        e1071_1.6-8          
+##  [97] affyio_1.49.1         tibble_1.4.2          stringi_1.1.7        
+## [100] highr_0.6             lattice_0.20-35       trimcluster_0.1-2    
+## [103] Matrix_1.2-12         psych_1.7.8           gbm_2.1.3            
+## [106] pillar_1.2.1          MALDIquant_1.17       bitops_1.0-6         
+## [109] httpuv_1.3.6.2        R6_2.2.2              pcaMethods_1.71.0    
+## [112] affy_1.57.0           hwriter_1.3.2         codetools_0.2-15     
+## [115] MASS_7.3-49           gtools_3.5.0          assertthat_0.2.0     
+## [118] CVST_0.2-1            rprojroot_1.3-2       withr_2.1.2          
+## [121] mnormt_1.5-5          diptest_0.75-7        grid_3.5.0           
+## [124] rpart_4.1-13          timeDate_3043.102     tidyr_0.8.0          
+## [127] class_7.3-14          rmarkdown_1.9         lubridate_1.7.3      
+## [130] shiny_1.0.5           base64enc_0.1-3
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2837,3 +2875,66 @@ Cambridge High Performance Computing Service, provided by Dell
 Inc. using Strategic Research Infrastructure Funding from the Higher
 Education Funding Council for England and funding from the Science and
 Technology Facilities Council.
+
+\subsection*{Appendix}
+
+\subsubsection{Novelty detection results}
+
+To load the pre-computed novelty detection results please execute the
+following lines of code
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Specifying the path to the PD results}
+\hlstd{f0} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+          \hlkwc{pattern} \hlstd{=} \hlstr{"bpw-pdres.rds"}\hlstd{)}
+\hlcom{## Reading the PD results}
+\hlstd{pdres} \hlkwb{<-} \hlkwd{readRDS}\hlstd{(f0)}
+\hlcom{## Adding the PD results to the hl MSnSet}
+\hlstd{hl} \hlkwb{<-} \hlkwd{addMarkers}\hlstd{(hl, pdres,} \hlkwc{mcol} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{verbose} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\subsubsection{SVM optimisation}
+
+To load the results of the SVM optimisation 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{## Specifying the path to the SVM optimisation results}
+\hlstd{svmf} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+              \hlkwc{pattern} \hlstd{=} \hlstr{"bpw-svmopt.rds"}\hlstd{)}
+\hlcom{## Reading the results}
+\hlstd{params} \hlkwb{<-} \hlkwd{readRDS}\hlstd{(svmf)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\subsubsection{Transfer learning results}
+
+To load the GO CC dataset 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{gofile} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+              \hlkwc{pattern} \hlstd{=} \hlstr{"bpw-gocc.rds"}\hlstd{)}
+\hlstd{gocc} \hlkwb{<-} \hlkwd{readRDS}\hlstd{(gofile)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+To load the results of the transfer learning
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{tlfile} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
+              \hlkwc{pattern} \hlstd{=} \hlstr{"bpw-tlopt.rds"}\hlstd{)}
+\hlstd{tlopt} \hlkwb{<-} \hlkwd{readRDS}\hlstd{(tlfile)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
