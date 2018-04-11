@@ -52,7 +52,7 @@ This procedure is also applicable to any packages, from
 \href{https://cran.r-project.org/}{CRAN} as well as GitHub. Once a
 package has been installed, it needs to be loaded for its
 functionality to become available in the R session; this is done with
-the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} one
+the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} package one
 would type \texttt{library("pRoloc")} after installation.
 
 If you have questions about this workflow in particular, or about
@@ -107,9 +107,10 @@ arbitrary spreadsheet, as produced by many popular third-party
 applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
-\hl{relevent} for any quantitative spatial proteomics data, irrespective of
-the fractionation or quantitation (i.e. labelled or label-free)
-methods.
+\hl{relevent} for any quantitative spatial proteomics data,  
+irrespective of the fractionation (i.e. density gradient or 
+differential centrifugation \cite{Itzhak:2016}) or quantitation 
+(i.e. labelled or label-free) methods.
 
 \subsection*{The infrastructure: \Biocpkg{pRoloc} and \Biocpkg{MSnbase} packages}
 
@@ -138,7 +139,7 @@ storing the sample meta-data.
 Feature metadata typically contains general annotation about the
 proteins (accession numbers, description, \ldots), information related
 to the identification search (confidence scores, number of peptides,
-\ldots) as well as annotation about know sub-cellular location (see in
+\ldots) as well as annotation about known sub-cellular location (see in
 particular the \textit{Markers} section) and results from data
 analysis. The sample metadata would, for example, record what stable
 isotope labels were used for the respective fraction (when labelled
@@ -182,7 +183,7 @@ interest resides. We then use the \texttt{dir} function to list the
 content of that directory and store the path that matches the file
 name of interest in the \texttt{csvfile}. Note that these two lines
 are only needed here to locate a file in a package; in a more general
-use case, the user would defined the \texttt{csvfile} variable
+use case, the user would define the \texttt{csvfile} variable
 containing the file name of interest directly.
 
 A common pitfall here is to provide only the file name, rather than
@@ -750,18 +751,12 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{combined} \hlkwb{<-} \hlkwd{combine}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)}
-\end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning: 'combine' is deprecated.\\\#\# Use 'gtable\_combine' instead.\\\#\# See help("{}Deprecated"{})}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in `[[<-.data.frame`(`*tmp*`, i, value = structure(list(t = numeric(0), : replacement has 0 rows, data has 10}}\begin{alltt}
+\hlstd{combined} \hlkwb{<-} \hlstd{MSnbase}\hlopt{::}\hlkwd{combine}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)}
 \hlstd{combined}
 \end{alltt}
 \begin{verbatim}
 ## MSnSet (storageMode: lockedEnvironment)
-## assayData: 5032 features, 20 samples 
+## assayData: 6725 features, 20 samples 
 ##   element names: exprs 
 ## protocolData: none
 ## phenoData
@@ -769,7 +764,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ##   varLabels: Replicate TMT.Reagent ... Iodixonal.Density (5 total)
 ##   varMetadata: labelDescription
 ## featureData
-##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2R6 (5032 total)
+##   featureNames: Q9JHU4 Q9QXS1-3 ... Q9Z2Y3-3 (6725 total)
 ##   fvarLabels: EntryName ProteinDescription ... ProteinCoverage2 (8
 ##     total)
 ##   fvarMetadata: labelDescription
@@ -777,31 +772,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [5489,10] and [6268,10] MSnSets Tue Apr 10 11:36:36 2018 
-## Subset [6725,20][5032,20] Tue Apr 10 11:36:36 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 11:36:36 2018 
-## Dropped featureData's levels Tue Apr 10 11:36:36 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 14:00:41 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 14:00:41 2018 
-## Dropped featureData's levels Tue Apr 10 14:00:41 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:11:22 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:11:22 2018 
-## Dropped featureData's levels Tue Apr 10 16:11:22 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:17:52 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:17:52 2018 
-## Dropped featureData's levels Tue Apr 10 16:17:52 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:25:51 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:25:51 2018 
-## Dropped featureData's levels Tue Apr 10 16:25:51 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:29:26 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:29:26 2018 
-## Dropped featureData's levels Tue Apr 10 16:29:27 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:35:47 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:35:47 2018 
-## Dropped featureData's levels Tue Apr 10 16:35:47 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:47:20 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:47:20 2018 
-## Dropped featureData's levels Tue Apr 10 16:47:20 2018 
+## Combined [5489,10] and [6268,10] MSnSets Wed Apr 11 14:03:28 2018 
 ##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
@@ -887,34 +858,10 @@ values (subsetting) changed the dimensions of the data.
 ##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [5489,10] and [6268,10] MSnSets Tue Apr 10 11:36:36 2018 
-## Subset [6725,20][5032,20] Tue Apr 10 11:36:36 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 11:36:36 2018 
-## Dropped featureData's levels Tue Apr 10 11:36:36 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 14:00:41 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 14:00:41 2018 
-## Dropped featureData's levels Tue Apr 10 14:00:41 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:11:22 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:11:22 2018 
-## Dropped featureData's levels Tue Apr 10 16:11:22 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:17:52 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:17:52 2018 
-## Dropped featureData's levels Tue Apr 10 16:17:52 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:25:51 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:25:51 2018 
-## Dropped featureData's levels Tue Apr 10 16:25:51 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:29:26 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:29:26 2018 
-## Dropped featureData's levels Tue Apr 10 16:29:27 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:35:47 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:35:47 2018 
-## Dropped featureData's levels Tue Apr 10 16:35:47 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:47:20 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:47:20 2018 
-## Dropped featureData's levels Tue Apr 10 16:47:20 2018 
-## Subset [5032,20][5032,20] Tue Apr 10 16:52:54 2018 
-## Removed features with more than 0 NAs: Tue Apr 10 16:52:54 2018 
-## Dropped featureData's levels Tue Apr 10 16:52:54 2018 
+## Combined [5489,10] and [6268,10] MSnSets Wed Apr 11 14:03:28 2018 
+## Subset [6725,20][5032,20] Wed Apr 11 14:03:28 2018 
+## Removed features with more than 0 NAs: Wed Apr 11 14:03:28 2018 
+## Dropped featureData's levels Wed Apr 11 14:03:28 2018 
 ##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
@@ -1225,11 +1172,10 @@ plot enables efficient visualisation of the complete dataset and
 assessment the relative separation of different sub-cellular niches,
 comparing profiles of a few marker clusters is useful to assess how
 exactly they differ (in terms of peak channels, for example). On
-figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
-and peroxisome markers to highlight the differences in profiles
-between these two sets of markers in the channels labelled with tag
-129C, as represented above along the 7th PC on the PCA plot on
-figure} \ref{fig:plotmarkers}.
+figure} \ref{fig:plotDist2}, \hl{we plot the profiles of the 
+mitochondrial and peroxisome markers to highlight the differences 
+in the channels labelled with tag 129C, also represented above  
+along the 7th PC on the PCA plot on figure} \ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -1256,7 +1202,7 @@ figure} \ref{fig:plotmarkers}.
 
 The data can also be visualised along three PCs using the
 \texttt{plot3D} function (Figure \ref{fig:plotmarkers3d}). When
-produced interactively, the plot can be rotated and zoomined using the
+produced interactively, the plot can be rotated and zoomed using the
 mouse.
 
 \begin{figure}[htb]
@@ -1317,6 +1263,8 @@ common definition of \textit{unknown} localisation.
 Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
 
+\pagebreak
+
 \subsection*{Features of interest}
 In addition to adding annotation using the \texttt{addMarkers}
 function, one can store specific sets of proteins by using the
@@ -1325,10 +1273,10 @@ function, one can store specific sets of proteins by using the
 they wish to highlight in their data (possibly across multiple
 experiments) they would first create a \texttt{FeaturesOfInterest}
 object \hl{and then use the \textit{highlightOnPlot} function to 
-visualise these}. For example, if we wanted to highlight \st{a} 
-proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, 
-which are some of the proteins known to form part of the 13S condensin complex, 
-we \hl{would call the following code:}
+visualise these}. For example, if we wanted to highlight 
+proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and 
+Q8C156, which are some of the proteins known to form part of the 
+13S condensin complex, we \hl{would call the following code:}
 
 
 \begin{figure}[!ht]
@@ -1344,7 +1292,7 @@ we \hl{would call the following code:}
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Tue Apr 10 16:52:56 2018 
+##  Created on Wed Apr 11 14:03:30 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1375,6 +1323,8 @@ visualisation). This can be handy for quickly searching and
 highlighting proteins on the fly, the disavanatge here is that
 proteins can only be searched for a one-by-one basis.
 
+\pagebreak
+
 \section*{Replication}
 
 With the aim of maximising the sub-cellular resolution and,
@@ -1386,7 +1336,7 @@ association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
 
 Direct comparisons of individual channels in replicated experiments
-do\st{es} not provide an adequate, goal-driven assessment of different
+do not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
 identical selected fractions along the gradient. For example, in the
@@ -1398,7 +1348,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.5.0 by xtable 1.8-2 package
-% Tue Apr 10 16:52:56 2018
+% Wed Apr 11 14:03:30 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1413,6 +1363,8 @@ X127C &   1 & 127C & 8 to 9 (pooled) & 11.00 \\
 \label{tab:pdtab}
 \end{table}
 
+
+\pagebreak
 
 The more \hl{relevent} comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised 
@@ -1450,7 +1402,7 @@ technical or voluntary reasons, to maximise resolution when combining
 experiments \cite{Trotter:2010}), one expects agreement in the most
 confident organelle assignments.
 
-\clearpage
+\pagebreak
 
 \section*{Interactive visualisation}
 
@@ -1644,10 +1596,10 @@ contained.
 \end{kframe}
 \end{knitrout}
 
-\hl{The above analysis is comptationally intensive and best parallelised over
+\hl{The above analysis is computationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
-when parallelised over 40 workers. As such, to avoid executing this
-time consuming analysis users can access the above results which are
+when parallelised over 40 workers. As such, in the interest of time 
+users can access the above results which are
 pre-computed and stored along with the \texttt{pRolocdata} package. 
 Please see the appendix to load these results.}
 
@@ -1711,8 +1663,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Apr 10 16:52:55 2018 
-## Added markers from  'pdres' marker vector. Tue Apr 10 16:52:56 2018 
+## Added markers from  'mrk' marker vector. Wed Apr 11 14:03:29 2018 
+## Added markers from  'pdres' marker vector. Wed Apr 11 14:03:30 2018 
 ##  MSnbase version: 2.5.10
 \end{verbatim}
 \begin{alltt}
@@ -1748,6 +1700,8 @@ phenotype data clusters were found.
 \end{kframe}
 \end{knitrout}
 
+We can plot the results using the \texttt{plot2D} function (Figure
+\ref{fig:plotPDres}). 
 
 \begin{figure}[!ht]
   \centering
@@ -1777,12 +1731,15 @@ phenotype data clusters were found.
   \label{fig:plotPDres}
 \end{figure}
 
-We can plot the results using the \texttt{plot2D} function (Figure
-\ref{fig:plotPDres}). The five new phenotype data clusters can be
+\pagebreak
+
+The five new phenotype data clusters can be
 extracted and examined.  In the code chunk below we write the results
 to a .csv file using the \texttt{write.exprs} function. We use the
 argument \texttt{fDataCols} to specify which columns of the
 \texttt{featureData} to write.
+
+\pagebreak
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1792,6 +1749,7 @@ argument \texttt{fDataCols} to specify which columns of the
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
 
 We can also examine each phenotype interactively and visualise
 their protein profiles by using the \texttt{pRolocVis} function in the
@@ -1902,15 +1860,7 @@ to the \texttt{svmOptimisation} function. Once again, we provide
 the optimisation results for users to load directly if they wish to save
 computational time, please see the appendix to load these results.}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{svmf} \hlkwb{<-} \hlkwd{dir}\hlstd{(extdatadir,} \hlkwc{full.names} \hlstd{=} \hlnum{TRUE}\hlstd{,}
-              \hlkwc{pattern} \hlstd{=} \hlstr{"bpw-svmopt.rds"}\hlstd{)}
-\hlstd{params} \hlkwb{<-} \hlkwd{readRDS}\hlstd{(svmf)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+
 
 
 \begin{knitrout}
@@ -1989,6 +1939,7 @@ consistently deliver better classification scores.
   \label{fig:visualisOptHide}
 \end{figure}
 
+\pagebreak
 
 By using the function \texttt{getParams} we can extract the best set
 of parameters. Currently, \texttt{getParams} retrieves the first best
@@ -2028,9 +1979,7 @@ specified as we use the labels defined in the default
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{svmClassification}\hlstd{(hl, params,} \hlkwc{class.weights} \hlstd{= w,} \hlkwc{fcol} \hlstd{=} \hlstr{"markers"}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in seq\_len(trpr): first element used of 'length.out' argument}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 In the code chunk above, we pass the whole \texttt{params} parameter
@@ -2163,25 +2112,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4323379               0.3037630               0.3822328 
+##               0.4318484               0.3059444               0.3846145 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6930642               0.6014878               0.4426545 
+##               0.6952120               0.6096139               0.4308645 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4224179               0.5978957               0.9497788 
+##               0.4099447               0.5950343               0.9499410 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7950203               0.7117761               0.3147679 
+##               0.7954586               0.7096376               0.3119884 
 ##         Plasma membrane              Proteasome 
-##               0.7042806               0.4150910
+##               0.7244522               0.4199965
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4323379               0.3037630               0.3822328 
+##               0.4318484               0.3059444               0.3846145 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6930642               0.6014878               0.4426545 
+##               0.6952120               0.6096139               0.4308645 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4224179               0.5978957               0.9497788 
+##               0.4099447               0.5950343               0.9499410 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7950203               0.7117761               0.3147679 
+##               0.7954586               0.7096376               0.3119884 
 ##         Plasma membrane              Proteasome 
-##               0.7042806               0.4150910
+##               0.7244522               0.4199965
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2189,15 +2138,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      84 
+##                      85                     173                      87 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     301                     478                      99 
+##                     298                     472                     103 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     123                     523 
+##                      26                     124                     521 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     341                      38 
+##                     229                     346                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     322                     154                    2057
+##                     317                     155                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2270,6 +2219,7 @@ respectively (see also \texttt{fvarLabels(svmres)}).
   \label{fig:classifyapp}
 \end{figure}
 
+\pagebreak
 
 The data is loaded and displayed on a PCA plot and a boxplot is used
 to display the classifier scores by data class. On the left, there is
@@ -2450,10 +2400,7 @@ hours to run on the University of Cambridge HPC using 256 workers.
 \hl{To save time for users, the results of the following optimisation 
 are pre-computed and provided with the \texttt{pRolocdata} package. 
 Please see the appendix for details on how
-to load these directly}.)
-
-\st{To remove the 4 classes and create a new column of markers in the
-feature data called tlmarkers to use for the analysis:}
+to load these directly}.)q
 
 
 
@@ -2688,8 +2635,13 @@ marker proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for
 enrichment of organelles and complexes. In the latter we do not make
 good use of valuable prior knowledge, and in our experience
-unsupervised clustering can be extremely difficult due to poor
-estimates of the number of clusters that may appear in the data.
+unsupervised clustering can be extremely difficult due to \hl{
+(i) the loose definition of what constitutes a cluster (for example 
+whether it is defined by the quantitative data or the localisation 
+information), (ii) the influence of the algorithm assumption on the 
+cluster identification (for example parametric or non-parametric) 
+and (iii) poor estimates of the number of clusters that may appear 
+in the data.}
 
 \section*{Writing and exporting data}
 
@@ -2769,7 +2721,7 @@ failure and/or different results.
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] gridExtra_2.3        pRolocdata_1.17.3    pRoloc_1.19.3       
+##  [1] gridExtra_2.3        pRolocdata_1.17.4    pRoloc_1.19.3       
 ##  [4] MLInterfaces_1.59.1  cluster_2.0.6        annotate_1.57.2     
 ##  [7] XML_3.98-1.10        AnnotationDbi_1.41.4 IRanges_2.13.28     
 ## [10] S4Vectors_0.17.37    MSnbase_2.5.10       ProtGenerics_1.11.0 
@@ -2878,7 +2830,7 @@ Technology Facilities Council.
 
 \subsection*{Appendix}
 
-\subsubsection{Novelty detection results}
+\subsubsection*{Novelty detection results}
 
 To load the pre-computed novelty detection results please execute the
 following lines of code
@@ -2897,7 +2849,7 @@ following lines of code
 \end{kframe}
 \end{knitrout}
 
-\subsubsection{SVM optimisation}
+\subsubsection*{SVM optimisation}
 
 To load the results of the SVM optimisation 
 
@@ -2913,7 +2865,7 @@ To load the results of the SVM optimisation
 \end{kframe}
 \end{knitrout}
 
-\subsubsection{Transfer learning results}
+\subsubsection*{Transfer learning results}
 
 To load the GO CC dataset 
 

@@ -56,7 +56,7 @@ This procedure is also applicable to any packages, from
 \href{https://cran.r-project.org/}{CRAN} as well as GitHub. Once a
 package has been installed, it needs to be loaded for its
 functionality to become available in the R session; this is done with
-the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} one
+the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} package one
 would type \texttt{library("pRoloc")} after installation.
 
 If you have questions about this workflow in particular, or about
@@ -111,9 +111,10 @@ arbitrary spreadsheet, as produced by many popular third-party
 applications.
 
 While we focus here on a LOPIT-type dataset, these analyses are
-\hl{relevent} for any quantitative spatial proteomics data, irrespective of
-the fractionation or quantitation (i.e. labelled or label-free)
-methods.
+\hl{relevent} for any quantitative spatial proteomics data,  
+irrespective of the fractionation (i.e. density gradient or 
+differential centrifugation \cite{Itzhak:2016}) or quantitation 
+(i.e. labelled or label-free) methods.
 
 \subsection*{The infrastructure: \Biocpkg{pRoloc} and \Biocpkg{MSnbase} packages}
 
@@ -142,7 +143,7 @@ storing the sample meta-data.
 Feature metadata typically contains general annotation about the
 proteins (accession numbers, description, \ldots), information related
 to the identification search (confidence scores, number of peptides,
-\ldots) as well as annotation about know sub-cellular location (see in
+\ldots) as well as annotation about known sub-cellular location (see in
 particular the \textit{Markers} section) and results from data
 analysis. The sample metadata would, for example, record what stable
 isotope labels were used for the respective fraction (when labelled
@@ -186,7 +187,7 @@ interest resides. We then use the \texttt{dir} function to list the
 content of that directory and store the path that matches the file
 name of interest in the \texttt{csvfile}. Note that these two lines
 are only needed here to locate a file in a package; in a more general
-use case, the user would defined the \texttt{csvfile} variable
+use case, the user would define the \texttt{csvfile} variable
 containing the file name of interest directly.
 
 A common pitfall here is to provide only the file name, rather than
@@ -469,7 +470,7 @@ fvarLabels(hyperLOPIT2015ms3r2)
 We can now combine the two experiments into a single \texttt{MSnSet}:
 
 <<combine, cache = cache>>=
-combined <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+combined <- MSnbase::combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
 combined
 @
 
@@ -761,11 +762,10 @@ plot enables efficient visualisation of the complete dataset and
 assessment the relative separation of different sub-cellular niches,
 comparing profiles of a few marker clusters is useful to assess how
 exactly they differ (in terms of peak channels, for example). On
-figure} \ref{fig:plotDist2}, \hl{we plot the profile of the mitochondrial
-and peroxisome markers to highlight the differences in profiles
-between these two sets of markers in the channels labelled with tag
-129C, as represented above along the 7th PC on the PCA plot on
-figure} \ref{fig:plotmarkers}.
+figure} \ref{fig:plotDist2}, \hl{we plot the profiles of the 
+mitochondrial and peroxisome markers to highlight the differences 
+in the channels labelled with tag 129C, also represented above  
+along the 7th PC on the PCA plot on figure} \ref{fig:plotmarkers}.
 
 \begin{figure}[!ht]
   \centering
@@ -786,7 +786,7 @@ legend("topleft", c("Mitochondrion", "Peroxisome"),
 
 The data can also be visualised along three PCs using the
 \texttt{plot3D} function (Figure \ref{fig:plotmarkers3d}). When
-produced interactively, the plot can be rotated and zoomined using the
+produced interactively, the plot can be rotated and zoomed using the
 mouse.
 
 \begin{figure}[htb]
@@ -826,6 +826,8 @@ getMarkers(hl)
 Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
 allows to interactively explore a 3-dimensional plot of the data.
 
+\pagebreak
+
 \subsection*{Features of interest}
 In addition to adding annotation using the \texttt{addMarkers}
 function, one can store specific sets of proteins by using the
@@ -834,10 +836,10 @@ function, one can store specific sets of proteins by using the
 they wish to highlight in their data (possibly across multiple
 experiments) they would first create a \texttt{FeaturesOfInterest}
 object \hl{and then use the \textit{highlightOnPlot} function to 
-visualise these}. For example, if we wanted to highlight \st{a} 
-proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and Q8C156, 
-which are some of the proteins known to form part of the 13S condensin complex, 
-we \hl{would call the following code:}
+visualise these}. For example, if we wanted to highlight 
+proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and 
+Q8C156, which are some of the proteins known to form part of the 
+13S condensin complex, we \hl{would call the following code:}
 
 
 \begin{figure}[!ht]
@@ -869,6 +871,8 @@ visualisation). This can be handy for quickly searching and
 highlighting proteins on the fly, the disavanatge here is that
 proteins can only be searched for a one-by-one basis.
 
+\pagebreak
+
 \section*{Replication}
 
 With the aim of maximising the sub-cellular resolution and,
@@ -880,7 +884,7 @@ association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
 
 Direct comparisons of individual channels in replicated experiments
-do\st{es} not provide an adequate, goal-driven assessment of different
+do not provide an adequate, goal-driven assessment of different
 experiments. Indeed, due to the nature of the experiment and gradient
 fraction collection, the quantitative channels do not correspond to
 identical selected fractions along the gradient. For example, in the
@@ -897,6 +901,8 @@ xtable(pData(hl)[i, ],
        caption = "Differences in gradient fraction pooling.", 
        label = "tab:pdtab")
 @
+
+\pagebreak
 
 The more \hl{relevent} comparison unit is not a single channel, but rather
 the complete protein occupancy profiles, which are best visualised 
@@ -928,7 +934,7 @@ technical or voluntary reasons, to maximise resolution when combining
 experiments \cite{Trotter:2010}), one expects agreement in the most
 confident organelle assignments.
 
-\clearpage
+\pagebreak
 
 \section*{Interactive visualisation}
 
@@ -1089,10 +1095,10 @@ contained.
 hl <- phenoDisco(hl, fcol = "phenoDisco.Input", times = 200, GS = 60)
 @
 
-\hl{The above analysis is comptationally intensive and best parallelised over
+\hl{The above analysis is computationally intensive and best parallelised over
 multiple workers. This phenoDisco analysis took ~24 hours to complete
-when parallelised over 40 workers. As such, to avoid executing this
-time consuming analysis users can access the above results which are
+when parallelised over 40 workers. As such, in the interest of time 
+users can access the above results which are
 pre-computed and stored along with the \texttt{pRolocdata} package. 
 Please see the appendix to load these results.}
 
@@ -1147,6 +1153,8 @@ hl
 getMarkers(hl, fcol = "pd")
 @
 
+We can plot the results using the \texttt{plot2D} function (Figure
+\ref{fig:plotPDres}). 
 
 \begin{figure}[!ht]
   \centering
@@ -1170,17 +1178,21 @@ addLegend(hl, fcol = "pd", cex = .7, col = cols)
   \label{fig:plotPDres}
 \end{figure}
 
-We can plot the results using the \texttt{plot2D} function (Figure
-\ref{fig:plotPDres}). The five new phenotype data clusters can be
+\pagebreak
+
+The five new phenotype data clusters can be
 extracted and examined.  In the code chunk below we write the results
 to a .csv file using the \texttt{write.exprs} function. We use the
 argument \texttt{fDataCols} to specify which columns of the
 \texttt{featureData} to write.
 
+\pagebreak
+
 <<writehl, eval=FALSE>>=
 fData(hl)$pd <- as.character(fData(hl)$pd)
 write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
 @
+
 
 We can also examine each phenotype interactively and visualise
 their protein profiles by using the \texttt{pRolocVis} function in the
@@ -1268,7 +1280,7 @@ to the \texttt{svmOptimisation} function. Once again, we provide
 the optimisation results for users to load directly if they wish to save
 computational time, please see the appendix to load these results.}
 
-<<loadpdRes, echo=TRUE>>=
+<<loadpdRes, echo=FALSE>>=
 svmf <- dir(extdatadir, full.names = TRUE,
               pattern = "bpw-svmopt.rds") 
 params <- readRDS(svmf)
@@ -1334,6 +1346,7 @@ grid.arrange(plot(params), levelPlot(params), ncol = 2)
   \label{fig:visualisOptHide}
 \end{figure}
 
+\pagebreak
 
 By using the function \texttt{getParams} we can extract the best set
 of parameters. Currently, \texttt{getParams} retrieves the first best
@@ -1360,7 +1373,7 @@ specified as we use the labels defined in the default
 \texttt{"markers"} feature variable.
 
 
-<<classify>>=
+<<classify, warning = FALSE>>=
 hl <- svmClassification(hl, params, class.weights = w, fcol = "markers")
 @
 
@@ -1370,7 +1383,7 @@ score are returned (using the \texttt{getParams} function above). It
 is advised to always check that these are actually good parameters
 and, if necessary, set them explicitly, as shown below.
 
-<<classify2, eval = FALSE>>=
+<<classify2, eval = FALSE, warning = FALSE>>=
 hl <- svmClassification(hl, cost = 16, sigma = 0.1, class.weights = w, fcol = "markers")
 @
 
@@ -1532,6 +1545,7 @@ pRolocVis(hl, app = "classify", fcol = "svm", scol = "svm.scores", mcol = "marke
   \label{fig:classifyapp}
 \end{figure}
 
+\pagebreak
 
 The data is loaded and displayed on a PCA plot and a boxplot is used
 to display the classifier scores by data class. On the left, there is
@@ -1700,10 +1714,7 @@ hours to run on the University of Cambridge HPC using 256 workers.
 \hl{To save time for users, the results of the following optimisation 
 are pre-computed and provided with the \texttt{pRolocdata} package. 
 Please see the appendix for details on how
-to load these directly}.)
-
-\st{To remove the 4 classes and create a new column of markers in the
-feature data called tlmarkers to use for the analysis:}
+to load these directly}.)q
 
 <<loadgocc, include=FALSE>>=
 gofile <- dir(extdatadir, full.names = TRUE,
@@ -1880,8 +1891,13 @@ marker proteins to build a classifier, instead of using an entirely
 unsupervised approach to look for clusters and then look for
 enrichment of organelles and complexes. In the latter we do not make
 good use of valuable prior knowledge, and in our experience
-unsupervised clustering can be extremely difficult due to poor
-estimates of the number of clusters that may appear in the data.
+unsupervised clustering can be extremely difficult due to \hl{
+(i) the loose definition of what constitutes a cluster (for example 
+whether it is defined by the quantitative data or the localisation 
+information), (ii) the influence of the algorithm assumption on the 
+cluster identification (for example parametric or non-parametric) 
+and (iii) poor estimates of the number of clusters that may appear 
+in the data.}
 
 \section*{Writing and exporting data}
 
@@ -1983,7 +1999,7 @@ Technology Facilities Council.
 
 \subsection*{Appendix}
 
-\subsubsection{Novelty detection results}
+\subsubsection*{Novelty detection results}
 
 To load the pre-computed novelty detection results please execute the
 following lines of code
@@ -1998,7 +2014,7 @@ pdres <- readRDS(f0)
 hl <- addMarkers(hl, pdres, mcol = "pd", verbose = FALSE)
 @
 
-\subsubsection{SVM optimisation}
+\subsubsection*{SVM optimisation}
 
 To load the results of the SVM optimisation 
 
@@ -2010,7 +2026,7 @@ svmf <- dir(extdatadir, full.names = TRUE,
 params <- readRDS(svmf)
 @
 
-\subsubsection{Transfer learning results}
+\subsubsection*{Transfer learning results}
 
 To load the GO CC dataset 
 
