@@ -770,7 +770,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Apr 16 15:26:11 2018 
+## Combined [6725,20] and [6268,10] MSnSets Mon Apr 16 15:33:11 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -855,10 +855,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Apr 16 15:26:11 2018 
-## Subset [6725,20][5032,20] Mon Apr 16 15:26:12 2018 
-## Removed features with more than 0 NAs: Mon Apr 16 15:26:12 2018 
-## Dropped featureData's levels Mon Apr 16 15:26:12 2018 
+## Combined [6725,20] and [6268,10] MSnSets Mon Apr 16 15:33:11 2018 
+## Subset [6725,20][5032,20] Mon Apr 16 15:33:12 2018 
+## Removed features with more than 0 NAs: Mon Apr 16 15:33:12 2018 
+## Dropped featureData's levels Mon Apr 16 15:33:12 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -963,7 +963,7 @@ replicate).
 \end{knitrout}
 \caption{Protein profiles and distribution of channel intensities. The
   red dots represent the mean relative intensity for each channel. }
-  \label{fig:q  cbx}
+  \label{fig:qcbx}
 \end{figure}
 
 \pagebreak
@@ -1289,7 +1289,7 @@ Q8C156, which are some of the proteins known to form part of the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Mon Apr 16 15:26:14 2018 
+##  Created on Mon Apr 16 15:33:14 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1345,7 +1345,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.4.4 by xtable 1.8-2 package
-% Mon Apr 16 15:26:14 2018
+% Mon Apr 16 15:33:14 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1660,8 +1660,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Mon Apr 16 15:26:13 2018 
-## Added markers from  'pdres' marker vector. Mon Apr 16 15:26:14 2018 
+## Added markers from  'mrk' marker vector. Mon Apr 16 15:33:13 2018 
+## Added markers from  'pdres' marker vector. Mon Apr 16 15:33:14 2018 
 ##  MSnbase version: 2.4.2
 \end{verbatim}
 \begin{alltt}
@@ -2109,25 +2109,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4355329               0.3041412               0.3939341 
+##               0.4371207               0.3057074               0.3881852 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6838362               0.6082860               0.4344442 
+##               0.6925752               0.6021888               0.4265610 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4147867               0.5994097               0.9498454 
+##               0.4262321               0.5923175               0.9498363 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7961992               0.7100991               0.3171891 
+##               0.7961720               0.7109965               0.3179536 
 ##         Plasma membrane              Proteasome 
-##               0.7093459               0.4225532
+##               0.7201960               0.4170372
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4355329               0.3041412               0.3939341 
+##               0.4371207               0.3057074               0.3881852 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6838362               0.6082860               0.4344442 
+##               0.6925752               0.6021888               0.4265610 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4147867               0.5994097               0.9498454 
+##               0.4262321               0.5923175               0.9498363 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7961992               0.7100991               0.3171891 
+##               0.7961720               0.7109965               0.3179536 
 ##         Plasma membrane              Proteasome 
-##               0.7093459               0.4225532
+##               0.7201960               0.4170372
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2135,15 +2135,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      89 
+##                      84                     171                      89 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     299                     476                      92 
+##                     294                     475                      97 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     523 
+##                      29                     124                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     344                      39 
+##                     229                     343                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     322                     156                    2057
+##                     317                     161                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

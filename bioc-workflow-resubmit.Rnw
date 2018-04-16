@@ -610,7 +610,7 @@ boxplot(exprs(hl[, o]))
 @
 \caption{Protein profiles and distribution of channel intensities. The
   red dots represent the mean relative intensity for each channel. }
-  \label{fig:q  cbx}
+  \label{fig:qcbx}
 \end{figure}
 
 \pagebreak
