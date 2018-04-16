@@ -22,3 +22,5 @@ Figures
 *.out
 *.log
 pd-results.csv
+main.bbl
+main.blg
