@@ -7,8 +7,6 @@ dist: trusty
 # as source which is white listed (https://github.com/travis-ci/apt-source-whitelist/)
 addons:
   apt:
-    sources:
-    - r-packages-precise
     packages:
     - r-base-dev
     - r-recommended
