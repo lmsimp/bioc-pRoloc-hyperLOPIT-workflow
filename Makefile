@@ -1,12 +1,12 @@
 all:
 	make bioc-workflow-resubmit.tex
 
-R_HOME=/opt/Rpatched/
-
 setvars:
 ifeq (${R_HOME},)
 R_HOME= $(shell R RHOME)
 endif
+
+## R_HOME=/opt/Rpatched/
 
 %.tex: %.Rnw
 	"$(R_HOME)/bin/Rscript" -e 'require("knitr"); knit("$^")'

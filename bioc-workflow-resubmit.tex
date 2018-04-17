@@ -116,8 +116,8 @@ differential centrifugation \cite{Itzhak:2016}) or quantitation
 
 \subsection*{The infrastructure: \Biocpkg{pRoloc} and \Biocpkg{MSnbase} packages}
 
-To make use of the full functionality of the \Biocpkg{pRoloc} software
-one needs to import their data into R and prepare them as an
+To make use of the full functionality of the \Biocpkg{pRoloc} software,
+users need to import their data into R and prepare them as an
 \texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for
 the efficient manipulation and processing of mass spectrometry and
 proteomics data in R. Figure \ref{fig:msnset} illustrates a simplified view of the
@@ -152,7 +152,8 @@ Another slot of interest is \texttt{processingData}, that logs the
 processing \texttt{MSnSet} objects undergo. The processing log can be
 accessed with the \texttt{processingData} function and is displayed
 under \textit{Processing information} in the textual object summary
-when an \texttt{MSnSet}'s name is typed in the R console.
+when an \texttt{MSnSet}'s name is typed in the R console (see example
+below).
 
 \subsection*{Importing data}
 
@@ -160,7 +161,7 @@ There are a number of ways to import quantitation data and create an
 \texttt{MSnSet} instance. All methods are described in the
 \Biocpkg{MSnbase}
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf}{input/output
-  capabilities vignette}. One suggested simple method is to use the
+  capabilities vignette}. The simplest method is to use the
 function \texttt{readMSnSet2}. The function takes a single spreadsheet
 file name as input and extracts the columns containing the
 quantitation data, as identified by the argument \texttt{ecol}, to
@@ -183,7 +184,7 @@ function is used to return the path to the \texttt{extdata} directory
 from the \Biocexptpkg{pRolocdata} package, which is where our file of
 interest resides. We then use the \texttt{dir} function to list the
 content of that directory and store the path that matches the file
-name of interest in the \texttt{csvfile}. Note that these two lines
+name of interest in the \texttt{csvfile} variable. Note that these two lines
 are only needed here to locate a file in a package; in a more general
 use case, the user would define the \texttt{csvfile} variable
 containing the file name of interest directly.
@@ -337,7 +338,7 @@ etc (see below).
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-##  MSnbase version: 2.4.2
+##  MSnbase version: 2.5.12
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -384,9 +385,9 @@ interest.
 \end{knitrout}
 
 The feature meta-data is stored in the \texttt{fData} slot and can be
-accessed by \texttt{fData(hl)}. When using \texttt{readMSnSet2}, automatically,
-everything that is not defined as quantitation data by \texttt{ecol} or the
-feature names by \texttt{fnames} is deposited to the \texttt{fData} slot.
+accessed by \texttt{fData(hl)}. When using \texttt{readMSnSet2}
+everything that is not defined as quantitation data by \texttt{ecol}
+is deposited to the \texttt{fData} slot.
 
 We see the \texttt{fData} contains 25 columns describing information such as
 the number of peptides, associated markers, machine learning results
@@ -654,7 +655,7 @@ At the R prompt, typing
 \end{kframe}
 \end{knitrout}
 
-will list the 62 datasets that are
+will list the 75 datasets that are
 available in \Biocexptpkg{pRolocdata}.
 
 %% $
@@ -722,9 +723,12 @@ peptide-spectrum matches (PSMs).
 
 Below, we update the replicate specific feature variable names and
 remove the shared annotation. In the first line, we update only the
-feature variable names 3 to 5 (by appending a \texttt{1}) and in the
-second line, we apply the \texttt{updateFvarLabels} function to update
-all feature variable names (by appending a \texttt{2}).
+feature variable names 3 to 5 (by appending a \texttt{1}) of the first
+replicate and in the second line, we apply the
+\texttt{updateFvarLabels} function to update all feature variable
+names (by appending a \texttt{2}) of the second replicate. In lines 3
+and 4, we retain the first 5 feature variables for the first replicate
+and the relevant third to fourth variables for the second replicate.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -753,7 +757,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{combined} \hlkwb{<-} \hlstd{MSnbase}\hlopt{::}\hlkwd{combine}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)}
+\hlstd{combined} \hlkwb{<-} \hlkwd{combine}\hlstd{(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)}
 \hlstd{combined}
 \end{alltt}
 \begin{verbatim}
@@ -771,10 +775,11 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ##     total)
 ##   fvarMetadata: labelDescription
 ## experimentData: use 'experimentData(object)'
+##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 08:39:23 2018 
-##  MSnbase version: 1.21.7
+## Combined [5489,10] and [6268,10] MSnSets Tue Apr 17 11:44:16 2018 
+##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -807,7 +812,7 @@ missing values using nearest neighbour imputation, one would
 
 In our particular case, missing values are indicative of protein
 groups that were not acquired in both replicates (Figure
-\ref{fig:namap}).
+\ref{fig:namap}, produced with the \texttt{image2} function).
 
 \begin{figure}[!ht]
   \centering
@@ -856,13 +861,14 @@ values (subsetting) changed the dimensions of the data.
 ##     total)
 ##   fvarMetadata: labelDescription
 ## experimentData: use 'experimentData(object)'
+##   pubMedIds: 26754106 
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 08:39:23 2018 
-## Subset [6725,20][5032,20] Tue Apr 17 08:39:24 2018 
-## Removed features with more than 0 NAs: Tue Apr 17 08:39:24 2018 
-## Dropped featureData's levels Tue Apr 17 08:39:24 2018 
-##  MSnbase version: 1.21.7
+## Combined [5489,10] and [6268,10] MSnSets Tue Apr 17 11:44:16 2018 
+## Subset [6725,20][5032,20] Tue Apr 17 11:44:17 2018 
+## Removed features with more than 0 NAs: Tue Apr 17 11:44:17 2018 
+## Dropped featureData's levels Tue Apr 17 11:44:17 2018 
+##  MSnbase version: 2.5.9
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -888,9 +894,9 @@ summarise multi-dimensional data in to 2 or 3 dimensions to enable
 visualisation. Very generally, the original continuous
 multi-dimensional data is transformed into a set of orthogonal
 components ordered according to the amount of variability that they
-describe. The \texttt{plot2D} and \texttt{plot3D} methods in
+describe. The \texttt{plot2D} and \texttt{plot3D} functions in
 \Biocpkg{pRoloc} allows one to plot the principal components (PCs) of
-a dataset against one another, by default the first two components are
+a dataset against one another. By default, the first two components are
 plotted on the x- and y-axis for the \texttt{plot2D} function, and
 first three components are loaded for the \texttt{plot3D} function,
 respectively (the \texttt{dims} argument can be used to plot other
@@ -941,11 +947,11 @@ It is also useful to visualise the relative intensities along the
 gradient to identify channels displaying particularly low yield. This
 can be done using the \texttt{plotDist} and \texttt{boxplot}
 functions, that plot the protein profiles occupancy along the gradient
-(we also display the mean channel intensities) and a \texttt{boxplot}
-of the column intensities.  In the two plots displayed on figure
-\ref{fig:qcbx}, we re-order the TMT channels to pair corresponding
-channels in the two replicates (rather than ordering the channels by
-replicate).
+(we also display the mean channel intensities below) and a
+\texttt{boxplot} of the column intensities.  In the two plots
+displayed on figure \ref{fig:qcbx}, we re-order the TMT channels to
+pair corresponding channels in the two replicates (rather than
+ordering the channels by replicate).
 
 \begin{figure}[!ht]
   \centering
@@ -976,7 +982,7 @@ replicate).
 In the context of spatial proteomics, a marker protein is defined as a
 well-known resident of a specific sub-cellular niche in a species
 \textit{and} condition of interest. Applying this to machine learning
-(ML), and specifically supervised learning, for the task of protein
+(ML), and specifically supervised learning for the task of protein
 localisation prediction, these markers constitute the labelled
 training data to use as input to a classification analyses. Defining
 well-known residents, and obtaining labelled training data for ML
@@ -1292,7 +1298,7 @@ Q8C156, which are some of the proteins known to form part of the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Tue Apr 17 08:39:26 2018 
+##  Created on Tue Apr 17 11:44:19 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1347,8 +1353,8 @@ replicate, respectively). Different sets of gradient fractions are
 often pooled to obtain enough material and optimise acurate
 quantitation.
 
-% latex table generated in R 3.4.4 by xtable 1.8-2 package
-% Tue Apr 17 08:39:26 2018
+% latex table generated in R 3.6.0 by xtable 1.8-2 package
+% Tue Apr 17 11:44:19 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1663,9 +1669,9 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Apr 17 08:39:25 2018 
-## Added markers from  'pdres' marker vector. Tue Apr 17 08:39:26 2018 
-##  MSnbase version: 2.4.2
+## Added markers from  'mrk' marker vector. Tue Apr 17 11:44:18 2018 
+## Added markers from  'pdres' marker vector. Tue Apr 17 11:44:19 2018 
+##  MSnbase version: 2.5.12
 \end{verbatim}
 \begin{alltt}
 \hlkwd{getMarkers}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{)}
@@ -2112,25 +2118,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4363460               0.3023446               0.3833708 
+##               0.4368645               0.3031282               0.3889317 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6846500               0.5947855               0.4246911 
+##               0.6760609               0.6075289               0.4353435 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4302963               0.5753825               0.9498381 
+##               0.4221860               0.5895546               0.9499026 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7947918               0.7075039               0.3176585 
+##               0.7952921               0.7096399               0.3106030 
 ##         Plasma membrane              Proteasome 
-##               0.7124225               0.4149409
+##               0.7232975               0.4205260
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4363460               0.3023446               0.3833708 
+##               0.4368645               0.3031282               0.3889317 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6846500               0.5947855               0.4246911 
+##               0.6760609               0.6075289               0.4353435 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4302963               0.5753825               0.9498381 
+##               0.4221860               0.5895546               0.9499026 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7947918               0.7075039               0.3176585 
+##               0.7952921               0.7096399               0.3106030 
 ##         Plasma membrane              Proteasome 
-##               0.7124225               0.4149409
+##               0.7232975               0.4205260
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2138,15 +2144,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      86                     170                      84 
+##                      85                     171                      89 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     296                     474                      95 
+##                     299                     477                      99 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      28                     123                     523 
+##                      27                     123                     521 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     344                      39 
+##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     326                     157                    2057
+##                     317                     156                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2705,7 +2711,7 @@ failure and/or different results.
 \hlkwd{sessionInfo}\hlstd{()}
 \end{alltt}
 \begin{verbatim}
-## R version 3.4.4 Patched (2018-03-19 r74516)
+## R Under development (unstable) (2018-04-02 r74505)
 ## Platform: x86_64-pc-linux-gnu (64-bit)
 ## Running under: Ubuntu 14.04.5 LTS
 ## 
@@ -2722,54 +2728,54 @@ failure and/or different results.
 ## [11] LC_MEASUREMENT=en_GB.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## attached base packages:
-## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
-## [8] datasets  base     
+## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] pRolocdata_1.16.0    pRoloc_1.18.0        MLInterfaces_1.58.1 
-##  [4] cluster_2.0.7-1      annotate_1.56.2      XML_3.98-1.10       
-##  [7] AnnotationDbi_1.40.0 IRanges_2.12.0       S4Vectors_0.16.0    
-## [10] MSnbase_2.4.2        ProtGenerics_1.10.0  BiocParallel_1.12.0 
-## [13] mzR_2.12.0           Rcpp_0.12.16         Biobase_2.38.0      
-## [16] BiocGenerics_0.24.0  xtable_1.8-2         BiocStyle_2.6.1     
+##  [1] pRolocdata_1.17.3    pRoloc_1.19.4        MLInterfaces_1.59.1 
+##  [4] cluster_2.0.7        annotate_1.57.3      XML_3.98-1.10       
+##  [7] AnnotationDbi_1.41.4 IRanges_2.13.28      S4Vectors_0.17.41   
+## [10] MSnbase_2.5.12       ProtGenerics_1.11.0  BiocParallel_1.13.3 
+## [13] mzR_2.13.6           Rcpp_0.12.16         Biobase_2.39.2      
+## [16] BiocGenerics_0.25.3  xtable_1.8-2         BiocStyle_2.7.8     
 ## [19] knitr_1.20          
 ## 
 ## loaded via a namespace (and not attached):
 ##   [1] backports_1.1.2       plyr_1.8.4            igraph_1.2.1         
-##   [4] lazyeval_0.2.1        splines_3.4.4         ggvis_0.4.3          
+##   [4] lazyeval_0.2.1        splines_3.6.0         ggvis_0.4.3          
 ##   [7] crosstalk_1.0.0       ggplot2_2.2.1         digest_0.6.15        
-##  [10] foreach_1.4.4         BiocInstaller_1.28.0  htmltools_0.3.6      
+##  [10] foreach_1.4.4         BiocInstaller_1.29.6  htmltools_0.3.6      
 ##  [13] viridis_0.5.1         gdata_2.18.0          magrittr_1.5         
 ##  [16] memoise_1.1.0         doParallel_1.0.11     sfsmisc_1.1-2        
-##  [19] limma_3.34.9          recipes_0.1.2         gower_0.1.2          
+##  [19] limma_3.35.14         recipes_0.1.2         gower_0.1.2          
 ##  [22] rda_1.0.2-2           dimRed_0.1.0          lpSolve_5.6.13       
 ##  [25] prettyunits_1.0.2     colorspace_1.3-2      blob_1.1.1           
-##  [28] dplyr_0.7.4           RCurl_1.95-4.10       hexbin_1.27.2        
-##  [31] genefilter_1.60.0     bindr_0.1.1           impute_1.52.0        
+##  [28] dplyr_0.7.4.9003      RCurl_1.95-4.10       hexbin_1.27.2        
+##  [31] genefilter_1.61.1     bindr_0.1.1           impute_1.53.0        
 ##  [34] DRR_0.0.3             survival_2.41-3       iterators_1.0.9      
 ##  [37] glue_1.2.0            gtable_0.2.0          ipred_0.9-6          
-##  [40] zlibbioc_1.24.0       kernlab_0.9-25        ddalpha_1.3.2        
-##  [43] prabclus_2.2-6        DEoptimR_1.0-8        abind_1.4-5          
-##  [46] scales_0.5.0.9000     vsn_3.46.0            mvtnorm_1.0-7        
-##  [49] DBI_0.8               viridisLite_0.3.0     progress_1.1.2       
-##  [52] magic_1.5-8           foreign_0.8-69        bit_1.1-12           
-##  [55] proxy_0.4-22          mclust_5.4            preprocessCore_1.40.0
-##  [58] lava_1.6.1            prodlim_1.6.1         sampling_2.8         
-##  [61] htmlwidgets_1.0       httr_1.3.1            threejs_0.3.1        
-##  [64] FNN_1.1               RColorBrewer_1.1-2    fpc_2.1-11           
-##  [67] modeltools_0.2-21     pkgconfig_2.0.1       flexmix_2.3-14       
-##  [70] nnet_7.3-12           caret_6.0-79          tidyselect_0.2.4     
-##  [73] rlang_0.2.0           reshape2_1.4.3        munsell_0.4.3        
-##  [76] mlbench_2.1-1         tools_3.4.4           msdata_0.18.0        
-##  [79] RSQLite_2.1.0         pls_2.6-0             broom_0.4.4          
-##  [82] evaluate_0.10.1       geometry_0.3-6        stringr_1.3.0        
-##  [85] mzID_1.16.0           yaml_2.1.18           ModelMetrics_1.1.0   
-##  [88] bit64_0.9-7           robustbase_0.92-8     randomForest_4.6-14  
-##  [91] purrr_0.2.4           dendextend_1.7.0      bindrcpp_0.2.2       
-##  [94] nlme_3.1-137          whisker_0.3-2         mime_0.5             
-##  [97] RcppRoll_0.2.2        biomaRt_2.34.2        compiler_3.4.4       
-## [100] e1071_1.6-8          
-##  [ reached getOption("max.print") -- omitted 37 entries ]
+##  [40] zlibbioc_1.25.0       kernlab_0.9-25        ddalpha_1.3.1.1      
+##  [43] prabclus_2.2-6        DEoptimR_1.0-8        scales_0.5.0         
+##  [46] vsn_3.47.1            mvtnorm_1.0-7         DBI_0.8              
+##  [49] viridisLite_0.3.0     progress_1.1.2        foreign_0.8-70       
+##  [52] bit_1.1-12            proxy_0.4-22          mclust_5.4           
+##  [55] preprocessCore_1.41.0 lava_1.6.1            prodlim_1.6.1        
+##  [58] sampling_2.8          htmlwidgets_1.0       httr_1.3.1           
+##  [61] threejs_0.3.1         FNN_1.1               RColorBrewer_1.1-2   
+##  [64] fpc_2.1-11            modeltools_0.2-21     pkgconfig_2.0.1      
+##  [67] flexmix_2.3-14        nnet_7.3-12           caret_6.0-78         
+##  [70] tidyselect_0.2.4      rlang_0.2.0           reshape2_1.4.3       
+##  [73] munsell_0.4.3         mlbench_2.1-1         tools_3.6.0          
+##  [76] msdata_0.19.3         RSQLite_2.1.0         pls_2.6-0            
+##  [79] broom_0.4.4           evaluate_0.10.1       stringr_1.3.0        
+##  [82] mzID_1.17.0           yaml_2.1.18           ModelMetrics_1.1.0   
+##  [85] bit64_0.9-7           robustbase_0.92-8     randomForest_4.6-14  
+##  [88] purrr_0.2.4           dendextend_1.7.0      bindrcpp_0.2.2.9000  
+##  [91] nlme_3.1-136          whisker_0.3-2         mime_0.5             
+##  [94] RcppRoll_0.2.2        biomaRt_2.35.13       compiler_3.6.0       
+##  [97] e1071_1.6-8           affyio_1.49.2         tibble_1.4.2         
+## [100] stringi_1.1.7        
+##  [ reached getOption("max.print") -- omitted 33 entries ]
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

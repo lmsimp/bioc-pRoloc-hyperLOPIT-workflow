@@ -120,8 +120,8 @@ differential centrifugation \cite{Itzhak:2016}) or quantitation
 
 \subsection*{The infrastructure: \Biocpkg{pRoloc} and \Biocpkg{MSnbase} packages}
 
-To make use of the full functionality of the \Biocpkg{pRoloc} software
-one needs to import their data into R and prepare them as an
+To make use of the full functionality of the \Biocpkg{pRoloc} software,
+users need to import their data into R and prepare them as an
 \texttt{MSnSet}. The \texttt{MSnSet} is a dedicated data structure for
 the efficient manipulation and processing of mass spectrometry and
 proteomics data in R. Figure \ref{fig:msnset} illustrates a simplified view of the
@@ -156,7 +156,8 @@ Another slot of interest is \texttt{processingData}, that logs the
 processing \texttt{MSnSet} objects undergo. The processing log can be
 accessed with the \texttt{processingData} function and is displayed
 under \textit{Processing information} in the textual object summary
-when an \texttt{MSnSet}'s name is typed in the R console.
+when an \texttt{MSnSet}'s name is typed in the R console (see example
+below).
 
 \subsection*{Importing data}
 
@@ -164,7 +165,7 @@ There are a number of ways to import quantitation data and create an
 \texttt{MSnSet} instance. All methods are described in the
 \Biocpkg{MSnbase}
 \href{http://bioconductor.org/packages/release/bioc/vignettes/MSnbase/inst/doc/MSnbase-io.pdf}{input/output
-  capabilities vignette}. One suggested simple method is to use the
+  capabilities vignette}. The simplest method is to use the
 function \texttt{readMSnSet2}. The function takes a single spreadsheet
 file name as input and extracts the columns containing the
 quantitation data, as identified by the argument \texttt{ecol}, to
@@ -187,7 +188,7 @@ function is used to return the path to the \texttt{extdata} directory
 from the \Biocexptpkg{pRolocdata} package, which is where our file of
 interest resides. We then use the \texttt{dir} function to list the
 content of that directory and store the path that matches the file
-name of interest in the \texttt{csvfile}. Note that these two lines
+name of interest in the \texttt{csvfile} variable. Note that these two lines
 are only needed here to locate a file in a package; in a more general
 use case, the user would define the \texttt{csvfile} variable
 containing the file name of interest directly.
@@ -276,9 +277,9 @@ exprs(hl)[c("Q9ERU9", "Q9Z2R6"), c("X126", "X131.1")]
 @
 
 The feature meta-data is stored in the \texttt{fData} slot and can be
-accessed by \texttt{fData(hl)}. When using \texttt{readMSnSet2}, automatically,
-everything that is not defined as quantitation data by \texttt{ecol} or the
-feature names by \texttt{fnames} is deposited to the \texttt{fData} slot.
+accessed by \texttt{fData(hl)}. When using \texttt{readMSnSet2}
+everything that is not defined as quantitation data by \texttt{ecol}
+is deposited to the \texttt{fData} slot.
 
 We see the \texttt{fData} contains 25 columns describing information such as
 the number of peptides, associated markers, machine learning results
@@ -456,9 +457,12 @@ fvarLabels(hyperLOPIT2015ms3r2)
 
 Below, we update the replicate specific feature variable names and
 remove the shared annotation. In the first line, we update only the
-feature variable names 3 to 5 (by appending a \texttt{1}) and in the
-second line, we apply the \texttt{updateFvarLabels} function to update
-all feature variable names (by appending a \texttt{2}).
+feature variable names 3 to 5 (by appending a \texttt{1}) of the first
+replicate and in the second line, we apply the
+\texttt{updateFvarLabels} function to update all feature variable
+names (by appending a \texttt{2}) of the second replicate. In lines 3
+and 4, we retain the first 5 feature variables for the first replicate
+and the relevant third to fourth variables for the second replicate.
 
 <<fvarnames2>>=
 fvarLabels(hyperLOPIT2015ms3r1)[3:5] <- paste0(fvarLabels(hyperLOPIT2015ms3r1)[3:5], 1)
@@ -472,7 +476,7 @@ fvarLabels(hyperLOPIT2015ms3r2)
 We can now combine the two experiments into a single \texttt{MSnSet}:
 
 <<combine, cache = cache>>=
-combined <- MSnbase::combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
+combined <- combine(hyperLOPIT2015ms3r1, hyperLOPIT2015ms3r2)
 combined
 @
 
@@ -500,7 +504,7 @@ hl <- impute(hl, method = "knn")
 
 In our particular case, missing values are indicative of protein
 groups that were not acquired in both replicates (Figure
-\ref{fig:namap}).
+\ref{fig:namap}, produced with the \texttt{image2} function).
 
 \begin{figure}[!ht]
   \centering
@@ -548,9 +552,9 @@ summarise multi-dimensional data in to 2 or 3 dimensions to enable
 visualisation. Very generally, the original continuous
 multi-dimensional data is transformed into a set of orthogonal
 components ordered according to the amount of variability that they
-describe. The \texttt{plot2D} and \texttt{plot3D} methods in
+describe. The \texttt{plot2D} and \texttt{plot3D} functions in
 \Biocpkg{pRoloc} allows one to plot the principal components (PCs) of
-a dataset against one another, by default the first two components are
+a dataset against one another. By default, the first two components are
 plotted on the x- and y-axis for the \texttt{plot2D} function, and
 first three components are loaded for the \texttt{plot3D} function,
 respectively (the \texttt{dims} argument can be used to plot other
@@ -594,11 +598,11 @@ It is also useful to visualise the relative intensities along the
 gradient to identify channels displaying particularly low yield. This
 can be done using the \texttt{plotDist} and \texttt{boxplot}
 functions, that plot the protein profiles occupancy along the gradient
-(we also display the mean channel intensities) and a \texttt{boxplot}
-of the column intensities.  In the two plots displayed on figure
-\ref{fig:qcbx}, we re-order the TMT channels to pair corresponding
-channels in the two replicates (rather than ordering the channels by
-replicate).
+(we also display the mean channel intensities below) and a
+\texttt{boxplot} of the column intensities.  In the two plots
+displayed on figure \ref{fig:qcbx}, we re-order the TMT channels to
+pair corresponding channels in the two replicates (rather than
+ordering the channels by replicate).
 
 \begin{figure}[!ht]
   \centering
@@ -623,7 +627,7 @@ boxplot(exprs(hl[, o]))
 In the context of spatial proteomics, a marker protein is defined as a
 well-known resident of a specific sub-cellular niche in a species
 \textit{and} condition of interest. Applying this to machine learning
-(ML), and specifically supervised learning, for the task of protein
+(ML), and specifically supervised learning for the task of protein
 localisation prediction, these markers constitute the labelled
 training data to use as input to a classification analyses. Defining
 well-known residents, and obtaining labelled training data for ML
