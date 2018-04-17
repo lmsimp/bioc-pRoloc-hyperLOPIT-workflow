@@ -1,6 +1,7 @@
-language: bash
+language: r
 r: bioc-release
 sudo: false
+dist: trusty
 
 # install R: use r-packages-precise (https://cran.r-project.org/bin/linux/ubuntu/precise/)
 # as source which is white listed (https://github.com/travis-ci/apt-source-whitelist/)
@@ -15,6 +16,7 @@ addons:
     - netcdf-bin
     - libnetcdf-dev
     - libhdf5-dev
+    - pdflatex
 
 # cache local R libraries directory:
 cache:
