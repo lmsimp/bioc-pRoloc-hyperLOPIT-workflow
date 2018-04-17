@@ -16,7 +16,7 @@ addons:
     - netcdf-bin
     - libnetcdf-dev
     - libhdf5-dev
-    - pdflatex
+    - texlive-latex-extra
 
 # cache local R libraries directory:
 cache:
