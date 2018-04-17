@@ -694,7 +694,7 @@ metadata, which makes conversion between identifers relatively
 straightforward. If this is not the case however, conversion can be
 performed using \Biocpkg{biomaRt}, the Bioconductor
 \href{http://bioconductor.org/help/workflows/annotation/Annotation_Resources/}{annotation
-  resouces} or any conversion softwares available online.
+  resources} or any conversion softwares available online.
 
 \subsection*{Adding user-defined marker lists}
 It is also possible for users to use their own marker list with the
@@ -829,9 +829,6 @@ hl <- fDataToUnknown(hl, from = "Golgi apparatus", to = "unknown")
 getMarkers(hl)
 @
 
-Finally, in addition to \texttt{plot2D}, the \texttt{plot3D} function
-allows to interactively explore a 3-dimensional plot of the data.
-
 \pagebreak
 
 \subsection*{Features of interest}
@@ -845,8 +842,9 @@ object and then use the \textit{highlightOnPlot} function to
 visualise these. For example, if we wanted to highlight
 proteins with the accession numbers Q8CG48, Q8CG47, Q8K2Z4, and
 Q8C156, which are some of the proteins known to form part of the
-13S condensin complex, we would call the following code:
-
+13S condensin complex, we would call the code displayed
+on Figure \ref{fig:foi}. Users can also create several sets of \texttt{FeaturesOfInterest}
+object and store them in a \texttt{FoICollection}.
 
 \begin{figure}[!ht]
   \centering
@@ -865,8 +863,8 @@ highlightOnPlot(hl, foi13s)
   \label{fig:foi}
 \end{figure}
 
-Users can also create several sets of \texttt{FeaturesOfInterest}
-object and store them in a \texttt{FoICollection}.
+
+\bigskip
 
 It is also worthy of note that it is possible to search for a
 specific protein of interest by \texttt{featureNames} or using any
@@ -884,8 +882,8 @@ proteins can only be searched for a one-by-one basis.
 With the aim of maximising the sub-cellular resolution and,
 consequently, the reliability in protein sub-cellular assignments, we
 follow the advice in \cite{Trotter:2010} and combine replicated spatial
-proteomics experiments as described above. Indeed, Trotter et
-al. have shown a significant improvement in protein–organelle
+proteomics experiments as described above. Indeed, Trotter \textit{et
+  al.} have shown a significant improvement in protein–organelle
 association upon direct combination of single experiments, in
 particular when these resolve different subcellular niches.
 
@@ -918,8 +916,8 @@ assuring that each displays acceptable sub-cellular resolution. Note
 that in the code chunk below, we mirror the x-axis to represent the
 two figures with the same orientation. The interactive "compare"
 application part of the \Biocpkg{pRolocGUI} package is also useful for
-examining replicate experiments (see the next section interactive
-visualisation for details).
+examining replicate experiments (see the next section
+\textit{Interactive visualisation} for details).
 
 \begin{figure}[!ht]
   \centering
@@ -946,14 +944,12 @@ confident organelle assignments.
 
 Visualisation and data exploration is an important aspect of data
 analyses allowing one to shed light on data structure and patterns of
-interest. Using the \Biocpkg{pRolocGUI} package we can interactively
+interest. Using the \Biocpkg{pRolocGUI} package, we can interactively
 visualise, explore and interrogate quantitative spatial proteomics
-data. The \Biocpkg{pRolocGUI} package is currently under active
-development and it relies on the \texttt{shiny} framework for
-reactivity and interactivity. The package currently distributes 3
-different GUI's (\textit{main} (default), \textit{compare} or
-\textit{classify}) which are wrapped and launched by the
-\texttt{pRolocVis} function.
+data. The \Biocpkg{pRolocGUI} package relies on the \texttt{shiny}
+framework for reactivity and interactivity. It distributes 3 different
+GUI's (\textit{main} (default), \textit{compare} or \textit{classify})
+which are wrapped and launched by the \texttt{pRolocVis} function.
 
 \subsubsection*{The main application}
 In the below code chunk we lauch the main
@@ -1034,8 +1030,8 @@ through regeneration/re-ordering of the \texttt{MSnSetList} object.
 The final application \textit{classify}, has been designed to view
 machine learning classification results according to user-specified
 thresholds for the assignment of proteins to its sub-cellular
-location, as discussed later in the subsection \textit{thresholding}
-in the \textit{supervised machine learning section}.
+location, as discussed later in the subsection \textit{Thresholding}
+in the \textit{Supervised machine learning} section.
 
 
 \section*{Novelty Detection}
@@ -1061,26 +1057,27 @@ proteins on existing labelled data with the detection of new clusters.
 
 In addition to extracting new phenotypes, novelty detection methods
 are also useful for confirming the presence of known or postulated
-clusters in an unbiased fashion. For example, in \cite{hyper} the
+clusters in an unbiased fashion. For example in \cite{hyper}, the
 \texttt{phenoDisco} algorithm was used to confirm the data-specific presence
 of the nucleus and nucleus sub-compartments. In the code chunk below,
 we demonstrate how to do this analysis, highlighting some of the
 optional arguments and parameters available for phenotype extraction
 and give some advice on how to interpret the output.
 
-As the \texttt{phenoDisco} algorithm is semi-supervised it uses both labelled
-(markers) and unlabelled data to explore the data structure and find
-new sub-cellular data clusters. Thus the first step is to define some
-input labelled data i.e. markers, that the algorithm will use as input
-for the supervised learning aspect of the algorithm. As described in
-\cite{hyper} we define a set of markers to use as input for the analyses
-that cover well-known residents from three distinct organelle
-structures; the mitochondria, plasma membrane and ER, and from three
-well-known and abundant protein complexes; the proteasome and two
-ribosomal subunits, 40S and 60S.  These input markers are stored in
-the \texttt{featureData} column of \texttt{hl} where \texttt{fcol = "phenoDisco.Input"}. We
-can use the convenience accessor function \texttt{getMarkers} to print out a
-table of the markers contained in this marker set. These initial
+As the \texttt{phenoDisco} algorithm is semi-supervised it uses both
+labelled (markers) and unlabelled data to explore the data structure
+and find new sub-cellular data clusters. Thus the first step is to
+define some input labelled data i.e. markers, that the algorithm will
+use as input for the supervised learning aspect of the algorithm. As
+described in \cite{hyper} we define a set of markers to use as input
+for the analyses that cover well-known residents from three distinct
+organelle structures; the mitochondria, plasma membrane and ER, and
+from three well-known and abundant protein complexes; the proteasome
+and two ribosomal subunits, 40S and 60S.  These input markers are
+stored in the \texttt{phenoDisco.Input} \texttt{featureData} column of
+\texttt{hl} and below set by \texttt{fcol = "phenoDisco.Input"}. We
+can use the convenience accessor function \texttt{getMarkers} to print
+out a table of the markers contained in this marker set. These initial
 markers were manually curated using information from the UniProt
 database, the Gene Ontology and the literature.
 
@@ -1117,7 +1114,7 @@ have found for larger datasets (e.g. 5000+ proteins) a higher
 minimum number of proteins allowed per new data cluster and thus
 heavily influences what type of new clusters are extracted. For
 example, if a user is interested in the detection of small complexes
-they may wish to use a small \texttt{GS = 10}, or \texttt{= 20} etc.
+they may wish to use a small \texttt{GS = 10}, or \texttt{GS = 20} etc.
 If they wish to detect larger, more abundant sub-cellular niches a
 much higher \texttt{GS} would be preferable. Specifying a small
 \texttt{GS} can be more time consuming than using a larger

@@ -25,11 +25,8 @@ cache:
 # - define R repository in .Rprofile
 # - install packages
 
-
-before_script:
+script:
   - mkdir -p ~/Rlib
   - echo 'R_LIBS=~/Rlib' > .Renviron
   - Rscript -e 'source("http://www.bioconductor.org/biocLite.R"); biocLite(c("pRoloc", "pRolocdata", "BiocStyle", "knitr", "gridExtra"), suppressUpdates = TRUE)'
-
-script:
   - make
