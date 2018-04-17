@@ -777,7 +777,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 13:59:46 2018 
+## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 15:22:42 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -862,10 +862,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 13:59:46 2018 
-## Subset [6725,20][5032,20] Tue Apr 17 13:59:47 2018 
-## Removed features with more than 0 NAs: Tue Apr 17 13:59:47 2018 
-## Dropped featureData's levels Tue Apr 17 13:59:47 2018 
+## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 15:22:42 2018 
+## Subset [6725,20][5032,20] Tue Apr 17 15:22:43 2018 
+## Removed features with more than 0 NAs: Tue Apr 17 15:22:43 2018 
+## Dropped featureData's levels Tue Apr 17 15:22:43 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1294,7 +1294,7 @@ object and store them in a \texttt{FoICollection}.
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Tue Apr 17 13:59:49 2018 
+##  Created on Tue Apr 17 15:22:45 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1350,7 +1350,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.4.4 by xtable 1.8-2 package
-% Tue Apr 17 13:59:49 2018
+% Tue Apr 17 15:22:45 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1664,8 +1664,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Apr 17 13:59:48 2018 
-## Added markers from  'pdres' marker vector. Tue Apr 17 13:59:49 2018 
+## Added markers from  'mrk' marker vector. Tue Apr 17 15:22:45 2018 
+## Added markers from  'pdres' marker vector. Tue Apr 17 15:22:46 2018 
 ##  MSnbase version: 2.4.2
 \end{verbatim}
 \begin{alltt}
@@ -1856,10 +1856,10 @@ frequencies.
 \end{kframe}
 \end{knitrout}
 
-In the code chunk below we then pass these weights
-to the \texttt{svmOptimisation} function. Once again, we provide
-the optimisation results for users to load directly if they wish to save
-computational time, please see the appendix to load these results.
+In the code chunk below we then pass these weights to the
+\texttt{svmOptimisation} function. Once again, we provide the
+optimisation results for users to load directly if they wish to save
+computational time (see the appendix for details).
 
 
 
@@ -2009,9 +2009,10 @@ visualised using \texttt{plot2D}. In the code chunk below
 e.g. \texttt{fcol = "svm"}.
 
 Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
-argument to change the size of each point on the plot to be inversely
-proportional to the SVM score (Figure \ref{fig:plotSVM}). This gives an initial overview of the
-high scoring localisations from the SVM predictions.
+argument to change the size of each point on the plot to be
+proportional to the SVM score (Figure \ref{fig:plotSVM}). This gives
+an initial overview of the high scoring localisations from the SVM
+predictions.
 
 
 
@@ -2020,7 +2021,7 @@ high scoring localisations from the SVM predictions.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{## set point size of each protein to be inversely proportional to the}
+\hlcom{## set point size of each protein to be proportional to the svm score}
 \hlstd{ptsze} \hlkwb{<-} \hlkwd{exp}\hlstd{(}\hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{svm.scores)} \hlopt{-} \hlnum{1}
 \hlcom{## plot new predictions}
 \hlkwd{plot2D}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{cex} \hlstd{= ptsze)}
@@ -2037,7 +2038,7 @@ high scoring localisations from the SVM predictions.
 \pagebreak
 
 The adjustment of the point size intuitively confers important
-information that is more difficult to define formally (we
+information that is more difficult to define formally (that we
 will address in the next section). The classifier (SVM in our case, but
 this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
@@ -2051,7 +2052,7 @@ which classifications are kept unknown/unassigned. This is important
 as in a supervised learning setup, proteins can only be predicted to
 be localised to one of the sub-cellular niches that appear in the
 labelled training data. We can not guarantee (and do not expect) that
-the whole sub-cellular diversity to be represented in the labelled
+the whole sub-cellular diversity is represented in the labelled
 training data as (1) finding markers that represent the whole
 diversity of the cell is challenging (especially obtaining dual- and
 multiply-localised protein markers) and (2) many sub-cellular niches
@@ -2113,25 +2114,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4340512               0.3058889               0.3932999 
+##               0.4323939               0.3044486               0.3845760 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6866550               0.6085893               0.4267912 
+##               0.6850826               0.6012822               0.4245089 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4088995               0.5917139               0.9495218 
+##               0.4256415               0.5944635               0.9493494 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946689               0.7107085               0.3134403 
+##               0.7949812               0.7104192               0.3114933 
 ##         Plasma membrane              Proteasome 
-##               0.7229096               0.4193182
+##               0.7229559               0.4157514
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4340512               0.3058889               0.3932999 
+##               0.4323939               0.3044486               0.3845760 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6866550               0.6085893               0.4267912 
+##               0.6850826               0.6012822               0.4245089 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4088995               0.5917139               0.9495218 
+##               0.4256415               0.5944635               0.9493494 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7946689               0.7107085               0.3134403 
+##               0.7949812               0.7104192               0.3114933 
 ##         Plasma membrane              Proteasome 
-##               0.7229096               0.4193182
+##               0.7229559               0.4157514
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2139,15 +2140,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     171                      89 
+##                      85                     170                      88 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     295                     477                      96 
+##                     296                     475                     101 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     125                     523 
+##                      27                     124                     524 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     343                      38 
+##                     230                     343                      38 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     317                     159                    2058
+##                     316                     158                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2193,6 +2194,7 @@ using, for example, \texttt{fData(hl)\$svm.pred}.
   \label{fig:plotres}
 \end{figure}
 
+\bigskip
 
 There is also a dedicated interactive application to help users
 examine these distributions in the \Biocpkg{pRolocGUI} package (Figure
@@ -2236,7 +2238,7 @@ threshold. The quantile threshold can be set by moving the
 corresponding quantile slider. If the users wishes to set their own
 cut-offs, the \textit{User-defined} radio button must be selected and
 then the sliders for defining user-specified scores become active and
-the scores and highlighted on the boxplot by blue dots. For more
+the scores are highlighted on the boxplot by blue dots. For more
 information we refer users to the \Biocpkg{pRolocGUI} tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 

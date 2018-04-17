@@ -1278,10 +1278,10 @@ w <- table(getMarkers(hl, verbose = TRUE))
 w <- 1/w[names(w) != "unknown"]
 @
 
-In the code chunk below we then pass these weights
-to the \texttt{svmOptimisation} function. Once again, we provide
-the optimisation results for users to load directly if they wish to save
-computational time, please see the appendix to load these results.
+In the code chunk below we then pass these weights to the
+\texttt{svmOptimisation} function. Once again, we provide the
+optimisation results for users to load directly if they wish to save
+computational time (see the appendix for details).
 
 <<loadpdRes, echo=FALSE>>=
 svmf <- dir(extdatadir, full.names = TRUE,
@@ -1401,9 +1401,10 @@ visualised using \texttt{plot2D}. In the code chunk below
 e.g. \texttt{fcol = "svm"}.
 
 Additionally, when calling \texttt{plot2D} we can use the \texttt{cex}
-argument to change the size of each point on the plot to be inversely
-proportional to the SVM score (Figure \ref{fig:plotSVM}). This gives an initial overview of the
-high scoring localisations from the SVM predictions.
+argument to change the size of each point on the plot to be
+proportional to the SVM score (Figure \ref{fig:plotSVM}). This gives
+an initial overview of the high scoring localisations from the SVM
+predictions.
 
 <<setColors, include=FALSE>>=
 setStockcol(NULL)
@@ -1414,7 +1415,7 @@ par(mfrow = c(1, 1))
 \begin{figure}[!ht]
   \centering
 <<plotSVM, out.width=".8\\textwidth">>=
-## set point size of each protein to be inversely proportional to the
+## set point size of each protein to be proportional to the svm score
 ptsze <- exp(fData(hl)$svm.scores) - 1
 ## plot new predictions
 plot2D(hl, fcol = "svm", cex = ptsze)
@@ -1427,7 +1428,7 @@ addLegend(hl, fcol = "svm", where = "bottomleft", bty = "n", cex = .5)
 \pagebreak
 
 The adjustment of the point size intuitively confers important
-information that is more difficult to define formally (we
+information that is more difficult to define formally (that we
 will address in the next section). The classifier (SVM in our case, but
 this is also valid of other classifiers) defines boundaries based on
 the labelled marker proteins. These class/organelle boundaries define
@@ -1441,7 +1442,7 @@ which classifications are kept unknown/unassigned. This is important
 as in a supervised learning setup, proteins can only be predicted to
 be localised to one of the sub-cellular niches that appear in the
 labelled training data. We can not guarantee (and do not expect) that
-the whole sub-cellular diversity to be represented in the labelled
+the whole sub-cellular diversity is represented in the labelled
 training data as (1) finding markers that represent the whole
 diversity of the cell is challenging (especially obtaining dual- and
 multiply-localised protein markers) and (2) many sub-cellular niches
@@ -1524,6 +1525,7 @@ plot2D(hl, fcol = "svm.pred")
   \label{fig:plotres}
 \end{figure}
 
+\bigskip
 
 There is also a dedicated interactive application to help users
 examine these distributions in the \Biocpkg{pRolocGUI} package (Figure
@@ -1563,7 +1565,7 @@ threshold. The quantile threshold can be set by moving the
 corresponding quantile slider. If the users wishes to set their own
 cut-offs, the \textit{User-defined} radio button must be selected and
 then the sliders for defining user-specified scores become active and
-the scores and highlighted on the boxplot by blue dots. For more
+the scores are highlighted on the boxplot by blue dots. For more
 information we refer users to the \Biocpkg{pRolocGUI} tutorial
 \href{http://bioconductor.org/packages/release/bioc/vignettes/pRolocGUI/inst/doc/pRolocGUI.html}{vignette}.
 
