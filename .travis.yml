@@ -1,4 +1,4 @@
-language: r
+language: bash
 r: bioc-release
 sudo: false
 dist: trusty
