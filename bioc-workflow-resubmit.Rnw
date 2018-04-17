@@ -1193,7 +1193,7 @@ argument \texttt{fDataCols} to specify which columns of the
 
 <<writehl, eval=FALSE>>=
 fData(hl)$pd <- as.character(fData(hl)$pd)
-write.exprs(hl, fDataCols = "pd", file = "pd-results.csv", sep = ",")
+write.exprs(hl, fcol = "pd", file = "pd-results.csv", sep = ",")
 @
 
 
@@ -1865,12 +1865,12 @@ uncover groups of similar features within the data, termed
 clustering. Ordination methods such as principal components analysis
 (PCA) also fall into the category of unsupervised learning methods,
 where the data can be projected from a high-dimensional space down to
-two or three dimensions for the purpose of visualisation.
+two or three dimensions.
 
 As described and demonstrated already above, PCA is a valuable and
 powerful method for data visualisation and quality control. Another
 application uses hierarchical clustering to summarise the relation
-between marker proteins using he \texttt{mrkHClust} function, where
+between marker proteins using the \texttt{mrkHClust} function, where
 the euclidean distance between average class-specific profiles is used
 to produce a dendrogramme describing a simple relationship between the
 sub-cellular classes (Figure~\ref{fig:mrkHclust}). The
@@ -1967,6 +1967,8 @@ It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
 \href{https://support.bioconductor.org/}{question} at hand.
+
+\bigskip
 
 The source of this document, including the code necessary to reproduce
 the analyses and figures is available in a public manuscript

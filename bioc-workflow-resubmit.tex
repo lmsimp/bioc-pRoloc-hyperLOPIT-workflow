@@ -777,7 +777,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 15:22:42 2018 
+## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 15:40:33 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -862,10 +862,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 15:22:42 2018 
-## Subset [6725,20][5032,20] Tue Apr 17 15:22:43 2018 
-## Removed features with more than 0 NAs: Tue Apr 17 15:22:43 2018 
-## Dropped featureData's levels Tue Apr 17 15:22:43 2018 
+## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 15:40:33 2018 
+## Subset [6725,20][5032,20] Tue Apr 17 15:40:34 2018 
+## Removed features with more than 0 NAs: Tue Apr 17 15:40:34 2018 
+## Dropped featureData's levels Tue Apr 17 15:40:34 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1294,7 +1294,7 @@ object and store them in a \texttt{FoICollection}.
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Tue Apr 17 15:22:45 2018 
+##  Created on Tue Apr 17 15:40:38 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1350,7 +1350,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.4.4 by xtable 1.8-2 package
-% Tue Apr 17 15:22:45 2018
+% Tue Apr 17 15:40:38 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1664,8 +1664,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Tue Apr 17 15:22:45 2018 
-## Added markers from  'pdres' marker vector. Tue Apr 17 15:22:46 2018 
+## Added markers from  'mrk' marker vector. Tue Apr 17 15:40:37 2018 
+## Added markers from  'pdres' marker vector. Tue Apr 17 15:40:39 2018 
 ##  MSnbase version: 2.4.2
 \end{verbatim}
 \begin{alltt}
@@ -1746,7 +1746,7 @@ argument \texttt{fDataCols} to specify which columns of the
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{pd} \hlkwb{<-} \hlkwd{as.character}\hlstd{(}\hlkwd{fData}\hlstd{(hl)}\hlopt{$}\hlstd{pd)}
-\hlkwd{write.exprs}\hlstd{(hl,} \hlkwc{fDataCols} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{file} \hlstd{=} \hlstr{"pd-results.csv"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{)}
+\hlkwd{write.exprs}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"pd"}\hlstd{,} \hlkwc{file} \hlstd{=} \hlstr{"pd-results.csv"}\hlstd{,} \hlkwc{sep} \hlstd{=} \hlstr{","}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -2114,25 +2114,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4323939               0.3044486               0.3845760 
+##               0.4382130               0.3040042               0.3797701 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6850826               0.6012822               0.4245089 
+##               0.6897383               0.6007307               0.4284784 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4256415               0.5944635               0.9493494 
+##               0.4200181               0.5879109               0.9502066 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7949812               0.7104192               0.3114933 
+##               0.7951514               0.7100151               0.3166095 
 ##         Plasma membrane              Proteasome 
-##               0.7229559               0.4157514
+##               0.7050611               0.4169158
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4323939               0.3044486               0.3845760 
+##               0.4382130               0.3040042               0.3797701 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6850826               0.6012822               0.4245089 
+##               0.6897383               0.6007307               0.4284784 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4256415               0.5944635               0.9493494 
+##               0.4200181               0.5879109               0.9502066 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7949812               0.7104192               0.3114933 
+##               0.7951514               0.7100151               0.3166095 
 ##         Plasma membrane              Proteasome 
-##               0.7229559               0.4157514
+##               0.7050611               0.4169158
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2140,15 +2140,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      85                     170                      88 
+##                      86                     169                      85 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     296                     475                     101 
+##                     296                     477                      94 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      27                     124                     524 
+##                      27                     123                     522 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     230                     343                      38 
+##                     230                     344                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     316                     158                    2057
+##                     325                     157                    2058
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -2602,12 +2602,12 @@ uncover groups of similar features within the data, termed
 clustering. Ordination methods such as principal components analysis
 (PCA) also fall into the category of unsupervised learning methods,
 where the data can be projected from a high-dimensional space down to
-two or three dimensions for the purpose of visualisation.
+two or three dimensions.
 
 As described and demonstrated already above, PCA is a valuable and
 powerful method for data visualisation and quality control. Another
 application uses hierarchical clustering to summarise the relation
-between marker proteins using he \texttt{mrkHClust} function, where
+between marker proteins using the \texttt{mrkHClust} function, where
 the euclidean distance between average class-specific profiles is used
 to produce a dendrogramme describing a simple relationship between the
 sub-cellular classes (Figure~\ref{fig:mrkHclust}). The
@@ -2793,6 +2793,8 @@ It is always important to include session information details along
 with a \href{http://adv-r.had.co.nz/Reproducibility.html}{short
   reproducible example} highlighting the problem or
 \href{https://support.bioconductor.org/}{question} at hand.
+
+\bigskip
 
 The source of this document, including the code necessary to reproduce
 the analyses and figures is available in a public manuscript
