@@ -1,5 +1,5 @@
 all:
-	make -B bioc-workflow-resubmit.tex
+	make main.pdf
 
 setvars:
 ifeq (${R_HOME},)
