@@ -2,18 +2,19 @@
 
 \section*{Introduction}
 
-Quantitative mass spectrometry based spatial proteomics involves
+Quantitative mass spectrometry-based spatial proteomics involves
 elaborate, expensive and time consuming experimental protocols and
 considerable effort is invested in the generation of such data.
 Multiple research groups have described a variety of approaches to
 establish high quality proteome-wide datasets (see for example
 \cite{Gatto:2010} for a review, and
-\cite{hyper,Itzhak:2016,Jean_Beltran:2016} for recent
-examples). However, data analysis is as critical as data production
-for reliable and insightful biological interpretation. Here, we walk
-the reader through a typical pipeline for the analysis of such data
-using several Bioconductor~\cite{Huber:2015} packages for the R
-statistical programming environment.
+\cite{hyper,Itzhak:2016,Jean_Beltran:2016,Itzhak:2017,Hirst:2018} for
+recent examples). However, data analysis is as critical as data
+production for reliable and insightful biological
+interpretation. Here, we walk the reader through a typical pipeline
+for the analysis of such data using several
+Bioconductor~\cite{Huber:2015} packages for the R statistical
+programming environment.
 
 The main package to analyse protein localisation data is
 \Biocpkg{pRoloc}, which offers a set of dedicated functions for the
@@ -32,7 +33,7 @@ embryonic stem cells experiment \cite{hyper}. These data, as well as
 additional annotated and pre-formatted datasets from various species
 are readily available in the \Biocexptpkg{pRolocdata} package.
 
-Installation of Bioconductor package is documented in detail on the
+Installation of Bioconductor packages is documented in detail on the
 \href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
   installation help page}. Below, we show how to install the four main
 packages used in this workflow:
@@ -53,6 +54,8 @@ package has been installed, it needs to be loaded for its
 functionality to become available in the R session; this is done with
 the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} package one
 would type \texttt{library("pRoloc")} after installation.
+
+\bigskip
 
 If you have questions about this workflow in particular, or about
 other Bioconductor packages in general, they are best asked on the
@@ -770,7 +773,7 @@ We can now combine the two experiments into a single \texttt{MSnSet}:
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Apr 16 15:33:11 2018 
+## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 08:39:23 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -855,10 +858,10 @@ values (subsetting) changed the dimensions of the data.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Combined [6725,20] and [6268,10] MSnSets Mon Apr 16 15:33:11 2018 
-## Subset [6725,20][5032,20] Mon Apr 16 15:33:12 2018 
-## Removed features with more than 0 NAs: Mon Apr 16 15:33:12 2018 
-## Dropped featureData's levels Mon Apr 16 15:33:12 2018 
+## Combined [6725,20] and [6268,10] MSnSets Tue Apr 17 08:39:23 2018 
+## Subset [6725,20][5032,20] Tue Apr 17 08:39:24 2018 
+## Removed features with more than 0 NAs: Tue Apr 17 08:39:24 2018 
+## Dropped featureData's levels Tue Apr 17 08:39:24 2018 
 ##  MSnbase version: 1.21.7
 \end{verbatim}
 \end{kframe}
@@ -1289,7 +1292,7 @@ Q8C156, which are some of the proteins known to form part of the
 \end{alltt}
 \begin{verbatim}
 ## Traceable object of class "FeaturesOfInterest"
-##  Created on Mon Apr 16 15:33:14 2018 
+##  Created on Tue Apr 17 08:39:26 2018 
 ##  Description:
 ##   13S consensin proteins
 ##  4 features of interest:
@@ -1345,7 +1348,7 @@ often pooled to obtain enough material and optimise acurate
 quantitation.
 
 % latex table generated in R 3.4.4 by xtable 1.8-2 package
-% Mon Apr 16 15:33:14 2018
+% Tue Apr 17 08:39:26 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrllr}
@@ -1660,8 +1663,8 @@ phenotype data clusters were found.
 ## experimentData: use 'experimentData(object)'
 ## Annotation:  
 ## - - - Processing information - - -
-## Added markers from  'mrk' marker vector. Mon Apr 16 15:33:13 2018 
-## Added markers from  'pdres' marker vector. Mon Apr 16 15:33:14 2018 
+## Added markers from  'mrk' marker vector. Tue Apr 17 08:39:25 2018 
+## Added markers from  'pdres' marker vector. Tue Apr 17 08:39:26 2018 
 ##  MSnbase version: 2.4.2
 \end{verbatim}
 \begin{alltt}
@@ -2109,25 +2112,25 @@ labelled as unknown.
 \end{alltt}
 \begin{verbatim}
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4371207               0.3057074               0.3881852 
+##               0.4363460               0.3023446               0.3833708 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6925752               0.6021888               0.4265610 
+##               0.6846500               0.5947855               0.4246911 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4262321               0.5923175               0.9498363 
+##               0.4302963               0.5753825               0.9498381 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7961720               0.7109965               0.3179536 
+##               0.7947918               0.7075039               0.3176585 
 ##         Plasma membrane              Proteasome 
-##               0.7201960               0.4170372
+##               0.7124225               0.4149409
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##               0.4371207               0.3057074               0.3881852 
+##               0.4363460               0.3023446               0.3833708 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##               0.6925752               0.6021888               0.4265610 
+##               0.6846500               0.5947855               0.4246911 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##               0.4262321               0.5923175               0.9498363 
+##               0.4302963               0.5753825               0.9498381 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##               0.7961720               0.7109965               0.3179536 
+##               0.7947918               0.7075039               0.3176585 
 ##         Plasma membrane              Proteasome 
-##               0.7201960               0.4170372
+##               0.7124225               0.4149409
 \end{verbatim}
 \begin{alltt}
 \hlstd{hl} \hlkwb{<-} \hlkwd{getPredictions}\hlstd{(hl,} \hlkwc{fcol} \hlstd{=} \hlstr{"svm"}\hlstd{,} \hlkwc{scol} \hlstd{=} \hlstr{"svm.scores"}\hlstd{,} \hlkwc{mcol} \hlstd{=} \hlstr{"markers"}\hlstd{,} \hlkwc{t} \hlstd{= ts)}
@@ -2135,15 +2138,15 @@ labelled as unknown.
 \begin{verbatim}
 ## ans
 ##            40S Ribosome            60S Ribosome      Actin cytoskeleton 
-##                      84                     171                      89 
+##                      86                     170                      84 
 ##                 Cytosol   Endoplasmic reticulum                Endosome 
-##                     294                     475                      97 
+##                     296                     474                      95 
 ##    Extracellular matrix                Lysosome           Mitochondrion 
-##                      29                     124                     523 
+##                      28                     123                     523 
 ##     Nucleus - Chromatin Nucleus - Non-chromatin              Peroxisome 
-##                     229                     343                      39 
+##                     230                     344                      39 
 ##         Plasma membrane              Proteasome                 unknown 
-##                     317                     161                    2057
+##                     326                     157                    2057
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

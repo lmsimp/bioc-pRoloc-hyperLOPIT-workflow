@@ -10,18 +10,19 @@ cache <- FALSE
 
 \section*{Introduction}
 
-Quantitative mass spectrometry based spatial proteomics involves
+Quantitative mass spectrometry-based spatial proteomics involves
 elaborate, expensive and time consuming experimental protocols and
 considerable effort is invested in the generation of such data.
 Multiple research groups have described a variety of approaches to
 establish high quality proteome-wide datasets (see for example
 \cite{Gatto:2010} for a review, and
-\cite{hyper,Itzhak:2016,Jean_Beltran:2016} for recent
-examples). However, data analysis is as critical as data production
-for reliable and insightful biological interpretation. Here, we walk
-the reader through a typical pipeline for the analysis of such data
-using several Bioconductor~\cite{Huber:2015} packages for the R
-statistical programming environment.
+\cite{hyper,Itzhak:2016,Jean_Beltran:2016,Itzhak:2017,Hirst:2018} for
+recent examples). However, data analysis is as critical as data
+production for reliable and insightful biological
+interpretation. Here, we walk the reader through a typical pipeline
+for the analysis of such data using several
+Bioconductor~\cite{Huber:2015} packages for the R statistical
+programming environment.
 
 The main package to analyse protein localisation data is
 \Biocpkg{pRoloc}, which offers a set of dedicated functions for the
@@ -40,7 +41,7 @@ embryonic stem cells experiment \cite{hyper}. These data, as well as
 additional annotated and pre-formatted datasets from various species
 are readily available in the \Biocexptpkg{pRolocdata} package.
 
-Installation of Bioconductor package is documented in detail on the
+Installation of Bioconductor packages is documented in detail on the
 \href{http://bioconductor.org/install/#install-bioconductor-packages}{Bioconductor
   installation help page}. Below, we show how to install the four main
 packages used in this workflow:
@@ -57,6 +58,8 @@ package has been installed, it needs to be loaded for its
 functionality to become available in the R session; this is done with
 the \texttt{library} function e.g.  to load the \Biocpkg{pRoloc} package one
 would type \texttt{library("pRoloc")} after installation.
+
+\bigskip
 
 If you have questions about this workflow in particular, or about
 other Bioconductor packages in general, they are best asked on the
