@@ -1,5 +1,5 @@
 all:
-	make -B bioc-workflow-resubmit.tex
+	make bioc-workflow-resubmit.tex
 
 R_HOME=/opt/Rpatched/
 
