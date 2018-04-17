@@ -1,6 +1,5 @@
 all:
 	make bioc-workflow-resubmit.tex
-	pdflatex main.tex
 
 R_HOME=/opt/Rpatched/
 
@@ -18,7 +17,8 @@ endif
 %.R: %.Rnw
 	"$(R_HOME)/bin/Rscript" -e 'require("knitr"); purl("$^")'
 
-bibtex:
+main.pdf: bioc-workflow-resubmit.tex
+	pdflatex main.tex
 	bibtex main
 	pdflatex main.tex
 	pdflatex main.tex
