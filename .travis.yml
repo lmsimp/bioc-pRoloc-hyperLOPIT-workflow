@@ -1,5 +1,5 @@
 language: c
-sudo: false
+sudo: require
 dist: trusty
 
 # install R: use r-packages-precise (https://cran.r-project.org/bin/linux/ubuntu/precise/)
