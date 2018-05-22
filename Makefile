@@ -23,6 +23,13 @@ main.pdf: bioc-workflow-resubmit.tex
 	pdflatex main.tex
 	pdflatex main.tex
 
+main-annotated.pdf: bioc-workflow-annotated.tex
+	pdflatex main.tex
+	bibtex main
+	pdflatex main.tex
+	pdflatex main.tex
+	cp main.pdf main-annotated.pdf
+
 clean:
 	rm -f *~
 	rm -rf .Rcache
