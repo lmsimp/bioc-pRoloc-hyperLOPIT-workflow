@@ -34,4 +34,7 @@ clean:
 	rm -f *~
 	rm -rf .Rcache
 
+replies-to-reviewers.pdf: replies-to-reviewers.Rmd
+	"$(R_HOME)/bin/Rscript" -e 'library(rmarkdown); render("$^", output_format = pdf_document())'
+
 .PHONY: clean all bibtex
