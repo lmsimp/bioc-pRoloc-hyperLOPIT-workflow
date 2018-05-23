@@ -16,7 +16,6 @@ comments
 .vimrc
 .DS_Store
 Data/.DS_Store
-Figures
 *.html
 *.aux
 *.out
